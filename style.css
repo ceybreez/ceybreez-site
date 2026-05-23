@@ -24,10 +24,11 @@ header{
   z-index:1000;
 }
 
-.logo{
-  color:white;
-  font-size:28px;
-  font-weight:bold;
+.logo img{
+  height:55px;
+  width:auto;
+  display:block;
+}
 }
 
 nav a{

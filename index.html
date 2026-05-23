@@ -1,155 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CeyBreez | Stay. Taste. Explore Sri Lanka.</title>
-
   <link rel="stylesheet" href="style.css">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-  <!-- HEADER -->
-
-  <header>
-
-    <div class="logo-text">
-      CeyBreez
+  <!-- WELCOME SCREEN -->
+  <section class="welcome-screen" id="welcomeScreen">
+    <div class="welcome-content">
+      <img src="logo.png" alt="CeyBreez Logo">
+      <h1>Welcome to CeyBreez</h1>
+      <p>Click, scroll, press any key or touch to enter</p>
     </div>
+  </section>
 
-    <nav>
-      <a href="#Villas">Villas</a>
-      <a href="#Apartments">Apartments</a>
-      <a href="#HomeStays">HomeStays</a>
-      <a href="#Tours">Tours</a>
-      <a href="#contact">Contact</a>
-    </nav>
+  <!-- MAIN WEBSITE -->
+  <main id="mainSite">
 
-  </header>
+    <header>
+      <nav>
+        <a href="#home">Home</a>
+        <a href="#villas">Villas</a>
+        <a href="#tours">Tours</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
 
-  <!-- HERO SECTION -->
+    <section class="hero" id="home">
+      <div class="hero-content">
+        <img class="hero-logo-img" src="logo.png" alt="CeyBreez Logo">
 
-  <section class="hero">
+        <p>
+          Premium villas, unforgettable tours,
+          and authentic Sri Lankan experiences.
+        </p>
 
-    <div class="hero-content">
+        <a href="#contact" class="btn">Book Your Experience</a>
+      </div>
+    </section>
 
-      <h1 class="hero-logo">
-        <img src="logo.png" alt="CeyBreez Logo">
-      </h1>
-
+    <section class="about">
+      <h2>Welcome to CeyBreez</h2>
       <p>
-        Stay with comfort,
-        Taste the island,
-        Explore Sri Lanka
+        CeyBreez brings together luxury stays,
+        island tours, local food,
+        and unique travel experiences across Sri Lanka.
+      </p>
+    </section>
+
+    <section class="cards" id="villas">
+      <h2>Our Experiences</h2>
+
+      <div class="grid">
+        <div class="card">
+          <h3>CeyBreez Villas</h3>
+          <p>Relax in beautiful private villas surrounded by tropical nature.</p>
+        </div>
+
+        <div class="card" id="tours">
+          <h3>CeyBreez Tours</h3>
+          <p>Explore beaches, mountains, waterfalls, temples, and cultural sites.</p>
+        </div>
+
+        <div class="card">
+          <h3>CeyBreez Cafe</h3>
+          <p>Taste authentic Sri Lankan food, tea, coffee, and island flavours.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <h2>Plan Your Journey</h2>
+      <p>
+        Contact us for villas, tours, airport pickup,
+        or custom Sri Lanka travel plans.
       </p>
 
-      <a href="#contact" class="btn">
-        Book Your Experience
+      <a class="whatsapp" href="https://wa.me/94700000000" target="_blank">
+        Chat on WhatsApp
       </a>
+    </section>
 
-    </div>
+    <footer>
+      <p>© 2026 CeyBreez. All rights reserved.</p>
+    </footer>
 
-  </section>
+  </main>
 
-  <!-- ABOUT -->
+  <script>
+    const welcomeScreen = document.getElementById("welcomeScreen");
 
-  <section class="about">
+    function enterSite(){
+      welcomeScreen.classList.add("hide");
+      document.body.classList.add("entered");
 
-    <h2>
-      Welcome to CeyBreez
-    </h2>
+      setTimeout(() => {
+        welcomeScreen.style.display = "none";
+      }, 900);
+    }
 
-    <p>
-      CeyBreez brings together unforgettable stays, breathtaking island tours, authentic local food, and unique travel experiences across the heart of Sri Lanka.
-    </p>
-
-  </section>
-
-  <!-- EXPERIENCE CARDS -->
-
-  <section class="cards" id="villas">
-
-    <h2>Our Experiences</h2>
-
-    <div class="grid">
-
-      <div class="card">
-
-        <h3>Villas</h3>
-
-        <p>
-          Relax in beautiful private villas
-          surrounded by tropical nature.
-        </p>
-
-      </div>
-
-      <div class="card" id="tours">
-
-        <h3>Tours</h3>
-
-        <p>
-          Explore beaches, mountains,
-          waterfalls, temples,
-          and cultural sites.
-        </p>
-
-      </div>
-
-      <div class="card" id="HomeStays">
-
-        <h3>HomeStays</h3>
-
-        <p>
-          Stay in cozy homestays
-          filled with local charm and warm Sri Lankan hospitality.
-        </p>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- CONTACT -->
-
-  <section class="contact" id="contact">
-
-    <h2>
-      Plan Your Journey
-    </h2>
-
-    <p>
-      Contact us for villas,
-      tours, airport pickup,
-      or custom Sri Lanka travel plans.
-    </p>
-
-    <a class="whatsapp"
-       href="https://wa.me/94700000000"
-       target="_blank">
-
-       Chat on WhatsApp
-
-    </a>
-
-  </section>
-
-  <!-- FOOTER -->
-
-  <footer>
-
-    <p>
-      © 2026 CeyBreez.
-      All rights reserved.
-    </p>
-
-  </footer>
+    window.addEventListener("click", enterSite);
+    window.addEventListener("wheel", enterSite);
+    window.addEventListener("keydown", enterSite);
+    window.addEventListener("touchstart", enterSite);
+  </script>
 
 </body>
 </html>

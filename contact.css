@@ -42,7 +42,7 @@ nav a:hover{
   color:#facc15;
 }
 
-/* PAGE */
+/* CONTACT PAGE */
 
 .contact-page{
 
@@ -51,8 +51,10 @@ nav a:hover{
   padding:130px 40px 80px;
 
   background:
-  linear-gradient(rgba(0,0,0,0.55),
-  rgba(0,0,0,0.55)),
+  linear-gradient(
+  rgba(0,0,0,0.55),
+  rgba(0,0,0,0.55)
+  ),
 
   url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2070&auto=format&fit=crop')
   center/cover no-repeat;
@@ -62,34 +64,30 @@ nav a:hover{
 
 .contact-container{
 
-  max-width:1300px;
+  width:100%;
 
-  margin:auto;
+  max-width:1400px;
 
-  display:grid;
+  margin:0 auto;
 
-  grid-template-columns:52% 48%;
+  display:flex;
 
-  gap:70px;
+  justify-content:space-between;
 
-  align-items:start;
+  align-items:flex-start;
+
+  gap:80px;
 }
 
 /* LEFT SIDE */
 
 .contact-info{
 
+  width:48%;
+
   color:white;
 
-  display:flex;
-
-  flex-direction:column;
-
-  justify-content:flex-start;
-
-  align-items:flex-start;
-
-  padding-top:30px;
+  padding-top:40px;
 }
 
 .contact-logo{
@@ -210,7 +208,7 @@ nav a:hover{
 
 .contact-form-box{
 
-  width:100%;
+  width:48%;
 
   margin-top:20px;
 
@@ -410,22 +408,24 @@ footer{
 
 /* MOBILE */
 
-@media(max-width:650px){
+@media(max-width:768px){
 
   .contact-container{
 
-    grid-template-columns:1fr;
+    flex-direction:column;
 
     gap:50px;
+  }
+
+  .contact-info,
+  .contact-form-box{
+
+    width:100%;
   }
 
   .contact-info{
 
     text-align:center;
-
-    align-items:center;
-
-    padding-top:0;
   }
 
   .contact-info p{

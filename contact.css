@@ -62,17 +62,17 @@ nav a:hover{
 
 .contact-container{
 
-  max-width:1250px;
+  max-width:1300px;
 
   margin:auto;
 
   display:grid;
 
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:52% 48%;
 
   gap:70px;
 
-  align-items:flex-start;
+  align-items:start;
 }
 
 /* LEFT SIDE */
@@ -81,7 +81,15 @@ nav a:hover{
 
   color:white;
 
-  padding-top:40px;
+  display:flex;
+
+  flex-direction:column;
+
+  justify-content:flex-start;
+
+  align-items:flex-start;
+
+  padding-top:30px;
 }
 
 .contact-logo{
@@ -95,7 +103,7 @@ nav a:hover{
 
   font-family:'Playfair Display', serif;
 
-  font-size:58px;
+  font-size:60px;
 
   margin-bottom:20px;
 }
@@ -104,7 +112,7 @@ nav a:hover{
 
   font-size:18px;
 
-  line-height:1.8;
+  line-height:1.9;
 
   max-width:520px;
 
@@ -147,9 +155,9 @@ nav a:hover{
 
 .social-btn{
 
-  width:50px;
+  width:52px;
 
-  height:50px;
+  height:52px;
 
   border-radius:50%;
 
@@ -172,7 +180,7 @@ nav a:hover{
 
 .social-btn:hover{
 
-  transform:translateY(-5px);
+  transform:translateY(-5px) scale(1.05);
 }
 
 .facebook{
@@ -202,23 +210,31 @@ nav a:hover{
 
 .contact-form-box{
 
-  background:white;
+  width:100%;
+
+  margin-top:20px;
 
   padding:45px;
 
   border-radius:30px;
 
+  background:rgba(255,255,255,0.50);
+
+  backdrop-filter:blur(12px);
+
+  -webkit-backdrop-filter:blur(12px);
+
+  border:1px solid rgba(255,255,255,0.25);
+
   box-shadow:
   0 15px 45px rgba(0,0,0,0.25);
-
-  width:100%;
 }
 
 .contact-form-box h2{
 
   font-family:'Playfair Display', serif;
 
-  font-size:42px;
+  font-size:44px;
 
   margin-bottom:30px;
 
@@ -237,7 +253,7 @@ nav a:hover{
 
   font-weight:600;
 
-  color:#222;
+  color:#111;
 }
 
 .contact-form-box input,
@@ -252,7 +268,7 @@ nav a:hover{
 
   border-radius:14px;
 
-  background:#f3f4f6;
+  background:rgba(255,255,255,0.75);
 
   font-family:'Poppins', sans-serif;
 
@@ -266,6 +282,12 @@ nav a:hover{
 .contact-form-box textarea{
 
   resize:none;
+}
+
+.contact-form-box input::placeholder,
+.contact-form-box textarea::placeholder{
+
+  color:#666;
 }
 
 .contact-form-box input:focus,
@@ -295,7 +317,7 @@ nav a:hover{
 
   gap:14px;
 
-  background:#f3f4f6;
+  background:rgba(255,255,255,0.45);
 
   padding:18px;
 
@@ -318,7 +340,7 @@ nav a:hover{
 
   font-weight:500;
 
-  color:#222;
+  color:#111;
 }
 
 .checkbox-group input[type="checkbox"]{
@@ -369,6 +391,8 @@ nav a:hover{
 .contact-form-box button:hover{
 
   background:#115e59;
+
+  transform:translateY(-3px);
 }
 
 /* FOOTER */
@@ -398,6 +422,8 @@ footer{
   .contact-info{
 
     text-align:center;
+
+    align-items:center;
 
     padding-top:0;
   }

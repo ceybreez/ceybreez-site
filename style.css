@@ -56,12 +56,12 @@ body{
 
 .welcome-content h1{
   font-family: "Cormorant Garamond", serif;
-  font-size:70px;
+  font-size:100px;
   margin-bottom:15px;
 }
 
 .welcome-content p{
-  font-size:70px;
+  font-size:100px;
   letter-spacing:1px;
   opacity:0.9;
 }
@@ -277,7 +277,7 @@ footer{
   }
 
   .welcome-content h1{
-    font-size:15px;
+    font-size:50px;
   }
 
   .hero-logo-img{
@@ -285,7 +285,7 @@ footer{
   }
 
   .hero p{
-    font-size:15px;
+    font-size:20px;
   }
 
   .about h2,

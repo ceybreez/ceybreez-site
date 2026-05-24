@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>
+    Contact | CeyBreez
+  </title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- GOOGLE FONTS -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header>
+
+    <nav>
+
+      <a href="index.html">
+        Home
+      </a>
+
+      <a href="contact.html">
+        Contact
+      </a>
+
+    </nav>
+
+  </header>
+
+  <!-- CONTACT HERO -->
+
+  <section class="contact-page">
+
+    <div class="contact-container">
+
+      <!-- LEFT SIDE -->
+
+      <div class="contact-info">
+
+        <img src="logo.png"
+             alt="CeyBreez Logo"
+             class="contact-logo">
+
+        <h1>
+          Contact CeyBreez
+        </h1>
+
+        <p>
+          Plan your Sri Lanka journey with us.
+          Contact us for villas, tours,
+          airport pickup,
+          and custom travel experiences.
+        </p>
+
+        <div class="info-box">
+
+          <h3>Email</h3>
+
+          <a href="mailto:ceybreez@gmail.com">
+            ceybreez@gmail.com
+          </a>
+
+        </div>
+
+        <div class="info-box">
+
+          <h3>WhatsApp</h3>
+
+          <a href="https://wa.me/94704620017"
+             target="_blank">
+
+             +94 70 462 0017
+
+          </a>
+
+        </div>
+
+        <div class="social-links">
+
+          <a href="https://www.facebook.com/profile.php?id=61589168168800"
+             target="_blank">
+
+             Facebook
+
+          </a>
+
+          <a href="https://www.instagram.com/CeyBreez"
+             target="_blank">
+
+             Instagram
+
+          </a>
+
+        </div>
+
+      </div>
+
+      <!-- RIGHT SIDE -->
+
+      <div class="contact-form-box">
+
+        <h2>
+          Send an Inquiry
+        </h2>
+
+        <form id="contactForm">
+
+          <input type="text"
+                 id="name"
+                 placeholder="Your Name"
+                 required>
+
+          <input type="email"
+                 id="email"
+                 placeholder="Your Email"
+                 required>
+
+          <input type="text"
+                 id="country"
+                 placeholder="Country">
+
+          <input type="date"
+                 id="date">
+
+          <textarea id="message"
+                    placeholder="Tell us about your trip..."
+                    rows="6"></textarea>
+
+          <button type="button"
+                  onclick="sendWhatsApp()">
+
+                  Send via WhatsApp
+
+          </button>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- FOOTER -->
+
+  <footer>
+
+    <p>
+      © 2026 CeyBreez.
+      All rights reserved.
+    </p>
+
+  </footer>
+
+  <!-- JAVASCRIPT -->
+
+  <script>
+
+    function sendWhatsApp(){
+
+      let name =
+      document.getElementById("name").value;
+
+      let email =
+      document.getElementById("email").value;
+
+      let country =
+      document.getElementById("country").value;
+
+      let date =
+      document.getElementById("date").value;
+
+      let message =
+      document.getElementById("message").value;
+
+      let text =
+`Hello CeyBreez!
+
+Name: ${name}
+Email: ${email}
+Country: ${country}
+Travel Date: ${date}
+
+Message:
+${message}`;
+
+      let url =
+"https://wa.me/94704620017?text="
++ encodeURIComponent(text);
+
+      window.open(url, "_blank");
+    }
+
+  </script>
+
+</body>
+</html>

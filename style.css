@@ -584,3 +584,41 @@ img{
     grid-template-columns:1fr;
   }
 }
+.social-links{
+  display:flex;
+  gap:15px;
+  align-items:center;
+  margin-top:30px;
+}
+
+.social-btn{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  color:white;
+  font-size:26px;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+.social-btn:hover{
+  transform:translateY(-4px);
+}
+
+.facebook{
+  background:#1877F2;
+  font-family:Arial, sans-serif;
+}
+
+.instagram{
+  background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd);
+}
+
+.whatsapp-icon{
+  background:#25D366;
+  font-size:22px;
+}

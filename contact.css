@@ -23,7 +23,7 @@ header{
   z-index:1000;
 
   display:flex;
-  justify-content:center;
+  justify-content:left;
 }
 
 nav{
@@ -34,7 +34,7 @@ nav{
 nav a{
   color:white;
   text-decoration:none;
-  font-weight:500;
+  font-weight:300;
   transition:0.3s;
 }
 
@@ -83,7 +83,7 @@ nav a:hover{
 
 .contact-info{
 
-  width:50%;
+  width:100%;
 
   color:white;
 
@@ -153,9 +153,9 @@ nav a:hover{
 
 .social-btn{
 
-  width:52px;
+  width:75px;
 
-  height:52px;
+  height:75px;
 
   border-radius:50%;
 
@@ -208,7 +208,7 @@ nav a:hover{
 
 .contact-form-box{
 
-  width:75%;
+  width:100%;
 
   margin-top:20px;
 
@@ -218,9 +218,9 @@ nav a:hover{
 
   background:rgba(255,255,255,0.50);
 
-  backdrop-filter:blur(12px);
+  backdrop-filter:blur(25px);
 
-  -webkit-backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(25px);
 
   border:1px solid rgba(255,255,255,0.25);
 

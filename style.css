@@ -9,7 +9,10 @@ html{
 }
 
 body{
-  font-family:'Poppins', sans-serif;
+  font-family: "Cormorant Garamond", serif;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
   background:#f5f5f5;
   color:#222;
   line-height:1.6;
@@ -55,7 +58,7 @@ body{
 }
 
 .welcome-content h1{
-  font-family:'Playfair Display', serif;
+  font-family: "Cormorant Garamond", serif;
   font-size:56px;
   margin-bottom:15px;
 }

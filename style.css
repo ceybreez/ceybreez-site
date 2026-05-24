@@ -264,12 +264,12 @@ footer{
 @media(max-width:768px){
 
   header{
-    padding:18px 20px;
+    padding:20px 25px;
   }
 
   nav a{
     margin:0 8px;
-    font-size:15px;
+    font-size:30px;
   }
 
   .welcome-content img{
@@ -291,7 +291,7 @@ footer{
   .about h2,
   .cards h2,
   .contact h2{
-    font-size:20px;
+    font-size:35px;
   }
 }
 

@@ -406,3 +406,78 @@ footer{
   color:white;
 }
 
+/* MOBILE FIX */
+
+@media(max-width:768px){
+
+  .contact-page{
+    padding:110px 18px 60px;
+  }
+
+  .contact-container{
+    display:block;
+    width:100%;
+  }
+
+  .contact-info{
+    width:100%;
+    text-align:center;
+    padding-top:0;
+    margin-bottom:35px;
+  }
+
+  .contact-info h1{
+    font-size:42px;
+  }
+
+  .contact-info p{
+    font-size:17px;
+    max-width:100%;
+  }
+
+  .contact-logo{
+    width:230px;
+    margin:auto auto 25px;
+    display:block;
+  }
+
+  .social-links{
+    justify-content:center;
+  }
+
+  .social-btn{
+    width:55px;
+    height:55px;
+  }
+
+  .contact-form-box{
+    width:100%;
+    margin:0;
+    padding:28px 22px;
+    border-radius:24px;
+  }
+
+  .contact-form-box h2{
+    font-size:34px;
+    line-height:1.2;
+  }
+
+  .contact-form-box input,
+  .contact-form-box textarea,
+  .contact-form-box select{
+    width:100%;
+    font-size:15px;
+  }
+
+  .iti{
+    width:100%;
+  }
+
+  .checkbox-group{
+    grid-template-columns:1fr;
+  }
+
+  .date-row{
+    flex-direction:column;
+  }
+}

@@ -208,7 +208,7 @@ nav a:hover{
 
 .contact-form-box{
 
-  width:50%;
+  width:75%;
 
   margin-top:20px;
 
@@ -406,60 +406,3 @@ footer{
   color:white;
 }
 
-/* MOBILE ONLY */
-
-@media(max-width:520px){
-
-  .contact-page{
-
-    padding:120px 20px 60px;
-  }
-
-  .contact-container{
-
-    flex-direction:column;
-
-    gap:50px;
-  }
-
-  .contact-info,
-  .contact-form-box{
-
-    width:100%;
-  }
-
-  .contact-info{
-
-    text-align:center;
-  }
-
-  .contact-info p{
-
-    margin:auto auto 30px;
-  }
-
-  .contact-logo{
-
-    width:210px;
-  }
-
-  .contact-info h1{
-
-    font-size:42px;
-  }
-
-  .contact-form-box{
-
-    padding:30px 22px;
-  }
-
-  .date-row{
-
-    flex-direction:column;
-  }
-
-  .checkbox-group{
-
-    grid-template-columns:1fr;
-  }
-}

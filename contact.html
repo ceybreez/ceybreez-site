@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Contact | CeyBreez</title>
 
   <link rel="stylesheet" href="style.css">
@@ -11,6 +13,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 
@@ -24,9 +27,11 @@
 </header>
 
 <section class="contact-page">
+
   <div class="contact-container">
 
     <div class="contact-info">
+
       <img src="logo.png" alt="CeyBreez Logo" class="contact-logo">
 
       <h1>Contact CeyBreez</h1>
@@ -52,9 +57,11 @@
         <a href="https://www.facebook.com/profile.php?id=61589168168800" target="_blank">Facebook</a>
         <a href="https://www.instagram.com/CeyBreez" target="_blank">Instagram</a>
       </div>
+
     </div>
 
     <div class="contact-form-box">
+
       <h2>Send an Inquiry</h2>
 
       <form id="contactForm">
@@ -63,7 +70,9 @@
         <input type="text" id="name" placeholder="Your Name" required>
 
         <label>*Country</label>
-        <input type="text" id="country" placeholder="Country will appear after selecting phone country" readonly required>
+        <select id="country" required>
+          <option value="">Select your country</option>
+        </select>
 
         <label>*Mobile Number</label>
         <input type="tel" id="mobile" placeholder="Mobile Number" required>
@@ -94,9 +103,11 @@
         <button type="button" onclick="sendInquiry()">Send Inquiry</button>
 
       </form>
+
     </div>
 
   </div>
+
 </section>
 
 <footer>
@@ -106,6 +117,7 @@
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/js/intlTelInput.min.js"></script>
 
 <script>
+
   const phoneInput = document.querySelector("#mobile");
   const countryInput = document.querySelector("#country");
 
@@ -116,13 +128,14 @@
     utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/js/utils.js"
   });
 
-  function updateCountry(){
-    const data = iti.getSelectedCountryData();
-    countryInput.value = data.name + " +" + data.dialCode;
-  }
+  const countryData = window.intlTelInputGlobals.getCountryData();
 
-  phoneInput.addEventListener("countrychange", updateCountry);
-  updateCountry();
+  countryData.forEach(country => {
+    const option = document.createElement("option");
+    option.value = country.name;
+    option.textContent = country.name;
+    countryInput.appendChild(option);
+  });
 
   async function sendInquiry(){
 
@@ -190,6 +203,7 @@ ${message}`;
     window.open(whatsappURL, "_blank");
 
     try{
+
       const response = await fetch(
         "https://ceybreez-contact-api.ceybreez.workers.dev",
         {
@@ -205,7 +219,7 @@ ${message}`;
         alert("Inquiry sent successfully!");
         document.getElementById("contactForm").reset();
         iti.setCountry("lk");
-        updateCountry();
+        countryInput.value = "";
       }else{
         alert("WhatsApp opened, but email sending failed.");
       }
@@ -214,7 +228,9 @@ ${message}`;
       alert("WhatsApp opened, but email sending failed.");
       console.log(error);
     }
+
   }
+
 </script>
 
 </body>

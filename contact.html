@@ -4,16 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Contact | CeyBreez</title>
 
   <link rel="stylesheet" href="contact.css">
-
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/css/intlTelInput.css">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 
@@ -27,11 +24,9 @@
 </header>
 
 <section class="contact-page">
-
   <div class="contact-container">
 
     <div class="contact-info">
-
       <img src="logo.png" alt="CeyBreez Logo" class="contact-logo">
 
       <h1>Contact CeyBreez</h1>
@@ -53,34 +48,25 @@
         </a>
       </div>
 
-    <div class="social-links">
+      <div class="social-links">
+        <a class="social-btn facebook"
+           href="https://www.facebook.com/profile.php?id=61589168168800"
+           target="_blank">f</a>
 
-  <a class="social-btn facebook"
-     href="https://www.facebook.com/profile.php?id=61589168168800"
-     target="_blank">
-     f
-  </a>
+        <a class="social-btn instagram"
+           href="https://www.instagram.com/CeyBreez"
+           target="_blank">◎</a>
 
-  <a class="social-btn instagram"
-     href="https://www.instagram.com/CeyBreez"
-     target="_blank">
-     ◎
-  </a>
+        <a class="social-btn whatsapp-icon"
+           href="https://wa.me/94704620017"
+           target="_blank">☎</a>
+      </div>
+    </div>
 
-  <a class="social-btn whatsapp-icon"
-     href="https://wa.me/94704620017"
-     target="_blank">
-     ☎
-  </a>
-
-</div>
-
-  <div class="contact-form-box">
-
+    <div class="contact-form-box">
       <h2>Send an Inquiry</h2>
 
       <form id="contactForm">
-
         <label>*Your Name</label>
         <input type="text" id="name" placeholder="Your Name" required>
 
@@ -116,13 +102,10 @@
         <textarea id="message" placeholder="Tell us about your trip..." rows="5"></textarea>
 
         <button type="button" onclick="sendInquiry()">Send Inquiry</button>
-
       </form>
-
     </div>
 
   </div>
-
 </section>
 
 <footer>
@@ -132,7 +115,6 @@
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/js/intlTelInput.min.js"></script>
 
 <script>
-
   const phoneInput = document.querySelector("#mobile");
   const countryInput = document.querySelector("#country");
 
@@ -151,23 +133,18 @@
     option.textContent = country.name;
     countryInput.appendChild(option);
   });
-countryInput.addEventListener("change", function(){
 
-  const selectedCountry = countryInput.value;
+  countryInput.addEventListener("change", function(){
+    const matchedCountry = countryData.find(
+      country => country.name === countryInput.value
+    );
 
-  const matchedCountry = countryData.find(
-    country => country.name === selectedCountry
-  );
+    if(matchedCountry){
+      iti.setCountry(matchedCountry.iso2);
+    }
+  });
 
-  if(matchedCountry){
-
-    iti.setCountry(matchedCountry.iso2);
-
-  }
-
-});
   async function sendInquiry(){
-
     const name = document.getElementById("name").value;
     const country = document.getElementById("country").value;
     const mobile = phoneInput.value;
@@ -225,21 +202,17 @@ ${guests}
 Message:
 ${message}`;
 
-    const whatsappURL =
-      "https://wa.me/94704620017?text=" +
-      encodeURIComponent(whatsappText);
-
-    window.open(whatsappURL, "_blank");
+    window.open(
+      "https://wa.me/94704620017?text=" + encodeURIComponent(whatsappText),
+      "_blank"
+    );
 
     try{
-
       const response = await fetch(
         "https://ceybreez-contact-api.ceybreez.workers.dev",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: {"Content-Type": "application/json"},
           body: JSON.stringify(inquiryData)
         }
       );
@@ -257,9 +230,7 @@ ${message}`;
       alert("WhatsApp opened, but email sending failed.");
       console.log(error);
     }
-
   }
-
 </script>
 
 </body>

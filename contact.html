@@ -2,214 +2,256 @@
 <html lang="en">
 
 <head>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>
-    Contact | CeyBreez
-  </title>
+  <title>Contact | CeyBreez</title>
 
   <link rel="stylesheet" href="style.css">
 
-  <!-- GOOGLE FONTS -->
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin>
-
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap"
-        rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-  <!-- HEADER -->
+<header>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
 
-  <header>
+<section class="contact-page">
 
-    <nav>
+  <div class="contact-container">
 
-      <a href="index.html">
-        Home
-      </a>
+    <div class="contact-info">
 
-      <a href="contact.html">
-        Contact
-      </a>
+      <img src="logo.png" alt="CeyBreez Logo" class="contact-logo">
 
-    </nav>
+      <h1>Contact CeyBreez</h1>
 
-  </header>
+      <p>
+        Plan your Sri Lanka journey with us. Contact us for Villas,
+        HomeStays, Apartments, Tours and custom travel experiences.
+      </p>
 
-  <!-- CONTACT HERO -->
-
-  <section class="contact-page">
-
-    <div class="contact-container">
-
-      <!-- LEFT SIDE -->
-
-      <div class="contact-info">
-
-        <img src="logo.png"
-             alt="CeyBreez Logo"
-             class="contact-logo">
-
-        <h1>
-          Contact CeyBreez
-        </h1>
-
-        <p>
-          Plan your Sri Lanka journey with us.
-          Contact us for villas, tours,
-          airport pickup,
-          and custom travel experiences.
-        </p>
-
-        <div class="info-box">
-
-          <h3>Email</h3>
-
-          <a href="mailto:ceybreez@gmail.com">
-            ceybreez@gmail.com
-          </a>
-
-        </div>
-
-        <div class="info-box">
-
-          <h3>WhatsApp</h3>
-
-          <a href="https://wa.me/94704620017"
-             target="_blank">
-
-             +94 70 462 0017
-
-          </a>
-
-        </div>
-
-        <div class="social-links">
-
-          <a href="https://www.facebook.com/profile.php?id=61589168168800"
-             target="_blank">
-
-             Facebook
-
-          </a>
-
-          <a href="https://www.instagram.com/CeyBreez"
-             target="_blank">
-
-             Instagram
-
-          </a>
-
-        </div>
-
+      <div class="info-box">
+        <h3>Email</h3>
+        <a href="mailto:ceybreez@gmail.com">ceybreez@gmail.com</a>
       </div>
 
-      <!-- RIGHT SIDE -->
+      <div class="info-box">
+        <h3>WhatsApp</h3>
+        <a href="https://wa.me/94704620017" target="_blank">
+          +94 70 462 0017
+        </a>
+      </div>
 
-      <div class="contact-form-box">
-
-        <h2>
-          Send an Inquiry
-        </h2>
-
-        <form id="contactForm">
-
-          <input type="text"
-                 id="name"
-                 placeholder="Your Name"
-                 required>
-
-          <input type="email"
-                 id="email"
-                 placeholder="Your Email"
-                 required>
-
-          <input type="text"
-                 id="country"
-                 placeholder="Country">
-
-          <input type="date"
-                 id="date">
-
-          <textarea id="message"
-                    placeholder="Tell us about your trip..."
-                    rows="6"></textarea>
-
-          <button type="button"
-                  onclick="sendWhatsApp()">
-
-                  Send via WhatsApp
-
-          </button>
-
-        </form>
-
+      <div class="social-links">
+        <a href="https://www.facebook.com/profile.php?id=61589168168800" target="_blank">Facebook</a>
+        <a href="https://www.instagram.com/CeyBreez" target="_blank">Instagram</a>
       </div>
 
     </div>
 
-  </section>
+    <div class="contact-form-box">
 
-  <!-- FOOTER -->
+      <h2>Send an Inquiry</h2>
 
-  <footer>
+      <form id="contactForm">
 
-    <p>
-      © 2026 CeyBreez.
-      All rights reserved.
-    </p>
+        <label>*Your Name</label>
+        <input type="text" id="name" placeholder="Your Name" required>
 
-  </footer>
+        <label>*Country</label>
+        <input list="countryList" id="country" placeholder="Start typing country name" required>
+        <datalist id="countryList"></datalist>
 
-  <!-- JAVASCRIPT -->
+        <label>*Mobile Number</label>
+        <div class="phone-row">
+          <div class="country-code" id="countryCode">🌍 +</div>
+          <input type="tel" id="mobile" placeholder="Mobile Number" required>
+        </div>
 
-  <script>
+        <label>*Email ID</label>
+        <input type="email" id="email" placeholder="Email ID" required>
 
-    function sendWhatsApp(){
+        <label>*Type of Experience</label>
+        <div class="checkbox-group">
+          <label><input type="checkbox" value="Villas"> Villas</label>
+          <label><input type="checkbox" value="HomeStays"> HomeStays</label>
+          <label><input type="checkbox" value="Apartments"> Apartments</label>
+          <label><input type="checkbox" value="Tours"> Tours</label>
+        </div>
 
-      let name =
-      document.getElementById("name").value;
+        <label>*Expecting Dates</label>
+        <div class="date-row">
+          <input type="date" id="dateFrom" required>
+          <input type="date" id="dateTo" required>
+        </div>
 
-      let email =
-      document.getElementById("email").value;
+        <label>*Number of Guests</label>
+        <input type="number" id="guests" placeholder="Number of Guests" min="1" required>
 
-      let country =
-      document.getElementById("country").value;
+        <label>Your Message</label>
+        <textarea id="message" placeholder="Tell us about your trip..." rows="5"></textarea>
 
-      let date =
-      document.getElementById("date").value;
+        <button type="button" onclick="sendInquiry()">
+          Send Inquiry
+        </button>
 
-      let message =
-      document.getElementById("message").value;
+      </form>
 
-      let text =
+    </div>
+
+  </div>
+
+</section>
+
+<footer>
+  <p>© 2026 CeyBreez. All rights reserved.</p>
+</footer>
+
+<script>
+  const countries = [
+    {name:"Sri Lanka", flag:"🇱🇰", code:"+94"},
+    {name:"Oman", flag:"🇴🇲", code:"+968"},
+    {name:"India", flag:"🇮🇳", code:"+91"},
+    {name:"United Arab Emirates", flag:"🇦🇪", code:"+971"},
+    {name:"Qatar", flag:"🇶🇦", code:"+974"},
+    {name:"Saudi Arabia", flag:"🇸🇦", code:"+966"},
+    {name:"Kuwait", flag:"🇰🇼", code:"+965"},
+    {name:"Bahrain", flag:"🇧🇭", code:"+973"},
+    {name:"United Kingdom", flag:"🇬🇧", code:"+44"},
+    {name:"United States", flag:"🇺🇸", code:"+1"},
+    {name:"Canada", flag:"🇨🇦", code:"+1"},
+    {name:"Australia", flag:"🇦🇺", code:"+61"},
+    {name:"Germany", flag:"🇩🇪", code:"+49"},
+    {name:"France", flag:"🇫🇷", code:"+33"},
+    {name:"Italy", flag:"🇮🇹", code:"+39"},
+    {name:"Netherlands", flag:"🇳🇱", code:"+31"},
+    {name:"Maldives", flag:"🇲🇻", code:"+960"},
+    {name:"Singapore", flag:"🇸🇬", code:"+65"},
+    {name:"Malaysia", flag:"🇲🇾", code:"+60"}
+  ];
+
+  const countryList = document.getElementById("countryList");
+  const countryInput = document.getElementById("country");
+  const countryCodeBox = document.getElementById("countryCode");
+
+  countries.forEach(country => {
+    const option = document.createElement("option");
+    option.value = `${country.flag} ${country.name} ${country.code}`;
+    countryList.appendChild(option);
+  });
+
+  countryInput.addEventListener("input", function(){
+    const selected = countries.find(country =>
+      countryInput.value.includes(country.name) ||
+      countryInput.value.includes(country.code)
+    );
+
+    if(selected){
+      countryCodeBox.innerText = `${selected.flag} ${selected.code}`;
+    }else{
+      countryCodeBox.innerText = "🌍 +";
+    }
+  });
+
+  async function sendInquiry(){
+
+    const name = document.getElementById("name").value;
+    const country = document.getElementById("country").value;
+    const mobile = document.getElementById("mobile").value;
+    const email = document.getElementById("email").value;
+    const dateFrom = document.getElementById("dateFrom").value;
+    const dateTo = document.getElementById("dateTo").value;
+    const guests = document.getElementById("guests").value;
+    const message = document.getElementById("message").value;
+    const code = document.getElementById("countryCode").innerText;
+
+    const experiences = Array.from(
+      document.querySelectorAll('.checkbox-group input:checked')
+    ).map(item => item.value).join(", ");
+
+    if(!name || !country || !mobile || !email || !dateFrom || !dateTo || !guests || !experiences){
+      alert("Please fill all required fields.");
+      return;
+    }
+
+    const inquiryData = {
+      name,
+      country,
+      mobile,
+      email,
+      countryCode: code,
+      experiences,
+      dateFrom,
+      dateTo,
+      guests,
+      message
+    };
+
+    const whatsappText =
 `Hello CeyBreez!
 
+New Travel Inquiry
+
 Name: ${name}
-Email: ${email}
 Country: ${country}
-Travel Date: ${date}
+Mobile: ${code} ${mobile}
+Email: ${email}
+
+Type of Experience:
+${experiences}
+
+Expecting Dates:
+${dateFrom} to ${dateTo}
+
+Guests:
+${guests}
 
 Message:
 ${message}`;
 
-      let url =
-"https://wa.me/94704620017?text="
-+ encodeURIComponent(text);
+    const whatsappURL =
+      "https://wa.me/94704620017?text=" +
+      encodeURIComponent(whatsappText);
 
-      window.open(url, "_blank");
+    window.open(whatsappURL, "_blank");
+
+    try{
+
+      const response = await fetch(
+        "https://ceybreez-contact-api.ceybreez.workers.dev",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(inquiryData)
+        }
+      );
+
+      if(response.ok){
+        alert("Inquiry sent successfully!");
+        document.getElementById("contactForm").reset();
+        countryCodeBox.innerText = "🌍 +";
+      }else{
+        alert("WhatsApp opened, but email sending failed.");
+      }
+
+    }catch(error){
+      alert("WhatsApp opened, but email sending failed.");
+      console.log(error);
     }
 
-  </script>
+  }
+</script>
 
 </body>
 </html>

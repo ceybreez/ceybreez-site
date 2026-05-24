@@ -121,7 +121,7 @@ nav a:hover{
 }
 
 .hero p{
-  font-size:22px;
+  font-size:35px;
   margin-bottom:35px;
 }
 
@@ -151,14 +151,14 @@ nav a:hover{
 
 .about h2{
   font-family:'Cormorant Garamond', serif;
-  font-size:48px;
+  font-size:60px;
   margin-bottom:25px;
 }
 
 .about p{
   max-width:850px;
   margin:auto;
-  font-size:18px;
+  font-size:35px;
 }
 
 /* CARDS */
@@ -171,7 +171,7 @@ nav a:hover{
 .cards h2{
   font-family:'Cormorant Garamond', serif;
   text-align:center;
-  font-size:48px;
+  font-size:60px;
   margin-bottom:60px;
 }
 
@@ -199,7 +199,7 @@ nav a:hover{
   font-family:'Cormorant Garamond', serif;
   margin-bottom:15px;
   color:#0f766e;
-  font-size:26px;
+  font-size:48px;
 }
 
 /* CONTACT */
@@ -218,7 +218,7 @@ nav a:hover{
 }
 
 .contact p{
-  font-size:18px;
+  font-size:35px;
 }
 
 .whatsapp{

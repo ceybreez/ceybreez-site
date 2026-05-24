@@ -136,7 +136,21 @@
     option.textContent = country.name;
     countryInput.appendChild(option);
   });
+countryInput.addEventListener("change", function(){
 
+  const selectedCountry = countryInput.value;
+
+  const matchedCountry = countryData.find(
+    country => country.name === selectedCountry
+  );
+
+  if(matchedCountry){
+
+    iti.setCountry(matchedCountry.iso2);
+
+  }
+
+});
   async function sendInquiry(){
 
     const name = document.getElementById("name").value;

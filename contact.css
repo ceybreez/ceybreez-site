@@ -5,7 +5,10 @@
 }
 
 body{
-  font-family:'Poppins', sans-serif;
+  font-family: "Cormorant Garamond", serif;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
   overflow-x:hidden;
   background:#111;
 }
@@ -99,7 +102,7 @@ nav a:hover{
 
 .contact-info h1{
 
-  font-family:'Playfair Display', serif;
+  font-family: "Cormorant Garamond", serif;
 
   font-size:60px;
 

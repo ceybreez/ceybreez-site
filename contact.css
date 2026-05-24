@@ -48,11 +48,12 @@ nav a:hover{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:55px;
-  align-items:center;
+  align-items:start;
 }
 
 .contact-info{
   color:white;
+  padding-top:60px;
 }
 
 .contact-logo{

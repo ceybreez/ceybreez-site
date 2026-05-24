@@ -487,3 +487,22 @@ footer{
     padding:30px 25px;
   }
 }
+.contact-form-box select{
+  width:100%;
+  padding:16px 18px;
+  border:none;
+  border-radius:14px;
+  background:#f3f4f6;
+  font-family:'Poppins', sans-serif;
+  font-size:15px;
+  color:#333;
+  outline:none;
+  cursor:pointer;
+}
+
+.contact-form-box select:focus,
+.contact-form-box input:focus,
+.contact-form-box textarea:focus{
+  background:white;
+  box-shadow:0 0 0 2px #0f766e;
+}

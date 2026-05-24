@@ -83,7 +83,7 @@ nav a:hover{
 
 .contact-info{
 
-  width:48%;
+  width:50%;
 
   color:white;
 
@@ -208,7 +208,7 @@ nav a:hover{
 
 .contact-form-box{
 
-  width:48%;
+  width:50%;
 
   margin-top:20px;
 
@@ -406,9 +406,14 @@ footer{
   color:white;
 }
 
-/* MOBILE */
+/* MOBILE ONLY */
 
-@media(max-width:768px){
+@media(max-width:520px){
+
+  .contact-page{
+
+    padding:120px 20px 60px;
+  }
 
   .contact-container{
 

@@ -318,19 +318,35 @@ footer{
 
 @media(max-width:768px){
 
+  @media(max-width:768px){
+
   header{
-    padding:14px 15px;
+    padding:12px 10px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    white-space:nowrap;
+  }
+
+  header::-webkit-scrollbar{
+    display:none;
   }
 
   nav{
+    display:flex;
+    flex-wrap:nowrap;
+    gap:10px;
     justify-content:flex-start;
-    gap:20px;
+    align-items:center;
+    min-width:max-content;
   }
 
   nav a{
-    font-size:18px;
+    font-size:13px;
+    padding:8px 12px;
+    flex:0 0 auto;
   }
 
+}
   .hero{
     padding-top:120px;
   }

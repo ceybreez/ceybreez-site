@@ -9,14 +9,13 @@ html{
 }
 
 body{
-  font-family: "Cormorant Garamond", serif;
+  font-family:'Poppins', sans-serif;
   background:#f5f5f5;
   color:#222;
   line-height:1.6;
   overflow-x:hidden;
   overflow-y:auto;
 }
-
 
 /* WELCOME SCREEN */
 
@@ -55,13 +54,14 @@ body{
 }
 
 .welcome-content h1{
-  font-family: "Cormorant Garamond", serif;
-  font-size:100px;
+  font-family:'Cormorant Garamond', serif;
+  font-size:72px;
+  font-weight:700;
   margin-bottom:15px;
 }
 
 .welcome-content p{
-  font-size:100px;
+  font-size:28px;
   letter-spacing:1px;
   opacity:0.9;
 }
@@ -121,7 +121,7 @@ nav a:hover{
 }
 
 .hero p{
-  font-size:50px;
+  font-size:26px;
   margin-bottom:35px;
 }
 
@@ -151,14 +151,14 @@ nav a:hover{
 
 .about h2{
   font-family:'Cormorant Garamond', serif;
-  font-size:40px;
+  font-size:48px;
   margin-bottom:25px;
 }
 
 .about p{
   max-width:850px;
   margin:auto;
-  font-size:30px;
+  font-size:22px;
 }
 
 /* CARDS */
@@ -171,7 +171,7 @@ nav a:hover{
 .cards h2{
   font-family:'Cormorant Garamond', serif;
   text-align:center;
-  font-size:40px;
+  font-size:48px;
   margin-bottom:60px;
 }
 
@@ -199,7 +199,7 @@ nav a:hover{
   font-family:'Cormorant Garamond', serif;
   margin-bottom:15px;
   color:#0f766e;
-  font-size:30px;
+  font-size:32px;
 }
 
 /* CONTACT */
@@ -213,12 +213,12 @@ nav a:hover{
 
 .contact h2{
   font-family:'Cormorant Garamond', serif;
-  font-size:30px;
+  font-size:48px;
   margin-bottom:20px;
 }
 
 .contact p{
-  font-size:25px;
+  font-size:22px;
 }
 
 .whatsapp{
@@ -269,7 +269,7 @@ footer{
 
   nav a{
     margin:0 8px;
-    font-size:20px;
+    font-size:15px;
   }
 
   .welcome-content img{
@@ -277,7 +277,11 @@ footer{
   }
 
   .welcome-content h1{
-    font-size:50px;
+    font-size:42px;
+  }
+
+  .welcome-content p{
+    font-size:18px;
   }
 
   .hero-logo-img{
@@ -291,7 +295,11 @@ footer{
   .about h2,
   .cards h2,
   .contact h2{
+    font-size:36px;
+  }
+
+  .about p,
+  .contact p{
     font-size:18px;
   }
 }
-

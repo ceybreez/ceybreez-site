@@ -94,12 +94,13 @@ nav a:hover{
 }
 
 .contact-logo{
-  width:240px;
+   width:340px;
+  max-width:100%;
   margin-bottom:25px;
 }
 
 .contact-info h1{
-  font-size:68px;
+  font-size:50px;
   margin-bottom:20px;
   line-height:1;
 }

@@ -97,23 +97,30 @@
 
   </main>
 
-  <script>
-    const welcomeScreen = document.getElementById("welcomeScreen");
+ <script>
+  const welcomeScreen = document.getElementById("welcomeScreen");
 
-    function enterSite(){
-      welcomeScreen.classList.add("hide");
-      document.body.classList.add("entered");
+  if(sessionStorage.getItem("ceybreezEntered") === "yes"){
+    welcomeScreen.style.display = "none";
+    document.body.classList.add("entered");
+  }
 
-      setTimeout(() => {
-        welcomeScreen.style.display = "none";
-      }, 900);
-    }
+  function enterSite(){
+    sessionStorage.setItem("ceybreezEntered", "yes");
 
-    window.addEventListener("click", enterSite);
-    window.addEventListener("wheel", enterSite);
-    window.addEventListener("keydown", enterSite);
-    window.addEventListener("touchstart", enterSite);
-  </script>
+    welcomeScreen.classList.add("hide");
+    document.body.classList.add("entered");
+
+    setTimeout(() => {
+      welcomeScreen.style.display = "none";
+    }, 900);
+  }
+
+  window.addEventListener("click", enterSite);
+  window.addEventListener("wheel", enterSite);
+  window.addEventListener("keydown", enterSite);
+  window.addEventListener("touchstart", enterSite);
+</script>
 
 </body>
 </html>

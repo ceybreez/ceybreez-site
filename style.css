@@ -206,6 +206,7 @@ nav a:hover::after{
   gap:35px;
   max-width:1200px;
   margin:auto;
+  align-items:stretch;
 }
 
 .card{
@@ -226,7 +227,15 @@ nav a:hover::after{
   color:#0f766e;
   font-size:32px;
 }
+.card-link{
+  text-decoration:none;
+  color:inherit;
+  display:block;
+}
 
+.card{
+  height:100%;
+}
 /* CONTACT */
 
 .contact{

@@ -430,3 +430,18 @@ footer{
     flex-direction:column;
   }
 }
+/* MOBILE TAP FIX */
+
+a,
+button,
+input,
+textarea,
+select{
+  -webkit-tap-highlight-color: transparent;
+}
+
+nav a:focus,
+nav a:active{
+  outline:none;
+  background:rgba(255,255,255,0.08);
+}

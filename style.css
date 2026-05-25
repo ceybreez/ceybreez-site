@@ -236,6 +236,29 @@ nav a:hover::after{
 .card{
   height:100%;
 }
+.card-link{
+  text-decoration:none;
+  color:inherit;
+  display:block;
+}
+
+.card-link:visited{
+  color:inherit;
+}
+
+.card-link:hover{
+  text-decoration:none;
+}
+
+.card h3{
+  color:#0f766e;
+  text-decoration:none;
+}
+
+.card p{
+  color:#444;
+  text-decoration:none;
+}
 /* CONTACT */
 
 .contact{

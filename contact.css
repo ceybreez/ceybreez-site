@@ -5,12 +5,21 @@
 }
 
 body{
-  font-family: "Cormorant Garamond", serif;
-  font-optical-sizing: auto;
-  font-weight: <weight>;
-  font-style: normal;
+  font-family:'Poppins', sans-serif;
   overflow-x:hidden;
   background:#111;
+  color:white;
+}
+
+/* HEADINGS */
+
+h1,
+h2,
+.contact-info h1,
+.contact-form-box h2{
+  font-family:'Cormorant Garamond', serif;
+  font-weight:700;
+  letter-spacing:1px;
 }
 
 /* HEADER */
@@ -37,7 +46,8 @@ nav{
 nav a{
   color:white;
   text-decoration:none;
-  font-weight:300;
+  font-weight:400;
+  font-size:16px;
   transition:0.3s;
 }
 
@@ -48,7 +58,6 @@ nav a:hover{
 /* CONTACT PAGE */
 
 .contact-page{
-
   min-height:100vh;
 
   padding:130px 40px 80px;
@@ -66,17 +75,12 @@ nav a:hover{
 /* MAIN LAYOUT */
 
 .contact-container{
-
   width:100%;
-
   max-width:1400px;
-
   margin:0 auto;
 
   display:flex;
-
   justify-content:space-between;
-
   align-items:flex-start;
 
   gap:80px;
@@ -85,112 +89,81 @@ nav a:hover{
 /* LEFT SIDE */
 
 .contact-info{
-
   width:48%;
-
-  color:white;
-
   padding-top:40px;
 }
 
 .contact-logo{
-
   width:240px;
-
   margin-bottom:25px;
 }
 
 .contact-info h1{
-
-  font-family: "Cormorant Garamond", serif;
-
-  font-size:60px;
-
+  font-size:68px;
   margin-bottom:20px;
+  line-height:1;
 }
 
 .contact-info p{
-
-  font-size:18px;
-
+  font-size:19px;
   line-height:1.9;
-
   max-width:520px;
-
   margin-bottom:35px;
+  font-family:'Poppins', sans-serif;
 }
 
 .info-box{
-
   margin-bottom:24px;
 }
 
 .info-box h3{
-
   color:#facc15;
-
   margin-bottom:6px;
-
-  font-size:18px;
+  font-size:20px;
 }
 
 .info-box a{
-
   color:white;
-
   text-decoration:none;
-
   font-size:16px;
+  font-family:'Poppins', sans-serif;
 }
 
 /* SOCIAL */
 
 .social-links{
-
   display:flex;
-
   gap:15px;
-
   margin-top:30px;
 }
 
 .social-btn{
-
-  width:50px;
-
-  height:50px;
-
+  width:55px;
+  height:55px;
   border-radius:50%;
 
   display:flex;
-
   align-items:center;
-
   justify-content:center;
 
   color:white;
-
   text-decoration:none;
 
-  font-size:22px;
-
+  font-size:24px;
   font-weight:bold;
 
   transition:0.3s;
 }
 
 .social-btn:hover{
-
   transform:translateY(-5px) scale(1.05);
 }
 
 .facebook{
-
   background:#1877f2;
 }
 
 .instagram{
-
   background:
   linear-gradient(
   45deg,
@@ -203,14 +176,12 @@ nav a:hover{
 }
 
 .whatsapp-icon{
-
   background:#25D366;
 }
 
 /* RIGHT SIDE FORM */
 
 .contact-form-box{
-
   width:48%;
 
   margin-top:20px;
@@ -219,7 +190,7 @@ nav a:hover{
 
   border-radius:30px;
 
-  background:rgba(255,255,255,0.50);
+  background:rgba(255,255,255,0.45);
 
   backdrop-filter:blur(25px);
 
@@ -232,35 +203,28 @@ nav a:hover{
 }
 
 .contact-form-box h2{
-
-  font-family:'Playfair Display', serif;
-
-  font-size:44px;
-
+  font-size:48px;
   margin-bottom:30px;
-
   color:#111;
 }
 
 .contact-form-box label{
-
   display:block;
 
   margin-top:18px;
-
   margin-bottom:8px;
 
   font-size:14px;
-
   font-weight:600;
 
   color:#111;
+
+  font-family:'Poppins', sans-serif;
 }
 
 .contact-form-box input,
 .contact-form-box textarea,
 .contact-form-box select{
-
   width:100%;
 
   padding:16px;
@@ -281,20 +245,17 @@ nav a:hover{
 }
 
 .contact-form-box textarea{
-
   resize:none;
 }
 
 .contact-form-box input::placeholder,
 .contact-form-box textarea::placeholder{
-
   color:#666;
 }
 
 .contact-form-box input:focus,
 .contact-form-box textarea:focus,
 .contact-form-box select:focus{
-
   background:white;
 
   box-shadow:
@@ -304,14 +265,12 @@ nav a:hover{
 /* PHONE */
 
 .iti{
-
   width:100%;
 }
 
 /* CHECKBOX */
 
 .checkbox-group{
-
   display:grid;
 
   grid-template-columns:1fr 1fr;
@@ -328,7 +287,6 @@ nav a:hover{
 }
 
 .checkbox-group label{
-
   display:flex;
 
   align-items:center;
@@ -345,27 +303,21 @@ nav a:hover{
 }
 
 .checkbox-group input[type="checkbox"]{
-
   width:18px;
-
   height:18px;
-
   accent-color:#0f766e;
 }
 
 /* DATE */
 
 .date-row{
-
   display:flex;
-
   gap:15px;
 }
 
 /* BUTTON */
 
 .contact-form-box button{
-
   width:100%;
 
   margin-top:30px;
@@ -387,26 +339,24 @@ nav a:hover{
   cursor:pointer;
 
   transition:0.3s;
+
+  font-family:'Poppins', sans-serif;
 }
 
 .contact-form-box button:hover{
-
   background:#115e59;
-
   transform:translateY(-3px);
 }
 
 /* FOOTER */
 
 footer{
-
   text-align:center;
-
   padding:25px;
-
   background:black;
-
   color:white;
+
+  font-family:'Poppins', sans-serif;
 }
 
 /* MOBILE FIX */
@@ -430,7 +380,7 @@ footer{
   }
 
   .contact-info h1{
-    font-size:42px;
+    font-size:46px;
   }
 
   .contact-info p{
@@ -448,11 +398,6 @@ footer{
     justify-content:center;
   }
 
-  .social-btn{
-    width:55px;
-    height:55px;
-  }
-
   .contact-form-box{
     width:100%;
     margin:0;
@@ -461,19 +406,7 @@ footer{
   }
 
   .contact-form-box h2{
-    font-size:34px;
-    line-height:1.2;
-  }
-
-  .contact-form-box input,
-  .contact-form-box textarea,
-  .contact-form-box select{
-    width:100%;
-    font-size:15px;
-  }
-
-  .iti{
-    width:100%;
+    font-size:38px;
   }
 
   .checkbox-group{

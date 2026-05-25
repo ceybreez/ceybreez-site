@@ -208,13 +208,13 @@ nav a:hover::after{
 
   gap:30px;
 
-  max-width:1300px;
+  max-width:250px;
 
   margin:auto;
 }
 
 .card{
-  background:rgba(255,255,255,0.75);
+  background:rgba(245,236,224,0.75);
 
   backdrop-filter:blur(12px);
 
@@ -222,7 +222,7 @@ nav a:hover::after{
 
   padding:40px 30px;
 
-  border-radius:28px;
+  border-radius:20px;
 
   box-shadow:
   0 10px 30px rgba(0,0,0,0.10);

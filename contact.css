@@ -80,7 +80,7 @@ transform:translateY(-2px);
   rgba(0,0,0,0.55)
   ),
 
-  url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2070&auto=format&fit=crop')
+  url('images/cover.jpg')
   center/cover no-repeat;
 }
 

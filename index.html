@@ -116,33 +116,38 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     <footer>
       <p>© 2026 CeyBreez. All rights reserved.</p>
     </footer>
+</main>
+<script>
 
-  </main>
+  const welcomeScreen =
+  document.getElementById("welcomeScreen");
+if(sessionStorage.getItem("ceybreezEntered") === "yes"){
+welcomeScreen.style.display = "none";
+document.body.classList.add("entered");
+}
+function enterSite(){
+sessionStorage.setItem(
+      "ceybreezEntered",
+      "yes"
+    );
+ welcomeScreen.classList.add("hide");
+ document.body.classList.add("entered");
+setTimeout(() => {
+welcomeScreen.style.display = "none";
+ }, 900);
+ }
+window.addEventListener("click", enterSite);
+  window.addEventListener("wheel", enterSite);
+  window.addEventListener("keydown", enterSite);
+  window.addEventListener("touchstart", enterSite);
 
-  <script>
-    const welcomeScreen = document.getElementById("welcomeScreen");
-
-    function enterSite(){
-      welcomeScreen.classList.add("hide");
-      document.body.classList.add("entered");
-
-      setTimeout(() => {
-        welcomeScreen.style.display = "none";
-      }, 900);
-    }
-
-    window.addEventListener("click", enterSite);
-    window.addEventListener("wheel", enterSite);
-    window.addEventListener("keydown", enterSite);
-    window.addEventListener("touchstart", enterSite);
-  </script>
+</script>
 
   <a href="https://wa.me/94704620017"
    class="floating-whatsapp"
    target="_blank"
    aria-label="Chat on WhatsApp">
-
-   <i class="fa-brands fa-whatsapp"></i>
+<i class="fa-brands fa-whatsapp"></i>
 
 </a>
   

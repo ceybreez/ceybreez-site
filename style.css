@@ -255,8 +255,8 @@ transform:translateY(-2px);
 .contact{
   padding:110px 20px;
   text-align:center;
-  background:#022c22;
-  color:white;
+  background:#dfe7e2;
+  color:#222;
 }
 
 .contact h2{
@@ -273,8 +273,8 @@ transform:translateY(-2px);
   display:inline-block;
   margin-top:35px;
   padding:16px 38px;
-  background:#25D366;
-  color:white;
+  background:#98F527;
+  color:black;
   text-decoration:none;
   border-radius:50px;
   font-weight:bold;

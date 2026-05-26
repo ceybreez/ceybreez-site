@@ -179,6 +179,94 @@ transform:translateY(-2px);
   margin:auto;
   font-size:22px;
 }
+/* THINGS TO DO */
+
+.things{
+  padding:50px 20px;
+  background:#f8f3eb;
+  text-align:center;
+}
+
+.things h2{
+  font-family:'Cormorant Garamond', serif;
+  font-size:52px;
+  color:#111;
+  margin-bottom:18px;
+}
+
+.things-intro{
+  max-width:800px;
+  margin:0 auto 60px;
+  font-size:20px;
+  color:#444;
+}
+
+.things-grid{
+  max-width:1300px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:30px;
+}
+
+.thing-card{
+  background:rgba(255,255,255,0.78);
+  padding:25px 30px;
+  border-radius:28px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+  transition:0.35s ease;
+}
+
+.thing-card:hover{
+  transform:translateY(-10px);
+  box-shadow:0 18px 45px rgba(0,0,0,0.14);
+}
+
+.thing-card span{
+  font-size:42px;
+  display:block;
+  margin-bottom:18px;
+}
+
+.thing-card h3{
+  font-family:'Cormorant Garamond', serif;
+  font-size:32px;
+  color:#0f766e;
+  margin-bottom:12px;
+}
+
+.thing-card p{
+  font-size:16px;
+  line-height:1.7;
+  color:#444;
+}
+
+@media(max-width:900px){
+  .things-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:768px){
+  .things h2{
+    font-size:38px;
+  }
+
+  .things-intro{
+    font-size:18px;
+  }
+
+  .things-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+
+
+
+
+
+
 
 /* CARDS */
 

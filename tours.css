@@ -119,7 +119,7 @@ nav a:hover{
   transform:translateY(-3px);
 }
 
-/* COMMON SECTIONS */
+/* COMMON */
 
 .intro,
 .tour-types,
@@ -131,7 +131,8 @@ nav a:hover{
   text-align:center;
 }
 
-.intro{
+.intro,
+.why{
   background:white;
 }
 
@@ -142,10 +143,6 @@ nav a:hover{
 
 .destinations{
   background:#eef7f2;
-}
-
-.why{
-  background:white;
 }
 
 .intro h2,
@@ -168,7 +165,7 @@ nav a:hover{
   color:#444;
 }
 
-/* TOUR TYPES */
+/* CARDS */
 
 .type-grid{
   max-width:1300px;
@@ -394,21 +391,59 @@ nav a:hover{
   flex:0 0 auto;
 }
 
-/* ADD LOCATION */
+/* CUSTOM LOCATION SEARCH */
 
-.add-location-row{
+.search-location-wrap{
+  position:relative;
+}
+
+.location-suggestions{
+  display:none;
+  position:absolute;
+  top:100%;
+  left:0;
+  right:0;
+  background:white;
+  border-radius:18px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.18);
+  overflow:hidden;
+  z-index:5000;
+  margin-top:8px;
+}
+
+.suggestion-item{
   display:flex;
-  gap:14px;
+  align-items:center;
+  gap:12px;
+  padding:14px 16px;
+  cursor:pointer;
+  border-bottom:1px solid #eee;
 }
 
-.add-location-row input{
-  flex:1;
+.suggestion-item:hover{
+  background:#eef7f2;
 }
 
-.add-location-row button{
-  padding:0 22px;
+.suggestion-item span{
+  font-size:26px;
+}
+
+.suggestion-item strong{
+  display:block;
+  color:#0f766e;
+  font-size:14px;
+}
+
+.suggestion-item small{
+  color:#555;
+  font-size:12px;
+}
+
+.add-selected-btn{
+  margin-top:14px;
+  padding:15px 22px;
   border:none;
-  border-radius:14px;
+  border-radius:50px;
   background:#0f766e;
   color:white;
   font-weight:700;
@@ -416,7 +451,7 @@ nav a:hover{
   font-family:'Poppins', sans-serif;
 }
 
-.add-location-row button:hover{
+.add-selected-btn:hover{
   background:#115e59;
 }
 
@@ -444,6 +479,23 @@ nav a:hover{
   border:4px solid rgba(255,255,255,0.55);
 }
 
+.custom-map-label{
+  background:rgba(15,118,110,0.94);
+  color:white;
+  padding:8px 13px;
+  border-radius:50px;
+  font-family:'Poppins', sans-serif;
+  font-size:13px;
+  font-weight:700;
+  white-space:nowrap;
+  box-shadow:0 8px 22px rgba(0,0,0,0.25);
+  border:2px solid rgba(255,255,255,0.75);
+}
+
+.custom-map-label span{
+  margin-right:5px;
+}
+
 .selected-box{
   background:rgba(242,232,220,0.78);
   border-radius:28px;
@@ -451,14 +503,17 @@ nav a:hover{
   box-shadow:0 10px 30px rgba(0,0,0,0.08);
 }
 
-.selected-box h4{
-  margin-bottom:15px;
-}
-
 .selected-box ul{
   padding-left:20px;
   line-height:1.9;
   color:#2f3d35;
+}
+
+.route-note{
+  font-size:13px;
+  color:#555;
+  margin-bottom:15px;
+  line-height:1.6;
 }
 
 /* FORM GRID */
@@ -483,6 +538,10 @@ nav a:hover{
 
 .airport-card label{
   margin-top:14px;
+}
+
+.hidden-fields{
+  display:none;
 }
 
 .send-plan-btn{
@@ -636,19 +695,29 @@ nav a:active{
   }
 
   .tour-hero{
-    padding:120px 18px 70px;
+    min-height:auto;
+    padding:95px 16px 45px;
   }
 
   .hero-logo{
-    width:320px;
+    width:240px;
+    margin-bottom:15px;
   }
 
   .tour-hero h1{
-    font-size:42px;
+    font-size:34px;
+    margin-bottom:12px;
   }
 
   .tour-hero p{
-    font-size:18px;
+    font-size:15px;
+    line-height:1.6;
+    margin-bottom:22px;
+  }
+
+  .hero-btn{
+    padding:12px 28px;
+    font-size:14px;
   }
 
   .intro,
@@ -657,7 +726,7 @@ nav a:active{
   .why,
   .trip-planner,
   .cta{
-    padding:55px 18px;
+    padding:38px 14px;
   }
 
   .intro h2,
@@ -666,13 +735,16 @@ nav a:active{
   .why h2,
   .trip-planner h2,
   .cta h2{
-    font-size:38px;
+    font-size:32px;
+    margin-bottom:14px;
   }
 
   .intro p,
   .planner-intro,
   .cta p{
-    font-size:18px;
+    font-size:15px;
+    line-height:1.6;
+    margin-bottom:28px;
   }
 
   .type-grid,
@@ -683,25 +755,62 @@ nav a:active{
     grid-template-columns:1fr;
   }
 
+  .type-card,
+  .destination-card,
+  .why-grid div{
+    padding:22px 18px;
+    border-radius:22px;
+  }
+
+  .destination-card img{
+    height:160px;
+  }
+
   .planner-box{
-    padding:25px 18px;
-    border-radius:26px;
+    padding:20px 14px;
+    border-radius:22px;
+  }
+
+  .planner-section{
+    margin-bottom:26px;
   }
 
   .planner-section h3{
-    font-size:30px;
+    font-size:26px;
+    margin-bottom:16px;
   }
 
-  .add-location-row{
-    flex-direction:column;
+  .planner-section h4{
+    font-size:23px;
   }
 
-  .add-location-row button{
-    padding:15px;
+  .places-grid{
+    padding:14px;
+    gap:10px;
+  }
+
+  .places-grid label{
+    padding:11px 12px;
+    font-size:14px;
+  }
+
+  .add-location-row,
+  .add-selected-btn{
+    width:100%;
   }
 
   #tripMap{
-    height:360px;
+    height:300px;
+  }
+
+  .selected-box,
+  .airport-card{
+    padding:20px 16px;
+    border-radius:22px;
+  }
+
+  .send-plan-btn{
+    padding:15px;
   }
 
   .floating-whatsapp{
@@ -711,93 +820,4 @@ nav a:active{
     bottom:18px;
     font-size:30px;
   }
-}
-.custom-map-label{
-  background:rgba(15,118,110,0.94);
-  color:white;
-  padding:8px 13px;
-  border-radius:50px;
-  font-family:'Poppins', sans-serif;
-  font-size:13px;
-  font-weight:700;
-  white-space:nowrap;
-  box-shadow:0 8px 22px rgba(0,0,0,0.25);
-  border:2px solid rgba(255,255,255,0.75);
-}
-
-.custom-map-label span{
-  margin-right:5px;
-}
-
-.search-location-wrap{
-  position:relative;
-}
-
-.location-suggestions{
-  display:none;
-  position:absolute;
-  top:100%;
-  left:0;
-  right:0;
-  background:white;
-  border-radius:18px;
-  box-shadow:0 15px 40px rgba(0,0,0,0.18);
-  overflow:hidden;
-  z-index:5000;
-  margin-top:8px;
-}
-
-.suggestion-item{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:14px 16px;
-  cursor:pointer;
-  border-bottom:1px solid #eee;
-}
-
-.suggestion-item:hover{
-  background:#eef7f2;
-}
-
-.suggestion-item span{
-  font-size:26px;
-}
-
-.suggestion-item strong{
-  display:block;
-  color:#0f766e;
-  font-size:14px;
-}
-
-.suggestion-item small{
-  color:#555;
-  font-size:12px;
-}
-
-.add-selected-btn{
-  margin-top:14px;
-  padding:15px 22px;
-  border:none;
-  border-radius:50px;
-  background:#0f766e;
-  color:white;
-  font-weight:700;
-  cursor:pointer;
-  font-family:'Poppins', sans-serif;
-}
-
-.add-selected-btn:hover{
-  background:#115e59;
-}
-
-.hidden-fields{
-  display:none;
-}
-
-.route-note{
-  font-size:13px;
-  color:#555;
-  margin-bottom:15px;
-  line-height:1.6;
 }

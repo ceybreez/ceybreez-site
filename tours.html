@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>CeyBreez Tours | Explore Sri Lanka</title>
-
   <meta name="description" content="Plan your Sri Lanka tour with CeyBreez. Select destinations, travel dates, airport pickup/drop details, and send your custom trip inquiry.">
 
   <link rel="icon" type="image/png" href="logo.png">
@@ -35,14 +34,8 @@
 <section class="tour-hero">
   <div class="hero-content">
     <img src="logo.png" alt="CeyBreez Logo" class="hero-logo">
-
     <h1>Explore Sri Lanka With CeyBreez</h1>
-
-    <p>
-      Custom tours, scenic journeys, cultural experiences,
-      airport pickup, airport drop and unforgettable island adventures.
-    </p>
-
+    <p>Custom tours, scenic journeys, cultural experiences, airport pickup, airport drop and unforgettable island adventures.</p>
     <a href="#tripPlanner" class="hero-btn">Plan My Tour</a>
   </div>
 </section>
@@ -114,7 +107,6 @@
         <h3>1. Places To Visit</h3>
 
         <div class="places-grid">
-
           <label><input type="checkbox" value="Sigiriya" data-lat="7.9570" data-lng="80.7603" data-icon="🏰" data-highlight="Heritage Rock Fortress"> Sigiriya</label>
           <label><input type="checkbox" value="Ella" data-lat="6.8667" data-lng="81.0466" data-icon="⛰" data-highlight="Hill Country & Waterfalls"> Ella</label>
           <label><input type="checkbox" value="Kandy" data-lat="7.2906" data-lng="80.6337" data-icon="🛕" data-highlight="Culture & Temple"> Kandy</label>
@@ -127,7 +119,6 @@
           <label><input type="checkbox" value="Bentota" data-lat="6.4211" data-lng="79.9989" data-icon="🌊" data-highlight="Beach & River Safari"> Bentota</label>
           <label><input type="checkbox" value="Nine Arch Bridge" data-lat="6.8768" data-lng="81.0608" data-icon="🚂" data-highlight="Scenic Railway"> Nine Arch Bridge</label>
           <label><input type="checkbox" value="Dambulla Cave Temple" data-lat="7.8567" data-lng="80.6492" data-icon="🛕" data-highlight="Cave Temple"> Dambulla Cave Temple</label>
-
         </div>
 
         <label class="field-label">Other Places You Want To Visit</label>
@@ -150,7 +141,9 @@
 
           <div class="selected-box">
             <h4>Selected Route</h4>
-            <p class="route-note">Markers show selected places. The green line is a visual route preview.</p>
+            <p class="route-note">
+              Markers show selected places. The green line is a visual route preview arranged from start point to end point.
+            </p>
             <ul id="selectedPlacesList">
               <li>No places selected yet.</li>
             </ul>
@@ -195,7 +188,7 @@
 
             <div id="pickupAirportFields">
               <label>Pickup Airport</label>
-              <select id="pickupAirport">
+              <select id="pickupAirport" onchange="updateMapAndList()">
                 <option value="Bandaranaike International Airport (CMB)">Bandaranaike International Airport (CMB)</option>
                 <option value="Mattala Rajapaksa International Airport (HRI)">Mattala Rajapaksa International Airport (HRI)</option>
                 <option value="Other">Other</option>
@@ -213,7 +206,7 @@
 
             <div id="tourStartFields" class="hidden-fields">
               <label>Tour Start Location</label>
-              <input type="text" id="tourStartLocation" placeholder="Example: Colombo, Negombo, Galle">
+              <input type="text" id="tourStartLocation" placeholder="Example: Colombo, Negombo, Galle" oninput="updateMapAndList()">
             </div>
           </div>
 
@@ -228,7 +221,7 @@
 
             <div id="dropAirportFields">
               <label>Drop Airport</label>
-              <select id="dropAirport">
+              <select id="dropAirport" onchange="updateMapAndList()">
                 <option value="Bandaranaike International Airport (CMB)">Bandaranaike International Airport (CMB)</option>
                 <option value="Mattala Rajapaksa International Airport (HRI)">Mattala Rajapaksa International Airport (HRI)</option>
                 <option value="Other">Other</option>
@@ -246,7 +239,7 @@
 
             <div id="tourEndFields" class="hidden-fields">
               <label>Tour End Location</label>
-              <input type="text" id="tourEndLocation" placeholder="Example: Colombo, Galle, Ella">
+              <input type="text" id="tourEndLocation" placeholder="Example: Colombo, Galle, Ella" oninput="updateMapAndList()">
             </div>
           </div>
 
@@ -286,7 +279,6 @@
 
       <div class="planner-section">
         <h3>6. Special Notes</h3>
-
         <textarea id="specialNotes" rows="5" placeholder="Tell us your travel style, budget, hotel preference, transport preference or anything special..."></textarea>
       </div>
 
@@ -324,6 +316,58 @@
   let routeLine = null;
   let selectedSuggestion = null;
   let otherLocations = [];
+
+  function getAirportPoint(airportName){
+    if(airportName.includes("Mattala")){
+      return {
+        name:"Mattala Airport",
+        lat:6.2845,
+        lng:81.1241,
+        icon:"✈️",
+        highlight:"Airport"
+      };
+    }
+
+    return {
+      name:"Bandaranaike Airport",
+      lat:7.1808,
+      lng:79.8841,
+      icon:"✈️",
+      highlight:"Airport"
+    };
+  }
+
+  function getDistance(a, b){
+    const dx = a.lat - b.lat;
+    const dy = a.lng - b.lng;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function sortRouteByNearest(startPoint, places){
+    const remaining = [...places];
+    const ordered = [];
+    let current = startPoint;
+
+    while(remaining.length > 0){
+      let nearestIndex = 0;
+      let nearestDistance = getDistance(current, remaining[0]);
+
+      for(let i = 1; i < remaining.length; i++){
+        const distance = getDistance(current, remaining[i]);
+
+        if(distance < nearestDistance){
+          nearestDistance = distance;
+          nearestIndex = i;
+        }
+      }
+
+      const nearest = remaining.splice(nearestIndex, 1)[0];
+      ordered.push(nearest);
+      current = nearest;
+    }
+
+    return ordered;
+  }
 
   function guessIconAndHighlight(name){
     const text = name.toLowerCase();
@@ -371,6 +415,46 @@
     }));
   }
 
+  function getStartEndPoints(){
+    const pickupRequired = document.getElementById("pickupRequired").value;
+    const dropRequired = document.getElementById("dropRequired").value;
+
+    let startPoint;
+    let endPoint;
+
+    if(pickupRequired === "Yes"){
+      startPoint = getAirportPoint(document.getElementById("pickupAirport").value);
+    }else{
+      const startName = document.getElementById("tourStartLocation").value.trim();
+      const visual = guessIconAndHighlight(startName);
+
+      startPoint = {
+        name:startName || "Tour Start Location",
+        lat:7.8731,
+        lng:80.7718,
+        icon:"🚩",
+        highlight:startName ? visual.highlight : "Tour Start"
+      };
+    }
+
+    if(dropRequired === "Yes"){
+      endPoint = getAirportPoint(document.getElementById("dropAirport").value);
+    }else{
+      const endName = document.getElementById("tourEndLocation").value.trim();
+      const visual = guessIconAndHighlight(endName);
+
+      endPoint = {
+        name:endName || "Tour End Location",
+        lat:7.8731,
+        lng:80.7718,
+        icon:"🏁",
+        highlight:endName ? visual.highlight : "Tour End"
+      };
+    }
+
+    return { startPoint, endPoint };
+  }
+
   function updateMapAndList(){
     markers.forEach(marker => map.removeLayer(marker));
     markers = [];
@@ -383,33 +467,53 @@
     const selectedList = document.getElementById("selectedPlacesList");
     selectedList.innerHTML = "";
 
-    const allPlaces = [
+    const selectedPlaces = [
       ...getSelectedPredefinedPlaces(),
       ...otherLocations
     ];
 
-    if(allPlaces.length === 0){
+    if(selectedPlaces.length === 0){
       selectedList.innerHTML = "<li>No places selected yet.</li>";
       return;
     }
 
-    allPlaces.forEach(place => {
-      const marker = makeLabelMarker(place);
+    const { startPoint, endPoint } = getStartEndPoints();
+    const orderedPlaces = sortRouteByNearest(startPoint, selectedPlaces);
+
+    const fullRoute = [
+      startPoint,
+      ...orderedPlaces,
+      endPoint
+    ];
+
+    fullRoute.forEach((place, index) => {
+      const labelName =
+        index === 0
+        ? "START - " + place.name
+        : index === fullRoute.length - 1
+        ? "END - " + place.name
+        : place.name;
+
+      const marker = makeLabelMarker({
+        ...place,
+        name: labelName
+      });
+
       markers.push(marker);
 
       const li = document.createElement("li");
-      li.innerHTML = `<strong>${place.icon} ${place.name}</strong><br><small>${place.highlight}</small>`;
+      li.innerHTML = `<strong>${place.icon} ${index + 1}. ${place.name}</strong><br><small>${place.highlight}</small>`;
       selectedList.appendChild(li);
     });
 
-    if(allPlaces.length > 1){
-      const routePoints = allPlaces.map(place => [place.lat, place.lng]);
+    if(fullRoute.length > 1){
+      const routePoints = fullRoute.map(place => [place.lat, place.lng]);
 
       routeLine = L.polyline(routePoints, {
-        color: "#0f766e",
-        weight: 5,
-        opacity: 0.85,
-        dashArray: "8, 10"
+        color:"#0f766e",
+        weight:5,
+        opacity:0.9,
+        dashArray:"8, 10"
       }).addTo(map);
     }
 
@@ -492,7 +596,6 @@
 
   document.getElementById("otherLocationInput").addEventListener("input", function(){
     clearTimeout(searchTimer);
-
     const query = this.value.trim();
 
     searchTimer = setTimeout(() => {
@@ -524,6 +627,7 @@
     const list = document.getElementById("otherLocationList");
     const li = document.createElement("li");
     const last = otherLocations[otherLocations.length - 1];
+
     li.textContent = `${last.icon} ${last.name} - ${last.highlight}`;
     list.appendChild(li);
 
@@ -556,14 +660,26 @@
 
   function toggleStartLocation(){
     const pickupRequired = document.getElementById("pickupRequired").value;
-    document.getElementById("pickupAirportFields").style.display = pickupRequired === "Yes" ? "block" : "none";
-    document.getElementById("tourStartFields").style.display = pickupRequired === "No" ? "block" : "none";
+
+    document.getElementById("pickupAirportFields").style.display =
+      pickupRequired === "Yes" ? "block" : "none";
+
+    document.getElementById("tourStartFields").style.display =
+      pickupRequired === "No" ? "block" : "none";
+
+    updateMapAndList();
   }
 
   function toggleEndLocation(){
     const dropRequired = document.getElementById("dropRequired").value;
-    document.getElementById("dropAirportFields").style.display = dropRequired === "Yes" ? "block" : "none";
-    document.getElementById("tourEndFields").style.display = dropRequired === "No" ? "block" : "none";
+
+    document.getElementById("dropAirportFields").style.display =
+      dropRequired === "Yes" ? "block" : "none";
+
+    document.getElementById("tourEndFields").style.display =
+      dropRequired === "No" ? "block" : "none";
+
+    updateMapAndList();
   }
 
   async function sendTripPlan(){
@@ -608,6 +724,10 @@
     const selectedText = selectedPlaces.map(place => `${place.icon} ${place.name} - ${place.highlight}`).join("\n");
     const otherText = otherLocations.map(place => `${place.icon} ${place.name} - ${place.highlight}`).join("\n");
 
+    const { startPoint, endPoint } = getStartEndPoints();
+    const routeOrder = sortRouteByNearest(startPoint, [...selectedPlaces, ...otherLocations]);
+    const routeText = [startPoint, ...routeOrder, endPoint].map((place, index) => `${index + 1}. ${place.icon} ${place.name}`).join("\n");
+
     const tripMessage =
 `New CeyBreez Trip Plan Inquiry
 
@@ -616,6 +736,9 @@ ${selectedText || "Not selected"}
 
 Other Places Added By Guest:
 ${otherText || "None"}
+
+Suggested Visual Route Order:
+${routeText}
 
 2. Travel Dates:
 Start Date: ${startDate}

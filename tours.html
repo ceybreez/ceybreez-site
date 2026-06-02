@@ -6,7 +6,7 @@
 
   <title>CeyBreez Tours | Explore Sri Lanka</title>
 
-  <meta name="description" content="Explore Sri Lanka with CeyBreez Tours. Discover beaches, hill country, wildlife safaris, cultural heritage sites and custom travel experiences.">
+  <meta name="description" content="Plan your Sri Lanka tour with CeyBreez. Select destinations, travel dates, airport pickup and drop details, and send your custom trip inquiry.">
 
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="stylesheet" href="tours.css">
@@ -16,6 +16,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 </head>
 
 <body>
@@ -34,14 +36,21 @@
 <section class="tour-hero">
   <div class="hero-content">
     <img src="logo.png" alt="CeyBreez Logo" class="hero-logo">
+
     <h1>Explore Sri Lanka With CeyBreez</h1>
-    <p>Custom tours, scenic journeys, cultural experiences and unforgettable island adventures.</p>
-    <a href="contact.html" class="hero-btn">Plan My Tour</a>
+
+    <p>
+      Custom tours, scenic journeys, cultural experiences,
+      airport pickup, airport drop and unforgettable island adventures.
+    </p>
+
+    <a href="#tripPlanner" class="hero-btn">Plan My Tour</a>
   </div>
 </section>
 
 <section class="intro">
   <h2>Discover The Island Your Way</h2>
+
   <p>
     From golden beaches and misty mountains to ancient kingdoms and wildlife safaris,
     CeyBreez creates Sri Lanka tours tailored to your travel style.
@@ -52,12 +61,43 @@
   <h2>Tour Experiences</h2>
 
   <div class="type-grid">
-    <div class="type-card"><span>🏖</span><h3>Beach Escapes</h3><p>Relax along Sri Lanka’s tropical coastline.</p></div>
-    <div class="type-card"><span>⛰</span><h3>Hill Country Tours</h3><p>Tea estates, waterfalls and cool mountain air.</p></div>
-    <div class="type-card"><span>🚂</span><h3>Scenic Train Journeys</h3><p>Experience iconic railway routes and landscapes.</p></div>
-    <div class="type-card"><span>🛕</span><h3>Cultural Heritage</h3><p>Ancient cities, temples and Sri Lankan history.</p></div>
-    <div class="type-card"><span>🐘</span><h3>Wildlife Safaris</h3><p>Elephants, leopards, birds and national parks.</p></div>
-    <div class="type-card"><span>🍛</span><h3>Food & Village Life</h3><p>Local food, traditions and authentic experiences.</p></div>
+
+    <div class="type-card">
+      <span>🏖</span>
+      <h3>Beach Escapes</h3>
+      <p>Relax along Sri Lanka’s tropical coastline.</p>
+    </div>
+
+    <div class="type-card">
+      <span>⛰</span>
+      <h3>Hill Country Tours</h3>
+      <p>Tea estates, waterfalls and cool mountain air.</p>
+    </div>
+
+    <div class="type-card">
+      <span>🚂</span>
+      <h3>Scenic Train Journeys</h3>
+      <p>Experience iconic railway routes and landscapes.</p>
+    </div>
+
+    <div class="type-card">
+      <span>🛕</span>
+      <h3>Cultural Heritage</h3>
+      <p>Ancient cities, temples and Sri Lankan history.</p>
+    </div>
+
+    <div class="type-card">
+      <span>🐘</span>
+      <h3>Wildlife Safaris</h3>
+      <p>Elephants, leopards, birds and national parks.</p>
+    </div>
+
+    <div class="type-card">
+      <span>🍛</span>
+      <h3>Food & Village Life</h3>
+      <p>Local food, traditions and authentic experiences.</p>
+    </div>
+
   </div>
 </section>
 
@@ -66,20 +106,77 @@
 
   <div class="destination-grid">
 
-    <div class="destination-card"><img src="images/sigiriya.jpg" alt="Sigiriya"><h3>Sigiriya</h3><p>Ancient rock fortress and world-famous heritage site.</p></div>
-    <div class="destination-card"><img src="images/ella.jpg" alt="Ella"><h3>Ella</h3><p>Misty mountains, waterfalls and scenic viewpoints.</p></div>
-    <div class="destination-card"><img src="images/kandy.jpg" alt="Kandy"><h3>Kandy</h3><p>Culture, temples and the heart of Sri Lankan tradition.</p></div>
-    <div class="destination-card"><img src="images/nuwara-eliya.jpg" alt="Nuwara Eliya"><h3>Nuwara Eliya</h3><p>Tea country, cool weather and colonial charm.</p></div>
+    <div class="destination-card">
+      <img src="images/sigiriya.jpg" alt="Sigiriya">
+      <h3>Sigiriya</h3>
+      <p>Ancient rock fortress and world-famous heritage site.</p>
+    </div>
 
-    <div class="destination-card"><img src="images/yala.jpg" alt="Yala"><h3>Yala</h3><p>Wildlife safaris and unforgettable nature encounters.</p></div>
-    <div class="destination-card"><img src="images/udawalawe.jpg" alt="Udawalawe"><h3>Udawalawe</h3><p>Elephants, open landscapes and safari adventures.</p></div>
-    <div class="destination-card"><img src="images/galle.jpg" alt="Galle"><h3>Galle</h3><p>Historic fort streets, ocean views and coastal charm.</p></div>
-    <div class="destination-card"><img src="images/mirissa.jpg" alt="Mirissa"><h3>Mirissa</h3><p>Beaches, sunsets and relaxed southern coast vibes.</p></div>
+    <div class="destination-card">
+      <img src="images/ella.jpg" alt="Ella">
+      <h3>Ella</h3>
+      <p>Misty mountains, waterfalls and scenic viewpoints.</p>
+    </div>
 
-    <div class="destination-card"><img src="images/hikkaduwa.jpg" alt="Hikkaduwa"><h3>Hikkaduwa</h3><p>Coral reefs, beach life and snorkeling experiences.</p></div>
-    <div class="destination-card"><img src="images/bentota.jpg" alt="Bentota"><h3>Bentota</h3><p>Luxury coast, river trips and peaceful beaches.</p></div>
-    <div class="destination-card"><img src="images/nine-arch.jpg" alt="Nine Arch Bridge"><h3>Nine Arch Bridge</h3><p>One of Sri Lanka’s most iconic scenic landmarks.</p></div>
-    <div class="destination-card"><img src="images/dambulla.jpg" alt="Dambulla"><h3>Dambulla</h3><p>Cave temples, heritage and cultural beauty.</p></div>
+    <div class="destination-card">
+      <img src="images/kandy.jpg" alt="Kandy">
+      <h3>Kandy</h3>
+      <p>Culture, temples and the heart of Sri Lankan tradition.</p>
+    </div>
+
+    <div class="destination-card">
+      <img src="images/nuwara-eliya.jpg" alt="Nuwara Eliya">
+      <h3>Nuwara Eliya</h3>
+      <p>Tea country, cool weather and colonial charm.</p>
+    </div>
+
+    <div class="destination-card">
+      <img src="images/yala.jpg" alt="Yala">
+      <h3>Yala</h3>
+      <p>Wildlife safaris and unforgettable nature encounters.</p>
+    </div>
+
+    <div class="destination-card">
+      <img src="images/udawalawe.jpg" alt="Udawalawe">
+      <h3>Udawalawe</h3>
+      <p>Elephants, open landscapes and safari adventures.</p>
+    </div>
+
+    <div class="destination-card">
+      <img src="images/galle.jpg" alt="Galle">
+      <h3>Galle</h3>
+      <p>Historic fort streets, ocean views and coastal charm.</p>
+    </div>
+
+    <div class="destination-card">
+      <img src="images/mirissa.jpg" alt="Mirissa">
+      <h3>Mirissa</h3>
+      <p>Beaches, sunsets and relaxed southern coast vibes.</p>
+    </div>
+
+    <div class="destination-card">
+      <img src="images/hikkaduwa.jpg" alt="Hikkaduwa">
+      <h3>Hikkaduwa</h3>
+      <p>Coral reefs, beach life and snorkeling experiences.</p>
+    </div>
+
+    <div class="destination-card">
+      <img src="images/bentota.jpg" alt="Bentota">
+      <h3>Bentota</h3>
+      <p>Luxury coast, river trips and peaceful beaches.</p>
+    </div>
+
+    <div class="destination-card">
+      <img src="images/nine-arch.jpg" alt="Nine Arch Bridge">
+      <h3>Nine Arch Bridge</h3>
+      <p>One of Sri Lanka’s most iconic scenic landmarks.</p>
+    </div>
+
+    <div class="destination-card">
+      <img src="images/dambulla.jpg" alt="Dambulla">
+      <h3>Dambulla</h3>
+      <p>Cave temples, heritage and cultural beauty.</p>
+    </div>
 
   </div>
 </section>
@@ -88,16 +185,212 @@
   <h2>Why Travel With CeyBreez?</h2>
 
   <div class="why-grid">
-    <div><h3>Personalized Trips</h3><p>We design tours around your time, budget and interests.</p></div>
-    <div><h3>Local Experience</h3><p>Discover Sri Lanka through authentic local knowledge.</p></div>
-    <div><h3>Comfort & Care</h3><p>Relax while we help organize your journey smoothly.</p></div>
+
+    <div>
+      <h3>Personalized Trips</h3>
+      <p>We design tours around your time, budget and interests.</p>
+    </div>
+
+    <div>
+      <h3>Local Experience</h3>
+      <p>Discover Sri Lanka through authentic local knowledge.</p>
+    </div>
+
+    <div>
+      <h3>Comfort & Care</h3>
+      <p>Relax while we help organize your journey smoothly.</p>
+    </div>
+
+  </div>
+</section>
+
+<section class="trip-planner" id="tripPlanner">
+
+  <h2>Plan Your Sri Lanka Trip</h2>
+
+  <p class="planner-intro">
+    Select the places you want to visit, add airport pickup/drop details,
+    and send us your inquiry. We will prepare a custom trip plan with price and email it back to you.
+  </p>
+
+  <div class="planner-box">
+
+    <form id="tripForm">
+
+      <div class="planner-section">
+        <h3>1. Places To Visit</h3>
+
+        <div class="places-grid">
+
+          <label><input type="checkbox" value="Sigiriya" data-lat="7.9570" data-lng="80.7603"> Sigiriya</label>
+          <label><input type="checkbox" value="Ella" data-lat="6.8667" data-lng="81.0466"> Ella</label>
+          <label><input type="checkbox" value="Kandy" data-lat="7.2906" data-lng="80.6337"> Kandy</label>
+          <label><input type="checkbox" value="Nuwara Eliya" data-lat="6.9497" data-lng="80.7891"> Nuwara Eliya</label>
+          <label><input type="checkbox" value="Yala National Park" data-lat="6.3725" data-lng="81.5185"> Yala National Park</label>
+          <label><input type="checkbox" value="Udawalawe National Park" data-lat="6.4742" data-lng="80.8880"> Udawalawe National Park</label>
+          <label><input type="checkbox" value="Galle Fort" data-lat="6.0329" data-lng="80.2168"> Galle Fort</label>
+          <label><input type="checkbox" value="Mirissa" data-lat="5.9485" data-lng="80.4713"> Mirissa</label>
+          <label><input type="checkbox" value="Hikkaduwa" data-lat="6.1407" data-lng="80.1012"> Hikkaduwa</label>
+          <label><input type="checkbox" value="Bentota" data-lat="6.4211" data-lng="79.9989"> Bentota</label>
+          <label><input type="checkbox" value="Nine Arch Bridge" data-lat="6.8768" data-lng="81.0608"> Nine Arch Bridge</label>
+          <label><input type="checkbox" value="Dambulla Cave Temple" data-lat="7.8567" data-lng="80.6492"> Dambulla Cave Temple</label>
+
+        </div>
+
+        <label class="field-label">Other Places You Want To Visit</label>
+
+        <div class="add-location-row">
+          <input type="text" id="otherLocationInput" placeholder="Example: Trincomalee, Arugam Bay">
+          <button type="button" onclick="addOtherLocation()">+ Add Location</button>
+        </div>
+
+        <ul id="otherLocationList" class="other-location-list"></ul>
+      </div>
+
+      <div class="planner-section">
+        <h3>2. Map Preview</h3>
+
+        <div class="map-layout">
+          <div id="tripMap"></div>
+
+          <div class="selected-box">
+            <h4>Selected Places</h4>
+            <ul id="selectedPlacesList">
+              <li>No places selected yet.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="planner-section">
+        <h3>3. Travel Dates</h3>
+
+        <div class="form-grid">
+          <div>
+            <label>Start Date</label>
+            <input type="date" id="startDate" required>
+          </div>
+
+          <div>
+            <label>End Date</label>
+            <input type="date" id="endDate" required>
+          </div>
+
+          <div>
+            <label>Number of Days</label>
+            <input type="text" id="numberOfDays" placeholder="Auto calculated" readonly>
+          </div>
+        </div>
+      </div>
+
+      <div class="planner-section">
+        <h3>4. Airport Pickup / Drop</h3>
+
+        <div class="airport-grid">
+
+          <div class="airport-card">
+            <h4>Airport Pickup</h4>
+
+            <label>Pickup Required?</label>
+            <select id="pickupRequired">
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+
+            <label>Pickup Airport</label>
+            <select id="pickupAirport">
+              <option value="Bandaranaike International Airport (CMB)">Bandaranaike International Airport (CMB)</option>
+              <option value="Mattala Rajapaksa International Airport (HRI)">Mattala Rajapaksa International Airport (HRI)</option>
+              <option value="Other">Other</option>
+            </select>
+
+            <label>Arrival Date</label>
+            <input type="date" id="arrivalDate">
+
+            <label>Arrival Time</label>
+            <input type="time" id="arrivalTime">
+
+            <label>Flight Number</label>
+            <input type="text" id="arrivalFlight" placeholder="Example: UL504">
+          </div>
+
+          <div class="airport-card">
+            <h4>Airport Drop</h4>
+
+            <label>Drop Required?</label>
+            <select id="dropRequired">
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+
+            <label>Drop Airport</label>
+            <select id="dropAirport">
+              <option value="Bandaranaike International Airport (CMB)">Bandaranaike International Airport (CMB)</option>
+              <option value="Mattala Rajapaksa International Airport (HRI)">Mattala Rajapaksa International Airport (HRI)</option>
+              <option value="Other">Other</option>
+            </select>
+
+            <label>Departure Date</label>
+            <input type="date" id="departureDate">
+
+            <label>Departure Time</label>
+            <input type="time" id="departureTime">
+
+            <label>Flight Number</label>
+            <input type="text" id="departureFlight" placeholder="Example: UL505">
+          </div>
+
+        </div>
+      </div>
+
+      <div class="planner-section">
+        <h3>5. Guest Details</h3>
+
+        <div class="form-grid">
+          <div>
+            <label>Your Name</label>
+            <input type="text" id="guestName" placeholder="Your Name" required>
+          </div>
+
+          <div>
+            <label>Email</label>
+            <input type="email" id="guestEmail" placeholder="Email Address" required>
+          </div>
+
+          <div>
+            <label>WhatsApp / Mobile</label>
+            <input type="tel" id="guestMobile" placeholder="Mobile Number" required>
+          </div>
+
+          <div>
+            <label>Country</label>
+            <input type="text" id="guestCountry" placeholder="Your Country" required>
+          </div>
+
+          <div>
+            <label>Number of Guests</label>
+            <input type="number" id="guestCount" min="1" placeholder="Number of Guests" required>
+          </div>
+        </div>
+      </div>
+
+      <div class="planner-section">
+        <h3>6. Special Notes</h3>
+
+        <textarea id="specialNotes" rows="5" placeholder="Tell us your travel style, budget, hotel preference, transport preference or anything special..."></textarea>
+      </div>
+
+      <button type="button" class="send-plan-btn" onclick="sendTripPlan()">Send Trip Plan Inquiry</button>
+
+    </form>
+
   </div>
 </section>
 
 <section class="cta">
   <h2>Ready To Explore Sri Lanka?</h2>
-  <p>Tell us what you love, and we’ll help create a memorable journey for you.</p>
-  <a href="contact.html">Plan My Tour</a>
+  <p>Send us your trip inquiry, and we’ll prepare a custom plan with pricing for you.</p>
+  <a href="#tripPlanner">Start Planning</a>
 </section>
 
 <footer>
@@ -107,6 +400,224 @@
 <a href="https://wa.me/94704620017" class="floating-whatsapp" target="_blank" aria-label="Chat on WhatsApp">
   <i class="fa-brands fa-whatsapp"></i>
 </a>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+  const map = L.map("tripMap").setView([7.8731, 80.7718], 7);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "© OpenStreetMap"
+  }).addTo(map);
+
+  let markers = [];
+  let otherLocations = [];
+
+  function updateMapAndList(){
+    markers.forEach(marker => map.removeLayer(marker));
+    markers = [];
+
+    const selectedList = document.getElementById("selectedPlacesList");
+    selectedList.innerHTML = "";
+
+    const selectedPlaces = Array.from(
+      document.querySelectorAll('.places-grid input:checked')
+    );
+
+    if(selectedPlaces.length === 0 && otherLocations.length === 0){
+      selectedList.innerHTML = "<li>No places selected yet.</li>";
+    }
+
+    selectedPlaces.forEach(place => {
+      const name = place.value;
+      const lat = parseFloat(place.dataset.lat);
+      const lng = parseFloat(place.dataset.lng);
+
+      const marker = L.marker([lat, lng]).addTo(map).bindPopup(name);
+      markers.push(marker);
+
+      const li = document.createElement("li");
+      li.textContent = name;
+      selectedList.appendChild(li);
+    });
+
+    otherLocations.forEach(location => {
+      const li = document.createElement("li");
+      li.textContent = location + " (Custom)";
+      selectedList.appendChild(li);
+    });
+
+    if(markers.length > 0){
+      const group = L.featureGroup(markers);
+      map.fitBounds(group.getBounds().pad(0.25));
+    }
+  }
+
+  document.querySelectorAll('.places-grid input').forEach(input => {
+    input.addEventListener("change", updateMapAndList);
+  });
+
+  function addOtherLocation(){
+    const input = document.getElementById("otherLocationInput");
+    const value = input.value.trim();
+
+    if(value){
+      otherLocations.push(value);
+
+      const list = document.getElementById("otherLocationList");
+      const li = document.createElement("li");
+      li.textContent = value;
+      list.appendChild(li);
+
+      input.value = "";
+      updateMapAndList();
+    }
+  }
+
+  function calculateDays(){
+    const startDate = document.getElementById("startDate").value;
+    const endDate = document.getElementById("endDate").value;
+    const numberOfDays = document.getElementById("numberOfDays");
+
+    if(startDate && endDate){
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const diffTime = end - start;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+      if(diffDays > 0){
+        numberOfDays.value = diffDays + " Days";
+      }else{
+        numberOfDays.value = "Invalid date range";
+      }
+    }
+  }
+
+  document.getElementById("startDate").addEventListener("change", calculateDays);
+  document.getElementById("endDate").addEventListener("change", calculateDays);
+
+  async function sendTripPlan(){
+    const selectedPlaces = Array.from(
+      document.querySelectorAll('.places-grid input:checked')
+    ).map(item => item.value);
+
+    const startDate = document.getElementById("startDate").value;
+    const endDate = document.getElementById("endDate").value;
+    const days = document.getElementById("numberOfDays").value;
+
+    const guestName = document.getElementById("guestName").value;
+    const guestEmail = document.getElementById("guestEmail").value;
+    const guestMobile = document.getElementById("guestMobile").value;
+    const guestCountry = document.getElementById("guestCountry").value;
+    const guestCount = document.getElementById("guestCount").value;
+
+    const specialNotes = document.getElementById("specialNotes").value;
+
+    const pickupRequired = document.getElementById("pickupRequired").value;
+    const pickupAirport = document.getElementById("pickupAirport").value;
+    const arrivalDate = document.getElementById("arrivalDate").value;
+    const arrivalTime = document.getElementById("arrivalTime").value;
+    const arrivalFlight = document.getElementById("arrivalFlight").value;
+
+    const dropRequired = document.getElementById("dropRequired").value;
+    const dropAirport = document.getElementById("dropAirport").value;
+    const departureDate = document.getElementById("departureDate").value;
+    const departureTime = document.getElementById("departureTime").value;
+    const departureFlight = document.getElementById("departureFlight").value;
+
+    if(!guestName || !guestEmail || !guestMobile || !guestCountry || !guestCount || !startDate || !endDate){
+      alert("Please fill all required guest and travel date details.");
+      return;
+    }
+
+    if(selectedPlaces.length === 0 && otherLocations.length === 0){
+      alert("Please select or add at least one place to visit.");
+      return;
+    }
+
+    const tripMessage =
+`New CeyBreez Trip Plan Inquiry
+
+1. Places To Visit:
+${selectedPlaces.join(", ") || "Not selected"}
+
+Other Places:
+${otherLocations.join(", ") || "None"}
+
+2. Travel Dates:
+Start Date: ${startDate}
+End Date: ${endDate}
+Number of Days: ${days}
+
+3. Airport Pickup:
+Required: ${pickupRequired}
+Airport: ${pickupAirport}
+Arrival Date: ${arrivalDate}
+Arrival Time: ${arrivalTime}
+Flight Number: ${arrivalFlight}
+
+4. Airport Drop:
+Required: ${dropRequired}
+Airport: ${dropAirport}
+Departure Date: ${departureDate}
+Departure Time: ${departureTime}
+Flight Number: ${departureFlight}
+
+5. Guest Details:
+Name: ${guestName}
+Email: ${guestEmail}
+Mobile: ${guestMobile}
+Country: ${guestCountry}
+Number of Guests: ${guestCount}
+
+6. Special Notes:
+${specialNotes}`;
+
+    const whatsappURL =
+      "https://wa.me/94704620017?text=" +
+      encodeURIComponent(tripMessage);
+
+    window.open(whatsappURL, "_blank");
+
+    const inquiryData = {
+      name: guestName,
+      country: guestCountry,
+      mobile: guestMobile,
+      email: guestEmail,
+      countryCode: "",
+      experiences: "Tours - Trip Planner",
+      dateFrom: startDate,
+      dateTo: endDate,
+      guests: guestCount,
+      message: tripMessage
+    };
+
+    try{
+      const response = await fetch(
+        "https://ceybreez-contact-api.ceybreez.workers.dev",
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(inquiryData)
+        }
+      );
+
+      if(response.ok){
+        alert("Trip plan inquiry sent successfully!");
+        document.getElementById("tripForm").reset();
+        otherLocations = [];
+        document.getElementById("otherLocationList").innerHTML = "";
+        document.getElementById("numberOfDays").value = "";
+        updateMapAndList();
+      }else{
+        alert("WhatsApp opened, but email sending failed.");
+      }
+    }catch(error){
+      alert("WhatsApp opened, but email sending failed.");
+      console.log(error);
+    }
+  }
+</script>
 
 </body>
 </html>

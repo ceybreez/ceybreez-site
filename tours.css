@@ -4,6 +4,10 @@
   box-sizing:border-box;
 }
 
+html{
+  scroll-behavior:smooth;
+}
+
 body{
   font-family:'Poppins', sans-serif;
   background:#f5f5f5;
@@ -65,7 +69,7 @@ nav a:hover{
 .tour-hero{
   min-height:100vh;
   background:
-    linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+    linear-gradient(rgba(0,0,0,0.42), rgba(0,0,0,0.42)),
     url('images/cover.jpg')
     center/cover no-repeat;
   display:flex;
@@ -115,39 +119,56 @@ nav a:hover{
   transform:translateY(-3px);
 }
 
-/* INTRO */
+/* COMMON SECTIONS */
 
-.intro{
+.intro,
+.tour-types,
+.destinations,
+.why,
+.trip-planner,
+.cta{
   padding:70px 20px;
   text-align:center;
+}
+
+.intro{
   background:white;
 }
 
-.intro h2{
+.tour-types,
+.trip-planner{
+  background:#f8f3eb;
+}
+
+.destinations{
+  background:#eef7f2;
+}
+
+.why{
+  background:white;
+}
+
+.intro h2,
+.tour-types h2,
+.destinations h2,
+.why h2,
+.trip-planner h2,
+.cta h2{
   font-size:52px;
   margin-bottom:20px;
 }
 
-.intro p{
+.intro p,
+.planner-intro,
+.cta p{
   max-width:900px;
-  margin:auto;
+  margin:0 auto 50px;
   font-size:21px;
   line-height:1.8;
   color:#444;
 }
 
 /* TOUR TYPES */
-
-.tour-types{
-  padding:70px 20px;
-  background:#f8f3eb;
-  text-align:center;
-}
-
-.tour-types h2{
-  font-size:52px;
-  margin-bottom:50px;
-}
 
 .type-grid{
   max-width:1300px;
@@ -192,17 +213,6 @@ nav a:hover{
 }
 
 /* DESTINATIONS */
-
-.destinations{
-  padding:70px 20px;
-  background:#eef7f2;
-  text-align:center;
-}
-
-.destinations h2{
-  font-size:52px;
-  margin-bottom:55px;
-}
 
 .destination-grid{
   max-width:1400px;
@@ -255,17 +265,6 @@ nav a:hover{
 
 /* WHY */
 
-.why{
-  padding:70px 20px;
-  background:white;
-  text-align:center;
-}
-
-.why h2{
-  font-size:52px;
-  margin-bottom:45px;
-}
-
 .why-grid{
   max-width:1100px;
   margin:auto;
@@ -292,24 +291,225 @@ nav a:hover{
   line-height:1.7;
 }
 
-/* CTA */
+/* TRIP PLANNER */
 
-.cta{
-  padding:70px 20px;
-  text-align:center;
-  background:#E3F7CB;
-  color:#222;
+.planner-box{
+  max-width:1300px;
+  margin:auto;
+  text-align:left;
+  background:rgba(255,255,255,0.50);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,0.35);
+  border-radius:34px;
+  padding:40px;
+  box-shadow:0 18px 50px rgba(0,0,0,0.14);
 }
 
-.cta h2{
-  font-size:52px;
+.planner-section{
+  margin-bottom:38px;
+}
+
+.planner-section h3{
+  font-size:36px;
+  color:#0f766e;
+  margin-bottom:22px;
+}
+
+.planner-section h4{
+  font-family:'Cormorant Garamond', serif;
+  font-size:28px;
+  color:#0f766e;
   margin-bottom:18px;
 }
 
-.cta p{
-  font-size:21px;
-  max-width:850px;
-  margin:0 auto 35px;
+.planner-section label,
+.field-label{
+  display:block;
+  font-weight:600;
+  font-size:14px;
+  color:#222;
+  margin-bottom:8px;
+  font-family:'Poppins', sans-serif;
+}
+
+.planner-section input,
+.planner-section select,
+.planner-section textarea{
+  width:100%;
+  padding:15px 16px;
+  border:none;
+  border-radius:14px;
+  background:rgba(255,255,255,0.78);
+  font-family:'Poppins', sans-serif;
+  font-size:15px;
+  color:#222;
+  outline:none;
+}
+
+.planner-section textarea{
+  resize:none;
+}
+
+.planner-section input:focus,
+.planner-section select:focus,
+.planner-section textarea:focus{
+  background:white;
+  box-shadow:0 0 0 2px #0f766e;
+}
+
+/* PLACES */
+
+.places-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  background:rgba(255,255,255,0.45);
+  padding:20px;
+  border-radius:22px;
+  margin-bottom:22px;
+}
+
+.places-grid label{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:0;
+  background:rgba(242,232,220,0.65);
+  padding:13px 14px;
+  border-radius:16px;
+  cursor:pointer;
+  transition:0.25s ease;
+}
+
+.places-grid label:hover{
+  background:rgba(230,245,235,0.95);
+  transform:translateY(-2px);
+}
+
+.places-grid input[type="checkbox"]{
+  width:18px;
+  height:18px;
+  accent-color:#0f766e;
+  flex:0 0 auto;
+}
+
+/* ADD LOCATION */
+
+.add-location-row{
+  display:flex;
+  gap:14px;
+}
+
+.add-location-row input{
+  flex:1;
+}
+
+.add-location-row button{
+  padding:0 22px;
+  border:none;
+  border-radius:14px;
+  background:#0f766e;
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+  font-family:'Poppins', sans-serif;
+}
+
+.add-location-row button:hover{
+  background:#115e59;
+}
+
+.other-location-list{
+  margin-top:15px;
+  padding-left:20px;
+  color:#2f3d35;
+  font-weight:500;
+}
+
+/* MAP */
+
+.map-layout{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:25px;
+}
+
+#tripMap{
+  width:100%;
+  height:430px;
+  border-radius:28px;
+  overflow:hidden;
+  box-shadow:0 15px 45px rgba(0,0,0,0.20);
+  border:4px solid rgba(255,255,255,0.55);
+}
+
+.selected-box{
+  background:rgba(242,232,220,0.78);
+  border-radius:28px;
+  padding:28px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+.selected-box h4{
+  margin-bottom:15px;
+}
+
+.selected-box ul{
+  padding-left:20px;
+  line-height:1.9;
+  color:#2f3d35;
+}
+
+/* FORM GRID */
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+
+.airport-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:25px;
+}
+
+.airport-card{
+  background:rgba(242,232,220,0.65);
+  padding:28px;
+  border-radius:26px;
+}
+
+.airport-card label{
+  margin-top:14px;
+}
+
+.send-plan-btn{
+  width:100%;
+  margin-top:10px;
+  padding:18px;
+  border:none;
+  border-radius:50px;
+  background:#0f766e;
+  color:white;
+  font-size:16px;
+  font-weight:700;
+  font-family:'Poppins', sans-serif;
+  cursor:pointer;
+  transition:0.3s ease;
+}
+
+.send-plan-btn:hover{
+  background:#115e59;
+  transform:translateY(-3px);
+}
+
+/* CTA */
+
+.cta{
+  background:#E3F7CB;
+  color:#222;
 }
 
 .cta a{
@@ -381,6 +581,7 @@ nav a:active{
 /* TABLET */
 
 @media(max-width:1100px){
+
   .destination-grid{
     grid-template-columns:repeat(2,1fr);
   }
@@ -388,6 +589,19 @@ nav a:active{
   .type-grid,
   .why-grid{
     grid-template-columns:repeat(2,1fr);
+  }
+
+  .places-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .form-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .map-layout,
+  .airport-grid{
+    grid-template-columns:1fr;
   }
 }
 
@@ -421,6 +635,10 @@ nav a:active{
     flex:0 0 auto;
   }
 
+  .tour-hero{
+    padding:120px 18px 70px;
+  }
+
   .hero-logo{
     width:320px;
   }
@@ -433,23 +651,57 @@ nav a:active{
     font-size:18px;
   }
 
+  .intro,
+  .tour-types,
+  .destinations,
+  .why,
+  .trip-planner,
+  .cta{
+    padding:55px 18px;
+  }
+
   .intro h2,
   .tour-types h2,
   .destinations h2,
   .why h2,
+  .trip-planner h2,
   .cta h2{
     font-size:38px;
   }
 
   .intro p,
+  .planner-intro,
   .cta p{
     font-size:18px;
   }
 
   .type-grid,
   .destination-grid,
-  .why-grid{
+  .why-grid,
+  .places-grid,
+  .form-grid{
     grid-template-columns:1fr;
+  }
+
+  .planner-box{
+    padding:25px 18px;
+    border-radius:26px;
+  }
+
+  .planner-section h3{
+    font-size:30px;
+  }
+
+  .add-location-row{
+    flex-direction:column;
+  }
+
+  .add-location-row button{
+    padding:15px;
+  }
+
+  #tripMap{
+    height:360px;
   }
 
   .floating-whatsapp{

@@ -411,24 +411,28 @@
     return { startPoint, endPoint };
   }
 
-  async function getRealRoute(fullRoute){
-    const coordinates = fullRoute.map(place => [place.lng, place.lat]);
+ async function getRealRoute(fullRoute){
+  const coordinates = fullRoute.map(place => [place.lng, place.lat]);
 
-    const response = await fetch(
-      "https://ceybreez-contact-api.ceybreez.workers.dev/route",
-      {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body:JSON.stringify({ coordinates })
-      }
-    );
-
-    if(!response.ok){
-      throw new Error("Route request failed");
+  const response = await fetch(
+    "https://ceybreez-contact-api.ceybreez.workers.dev/route",
+    {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body:JSON.stringify({ coordinates })
     }
+  );
 
-    return await response.json();
+  const result = await response.json();
+
+  if(!response.ok){
+    console.log("ROUTE ERROR RESPONSE:", result);
+    alert("Route error: " + JSON.stringify(result));
+    throw new Error("Route request failed");
   }
+
+  return result;
+}
 
   function showRouteSummary(distanceMeters, durationSeconds){
     const km = distanceMeters / 1000;

@@ -67,7 +67,7 @@ nav a:hover{
 /* HERO */
 
 .tour-hero{
-  min-height:100vh;
+  min-height:88vh;
   background:
     linear-gradient(rgba(0,0,0,0.42), rgba(0,0,0,0.42)),
     url('images/cover.jpg')
@@ -77,7 +77,7 @@ nav a:hover{
   justify-content:center;
   text-align:center;
   color:white;
-  padding:130px 20px 80px;
+  padding:115px 20px 60px;
 }
 
 .hero-content{
@@ -85,27 +85,27 @@ nav a:hover{
 }
 
 .hero-logo{
-  width:430px;
+  width:390px;
   max-width:85%;
-  margin-bottom:25px;
+  margin-bottom:18px;
 }
 
 .tour-hero h1{
-  font-size:64px;
+  font-size:60px;
   line-height:1.05;
-  margin-bottom:20px;
+  margin-bottom:16px;
 }
 
 .tour-hero p{
-  font-size:22px;
+  font-size:20px;
   max-width:780px;
-  margin:0 auto 35px;
+  margin:0 auto 28px;
   line-height:1.7;
 }
 
 .hero-btn{
   display:inline-block;
-  padding:16px 40px;
+  padding:15px 38px;
   background:#0f766e;
   color:white;
   text-decoration:none;
@@ -127,7 +127,7 @@ nav a:hover{
 .why,
 .trip-planner,
 .cta{
-  padding:70px 20px;
+  padding:50px 20px;
   text-align:center;
 }
 
@@ -151,62 +151,62 @@ nav a:hover{
 .why h2,
 .trip-planner h2,
 .cta h2{
-  font-size:52px;
-  margin-bottom:20px;
+  font-size:48px;
+  margin-bottom:16px;
 }
 
 .intro p,
 .planner-intro,
 .cta p{
   max-width:900px;
-  margin:0 auto 50px;
-  font-size:21px;
-  line-height:1.8;
+  margin:0 auto 36px;
+  font-size:19px;
+  line-height:1.75;
   color:#444;
 }
 
-/* CARDS */
+/* TOUR TYPE CARDS */
 
 .type-grid{
   max-width:1300px;
   margin:auto;
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:30px;
+  gap:26px;
 }
 
 .type-card{
   background:rgba(242,232,220,0.75);
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
-  padding:35px 30px;
-  border-radius:28px;
+  padding:30px 26px;
+  border-radius:26px;
   box-shadow:0 10px 30px rgba(0,0,0,0.08);
   transition:0.35s ease;
 }
 
 .type-card:hover{
-  transform:translateY(-10px);
+  transform:translateY(-8px);
   background:rgba(230,245,235,0.92);
   box-shadow:0 18px 45px rgba(0,0,0,0.14);
 }
 
 .type-card span{
-  font-size:42px;
+  font-size:40px;
   display:block;
-  margin-bottom:16px;
+  margin-bottom:12px;
 }
 
 .type-card h3{
-  font-size:32px;
+  font-size:30px;
   color:#0f766e;
-  margin-bottom:12px;
+  margin-bottom:10px;
 }
 
 .type-card p{
   color:#444;
-  font-size:16px;
-  line-height:1.7;
+  font-size:15px;
+  line-height:1.65;
 }
 
 /* DESTINATIONS */
@@ -216,13 +216,13 @@ nav a:hover{
   margin:auto;
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:30px;
+  gap:26px;
 }
 
 .destination-card{
   background:rgba(242,232,220,0.75);
-  border-radius:28px;
-  padding:22px;
+  border-radius:26px;
+  padding:18px;
   box-shadow:0 10px 30px rgba(0,0,0,0.10);
   transition:0.35s ease;
   text-align:left;
@@ -230,34 +230,34 @@ nav a:hover{
 }
 
 .destination-card:hover{
-  transform:translateY(-10px);
+  transform:translateY(-8px);
   background:rgba(230,245,235,0.92);
   box-shadow:0 18px 45px rgba(0,0,0,0.15);
 }
 
 .destination-card img{
   width:100%;
-  height:190px;
+  height:175px;
   object-fit:cover;
-  border-radius:20px;
-  margin-bottom:18px;
+  border-radius:18px;
+  margin-bottom:14px;
   transition:0.4s ease;
 }
 
 .destination-card:hover img{
-  transform:scale(1.05);
+  transform:scale(1.04);
 }
 
 .destination-card h3{
   color:#0f766e;
-  font-size:30px;
-  margin-bottom:10px;
+  font-size:28px;
+  margin-bottom:8px;
 }
 
 .destination-card p{
   color:#2f3d35;
-  font-size:15px;
-  line-height:1.7;
+  font-size:14px;
+  line-height:1.6;
 }
 
 /* WHY */
@@ -267,25 +267,25 @@ nav a:hover{
   margin:auto;
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:30px;
+  gap:26px;
 }
 
 .why-grid div{
   background:#f8f3eb;
-  padding:35px 28px;
-  border-radius:26px;
+  padding:30px 24px;
+  border-radius:24px;
   box-shadow:0 10px 30px rgba(0,0,0,0.07);
 }
 
 .why-grid h3{
   color:#0f766e;
-  font-size:30px;
-  margin-bottom:12px;
+  font-size:28px;
+  margin-bottom:10px;
 }
 
 .why-grid p{
   color:#444;
-  line-height:1.7;
+  line-height:1.65;
 }
 
 /* TRIP PLANNER */
@@ -298,26 +298,26 @@ nav a:hover{
   backdrop-filter:blur(18px);
   -webkit-backdrop-filter:blur(18px);
   border:1px solid rgba(255,255,255,0.35);
-  border-radius:34px;
-  padding:40px;
+  border-radius:30px;
+  padding:32px;
   box-shadow:0 18px 50px rgba(0,0,0,0.14);
 }
 
 .planner-section{
-  margin-bottom:38px;
+  margin-bottom:30px;
 }
 
 .planner-section h3{
-  font-size:36px;
+  font-size:32px;
   color:#0f766e;
-  margin-bottom:22px;
+  margin-bottom:18px;
 }
 
 .planner-section h4{
   font-family:'Cormorant Garamond', serif;
-  font-size:28px;
+  font-size:26px;
   color:#0f766e;
-  margin-bottom:18px;
+  margin-bottom:15px;
 }
 
 .planner-section label,
@@ -334,7 +334,7 @@ nav a:hover{
 .planner-section select,
 .planner-section textarea{
   width:100%;
-  padding:15px 16px;
+  padding:14px 15px;
   border:none;
   border-radius:14px;
   background:rgba(255,255,255,0.78);
@@ -360,11 +360,11 @@ nav a:hover{
 .places-grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:14px;
+  gap:12px;
   background:rgba(255,255,255,0.45);
-  padding:20px;
-  border-radius:22px;
-  margin-bottom:22px;
+  padding:16px;
+  border-radius:20px;
+  margin-bottom:20px;
 }
 
 .places-grid label{
@@ -373,8 +373,8 @@ nav a:hover{
   gap:10px;
   margin:0;
   background:rgba(242,232,220,0.65);
-  padding:13px 14px;
-  border-radius:16px;
+  padding:12px 13px;
+  border-radius:15px;
   cursor:pointer;
   transition:0.25s ease;
 }
@@ -415,7 +415,7 @@ nav a:hover{
   display:flex;
   align-items:center;
   gap:12px;
-  padding:14px 16px;
+  padding:13px 15px;
   cursor:pointer;
   border-bottom:1px solid #eee;
 }
@@ -425,7 +425,7 @@ nav a:hover{
 }
 
 .suggestion-item span{
-  font-size:26px;
+  font-size:24px;
 }
 
 .suggestion-item strong{
@@ -441,7 +441,7 @@ nav a:hover{
 
 .add-selected-btn{
   margin-top:14px;
-  padding:15px 22px;
+  padding:14px 22px;
   border:none;
   border-radius:50px;
   background:#0f766e;
@@ -467,13 +467,13 @@ nav a:hover{
 .map-layout{
   display:grid;
   grid-template-columns:2fr 1fr;
-  gap:25px;
+  gap:22px;
 }
 
 #tripMap{
   width:100%;
-  height:430px;
-  border-radius:28px;
+  height:410px;
+  border-radius:26px;
   overflow:hidden;
   box-shadow:0 15px 45px rgba(0,0,0,0.20);
   border:4px solid rgba(255,255,255,0.55);
@@ -498,22 +498,32 @@ nav a:hover{
 
 .selected-box{
   background:rgba(242,232,220,0.78);
-  border-radius:28px;
-  padding:28px;
+  border-radius:26px;
+  padding:24px;
   box-shadow:0 10px 30px rgba(0,0,0,0.08);
 }
 
 .selected-box ul{
   padding-left:20px;
-  line-height:1.9;
+  line-height:1.85;
   color:#2f3d35;
 }
 
 .route-note{
   font-size:13px;
   color:#555;
-  margin-bottom:15px;
+  margin-bottom:12px;
   line-height:1.6;
+}
+
+.route-summary{
+  background:rgba(255,255,255,0.7);
+  border-radius:18px;
+  padding:14px 16px;
+  margin-bottom:16px;
+  color:#0f3d3e;
+  font-weight:700;
+  line-height:1.7;
 }
 
 /* FORM GRID */
@@ -521,23 +531,23 @@ nav a:hover{
 .form-grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:20px;
+  gap:18px;
 }
 
 .airport-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:25px;
+  gap:22px;
 }
 
 .airport-card{
   background:rgba(242,232,220,0.65);
-  padding:28px;
-  border-radius:26px;
+  padding:24px;
+  border-radius:24px;
 }
 
 .airport-card label{
-  margin-top:14px;
+  margin-top:12px;
 }
 
 .hidden-fields{
@@ -546,8 +556,8 @@ nav a:hover{
 
 .send-plan-btn{
   width:100%;
-  margin-top:10px;
-  padding:18px;
+  margin-top:8px;
+  padding:17px;
   border:none;
   border-radius:50px;
   background:#0f766e;
@@ -573,7 +583,7 @@ nav a:hover{
 
 .cta a{
   display:inline-block;
-  padding:16px 42px;
+  padding:15px 40px;
   background:#325904;
   color:white;
   text-decoration:none;
@@ -696,23 +706,23 @@ nav a:active{
 
   .tour-hero{
     min-height:auto;
-    padding:95px 16px 45px;
+    padding:90px 16px 40px;
   }
 
   .hero-logo{
-    width:240px;
-    margin-bottom:15px;
+    width:230px;
+    margin-bottom:14px;
   }
 
   .tour-hero h1{
-    font-size:34px;
-    margin-bottom:12px;
+    font-size:33px;
+    margin-bottom:10px;
   }
 
   .tour-hero p{
     font-size:15px;
-    line-height:1.6;
-    margin-bottom:22px;
+    line-height:1.55;
+    margin-bottom:20px;
   }
 
   .hero-btn{
@@ -726,7 +736,7 @@ nav a:active{
   .why,
   .trip-planner,
   .cta{
-    padding:38px 14px;
+    padding:34px 14px;
   }
 
   .intro h2,
@@ -735,16 +745,16 @@ nav a:active{
   .why h2,
   .trip-planner h2,
   .cta h2{
-    font-size:32px;
-    margin-bottom:14px;
+    font-size:31px;
+    margin-bottom:12px;
   }
 
   .intro p,
   .planner-intro,
   .cta p{
     font-size:15px;
-    line-height:1.6;
-    margin-bottom:28px;
+    line-height:1.55;
+    margin-bottom:24px;
   }
 
   .type-grid,
@@ -758,55 +768,66 @@ nav a:active{
   .type-card,
   .destination-card,
   .why-grid div{
-    padding:22px 18px;
-    border-radius:22px;
+    padding:20px 16px;
+    border-radius:20px;
   }
 
   .destination-card img{
-    height:160px;
+    height:155px;
   }
 
   .planner-box{
-    padding:20px 14px;
-    border-radius:22px;
+    padding:18px 13px;
+    border-radius:20px;
   }
 
   .planner-section{
-    margin-bottom:26px;
+    margin-bottom:24px;
   }
 
   .planner-section h3{
-    font-size:26px;
-    margin-bottom:16px;
+    font-size:25px;
+    margin-bottom:14px;
   }
 
   .planner-section h4{
-    font-size:23px;
+    font-size:22px;
+  }
+
+  .planner-section input,
+  .planner-section select,
+  .planner-section textarea{
+    padding:13px 14px;
   }
 
   .places-grid{
-    padding:14px;
-    gap:10px;
+    padding:12px;
+    gap:9px;
   }
 
   .places-grid label{
-    padding:11px 12px;
+    padding:10px 11px;
     font-size:14px;
   }
 
-  .add-location-row,
   .add-selected-btn{
     width:100%;
+    padding:14px;
   }
 
   #tripMap{
-    height:300px;
+    height:285px;
+    border-radius:20px;
   }
 
   .selected-box,
   .airport-card{
-    padding:20px 16px;
-    border-radius:22px;
+    padding:18px 14px;
+    border-radius:20px;
+  }
+
+  .route-summary{
+    padding:12px 14px;
   }
 
   .send-plan-btn{

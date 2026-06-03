@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>CeyBreez Tours | Explore Sri Lanka</title>
   <meta name="description" content="Plan your Sri Lanka tour with CeyBreez. Select destinations, travel dates, airport pickup/drop details, and send your custom trip inquiry.">
 
@@ -91,95 +90,18 @@
 </section>
 
 <section class="trip-planner" id="tripPlanner">
-
   <h2>Plan Your Sri Lanka Trip</h2>
 
   <p class="planner-intro">
-    Select the places you want to visit, add your own locations, view the real road route,
+    Choose pickup/drop details, select places to visit, view the route on the map,
     and send us your inquiry. We will prepare a custom trip plan with price and email it back to you.
   </p>
 
   <div class="planner-box">
-
     <form id="tripForm">
 
       <div class="planner-section">
-        <h3>1. Places To Visit</h3>
-
-        <div class="places-grid">
-          <label><input type="checkbox" value="Sigiriya" data-lat="7.9570" data-lng="80.7603" data-icon="🏰" data-highlight="Heritage Rock Fortress"> Sigiriya</label>
-          <label><input type="checkbox" value="Ella" data-lat="6.8667" data-lng="81.0466" data-icon="⛰" data-highlight="Hill Country & Waterfalls"> Ella</label>
-          <label><input type="checkbox" value="Kandy" data-lat="7.2906" data-lng="80.6337" data-icon="🛕" data-highlight="Culture & Temple"> Kandy</label>
-          <label><input type="checkbox" value="Nuwara Eliya" data-lat="6.9497" data-lng="80.7891" data-icon="🍃" data-highlight="Tea Country"> Nuwara Eliya</label>
-          <label><input type="checkbox" value="Yala National Park" data-lat="6.3725" data-lng="81.5185" data-icon="🐆" data-highlight="Wildlife Safari"> Yala National Park</label>
-          <label><input type="checkbox" value="Udawalawe National Park" data-lat="6.4742" data-lng="80.8880" data-icon="🐘" data-highlight="Elephant Safari"> Udawalawe National Park</label>
-          <label><input type="checkbox" value="Galle Fort" data-lat="6.0329" data-lng="80.2168" data-icon="🏛" data-highlight="Colonial Heritage"> Galle Fort</label>
-          <label><input type="checkbox" value="Mirissa" data-lat="5.9485" data-lng="80.4713" data-icon="🏄" data-highlight="Surfing & Beach"> Mirissa</label>
-          <label><input type="checkbox" value="Hikkaduwa" data-lat="6.1407" data-lng="80.1012" data-icon="🐠" data-highlight="Snorkeling & Coral Reef"> Hikkaduwa</label>
-          <label><input type="checkbox" value="Bentota" data-lat="6.4211" data-lng="79.9989" data-icon="🌊" data-highlight="Beach & River Safari"> Bentota</label>
-          <label><input type="checkbox" value="Nine Arch Bridge" data-lat="6.8768" data-lng="81.0608" data-icon="🚂" data-highlight="Scenic Railway"> Nine Arch Bridge</label>
-          <label><input type="checkbox" value="Dambulla Cave Temple" data-lat="7.8567" data-lng="80.6492" data-icon="🛕" data-highlight="Cave Temple"> Dambulla Cave Temple</label>
-        </div>
-
-        <label class="field-label">Other Places You Want To Visit</label>
-
-        <div class="search-location-wrap">
-          <input type="text" id="otherLocationInput" placeholder="Type a place in Sri Lanka. Example: Arugam Bay, Trincomalee">
-          <div id="locationSuggestions" class="location-suggestions"></div>
-        </div>
-
-        <button type="button" class="add-selected-btn" onclick="addSelectedSuggestion()">+ Add Selected Location</button>
-
-        <ul id="otherLocationList" class="other-location-list"></ul>
-      </div>
-
-      <div class="planner-section">
-        <h3>2. Map Preview</h3>
-
-        <div class="map-layout">
-          <div id="tripMap"></div>
-
-          <div class="selected-box">
-            <h4>Selected Route</h4>
-            <p class="route-note">
-              Real road route is calculated after locations are selected.
-            </p>
-
-            <div id="routeSummary" class="route-summary">
-              Distance: Not calculated<br>
-              Time: Not calculated
-            </div>
-
-            <ul id="selectedPlacesList">
-              <li>No places selected yet.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="planner-section">
-        <h3>3. Travel Dates</h3>
-
-        <div class="form-grid">
-          <div>
-            <label>Start Date</label>
-            <input type="date" id="startDate" required>
-          </div>
-
-          <div>
-            <label>End Date</label>
-            <input type="date" id="endDate" required>
-          </div>
-
-          <div>
-            <label>Number of Days</label>
-            <input type="text" id="numberOfDays" placeholder="Auto calculated" readonly>
-          </div>
-        </div>
-      </div>
-
-      <div class="planner-section">
-        <h3>4. Airport Pickup / Drop</h3>
+        <h3>1. Airport Pickup / Drop</h3>
 
         <div class="airport-grid">
 
@@ -211,7 +133,10 @@
 
             <div id="tourStartFields" class="hidden-fields">
               <label>Tour Start Location</label>
-              <input type="text" id="tourStartLocation" placeholder="Example: Colombo, Negombo, Galle" oninput="updateMapAndList()">
+              <div class="search-location-wrap">
+                <input type="text" id="tourStartLocation" placeholder="Type start location. Example: Colombo, Negombo, Galle">
+                <div id="startLocationSuggestions" class="location-suggestions"></div>
+              </div>
             </div>
           </div>
 
@@ -243,10 +168,86 @@
 
             <div id="tourEndFields" class="hidden-fields">
               <label>Tour End Location</label>
-              <input type="text" id="tourEndLocation" placeholder="Example: Colombo, Galle, Ella" oninput="updateMapAndList()">
+              <div class="search-location-wrap">
+                <input type="text" id="tourEndLocation" placeholder="Type end location. Example: Colombo, Ella, Galle">
+                <div id="endLocationSuggestions" class="location-suggestions"></div>
+              </div>
             </div>
           </div>
 
+        </div>
+      </div>
+
+      <div class="planner-section">
+        <h3>2. Places To Visit</h3>
+
+        <div class="places-grid">
+          <label><input type="checkbox" value="Sigiriya" data-lat="7.957650" data-lng="80.751209" data-icon="🏰" data-highlight="Heritage Rock Fortress"> Sigiriya</label>
+          <label><input type="checkbox" value="Ella" data-lat="6.873068" data-lng="81.049114" data-icon="⛰" data-highlight="Hill Country & Waterfalls"> Ella</label>
+          <label><input type="checkbox" value="Kandy" data-lat="7.293276" data-lng="80.638779" data-icon="🛕" data-highlight="Culture & Temple"> Kandy</label>
+          <label><input type="checkbox" value="Nuwara Eliya" data-lat="6.957393" data-lng="80.775928" data-icon="🍃" data-highlight="Tea Country"> Nuwara Eliya</label>
+          <label><input type="checkbox" value="Yala National Park" data-lat="6.279202" data-lng="81.402162" data-icon="🐆" data-highlight="Wildlife Safari"> Yala National Park</label>
+          <label><input type="checkbox" value="Udawalawe National Park" data-lat="6.438522" data-lng="80.888620" data-icon="🐘" data-highlight="Elephant Safari"> Udawalawe National Park</label>
+          <label><input type="checkbox" value="Galle Fort" data-lat="6.029502" data-lng="80.215012" data-icon="🏛" data-highlight="Colonial Heritage"> Galle Fort</label>
+          <label><input type="checkbox" value="Mirissa" data-lat="5.944642" data-lng="80.460628" data-icon="🏄" data-highlight="Surfing & Beach"> Mirissa</label>
+          <label><input type="checkbox" value="Hikkaduwa" data-lat="6.140468" data-lng="80.099841" data-icon="🐠" data-highlight="Snorkeling & Coral Reef"> Hikkaduwa</label>
+          <label><input type="checkbox" value="Bentota" data-lat="6.425460" data-lng="79.997683" data-icon="🌊" data-highlight="Beach & River Safari"> Bentota</label>
+          <label><input type="checkbox" value="Nine Arch Bridge" data-lat="6.877257" data-lng="81.063007" data-icon="🚂" data-highlight="Scenic Railway"> Nine Arch Bridge</label>
+          <label><input type="checkbox" value="Dambulla Cave Temple" data-lat="7.857268" data-lng="80.652199" data-icon="🛕" data-highlight="Cave Temple"> Dambulla Cave Temple</label>
+        </div>
+
+        <label class="field-label">Other Places You Want To Visit</label>
+
+        <div class="search-location-wrap">
+          <input type="text" id="otherLocationInput" placeholder="Type a place in Sri Lanka. Example: Arugam Bay, Trincomalee">
+          <div id="locationSuggestions" class="location-suggestions"></div>
+        </div>
+
+        <button type="button" class="add-selected-btn" onclick="addSelectedSuggestion()">+ Add Selected Location</button>
+
+        <ul id="otherLocationList" class="other-location-list"></ul>
+      </div>
+
+      <div class="planner-section">
+        <h3>3. Map Preview</h3>
+
+        <div class="map-layout">
+          <div id="tripMap"></div>
+
+          <div class="selected-box">
+            <h4>Selected Route</h4>
+            <p class="route-note">Real road route is calculated after locations are selected.</p>
+
+            <div id="routeSummary" class="route-summary">
+              Distance: Not calculated<br>
+              Time: Not calculated
+            </div>
+
+            <ul id="selectedPlacesList">
+              <li>No places selected yet.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="planner-section">
+        <h3>4. Travel Dates</h3>
+
+        <div class="form-grid">
+          <div>
+            <label>Start Date</label>
+            <input type="date" id="startDate" required>
+          </div>
+
+          <div>
+            <label>End Date</label>
+            <input type="date" id="endDate" required>
+          </div>
+
+          <div>
+            <label>Number of Days</label>
+            <input type="text" id="numberOfDays" placeholder="Auto calculated" readonly>
+          </div>
         </div>
       </div>
 
@@ -270,7 +271,6 @@
       <button type="button" class="send-plan-btn" onclick="sendTripPlan()">Send Trip Plan Inquiry</button>
 
     </form>
-
   </div>
 </section>
 
@@ -300,16 +300,61 @@
   let markers = [];
   let routeLayer = null;
   let selectedSuggestion = null;
+  let selectedStartLocation = null;
+  let selectedEndLocation = null;
   let otherLocations = [];
   let latestDistance = "";
   let latestDuration = "";
 
-  function getAirportPoint(airportName){
+  function getAirportPoint(airportName, type = "pickup"){
     if(airportName.includes("Mattala")){
-      return { name:"Mattala Airport", lat:6.2845, lng:81.1241, icon:"✈️", highlight:"Airport" };
+      return {
+        name: type === "pickup" ? "Mattala Airport Arrival" : "Mattala Airport Departure",
+        lat: 6.291851,
+        lng: 81.120918,
+        icon: "✈️",
+        highlight: "Airport"
+      };
     }
 
-    return { name:"Bandaranaike Airport", lat:7.1808, lng:79.8841, icon:"✈️", highlight:"Airport" };
+    if(type === "pickup"){
+      return {
+        name: "Colombo Airport Arrival",
+        lat: 7.174459,
+        lng: 79.888084,
+        icon: "✈️",
+        highlight: "Airport Arrival"
+      };
+    }
+
+    return {
+      name: "Colombo Airport Departure",
+      lat: 7.173298,
+      lng: 79.887143,
+      icon: "✈️",
+      highlight: "Airport Departure"
+    };
+  }
+
+  function guessIconAndHighlight(name){
+    const text = name.toLowerCase();
+
+    if(text.includes("yala")) return { icon:"🐆", highlight:"Wildlife Safari" };
+    if(text.includes("udawalawe")) return { icon:"🐘", highlight:"Elephant Safari" };
+    if(text.includes("mirissa")) return { icon:"🏄", highlight:"Surfing & Beach" };
+    if(text.includes("arugam")) return { icon:"🏄", highlight:"Surfing Beach" };
+    if(text.includes("hikkaduwa")) return { icon:"🐠", highlight:"Snorkeling & Coral Reef" };
+    if(text.includes("bentota")) return { icon:"🌊", highlight:"Beach & River Safari" };
+    if(text.includes("galle")) return { icon:"🏛", highlight:"Colonial Heritage" };
+    if(text.includes("sigiriya")) return { icon:"🏰", highlight:"Heritage Rock Fortress" };
+    if(text.includes("dambulla")) return { icon:"🛕", highlight:"Cave Temple" };
+    if(text.includes("kandy")) return { icon:"🛕", highlight:"Culture & Temple" };
+    if(text.includes("ella")) return { icon:"⛰", highlight:"Hill Country & Waterfalls" };
+    if(text.includes("nuwara")) return { icon:"🍃", highlight:"Tea Country" };
+    if(text.includes("train") || text.includes("bridge")) return { icon:"🚂", highlight:"Scenic Railway" };
+    if(text.includes("beach") || text.includes("bay") || text.includes("trincomalee") || text.includes("nilaveli")) return { icon:"🏖", highlight:"Beach Destination" };
+
+    return { icon:"📍", highlight:"Custom Location" };
   }
 
   function getDistance(a, b){
@@ -343,27 +388,6 @@
     return ordered;
   }
 
-  function guessIconAndHighlight(name){
-    const text = name.toLowerCase();
-
-    if(text.includes("yala")) return { icon:"🐆", highlight:"Wildlife Safari" };
-    if(text.includes("udawalawe")) return { icon:"🐘", highlight:"Elephant Safari" };
-    if(text.includes("mirissa")) return { icon:"🏄", highlight:"Surfing & Beach" };
-    if(text.includes("arugam")) return { icon:"🏄", highlight:"Surfing Beach" };
-    if(text.includes("hikkaduwa")) return { icon:"🐠", highlight:"Snorkeling & Coral Reef" };
-    if(text.includes("bentota")) return { icon:"🌊", highlight:"Beach & River Safari" };
-    if(text.includes("galle")) return { icon:"🏛", highlight:"Colonial Heritage" };
-    if(text.includes("sigiriya")) return { icon:"🏰", highlight:"Heritage Rock Fortress" };
-    if(text.includes("dambulla")) return { icon:"🛕", highlight:"Cave Temple" };
-    if(text.includes("kandy")) return { icon:"🛕", highlight:"Culture & Temple" };
-    if(text.includes("ella")) return { icon:"⛰", highlight:"Hill Country & Waterfalls" };
-    if(text.includes("nuwara")) return { icon:"🍃", highlight:"Tea Country" };
-    if(text.includes("train") || text.includes("bridge")) return { icon:"🚂", highlight:"Scenic Railway" };
-    if(text.includes("beach") || text.includes("bay") || text.includes("trincomalee") || text.includes("nilaveli")) return { icon:"🏖", highlight:"Beach Destination" };
-
-    return { icon:"📍", highlight:"Custom Location" };
-  }
-
   function makeLabelMarker(place){
     const customIcon = L.divIcon({
       className: "custom-map-label",
@@ -395,44 +419,71 @@
     let endPoint;
 
     if(pickupRequired === "Yes"){
-      startPoint = getAirportPoint(document.getElementById("pickupAirport").value);
+      startPoint = getAirportPoint(
+        document.getElementById("pickupAirport").value,
+        "pickup"
+      );
+    }else if(selectedStartLocation){
+      startPoint = {
+        ...selectedStartLocation,
+        icon: "🚩",
+        highlight: "Tour Start"
+      };
     }else{
-      const startName = document.getElementById("tourStartLocation").value.trim();
-      startPoint = { name:startName || "Tour Start Location", lat:7.8731, lng:80.7718, icon:"🚩", highlight:"Tour Start" };
+      startPoint = {
+        name: "Tour Start Location",
+        lat: 7.8731,
+        lng: 80.7718,
+        icon: "🚩",
+        highlight: "Please select tour start location"
+      };
     }
 
     if(dropRequired === "Yes"){
-      endPoint = getAirportPoint(document.getElementById("dropAirport").value);
+      endPoint = getAirportPoint(
+        document.getElementById("dropAirport").value,
+        "drop"
+      );
+    }else if(selectedEndLocation){
+      endPoint = {
+        ...selectedEndLocation,
+        icon: "🏁",
+        highlight: "Tour End"
+      };
     }else{
-      const endName = document.getElementById("tourEndLocation").value.trim();
-      endPoint = { name:endName || "Tour End Location", lat:7.8731, lng:80.7718, icon:"🏁", highlight:"Tour End" };
+      endPoint = {
+        name: "Tour End Location",
+        lat: 7.8731,
+        lng: 80.7718,
+        icon: "🏁",
+        highlight: "Please select tour end location"
+      };
     }
 
     return { startPoint, endPoint };
   }
 
- async function getRealRoute(fullRoute){
-  const coordinates = fullRoute.map(place => [place.lng, place.lat]);
+  async function getRealRoute(fullRoute){
+    const coordinates = fullRoute.map(place => [place.lng, place.lat]);
 
-  const response = await fetch(
-    "https://ceybreez-contact-api.ceybreez.workers.dev/route",
-    {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body:JSON.stringify({ coordinates })
+    const response = await fetch(
+      "https://ceybreez-contact-api.ceybreez.workers.dev/route",
+      {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({ coordinates })
+      }
+    );
+
+    const result = await response.json();
+
+    if(!response.ok){
+      console.log("ROUTE ERROR RESPONSE:", result);
+      throw new Error("Route request failed");
     }
-  );
 
-  const result = await response.json();
-
-  if(!response.ok){
-    console.log("ROUTE ERROR RESPONSE:", result);
-    alert("Route error: " + JSON.stringify(result));
-    throw new Error("Route request failed");
+    return result;
   }
-
-  return result;
-}
 
   function showRouteSummary(distanceMeters, durationSeconds){
     const km = distanceMeters / 1000;
@@ -458,9 +509,6 @@
     latestDistance = "";
     latestDuration = "";
 
-    document.getElementById("routeSummary").innerHTML =
-      "Distance: Calculating...<br>Time: Calculating...";
-
     const selectedList = document.getElementById("selectedPlacesList");
     selectedList.innerHTML = "";
 
@@ -475,6 +523,9 @@
         "Distance: Not calculated<br>Time: Not calculated";
       return;
     }
+
+    document.getElementById("routeSummary").innerHTML =
+      "Distance: Calculating...<br>Time: Calculating...";
 
     const { startPoint, endPoint } = getStartEndPoints();
     const orderedPlaces = sortRouteByNearest(startPoint, selectedPlaces);
@@ -513,7 +564,7 @@
       map.fitBounds(routeLayer.getBounds().pad(0.15));
     }catch(error){
       document.getElementById("routeSummary").innerHTML =
-        "Road route unavailable. Please try again.";
+        "Road route unavailable. Please try another route or location.";
       console.log(error);
 
       if(markers.length > 0){
@@ -527,8 +578,8 @@
     input.addEventListener("change", updateMapAndList);
   });
 
-  async function searchLocations(query){
-    const suggestionsBox = document.getElementById("locationSuggestions");
+  async function searchLocations(query, suggestionsBoxId, type){
+    const suggestionsBox = document.getElementById(suggestionsBoxId);
 
     if(query.length < 3){
       suggestionsBox.innerHTML = "";
@@ -570,10 +621,28 @@
         div.innerHTML = `<span>${visual.icon}</span><div><strong>${displayName}</strong><small>${visual.highlight}</small></div>`;
 
         div.onclick = function(){
-          selectedSuggestion = { name: displayName, lat, lng, icon: visual.icon, highlight: visual.highlight };
-          document.getElementById("otherLocationInput").value = displayName;
+          const selected = {
+            name: displayName,
+            lat,
+            lng,
+            icon: visual.icon,
+            highlight: visual.highlight
+          };
+
+          if(type === "start"){
+            selectedStartLocation = selected;
+            document.getElementById("tourStartLocation").value = displayName;
+          }else if(type === "end"){
+            selectedEndLocation = selected;
+            document.getElementById("tourEndLocation").value = displayName;
+          }else{
+            selectedSuggestion = selected;
+            document.getElementById("otherLocationInput").value = displayName;
+          }
+
           suggestionsBox.innerHTML = "";
           suggestionsBox.style.display = "none";
+          updateMapAndList();
         };
 
         suggestionsBox.appendChild(div);
@@ -586,13 +655,35 @@
   }
 
   let searchTimer;
+  let startTimer;
+  let endTimer;
 
   document.getElementById("otherLocationInput").addEventListener("input", function(){
     clearTimeout(searchTimer);
     const query = this.value.trim();
 
     searchTimer = setTimeout(() => {
-      searchLocations(query);
+      searchLocations(query, "locationSuggestions", "other");
+    }, 450);
+  });
+
+  document.getElementById("tourStartLocation").addEventListener("input", function(){
+    clearTimeout(startTimer);
+    selectedStartLocation = null;
+    const query = this.value.trim();
+
+    startTimer = setTimeout(() => {
+      searchLocations(query, "startLocationSuggestions", "start");
+    }, 450);
+  });
+
+  document.getElementById("tourEndLocation").addEventListener("input", function(){
+    clearTimeout(endTimer);
+    selectedEndLocation = null;
+    const query = this.value.trim();
+
+    endTimer = setTimeout(() => {
+      searchLocations(query, "endLocationSuggestions", "end");
     }, 450);
   });
 
@@ -602,11 +693,8 @@
 
     if(selectedSuggestion && selectedSuggestion.name === value){
       otherLocations.push(selectedSuggestion);
-    }else if(value){
-      alert("Please select a suggested location from the list so we can show it on the map.");
-      return;
     }else{
-      alert("Please type and select a location.");
+      alert("Please type and select a suggested location from the list.");
       return;
     }
 
@@ -678,14 +766,12 @@
     const arrivalDate = document.getElementById("arrivalDate").value;
     const arrivalTime = document.getElementById("arrivalTime").value;
     const arrivalFlight = document.getElementById("arrivalFlight").value;
-    const tourStartLocation = document.getElementById("tourStartLocation").value;
 
     const dropRequired = document.getElementById("dropRequired").value;
     const dropAirport = document.getElementById("dropAirport").value;
     const departureDate = document.getElementById("departureDate").value;
     const departureTime = document.getElementById("departureTime").value;
     const departureFlight = document.getElementById("departureFlight").value;
-    const tourEndLocation = document.getElementById("tourEndLocation").value;
 
     if(!guestName || !guestEmail || !guestMobile || !guestCountry || !guestCount || !startDate || !endDate){
       alert("Please fill all required guest and travel date details.");
@@ -707,13 +793,21 @@
     const tripMessage =
 `New CeyBreez Trip Plan Inquiry
 
-1. Places To Visit:
+1. Airport Pickup / Tour Start:
+Pickup Required: ${pickupRequired}
+Pickup Airport: ${pickupRequired === "Yes" ? pickupAirport : "Not required"}
+Arrival Date: ${pickupRequired === "Yes" ? arrivalDate : "Not required"}
+Arrival Time: ${pickupRequired === "Yes" ? arrivalTime : "Not required"}
+Flight Number: ${pickupRequired === "Yes" ? arrivalFlight : "Not required"}
+Tour Start Location: ${pickupRequired === "No" ? startPoint.name : "Airport pickup"}
+
+2. Places To Visit:
 ${selectedText || "Not selected"}
 
 Other Places Added By Guest:
 ${otherText || "None"}
 
-Suggested Road Route Order:
+3. Road Route Order:
 ${routeText}
 
 Route Distance:
@@ -722,35 +816,27 @@ ${latestDistance || "Not calculated"}
 Estimated Driving Time:
 ${latestDuration || "Not calculated"}
 
-2. Travel Dates:
-Start Date: ${startDate}
-End Date: ${endDate}
-Number of Days: ${days}
-
-3. Airport Pickup / Tour Start:
-Pickup Required: ${pickupRequired}
-Pickup Airport: ${pickupRequired === "Yes" ? pickupAirport : "Not required"}
-Arrival Date: ${pickupRequired === "Yes" ? arrivalDate : "Not required"}
-Arrival Time: ${pickupRequired === "Yes" ? arrivalTime : "Not required"}
-Flight Number: ${pickupRequired === "Yes" ? arrivalFlight : "Not required"}
-Tour Start Location: ${pickupRequired === "No" ? tourStartLocation : "Airport pickup"}
-
 4. Airport Drop / Tour End:
 Drop Required: ${dropRequired}
 Drop Airport: ${dropRequired === "Yes" ? dropAirport : "Not required"}
 Departure Date: ${dropRequired === "Yes" ? departureDate : "Not required"}
 Departure Time: ${dropRequired === "Yes" ? departureTime : "Not required"}
 Flight Number: ${dropRequired === "Yes" ? departureFlight : "Not required"}
-Tour End Location: ${dropRequired === "No" ? tourEndLocation : "Airport drop"}
+Tour End Location: ${dropRequired === "No" ? endPoint.name : "Airport drop"}
 
-5. Guest Details:
+5. Travel Dates:
+Start Date: ${startDate}
+End Date: ${endDate}
+Number of Days: ${days}
+
+6. Guest Details:
 Name: ${guestName}
 Email: ${guestEmail}
 Mobile: ${guestMobile}
 Country: ${guestCountry}
 Number of Guests: ${guestCount}
 
-6. Special Notes:
+7. Special Notes:
 ${specialNotes}`;
 
     window.open(

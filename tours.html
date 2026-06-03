@@ -1,118 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CeyBreez Tours | Explore Sri Lanka</title>
-  <meta name="description" content="Plan your Sri Lanka tour with CeyBreez. Select destinations, travel dates, airport pickup/drop details, and send your custom trip inquiry.">
-
-  <link rel="icon" type="image/png" href="logo.png">
-  <link rel="stylesheet" href="tours.css">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-</head>
-
-<body>
-
-<header>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="villas.html">Villas</a>
-    <a href="apartments.html">Apartments</a>
-    <a href="homestays.html">HomeStays</a>
-    <a href="tours.html">Tours</a>
-    <a href="contact.html">Contact</a>
-  </nav>
-</header>
-
-<section class="tour-hero">
-  <div class="hero-content">
-    <img src="logo.png" alt="CeyBreez Logo" class="hero-logo">
-    <h1>Explore Sri Lanka With CeyBreez</h1>
-    <p>Custom tours, scenic journeys, cultural experiences, airport pickup, airport drop and unforgettable island adventures.</p>
-    <a href="#tripPlanner" class="hero-btn">Plan My Tour</a>
-  </div>
-</section>
-
-<section class="intro">
-  <h2>Discover The Island Your Way</h2>
-  <p>
-    From golden beaches and misty mountains to ancient kingdoms and wildlife safaris,
-    CeyBreez creates Sri Lanka tours tailored to your travel style.
-  </p>
-</section>
-
-<section class="tour-types">
-  <h2>Tour Experiences</h2>
-
-  <div class="type-grid">
-    <div class="type-card"><span>🏖</span><h3>Beach Escapes</h3><p>Relax along Sri Lanka’s tropical coastline.</p></div>
-    <div class="type-card"><span>⛰</span><h3>Hill Country Tours</h3><p>Tea estates, waterfalls and cool mountain air.</p></div>
-    <div class="type-card"><span>🚂</span><h3>Scenic Train Journeys</h3><p>Experience iconic railway routes and landscapes.</p></div>
-    <div class="type-card"><span>🛕</span><h3>Cultural Heritage</h3><p>Ancient cities, temples and Sri Lankan history.</p></div>
-    <div class="type-card"><span>🐘</span><h3>Wildlife Safaris</h3><p>Elephants, leopards, birds and national parks.</p></div>
-    <div class="type-card"><span>🍛</span><h3>Food & Village Life</h3><p>Local food, traditions and authentic experiences.</p></div>
-  </div>
-</section>
-
-<section class="destinations">
-  <h2>Featured Destinations</h2>
-
-  <div class="destination-grid">
-    <div class="destination-card"><img src="images/sigiriya.jpg" alt="Sigiriya"><h3>Sigiriya</h3><p>Ancient rock fortress and world-famous heritage site.</p></div>
-    <div class="destination-card"><img src="images/ella.jpg" alt="Ella"><h3>Ella</h3><p>Misty mountains, waterfalls and scenic viewpoints.</p></div>
-    <div class="destination-card"><img src="images/kandy.jpg" alt="Kandy"><h3>Kandy</h3><p>Culture, temples and the heart of Sri Lankan tradition.</p></div>
-    <div class="destination-card"><img src="images/nuwara-eliya.jpg" alt="Nuwara Eliya"><h3>Nuwara Eliya</h3><p>Tea country, cool weather and colonial charm.</p></div>
-    <div class="destination-card"><img src="images/yala.jpg" alt="Yala"><h3>Yala</h3><p>Wildlife safaris and unforgettable nature encounters.</p></div>
-    <div class="destination-card"><img src="images/udawalawe.jpg" alt="Udawalawe"><h3>Udawalawe</h3><p>Elephants, open landscapes and safari adventures.</p></div>
-    <div class="destination-card"><img src="images/galle.jpg" alt="Galle"><h3>Galle</h3><p>Historic fort streets, ocean views and coastal charm.</p></div>
-    <div class="destination-card"><img src="images/mirissa.jpg" alt="Mirissa"><h3>Mirissa</h3><p>Beaches, sunsets and relaxed southern coast vibes.</p></div>
-    <div class="destination-card"><img src="images/hikkaduwa.jpg" alt="Hikkaduwa"><h3>Hikkaduwa</h3><p>Coral reefs, beach life and snorkeling experiences.</p></div>
-    <div class="destination-card"><img src="images/bentota.jpg" alt="Bentota"><h3>Bentota</h3><p>Luxury coast, river trips and peaceful beaches.</p></div>
-    <div class="destination-card"><img src="images/nine-arch.jpg" alt="Nine Arch Bridge"><h3>Nine Arch Bridge</h3><p>One of Sri Lanka’s most iconic scenic landmarks.</p></div>
-    <div class="destination-card"><img src="images/dambulla.jpg" alt="Dambulla"><h3>Dambulla</h3><p>Cave temples, heritage and cultural beauty.</p></div>
-  </div>
-</section>
-
-<section class="why">
-  <h2>Why Travel With CeyBreez?</h2>
-
-  <div class="why-grid">
-    <div><h3>Personalized Trips</h3><p>We design tours around your time, budget and interests.</p></div>
-    <div><h3>Local Experience</h3><p>Discover Sri Lanka through authentic local knowledge.</p></div>
-    <div><h3>Comfort & Care</h3><p>Relax while we help organize your journey smoothly.</p></div>
-  </div>
-</section>
-
 <section class="trip-planner" id="tripPlanner">
   <h2>Plan Your Sri Lanka Trip</h2>
 
   <p class="planner-intro">
-    Choose pickup/drop details, select places to visit, view the route on the map,
-    and send us your inquiry. We will prepare a custom trip plan with price and email it back to you.
+    Choose your service type, select pickup/drop details, places to visit, and send us your inquiry.
   </p>
 
   <div class="planner-box">
     <form id="tripForm">
 
       <div class="planner-section">
-        <h3>1. Airport Pickup / Drop</h3>
+        <h3>1. What Service Do You Need?</h3>
+
+        <div class="service-grid">
+          <label class="service-card">
+            <input type="radio" name="serviceType" value="Round Tour" checked onchange="updateServiceType()">
+            <span>🔁</span>
+            <strong>Round Tour</strong>
+          </label>
+
+          <label class="service-card">
+            <input type="radio" name="serviceType" value="One-way Trip With Stops" onchange="updateServiceType()">
+            <span>➡️</span>
+            <strong>One-way Trip With Stops</strong>
+          </label>
+
+          <label class="service-card">
+            <input type="radio" name="serviceType" value="Airport Pickup" onchange="updateServiceType()">
+            <span>🛬</span>
+            <strong>Airport Pickup</strong>
+          </label>
+
+          <label class="service-card">
+            <input type="radio" name="serviceType" value="Airport Drop" onchange="updateServiceType()">
+            <span>🛫</span>
+            <strong>Airport Drop</strong>
+          </label>
+        </div>
+      </div>
+
+      <div class="planner-section" id="airportPickupDropSection">
+        <h3>2. Pickup / Drop Details</h3>
 
         <div class="airport-grid">
 
-          <div class="airport-card">
-            <h4>Airport Pickup</h4>
+          <div class="airport-card" id="pickupCard">
+            <h4>Pickup / Start</h4>
 
-            <label>Pickup Required?</label>
-            <select id="pickupRequired" onchange="toggleStartLocation()">
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
+            <div id="roundPickupQuestion">
+              <label>Airport Pickup Required?</label>
+              <select id="pickupRequired" onchange="toggleStartLocation()">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
 
             <div id="pickupAirportFields">
               <label>Pickup Airport</label>
@@ -132,22 +72,24 @@
             </div>
 
             <div id="tourStartFields" class="hidden-fields">
-              <label>Tour Start Location</label>
+              <label>Start / Pickup Location</label>
               <div class="search-location-wrap">
-                <input type="text" id="tourStartLocation" placeholder="Type start location. Example: Colombo, Negombo, Galle">
+                <input type="text" id="tourStartLocation" placeholder="Type start location">
                 <div id="startLocationSuggestions" class="location-suggestions"></div>
               </div>
             </div>
           </div>
 
-          <div class="airport-card">
-            <h4>Airport Drop</h4>
+          <div class="airport-card" id="dropCard">
+            <h4>Drop / End</h4>
 
-            <label>Drop Required?</label>
-            <select id="dropRequired" onchange="toggleEndLocation()">
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
+            <div id="roundDropQuestion">
+              <label>Airport Drop Required?</label>
+              <select id="dropRequired" onchange="toggleEndLocation()">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
 
             <div id="dropAirportFields">
               <label>Drop Airport</label>
@@ -159,7 +101,7 @@
               <label>Departure Date</label>
               <input type="date" id="departureDate">
 
-              <label>Departure Time</label>
+              <label>Departure Time / Must Reach Airport By</label>
               <input type="time" id="departureTime">
 
               <label>Flight Number</label>
@@ -167,9 +109,9 @@
             </div>
 
             <div id="tourEndFields" class="hidden-fields">
-              <label>Tour End Location</label>
+              <label>End / Drop Location</label>
               <div class="search-location-wrap">
-                <input type="text" id="tourEndLocation" placeholder="Type end location. Example: Colombo, Ella, Galle">
+                <input type="text" id="tourEndLocation" placeholder="Type end location">
                 <div id="endLocationSuggestions" class="location-suggestions"></div>
               </div>
             </div>
@@ -178,8 +120,8 @@
         </div>
       </div>
 
-      <div class="planner-section">
-        <h3>2. Places To Visit</h3>
+      <div class="planner-section" id="placesSection">
+        <h3>3. Places / Stops To Visit</h3>
 
         <div class="places-grid">
           <label><input type="checkbox" value="Sigiriya" data-lat="7.957650" data-lng="80.751209" data-icon="🏰" data-highlight="Heritage Rock Fortress"> Sigiriya</label>
@@ -196,27 +138,24 @@
           <label><input type="checkbox" value="Dambulla Cave Temple" data-lat="7.857268" data-lng="80.652199" data-icon="🛕" data-highlight="Cave Temple"> Dambulla Cave Temple</label>
         </div>
 
-        <label class="field-label">Other Places You Want To Visit</label>
-
+        <label class="field-label">Other Place / Stop</label>
         <div class="search-location-wrap">
-          <input type="text" id="otherLocationInput" placeholder="Type a place in Sri Lanka. Example: Arugam Bay, Trincomalee">
+          <input type="text" id="otherLocationInput" placeholder="Type a place in Sri Lanka">
           <div id="locationSuggestions" class="location-suggestions"></div>
         </div>
 
         <button type="button" class="add-selected-btn" onclick="addSelectedSuggestion()">+ Add Selected Location</button>
-
         <ul id="otherLocationList" class="other-location-list"></ul>
       </div>
 
       <div class="planner-section">
-        <h3>3. Map Preview</h3>
+        <h3>4. Map Preview</h3>
 
         <div class="map-layout">
           <div id="tripMap"></div>
 
           <div class="selected-box">
             <h4>Selected Route</h4>
-            <p class="route-note">Real road route is calculated after locations are selected.</p>
 
             <div id="routeSummary" class="route-summary">
               Distance: Not calculated<br>
@@ -231,7 +170,7 @@
       </div>
 
       <div class="planner-section">
-        <h3>4. Travel Dates</h3>
+        <h3>5. Travel Dates</h3>
 
         <div class="form-grid">
           <div>
@@ -252,634 +191,24 @@
       </div>
 
       <div class="planner-section">
-        <h3>5. Guest Details</h3>
+        <h3>6. Guest Details</h3>
 
         <div class="form-grid">
-          <div><label>Your Name</label><input type="text" id="guestName" placeholder="Your Name" required></div>
-          <div><label>Email</label><input type="email" id="guestEmail" placeholder="Email Address" required></div>
-          <div><label>WhatsApp / Mobile</label><input type="tel" id="guestMobile" placeholder="Mobile Number" required></div>
-          <div><label>Country</label><input type="text" id="guestCountry" placeholder="Your Country" required></div>
-          <div><label>Number of Guests</label><input type="number" id="guestCount" min="1" placeholder="Number of Guests" required></div>
+          <div><label>Your Name</label><input type="text" id="guestName" required></div>
+          <div><label>Email</label><input type="email" id="guestEmail" required></div>
+          <div><label>WhatsApp / Mobile</label><input type="tel" id="guestMobile" required></div>
+          <div><label>Country</label><input type="text" id="guestCountry" required></div>
+          <div><label>Number of Guests</label><input type="number" id="guestCount" min="1" required></div>
         </div>
       </div>
 
       <div class="planner-section">
-        <h3>6. Special Notes</h3>
-        <textarea id="specialNotes" rows="5" placeholder="Tell us your travel style, budget, hotel preference, transport preference or anything special..."></textarea>
+        <h3>7. Special Notes</h3>
+        <textarea id="specialNotes" rows="5" placeholder="Budget, hotel preference, vehicle preference or anything special..."></textarea>
       </div>
 
-      <button type="button" class="send-plan-btn" onclick="sendTripPlan()">Send Trip Plan Inquiry</button>
+      <button type="button" class="send-plan-btn" onclick="sendTripPlan()">Send Inquiry</button>
 
     </form>
   </div>
 </section>
-
-<section class="cta">
-  <h2>Ready To Explore Sri Lanka?</h2>
-  <p>Send us your trip inquiry, and we’ll prepare a custom plan with pricing for you.</p>
-  <a href="#tripPlanner">Start Planning</a>
-</section>
-
-<footer>
-  <p>© 2026 CeyBreez. All rights reserved.</p>
-</footer>
-
-<a href="https://wa.me/94704620017" class="floating-whatsapp" target="_blank" aria-label="Chat on WhatsApp">
-  <i class="fa-brands fa-whatsapp"></i>
-</a>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-<script>
-  const map = L.map("tripMap").setView([7.8731, 80.7718], 7);
-
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "© OpenStreetMap"
-  }).addTo(map);
-
-  let markers = [];
-  let routeLayer = null;
-  let selectedSuggestion = null;
-  let selectedStartLocation = null;
-  let selectedEndLocation = null;
-  let otherLocations = [];
-  let latestDistance = "";
-  let latestDuration = "";
-
-  function getAirportPoint(airportName, type = "pickup"){
-    if(airportName.includes("Mattala")){
-      return {
-        name: type === "pickup" ? "Mattala Airport Arrival" : "Mattala Airport Departure",
-        lat: 6.291851,
-        lng: 81.120918,
-        icon: "✈️",
-        highlight: "Airport"
-      };
-    }
-
-    if(type === "pickup"){
-      return {
-        name: "Colombo Airport Arrival",
-        lat: 7.174459,
-        lng: 79.888084,
-        icon: "✈️",
-        highlight: "Airport Arrival"
-      };
-    }
-
-    return {
-      name: "Colombo Airport Departure",
-      lat: 7.173298,
-      lng: 79.887143,
-      icon: "✈️",
-      highlight: "Airport Departure"
-    };
-  }
-
-  function guessIconAndHighlight(name){
-    const text = name.toLowerCase();
-
-    if(text.includes("yala")) return { icon:"🐆", highlight:"Wildlife Safari" };
-    if(text.includes("udawalawe")) return { icon:"🐘", highlight:"Elephant Safari" };
-    if(text.includes("mirissa")) return { icon:"🏄", highlight:"Surfing & Beach" };
-    if(text.includes("arugam")) return { icon:"🏄", highlight:"Surfing Beach" };
-    if(text.includes("hikkaduwa")) return { icon:"🐠", highlight:"Snorkeling & Coral Reef" };
-    if(text.includes("bentota")) return { icon:"🌊", highlight:"Beach & River Safari" };
-    if(text.includes("galle")) return { icon:"🏛", highlight:"Colonial Heritage" };
-    if(text.includes("sigiriya")) return { icon:"🏰", highlight:"Heritage Rock Fortress" };
-    if(text.includes("dambulla")) return { icon:"🛕", highlight:"Cave Temple" };
-    if(text.includes("kandy")) return { icon:"🛕", highlight:"Culture & Temple" };
-    if(text.includes("ella")) return { icon:"⛰", highlight:"Hill Country & Waterfalls" };
-    if(text.includes("nuwara")) return { icon:"🍃", highlight:"Tea Country" };
-    if(text.includes("train") || text.includes("bridge")) return { icon:"🚂", highlight:"Scenic Railway" };
-    if(text.includes("beach") || text.includes("bay") || text.includes("trincomalee") || text.includes("nilaveli")) return { icon:"🏖", highlight:"Beach Destination" };
-
-    return { icon:"📍", highlight:"Custom Location" };
-  }
-
-  function getDistance(a, b){
-    const dx = a.lat - b.lat;
-    const dy = a.lng - b.lng;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-  function sortRouteByNearest(startPoint, places){
-    const remaining = [...places];
-    const ordered = [];
-    let current = startPoint;
-
-    while(remaining.length > 0){
-      let nearestIndex = 0;
-      let nearestDistance = getDistance(current, remaining[0]);
-
-      for(let i = 1; i < remaining.length; i++){
-        const distance = getDistance(current, remaining[i]);
-        if(distance < nearestDistance){
-          nearestDistance = distance;
-          nearestIndex = i;
-        }
-      }
-
-      const nearest = remaining.splice(nearestIndex, 1)[0];
-      ordered.push(nearest);
-      current = nearest;
-    }
-
-    return ordered;
-  }
-
-  function makeLabelMarker(place){
-    const customIcon = L.divIcon({
-      className: "custom-map-label",
-      html: `<span>${place.icon || "📍"}</span> ${place.name}`,
-      iconSize: null,
-      iconAnchor: [20, 18]
-    });
-
-    return L.marker([place.lat, place.lng], { icon: customIcon })
-      .addTo(map)
-      .bindPopup(`<strong>${place.icon || "📍"} ${place.name}</strong><br>${place.highlight || ""}`);
-  }
-
-  function getSelectedPredefinedPlaces(){
-    return Array.from(document.querySelectorAll('.places-grid input:checked')).map(place => ({
-      name: place.value,
-      lat: parseFloat(place.dataset.lat),
-      lng: parseFloat(place.dataset.lng),
-      icon: place.dataset.icon || "📍",
-      highlight: place.dataset.highlight || ""
-    }));
-  }
-
-  function getStartEndPoints(){
-    const pickupRequired = document.getElementById("pickupRequired").value;
-    const dropRequired = document.getElementById("dropRequired").value;
-
-    let startPoint;
-    let endPoint;
-
-    if(pickupRequired === "Yes"){
-      startPoint = getAirportPoint(
-        document.getElementById("pickupAirport").value,
-        "pickup"
-      );
-    }else if(selectedStartLocation){
-      startPoint = {
-        ...selectedStartLocation,
-        icon: "🚩",
-        highlight: "Tour Start"
-      };
-    }else{
-      startPoint = {
-        name: "Tour Start Location",
-        lat: 7.8731,
-        lng: 80.7718,
-        icon: "🚩",
-        highlight: "Please select tour start location"
-      };
-    }
-
-    if(dropRequired === "Yes"){
-      endPoint = getAirportPoint(
-        document.getElementById("dropAirport").value,
-        "drop"
-      );
-    }else if(selectedEndLocation){
-      endPoint = {
-        ...selectedEndLocation,
-        icon: "🏁",
-        highlight: "Tour End"
-      };
-    }else{
-      endPoint = {
-        name: "Tour End Location",
-        lat: 7.8731,
-        lng: 80.7718,
-        icon: "🏁",
-        highlight: "Please select tour end location"
-      };
-    }
-
-    return { startPoint, endPoint };
-  }
-
-  async function getRealRoute(fullRoute){
-    const coordinates = fullRoute.map(place => [place.lng, place.lat]);
-
-    const response = await fetch(
-      "https://ceybreez-contact-api.ceybreez.workers.dev/route",
-      {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body:JSON.stringify({ coordinates })
-      }
-    );
-
-    const result = await response.json();
-
-    if(!response.ok){
-      console.log("ROUTE ERROR RESPONSE:", result);
-      throw new Error("Route request failed");
-    }
-
-    return result;
-  }
-
-  function showRouteSummary(distanceMeters, durationSeconds){
-    const km = distanceMeters / 1000;
-    const hours = Math.floor(durationSeconds / 3600);
-    const minutes = Math.round((durationSeconds % 3600) / 60);
-
-    latestDistance = km.toFixed(1) + " km";
-    latestDuration = hours + " hrs " + minutes + " mins";
-
-    document.getElementById("routeSummary").innerHTML =
-      `Distance: ${latestDistance}<br>Estimated Driving Time: ${latestDuration}`;
-  }
-
-  async function updateMapAndList(){
-    markers.forEach(marker => map.removeLayer(marker));
-    markers = [];
-
-    if(routeLayer){
-      map.removeLayer(routeLayer);
-      routeLayer = null;
-    }
-
-    latestDistance = "";
-    latestDuration = "";
-
-    const selectedList = document.getElementById("selectedPlacesList");
-    selectedList.innerHTML = "";
-
-    const selectedPlaces = [
-      ...getSelectedPredefinedPlaces(),
-      ...otherLocations
-    ];
-
-    if(selectedPlaces.length === 0){
-      selectedList.innerHTML = "<li>No places selected yet.</li>";
-      document.getElementById("routeSummary").innerHTML =
-        "Distance: Not calculated<br>Time: Not calculated";
-      return;
-    }
-
-    document.getElementById("routeSummary").innerHTML =
-      "Distance: Calculating...<br>Time: Calculating...";
-
-    const { startPoint, endPoint } = getStartEndPoints();
-    const orderedPlaces = sortRouteByNearest(startPoint, selectedPlaces);
-    const fullRoute = [startPoint, ...orderedPlaces, endPoint];
-
-    fullRoute.forEach((place, index) => {
-      const labelName =
-        index === 0
-        ? "START - " + place.name
-        : index === fullRoute.length - 1
-        ? "END - " + place.name
-        : place.name;
-
-      const marker = makeLabelMarker({ ...place, name: labelName });
-      markers.push(marker);
-
-      const li = document.createElement("li");
-      li.innerHTML = `<strong>${index + 1}. ${place.icon} ${place.name}</strong>`;
-    });
-
-    try{
-      const routeData = await getRealRoute(fullRoute);
-
-      routeLayer = L.geoJSON(routeData, {
-        style:{
-          color:"#0f766e",
-          weight:6,
-          opacity:0.9
-        }
-      }).addTo(map);
-
-      const summary = routeData.features[0].properties.summary;
-      showRouteSummary(summary.distance, summary.duration);
-
-      map.fitBounds(routeLayer.getBounds().pad(0.15));
-    }catch(error){
-      document.getElementById("routeSummary").innerHTML =
-        "Road route unavailable. Please try another route or location.";
-      console.log(error);
-
-      if(markers.length > 0){
-        const group = L.featureGroup(markers);
-        map.fitBounds(group.getBounds().pad(0.25));
-      }
-    }
-  }
-
-  document.querySelectorAll('.places-grid input').forEach(input => {
-    input.addEventListener("change", updateMapAndList);
-  });
-
-  async function searchLocations(query, suggestionsBoxId, type){
-    const suggestionsBox = document.getElementById(suggestionsBoxId);
-
-    if(query.length < 3){
-      suggestionsBox.innerHTML = "";
-      suggestionsBox.style.display = "none";
-      return;
-    }
-
-    try{
-      const url =
-        "https://photon.komoot.io/api/?q=" +
-        encodeURIComponent(query + " Sri Lanka") +
-        "&limit=5";
-
-      const response = await fetch(url);
-      const data = await response.json();
-
-      suggestionsBox.innerHTML = "";
-
-      const results = data.features.filter(item => {
-        const country = item.properties.country || "";
-        return country.toLowerCase().includes("sri lanka");
-      });
-
-      if(results.length === 0){
-        suggestionsBox.style.display = "none";
-        return;
-      }
-
-      results.forEach(item => {
-        const name = item.properties.name || "Selected Location";
-        const city = item.properties.city || item.properties.state || "";
-        const displayName = city ? `${name}, ${city}` : name;
-        const lng = item.geometry.coordinates[0];
-        const lat = item.geometry.coordinates[1];
-        const visual = guessIconAndHighlight(displayName);
-
-        const div = document.createElement("div");
-        div.className = "suggestion-item";
-        div.innerHTML = `<span>${visual.icon}</span><div><strong>${displayName}</strong><small>${visual.highlight}</small></div>`;
-
-        div.onclick = function(){
-          const selected = {
-            name: displayName,
-            lat,
-            lng,
-            icon: visual.icon,
-            highlight: visual.highlight
-          };
-
-          if(type === "start"){
-            selectedStartLocation = selected;
-            document.getElementById("tourStartLocation").value = displayName;
-          }else if(type === "end"){
-            selectedEndLocation = selected;
-            document.getElementById("tourEndLocation").value = displayName;
-          }else{
-            selectedSuggestion = selected;
-            document.getElementById("otherLocationInput").value = displayName;
-          }
-
-          suggestionsBox.innerHTML = "";
-          suggestionsBox.style.display = "none";
-          updateMapAndList();
-        };
-
-        suggestionsBox.appendChild(div);
-      });
-
-      suggestionsBox.style.display = "block";
-    }catch(error){
-      console.log(error);
-    }
-  }
-
-  let searchTimer;
-  let startTimer;
-  let endTimer;
-
-  document.getElementById("otherLocationInput").addEventListener("input", function(){
-    clearTimeout(searchTimer);
-    const query = this.value.trim();
-
-    searchTimer = setTimeout(() => {
-      searchLocations(query, "locationSuggestions", "other");
-    }, 450);
-  });
-
-  document.getElementById("tourStartLocation").addEventListener("input", function(){
-    clearTimeout(startTimer);
-    selectedStartLocation = null;
-    const query = this.value.trim();
-
-    startTimer = setTimeout(() => {
-      searchLocations(query, "startLocationSuggestions", "start");
-    }, 450);
-  });
-
-  document.getElementById("tourEndLocation").addEventListener("input", function(){
-    clearTimeout(endTimer);
-    selectedEndLocation = null;
-    const query = this.value.trim();
-
-    endTimer = setTimeout(() => {
-      searchLocations(query, "endLocationSuggestions", "end");
-    }, 450);
-  });
-
-  function addSelectedSuggestion(){
-    const input = document.getElementById("otherLocationInput");
-    const value = input.value.trim();
-
-    if(selectedSuggestion && selectedSuggestion.name === value){
-      otherLocations.push(selectedSuggestion);
-    }else{
-      alert("Please type and select a suggested location from the list.");
-      return;
-    }
-
-    const list = document.getElementById("otherLocationList");
-    const li = document.createElement("li");
-    const last = otherLocations[otherLocations.length - 1];
-
-    li.textContent = `${last.icon} ${last.name} - ${last.highlight}`;
-    list.appendChild(li);
-
-    input.value = "";
-    selectedSuggestion = null;
-    updateMapAndList();
-  }
-
-  function calculateDays(){
-    const startDate = document.getElementById("startDate").value;
-    const endDate = document.getElementById("endDate").value;
-    const numberOfDays = document.getElementById("numberOfDays");
-
-    if(startDate && endDate){
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      const diffTime = end - start;
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-      if(diffDays > 0){
-        numberOfDays.value = diffDays + " Days";
-      }else{
-        numberOfDays.value = "Invalid date range";
-      }
-    }
-  }
-
-  document.getElementById("startDate").addEventListener("change", calculateDays);
-  document.getElementById("endDate").addEventListener("change", calculateDays);
-
-  function toggleStartLocation(){
-    const pickupRequired = document.getElementById("pickupRequired").value;
-    document.getElementById("pickupAirportFields").style.display = pickupRequired === "Yes" ? "block" : "none";
-    document.getElementById("tourStartFields").style.display = pickupRequired === "No" ? "block" : "none";
-    updateMapAndList();
-  }
-
-  function toggleEndLocation(){
-    const dropRequired = document.getElementById("dropRequired").value;
-    document.getElementById("dropAirportFields").style.display = dropRequired === "Yes" ? "block" : "none";
-    document.getElementById("tourEndFields").style.display = dropRequired === "No" ? "block" : "none";
-    updateMapAndList();
-  }
-
-  async function sendTripPlan(){
-    const selectedPlaces = getSelectedPredefinedPlaces();
-
-    const startDate = document.getElementById("startDate").value;
-    const endDate = document.getElementById("endDate").value;
-    const days = document.getElementById("numberOfDays").value;
-
-    const guestName = document.getElementById("guestName").value;
-    const guestEmail = document.getElementById("guestEmail").value;
-    const guestMobile = document.getElementById("guestMobile").value;
-    const guestCountry = document.getElementById("guestCountry").value;
-    const guestCount = document.getElementById("guestCount").value;
-
-    const specialNotes = document.getElementById("specialNotes").value;
-
-    const pickupRequired = document.getElementById("pickupRequired").value;
-    const pickupAirport = document.getElementById("pickupAirport").value;
-    const arrivalDate = document.getElementById("arrivalDate").value;
-    const arrivalTime = document.getElementById("arrivalTime").value;
-    const arrivalFlight = document.getElementById("arrivalFlight").value;
-
-    const dropRequired = document.getElementById("dropRequired").value;
-    const dropAirport = document.getElementById("dropAirport").value;
-    const departureDate = document.getElementById("departureDate").value;
-    const departureTime = document.getElementById("departureTime").value;
-    const departureFlight = document.getElementById("departureFlight").value;
-
-    if(!guestName || !guestEmail || !guestMobile || !guestCountry || !guestCount || !startDate || !endDate){
-      alert("Please fill all required guest and travel date details.");
-      return;
-    }
-
-    if(selectedPlaces.length === 0 && otherLocations.length === 0){
-      alert("Please select or add at least one place to visit.");
-      return;
-    }
-
-    const { startPoint, endPoint } = getStartEndPoints();
-    const routeOrder = sortRouteByNearest(startPoint, [...selectedPlaces, ...otherLocations]);
-
-    const selectedText = selectedPlaces.map(place => `${place.icon} ${place.name} - ${place.highlight}`).join("\n");
-    const otherText = otherLocations.map(place => `${place.icon} ${place.name} - ${place.highlight}`).join("\n");
-    const routeText = [startPoint, ...routeOrder, endPoint].map((place, index) => `${index + 1}. ${place.icon} ${place.name}`).join("\n");
-
-    const tripMessage =
-`New CeyBreez Trip Plan Inquiry
-
-1. Airport Pickup / Tour Start:
-Pickup Required: ${pickupRequired}
-Pickup Airport: ${pickupRequired === "Yes" ? pickupAirport : "Not required"}
-Arrival Date: ${pickupRequired === "Yes" ? arrivalDate : "Not required"}
-Arrival Time: ${pickupRequired === "Yes" ? arrivalTime : "Not required"}
-Flight Number: ${pickupRequired === "Yes" ? arrivalFlight : "Not required"}
-Tour Start Location: ${pickupRequired === "No" ? startPoint.name : "Airport pickup"}
-
-2. Places To Visit:
-${selectedText || "Not selected"}
-
-Other Places Added By Guest:
-${otherText || "None"}
-
-3. Road Route Order:
-${routeText}
-
-Route Distance:
-${latestDistance || "Not calculated"}
-
-Estimated Driving Time:
-${latestDuration || "Not calculated"}
-
-4. Airport Drop / Tour End:
-Drop Required: ${dropRequired}
-Drop Airport: ${dropRequired === "Yes" ? dropAirport : "Not required"}
-Departure Date: ${dropRequired === "Yes" ? departureDate : "Not required"}
-Departure Time: ${dropRequired === "Yes" ? departureTime : "Not required"}
-Flight Number: ${dropRequired === "Yes" ? departureFlight : "Not required"}
-Tour End Location: ${dropRequired === "No" ? endPoint.name : "Airport drop"}
-
-5. Travel Dates:
-Start Date: ${startDate}
-End Date: ${endDate}
-Number of Days: ${days}
-
-6. Guest Details:
-Name: ${guestName}
-Email: ${guestEmail}
-Mobile: ${guestMobile}
-Country: ${guestCountry}
-Number of Guests: ${guestCount}
-
-7. Special Notes:
-${specialNotes}`;
-
-    window.open(
-      "https://wa.me/94704620017?text=" + encodeURIComponent(tripMessage),
-      "_blank"
-    );
-
-    const inquiryData = {
-      name: guestName,
-      country: guestCountry,
-      mobile: guestMobile,
-      email: guestEmail,
-      countryCode: "",
-      experiences: "Tours - Trip Planner",
-      dateFrom: startDate,
-      dateTo: endDate,
-      guests: guestCount,
-      message: tripMessage
-    };
-
-    try{
-      const response = await fetch(
-        "https://ceybreez-contact-api.ceybreez.workers.dev",
-        {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify(inquiryData)
-        }
-      );
-
-      if(response.ok){
-        alert("Trip plan inquiry sent successfully!");
-      }else{
-        alert("WhatsApp opened, but email sending failed.");
-      }
-    }catch(error){
-      alert("WhatsApp opened, but email sending failed.");
-      console.log(error);
-    }
-  }
-
-  toggleStartLocation();
-  toggleEndLocation();
-</script>
-
-</body>
-</html>

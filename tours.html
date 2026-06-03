@@ -543,8 +543,7 @@
       markers.push(marker);
 
       const li = document.createElement("li");
-      li.innerHTML = `<strong>${place.icon} ${index + 1}. ${place.name}</strong><br><small>${place.highlight}</small>`;
-      selectedList.appendChild(li);
+      li.innerHTML = `<strong>${index + 1}. ${place.icon} ${place.name}</strong>`;
     });
 
     try{

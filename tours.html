@@ -95,7 +95,7 @@
   <h2>Plan Your Sri Lanka Trip</h2>
 
   <p class="planner-intro">
-    Select the places you want to visit, add your own locations, view them on the map,
+    Select the places you want to visit, add your own locations, view the real road route,
     and send us your inquiry. We will prepare a custom trip plan with price and email it back to you.
   </p>
 
@@ -142,8 +142,14 @@
           <div class="selected-box">
             <h4>Selected Route</h4>
             <p class="route-note">
-              Markers show selected places. The green line is a visual route preview arranged from start point to end point.
+              Real road route is calculated after locations are selected.
             </p>
+
+            <div id="routeSummary" class="route-summary">
+              Distance: Not calculated<br>
+              Time: Not calculated
+            </div>
+
             <ul id="selectedPlacesList">
               <li>No places selected yet.</li>
             </ul>
@@ -191,7 +197,6 @@
               <select id="pickupAirport" onchange="updateMapAndList()">
                 <option value="Bandaranaike International Airport (CMB)">Bandaranaike International Airport (CMB)</option>
                 <option value="Mattala Rajapaksa International Airport (HRI)">Mattala Rajapaksa International Airport (HRI)</option>
-                <option value="Other">Other</option>
               </select>
 
               <label>Arrival Date</label>
@@ -224,7 +229,6 @@
               <select id="dropAirport" onchange="updateMapAndList()">
                 <option value="Bandaranaike International Airport (CMB)">Bandaranaike International Airport (CMB)</option>
                 <option value="Mattala Rajapaksa International Airport (HRI)">Mattala Rajapaksa International Airport (HRI)</option>
-                <option value="Other">Other</option>
               </select>
 
               <label>Departure Date</label>
@@ -250,30 +254,11 @@
         <h3>5. Guest Details</h3>
 
         <div class="form-grid">
-          <div>
-            <label>Your Name</label>
-            <input type="text" id="guestName" placeholder="Your Name" required>
-          </div>
-
-          <div>
-            <label>Email</label>
-            <input type="email" id="guestEmail" placeholder="Email Address" required>
-          </div>
-
-          <div>
-            <label>WhatsApp / Mobile</label>
-            <input type="tel" id="guestMobile" placeholder="Mobile Number" required>
-          </div>
-
-          <div>
-            <label>Country</label>
-            <input type="text" id="guestCountry" placeholder="Your Country" required>
-          </div>
-
-          <div>
-            <label>Number of Guests</label>
-            <input type="number" id="guestCount" min="1" placeholder="Number of Guests" required>
-          </div>
+          <div><label>Your Name</label><input type="text" id="guestName" placeholder="Your Name" required></div>
+          <div><label>Email</label><input type="email" id="guestEmail" placeholder="Email Address" required></div>
+          <div><label>WhatsApp / Mobile</label><input type="tel" id="guestMobile" placeholder="Mobile Number" required></div>
+          <div><label>Country</label><input type="text" id="guestCountry" placeholder="Your Country" required></div>
+          <div><label>Number of Guests</label><input type="number" id="guestCount" min="1" placeholder="Number of Guests" required></div>
         </div>
       </div>
 
@@ -313,28 +298,18 @@
   }).addTo(map);
 
   let markers = [];
-  let routeLine = null;
+  let routeLayer = null;
   let selectedSuggestion = null;
   let otherLocations = [];
+  let latestDistance = "";
+  let latestDuration = "";
 
   function getAirportPoint(airportName){
     if(airportName.includes("Mattala")){
-      return {
-        name:"Mattala Airport",
-        lat:6.2845,
-        lng:81.1241,
-        icon:"✈️",
-        highlight:"Airport"
-      };
+      return { name:"Mattala Airport", lat:6.2845, lng:81.1241, icon:"✈️", highlight:"Airport" };
     }
 
-    return {
-      name:"Bandaranaike Airport",
-      lat:7.1808,
-      lng:79.8841,
-      icon:"✈️",
-      highlight:"Airport"
-    };
+    return { name:"Bandaranaike Airport", lat:7.1808, lng:79.8841, icon:"✈️", highlight:"Airport" };
   }
 
   function getDistance(a, b){
@@ -354,7 +329,6 @@
 
       for(let i = 1; i < remaining.length; i++){
         const distance = getDistance(current, remaining[i]);
-
         if(distance < nearestDistance){
           nearestDistance = distance;
           nearestIndex = i;
@@ -391,18 +365,16 @@
   }
 
   function makeLabelMarker(place){
-    const iconText = place.icon || "📍";
-
     const customIcon = L.divIcon({
       className: "custom-map-label",
-      html: `<span>${iconText}</span> ${place.name}`,
+      html: `<span>${place.icon || "📍"}</span> ${place.name}`,
       iconSize: null,
       iconAnchor: [20, 18]
     });
 
     return L.marker([place.lat, place.lng], { icon: customIcon })
       .addTo(map)
-      .bindPopup(`<strong>${iconText} ${place.name}</strong><br>${place.highlight || ""}`);
+      .bindPopup(`<strong>${place.icon || "📍"} ${place.name}</strong><br>${place.highlight || ""}`);
   }
 
   function getSelectedPredefinedPlaces(){
@@ -426,43 +398,64 @@
       startPoint = getAirportPoint(document.getElementById("pickupAirport").value);
     }else{
       const startName = document.getElementById("tourStartLocation").value.trim();
-      const visual = guessIconAndHighlight(startName);
-
-      startPoint = {
-        name:startName || "Tour Start Location",
-        lat:7.8731,
-        lng:80.7718,
-        icon:"🚩",
-        highlight:startName ? visual.highlight : "Tour Start"
-      };
+      startPoint = { name:startName || "Tour Start Location", lat:7.8731, lng:80.7718, icon:"🚩", highlight:"Tour Start" };
     }
 
     if(dropRequired === "Yes"){
       endPoint = getAirportPoint(document.getElementById("dropAirport").value);
     }else{
       const endName = document.getElementById("tourEndLocation").value.trim();
-      const visual = guessIconAndHighlight(endName);
-
-      endPoint = {
-        name:endName || "Tour End Location",
-        lat:7.8731,
-        lng:80.7718,
-        icon:"🏁",
-        highlight:endName ? visual.highlight : "Tour End"
-      };
+      endPoint = { name:endName || "Tour End Location", lat:7.8731, lng:80.7718, icon:"🏁", highlight:"Tour End" };
     }
 
     return { startPoint, endPoint };
   }
 
-  function updateMapAndList(){
+  async function getRealRoute(fullRoute){
+    const coordinates = fullRoute.map(place => [place.lng, place.lat]);
+
+    const response = await fetch(
+      "https://ceybreez-contact-api.ceybreez.workers.dev/route",
+      {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({ coordinates })
+      }
+    );
+
+    if(!response.ok){
+      throw new Error("Route request failed");
+    }
+
+    return await response.json();
+  }
+
+  function showRouteSummary(distanceMeters, durationSeconds){
+    const km = distanceMeters / 1000;
+    const hours = Math.floor(durationSeconds / 3600);
+    const minutes = Math.round((durationSeconds % 3600) / 60);
+
+    latestDistance = km.toFixed(1) + " km";
+    latestDuration = hours + " hrs " + minutes + " mins";
+
+    document.getElementById("routeSummary").innerHTML =
+      `Distance: ${latestDistance}<br>Estimated Driving Time: ${latestDuration}`;
+  }
+
+  async function updateMapAndList(){
     markers.forEach(marker => map.removeLayer(marker));
     markers = [];
 
-    if(routeLine){
-      map.removeLayer(routeLine);
-      routeLine = null;
+    if(routeLayer){
+      map.removeLayer(routeLayer);
+      routeLayer = null;
     }
+
+    latestDistance = "";
+    latestDuration = "";
+
+    document.getElementById("routeSummary").innerHTML =
+      "Distance: Calculating...<br>Time: Calculating...";
 
     const selectedList = document.getElementById("selectedPlacesList");
     selectedList.innerHTML = "";
@@ -474,17 +467,14 @@
 
     if(selectedPlaces.length === 0){
       selectedList.innerHTML = "<li>No places selected yet.</li>";
+      document.getElementById("routeSummary").innerHTML =
+        "Distance: Not calculated<br>Time: Not calculated";
       return;
     }
 
     const { startPoint, endPoint } = getStartEndPoints();
     const orderedPlaces = sortRouteByNearest(startPoint, selectedPlaces);
-
-    const fullRoute = [
-      startPoint,
-      ...orderedPlaces,
-      endPoint
-    ];
+    const fullRoute = [startPoint, ...orderedPlaces, endPoint];
 
     fullRoute.forEach((place, index) => {
       const labelName =
@@ -494,11 +484,7 @@
         ? "END - " + place.name
         : place.name;
 
-      const marker = makeLabelMarker({
-        ...place,
-        name: labelName
-      });
-
+      const marker = makeLabelMarker({ ...place, name: labelName });
       markers.push(marker);
 
       const li = document.createElement("li");
@@ -506,20 +492,30 @@
       selectedList.appendChild(li);
     });
 
-    if(fullRoute.length > 1){
-      const routePoints = fullRoute.map(place => [place.lat, place.lng]);
+    try{
+      const routeData = await getRealRoute(fullRoute);
 
-      routeLine = L.polyline(routePoints, {
-        color:"#0f766e",
-        weight:5,
-        opacity:0.9,
-        dashArray:"8, 10"
+      routeLayer = L.geoJSON(routeData, {
+        style:{
+          color:"#0f766e",
+          weight:6,
+          opacity:0.9
+        }
       }).addTo(map);
-    }
 
-    if(markers.length > 0){
-      const group = L.featureGroup(markers);
-      map.fitBounds(group.getBounds().pad(0.25));
+      const summary = routeData.features[0].properties.summary;
+      showRouteSummary(summary.distance, summary.duration);
+
+      map.fitBounds(routeLayer.getBounds().pad(0.15));
+    }catch(error){
+      document.getElementById("routeSummary").innerHTML =
+        "Road route unavailable. Please try again.";
+      console.log(error);
+
+      if(markers.length > 0){
+        const group = L.featureGroup(markers);
+        map.fitBounds(group.getBounds().pad(0.25));
+      }
     }
   }
 
@@ -570,14 +566,7 @@
         div.innerHTML = `<span>${visual.icon}</span><div><strong>${displayName}</strong><small>${visual.highlight}</small></div>`;
 
         div.onclick = function(){
-          selectedSuggestion = {
-            name: displayName,
-            lat,
-            lng,
-            icon: visual.icon,
-            highlight: visual.highlight
-          };
-
+          selectedSuggestion = { name: displayName, lat, lng, icon: visual.icon, highlight: visual.highlight };
           document.getElementById("otherLocationInput").value = displayName;
           suggestionsBox.innerHTML = "";
           suggestionsBox.style.display = "none";
@@ -610,17 +599,10 @@
     if(selectedSuggestion && selectedSuggestion.name === value){
       otherLocations.push(selectedSuggestion);
     }else if(value){
-      const visual = guessIconAndHighlight(value);
-
-      otherLocations.push({
-        name: value,
-        lat: 7.8731,
-        lng: 80.7718,
-        icon: visual.icon,
-        highlight: visual.highlight + " (Location added without exact map coordinates)"
-      });
+      alert("Please select a suggested location from the list so we can show it on the map.");
+      return;
     }else{
-      alert("Please type or select a location.");
+      alert("Please type and select a location.");
       return;
     }
 
@@ -660,25 +642,15 @@
 
   function toggleStartLocation(){
     const pickupRequired = document.getElementById("pickupRequired").value;
-
-    document.getElementById("pickupAirportFields").style.display =
-      pickupRequired === "Yes" ? "block" : "none";
-
-    document.getElementById("tourStartFields").style.display =
-      pickupRequired === "No" ? "block" : "none";
-
+    document.getElementById("pickupAirportFields").style.display = pickupRequired === "Yes" ? "block" : "none";
+    document.getElementById("tourStartFields").style.display = pickupRequired === "No" ? "block" : "none";
     updateMapAndList();
   }
 
   function toggleEndLocation(){
     const dropRequired = document.getElementById("dropRequired").value;
-
-    document.getElementById("dropAirportFields").style.display =
-      dropRequired === "Yes" ? "block" : "none";
-
-    document.getElementById("tourEndFields").style.display =
-      dropRequired === "No" ? "block" : "none";
-
+    document.getElementById("dropAirportFields").style.display = dropRequired === "Yes" ? "block" : "none";
+    document.getElementById("tourEndFields").style.display = dropRequired === "No" ? "block" : "none";
     updateMapAndList();
   }
 
@@ -721,11 +693,11 @@
       return;
     }
 
-    const selectedText = selectedPlaces.map(place => `${place.icon} ${place.name} - ${place.highlight}`).join("\n");
-    const otherText = otherLocations.map(place => `${place.icon} ${place.name} - ${place.highlight}`).join("\n");
-
     const { startPoint, endPoint } = getStartEndPoints();
     const routeOrder = sortRouteByNearest(startPoint, [...selectedPlaces, ...otherLocations]);
+
+    const selectedText = selectedPlaces.map(place => `${place.icon} ${place.name} - ${place.highlight}`).join("\n");
+    const otherText = otherLocations.map(place => `${place.icon} ${place.name} - ${place.highlight}`).join("\n");
     const routeText = [startPoint, ...routeOrder, endPoint].map((place, index) => `${index + 1}. ${place.icon} ${place.name}`).join("\n");
 
     const tripMessage =
@@ -737,8 +709,14 @@ ${selectedText || "Not selected"}
 Other Places Added By Guest:
 ${otherText || "None"}
 
-Suggested Visual Route Order:
+Suggested Road Route Order:
 ${routeText}
+
+Route Distance:
+${latestDistance || "Not calculated"}
+
+Estimated Driving Time:
+${latestDuration || "Not calculated"}
 
 2. Travel Dates:
 Start Date: ${startDate}
@@ -771,11 +749,10 @@ Number of Guests: ${guestCount}
 6. Special Notes:
 ${specialNotes}`;
 
-    const whatsappURL =
-      "https://wa.me/94704620017?text=" +
-      encodeURIComponent(tripMessage);
-
-    window.open(whatsappURL, "_blank");
+    window.open(
+      "https://wa.me/94704620017?text=" + encodeURIComponent(tripMessage),
+      "_blank"
+    );
 
     const inquiryData = {
       name: guestName,
@@ -802,14 +779,6 @@ ${specialNotes}`;
 
       if(response.ok){
         alert("Trip plan inquiry sent successfully!");
-        document.getElementById("tripForm").reset();
-        otherLocations = [];
-        selectedSuggestion = null;
-        document.getElementById("otherLocationList").innerHTML = "";
-        document.getElementById("numberOfDays").value = "";
-        toggleStartLocation();
-        toggleEndLocation();
-        updateMapAndList();
       }else{
         alert("WhatsApp opened, but email sending failed.");
       }

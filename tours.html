@@ -16,6 +16,8 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsn_ExVvf3jsQXmosVDRjtp5OKJKMzxYM&libraries=places"></script>
 </head>
 
 <body>
@@ -169,10 +171,7 @@
 
             <div id="tourStartFields" class="hidden-fields">
               <label>Start / Pickup Location</label>
-              <div class="search-location-wrap">
-                <input type="text" id="tourStartLocation" placeholder="Type start location">
-                <div id="startLocationSuggestions" class="location-suggestions"></div>
-              </div>
+              <input type="text" id="tourStartLocation" placeholder="Search hotel, villa, city or place">
             </div>
           </div>
 
@@ -206,10 +205,7 @@
 
             <div id="tourEndFields" class="hidden-fields">
               <label>End / Drop Location</label>
-              <div class="search-location-wrap">
-                <input type="text" id="tourEndLocation" placeholder="Type end location">
-                <div id="endLocationSuggestions" class="location-suggestions"></div>
-              </div>
+              <input type="text" id="tourEndLocation" placeholder="Search hotel, villa, city or place">
             </div>
           </div>
 
@@ -236,10 +232,7 @@
 
         <label class="field-label">Other Place / Stop</label>
 
-        <div class="search-location-wrap">
-          <input type="text" id="otherLocationInput" placeholder="Type a place in Sri Lanka">
-          <div id="locationSuggestions" class="location-suggestions"></div>
-        </div>
+        <input type="text" id="otherLocationInput" placeholder="Search and select a place in Sri Lanka">
 
         <button type="button" class="add-selected-btn" onclick="addSelectedSuggestion()">+ Add Selected Location</button>
 
@@ -397,7 +390,7 @@
     if(text.includes("train") || text.includes("bridge")) return { icon:"🚂", highlight:"Scenic Railway" };
     if(text.includes("beach") || text.includes("bay") || text.includes("trincomalee") || text.includes("nilaveli")) return { icon:"🏖", highlight:"Beach Destination" };
 
-    return { icon:"📍", highlight:"Selected Location" };
+    return { icon:"📍", highlight:"Google Place" };
   }
 
   function getDistance(a, b){
@@ -726,123 +719,81 @@
     input.addEventListener("change", updateMapAndList);
   });
 
-  async function searchLocations(query, suggestionsBoxId, type){
-    const suggestionsBox = document.getElementById(suggestionsBoxId);
+  function initGooglePlaces(){
+    const options = {
+      componentRestrictions: { country: "lk" },
+      fields: ["name", "formatted_address", "geometry"]
+    };
 
-    if(query.length < 3){
-      suggestionsBox.innerHTML = "";
-      suggestionsBox.style.display = "none";
-      return;
-    }
+    const startInput = document.getElementById("tourStartLocation");
+    const endInput = document.getElementById("tourEndLocation");
+    const otherInput = document.getElementById("otherLocationInput");
 
-    try{
-      const url =
-        "https://photon.komoot.io/api/?q=" +
-        encodeURIComponent(query + " Sri Lanka") +
-        "&limit=5";
+    const startAutocomplete = new google.maps.places.Autocomplete(startInput, options);
+    const endAutocomplete = new google.maps.places.Autocomplete(endInput, options);
+    const otherAutocomplete = new google.maps.places.Autocomplete(otherInput, options);
 
-      const response = await fetch(url);
-      const data = await response.json();
+    startAutocomplete.addListener("place_changed", function(){
+      const place = startAutocomplete.getPlace();
 
-      suggestionsBox.innerHTML = "";
+      if(!place.geometry) return;
 
-      const results = data.features.filter(item => {
-        const country = item.properties.country || "";
-        return country.toLowerCase().includes("sri lanka");
-      });
+      const visual = guessIconAndHighlight(place.name || place.formatted_address);
 
-      if(results.length === 0){
-        suggestionsBox.style.display = "none";
-        return;
-      }
+      selectedStartLocation = {
+        name: place.formatted_address || place.name,
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+        icon: "🚩",
+        highlight: visual.highlight
+      };
 
-      results.forEach(item => {
-        const name = item.properties.name || "Selected Location";
-        const city = item.properties.city || item.properties.state || "";
-        const displayName = city ? `${name}, ${city}` : name;
-        const lng = item.geometry.coordinates[0];
-        const lat = item.geometry.coordinates[1];
-        const visual = guessIconAndHighlight(displayName);
+      updateMapAndList();
+    });
 
-        const div = document.createElement("div");
-        div.className = "suggestion-item";
-        div.innerHTML = `<span>${visual.icon}</span><div><strong>${displayName}</strong><small>${visual.highlight}</small></div>`;
+    endAutocomplete.addListener("place_changed", function(){
+      const place = endAutocomplete.getPlace();
 
-        div.onclick = function(){
-          const selected = {
-            name: displayName,
-            lat,
-            lng,
-            icon: visual.icon,
-            highlight: visual.highlight
-          };
+      if(!place.geometry) return;
 
-          if(type === "start"){
-            selectedStartLocation = selected;
-            document.getElementById("tourStartLocation").value = displayName;
-          }else if(type === "end"){
-            selectedEndLocation = selected;
-            document.getElementById("tourEndLocation").value = displayName;
-          }else{
-            selectedSuggestion = selected;
-            document.getElementById("otherLocationInput").value = displayName;
-          }
+      const visual = guessIconAndHighlight(place.name || place.formatted_address);
 
-          suggestionsBox.innerHTML = "";
-          suggestionsBox.style.display = "none";
-          updateMapAndList();
-        };
+      selectedEndLocation = {
+        name: place.formatted_address || place.name,
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+        icon: "🏁",
+        highlight: visual.highlight
+      };
 
-        suggestionsBox.appendChild(div);
-      });
+      updateMapAndList();
+    });
 
-      suggestionsBox.style.display = "block";
-    }catch(error){
-      console.log(error);
-    }
+    otherAutocomplete.addListener("place_changed", function(){
+      const place = otherAutocomplete.getPlace();
+
+      if(!place.geometry) return;
+
+      const visual = guessIconAndHighlight(place.name || place.formatted_address);
+
+      selectedSuggestion = {
+        name: place.formatted_address || place.name,
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+        icon: visual.icon,
+        highlight: visual.highlight
+      };
+    });
   }
-
-  let searchTimer;
-  let startTimer;
-  let endTimer;
-
-  document.getElementById("otherLocationInput").addEventListener("input", function(){
-    clearTimeout(searchTimer);
-    const query = this.value.trim();
-
-    searchTimer = setTimeout(() => {
-      searchLocations(query, "locationSuggestions", "other");
-    }, 450);
-  });
-
-  document.getElementById("tourStartLocation").addEventListener("input", function(){
-    clearTimeout(startTimer);
-    selectedStartLocation = null;
-    const query = this.value.trim();
-
-    startTimer = setTimeout(() => {
-      searchLocations(query, "startLocationSuggestions", "start");
-    }, 450);
-  });
-
-  document.getElementById("tourEndLocation").addEventListener("input", function(){
-    clearTimeout(endTimer);
-    selectedEndLocation = null;
-    const query = this.value.trim();
-
-    endTimer = setTimeout(() => {
-      searchLocations(query, "endLocationSuggestions", "end");
-    }, 450);
-  });
 
   function addSelectedSuggestion(){
     const input = document.getElementById("otherLocationInput");
     const value = input.value.trim();
 
-    if(selectedSuggestion && selectedSuggestion.name === value){
+    if(selectedSuggestion && value){
       otherLocations.push(selectedSuggestion);
     }else{
-      alert("Please type and select a suggested location from the list.");
+      alert("Please search and select a suggested location from the list.");
       return;
     }
 
@@ -992,7 +943,10 @@ ${specialNotes}`;
     }
   }
 
-  updateServiceType();
+  window.addEventListener("load", function(){
+    initGooglePlaces();
+    updateServiceType();
+  });
 </script>
 
 </body>

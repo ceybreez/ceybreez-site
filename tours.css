@@ -909,3 +909,27 @@ nav a:active{
     font-size:30px;
   }
 }
+/* INPUT VISIBILITY FIX */
+
+.planner-section input,
+.planner-section select,
+.planner-section textarea{
+  background:#ffffff !important;
+  color:#111111 !important;
+  border:1px solid rgba(15,118,110,0.18) !important;
+}
+
+.planner-section input::placeholder,
+.planner-section textarea::placeholder{
+  color:#777777 !important;
+  opacity:1;
+}
+
+.planner-section input:focus,
+.planner-section select:focus,
+.planner-section textarea:focus{
+  background:#ffffff !important;
+  color:#111111 !important;
+  border:1px solid #0f766e !important;
+  box-shadow:0 0 0 2px rgba(15,118,110,0.18) !important;
+}

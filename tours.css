@@ -933,11 +933,19 @@ nav a:active{
   border:1px solid #0f766e !important;
   box-shadow:0 0 0 2px rgba(15,118,110,0.18) !important;
 }
+/* GOOGLE PLACE AUTOCOMPLETE FIX */
+
 .google-place-box{
   width:100%;
+  background:#ffffff;
+  border-radius:14px;
+  overflow:visible;
 }
 
 .google-place-box gmp-place-autocomplete{
   width:100%;
   display:block;
+  color-scheme:light;
+  background:#ffffff;
+  border-radius:14px;
 }

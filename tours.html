@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBvopQt4c5PqBnhhd8jNQEPb6HlJ32TvTw&libraries=places"></script>
+  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBvopQt4c5PqBnhhd8jNQEPb6HlJ32TvTw&libraries=places&v=weekly"></script>
 </head>
 
 <body>
@@ -37,20 +37,14 @@
   <div class="hero-content">
     <img src="logo.png" alt="CeyBreez Logo" class="hero-logo">
     <h1>Explore Sri Lanka With CeyBreez</h1>
-    <p>
-      Custom tours, scenic journeys, airport pickup, airport drop,
-      and unforgettable island adventures.
-    </p>
+    <p>Custom tours, scenic journeys, airport pickup, airport drop, and unforgettable island adventures.</p>
     <a href="#tripPlanner" class="hero-btn">Plan My Trip</a>
   </div>
 </section>
 
 <section class="intro">
   <h2>Discover The Island Your Way</h2>
-  <p>
-    From golden beaches and misty mountains to ancient kingdoms and wildlife safaris,
-    CeyBreez creates Sri Lanka tours tailored to your travel style.
-  </p>
+  <p>From golden beaches and misty mountains to ancient kingdoms and wildlife safaris, CeyBreez creates Sri Lanka tours tailored to your travel style.</p>
 </section>
 
 <section class="tour-types">
@@ -99,8 +93,7 @@
   <h2>Plan Your Sri Lanka Trip</h2>
 
   <p class="planner-intro">
-    Choose your service type, select pickup/drop details, places to visit,
-    and send us your inquiry.
+    Choose your service type, select pickup/drop details, places to visit, and send us your inquiry.
   </p>
 
   <div class="planner-box">
@@ -171,7 +164,7 @@
 
             <div id="tourStartFields" class="hidden-fields">
               <label>Start / Pickup Location</label>
-              <input type="text" id="tourStartLocation" placeholder="Search hotel, villa, city or place">
+              <div id="tourStartGoogleBox" class="google-place-box"></div>
             </div>
           </div>
 
@@ -205,7 +198,7 @@
 
             <div id="tourEndFields" class="hidden-fields">
               <label>End / Drop Location</label>
-              <input type="text" id="tourEndLocation" placeholder="Search hotel, villa, city or place">
+              <div id="tourEndGoogleBox" class="google-place-box"></div>
             </div>
           </div>
 
@@ -231,8 +224,7 @@
         </div>
 
         <label class="field-label">Other Place / Stop</label>
-
-        <input type="text" id="otherLocationInput" placeholder="Search and select a place in Sri Lanka">
+        <div id="otherGoogleBox" class="google-place-box"></div>
 
         <button type="button" class="add-selected-btn" onclick="addSelectedSuggestion()">+ Add Selected Location</button>
 
@@ -410,7 +402,6 @@
 
       for(let i = 1; i < remaining.length; i++){
         const distance = getDistance(current, remaining[i]);
-
         if(distance < nearestDistance){
           nearestDistance = distance;
           nearestIndex = i;
@@ -456,49 +447,19 @@
 
     if(serviceType === "Airport Pickup"){
       startPoint = getAirportPoint(document.getElementById("pickupAirport").value, "pickup");
-
-      endPoint = selectedEndLocation || {
-        name: "Drop Location",
-        lat: 7.8731,
-        lng: 80.7718,
-        icon: "🏁",
-        highlight: "Please select drop location"
-      };
-
+      endPoint = selectedEndLocation;
       return { startPoint, endPoint };
     }
 
     if(serviceType === "Airport Drop"){
-      startPoint = selectedStartLocation || {
-        name: "Pickup Location",
-        lat: 7.8731,
-        lng: 80.7718,
-        icon: "🚩",
-        highlight: "Please select pickup location"
-      };
-
+      startPoint = selectedStartLocation;
       endPoint = getAirportPoint(document.getElementById("dropAirport").value, "drop");
-
       return { startPoint, endPoint };
     }
 
     if(serviceType === "One-way Trip With Stops"){
-      startPoint = selectedStartLocation || {
-        name: "Start Location",
-        lat: 7.8731,
-        lng: 80.7718,
-        icon: "🚩",
-        highlight: "Please select start location"
-      };
-
-      endPoint = selectedEndLocation || {
-        name: "End Location",
-        lat: 7.8731,
-        lng: 80.7718,
-        icon: "🏁",
-        highlight: "Please select end location"
-      };
-
+      startPoint = selectedStartLocation;
+      endPoint = selectedEndLocation;
       return { startPoint, endPoint };
     }
 
@@ -508,25 +469,13 @@
     if(pickupRequired === "Yes"){
       startPoint = getAirportPoint(document.getElementById("pickupAirport").value, "pickup");
     }else{
-      startPoint = selectedStartLocation || {
-        name: "Tour Start Location",
-        lat: 7.8731,
-        lng: 80.7718,
-        icon: "🚩",
-        highlight: "Please select tour start location"
-      };
+      startPoint = selectedStartLocation;
     }
 
     if(dropRequired === "Yes"){
       endPoint = getAirportPoint(document.getElementById("dropAirport").value, "drop");
     }else{
-      endPoint = selectedEndLocation || {
-        name: "Tour End Location",
-        lat: 7.8731,
-        lng: 80.7718,
-        icon: "🏁",
-        highlight: "Please select tour end location"
-      };
+      endPoint = selectedEndLocation;
     }
 
     return { startPoint, endPoint };
@@ -587,9 +536,17 @@
     ];
 
     const { startPoint, endPoint } = getStartEndPoints();
+    const serviceType = getServiceType();
+
+    if(!startPoint || !endPoint){
+      document.getElementById("routeSummary").innerHTML =
+        "Distance: Not calculated<br>Time: Not calculated";
+
+      selectedList.innerHTML = "<li>Please select start and end location.</li>";
+      return;
+    }
 
     let middlePlaces = selectedPlaces;
-    const serviceType = getServiceType();
 
     if(serviceType === "Airport Pickup" || serviceType === "Airport Drop"){
       middlePlaces = [];
@@ -635,7 +592,6 @@
     }catch(error){
       document.getElementById("routeSummary").innerHTML =
         "Road route unavailable. Please try another route or location.";
-      console.log(error);
 
       if(markers.length > 0){
         const group = L.featureGroup(markers);
@@ -719,83 +675,84 @@
     input.addEventListener("change", updateMapAndList);
   });
 
-  function initGooglePlaces(){
-    const options = {
-      componentRestrictions: { country: "lk" },
-      fields: ["name", "formatted_address", "geometry"]
-    };
+  async function setupGooglePlaces(){
+    const { PlaceAutocompleteElement } =
+      await google.maps.importLibrary("places");
 
-    const startInput = document.getElementById("tourStartLocation");
-    const endInput = document.getElementById("tourEndLocation");
-    const otherInput = document.getElementById("otherLocationInput");
+    createGooglePlaceBox("tourStartGoogleBox", "start", PlaceAutocompleteElement);
+    createGooglePlaceBox("tourEndGoogleBox", "end", PlaceAutocompleteElement);
+    createGooglePlaceBox("otherGoogleBox", "other", PlaceAutocompleteElement);
+  }
 
-    const startAutocomplete = new google.maps.places.Autocomplete(startInput, options);
-    const endAutocomplete = new google.maps.places.Autocomplete(endInput, options);
-    const otherAutocomplete = new google.maps.places.Autocomplete(otherInput, options);
+  function createGooglePlaceBox(containerId, type, PlaceAutocompleteElement){
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
 
-    startAutocomplete.addListener("place_changed", function(){
-      const place = startAutocomplete.getPlace();
-
-      if(!place.geometry) return;
-
-      const visual = guessIconAndHighlight(place.name || place.formatted_address);
-
-      selectedStartLocation = {
-        name: place.formatted_address || place.name,
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
-        icon: "🚩",
-        highlight: visual.highlight
-      };
-
-      updateMapAndList();
+    const autocomplete = new PlaceAutocompleteElement({
+      componentRestrictions: {
+        country: ["lk"]
+      }
     });
 
-    endAutocomplete.addListener("place_changed", function(){
-      const place = endAutocomplete.getPlace();
+    autocomplete.style.width = "100%";
+    autocomplete.style.display = "block";
 
-      if(!place.geometry) return;
+    container.appendChild(autocomplete);
 
-      const visual = guessIconAndHighlight(place.name || place.formatted_address);
+    autocomplete.addEventListener("gmp-select", async function(event){
+      const placePrediction = event.placePrediction;
+      const place = placePrediction.toPlace();
 
-      selectedEndLocation = {
-        name: place.formatted_address || place.name,
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
-        icon: "🏁",
-        highlight: visual.highlight
-      };
+      await place.fetchFields({
+        fields: ["displayName", "formattedAddress", "location"]
+      });
 
-      updateMapAndList();
-    });
+      const displayName =
+        place.formattedAddress ||
+        place.displayName ||
+        "Selected Location";
 
-    otherAutocomplete.addListener("place_changed", function(){
-      const place = otherAutocomplete.getPlace();
+      const visual = guessIconAndHighlight(displayName);
 
-      if(!place.geometry) return;
-
-      const visual = guessIconAndHighlight(place.name || place.formatted_address);
-
-      selectedSuggestion = {
-        name: place.formatted_address || place.name,
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
+      const selectedPlace = {
+        name: displayName,
+        lat: place.location.lat(),
+        lng: place.location.lng(),
         icon: visual.icon,
         highlight: visual.highlight
       };
+
+      if(type === "start"){
+        selectedStartLocation = {
+          ...selectedPlace,
+          icon: "🚩",
+          highlight: "Tour Start"
+        };
+      }
+
+      if(type === "end"){
+        selectedEndLocation = {
+          ...selectedPlace,
+          icon: "🏁",
+          highlight: "Tour End"
+        };
+      }
+
+      if(type === "other"){
+        selectedSuggestion = selectedPlace;
+      }
+
+      updateMapAndList();
     });
   }
 
   function addSelectedSuggestion(){
-    const input = document.getElementById("otherLocationInput");
-    const value = input.value.trim();
-
-    if(selectedSuggestion && value){
-      otherLocations.push(selectedSuggestion);
-    }else{
-      alert("Please search and select a suggested location from the list.");
+    if(!selectedSuggestion){
+      alert("Please search and select a suggested location first.");
       return;
     }
+
+    otherLocations.push(selectedSuggestion);
 
     const list = document.getElementById("otherLocationList");
     const li = document.createElement("li");
@@ -804,7 +761,6 @@
     li.textContent = `${last.icon} ${last.name}`;
     list.appendChild(li);
 
-    input.value = "";
     selectedSuggestion = null;
     updateMapAndList();
   }
@@ -852,6 +808,12 @@
     }
 
     const { startPoint, endPoint } = getStartEndPoints();
+
+    if(!startPoint || !endPoint){
+      alert("Please select start and end location.");
+      return;
+    }
+
     const routeOrder = sortRouteByNearest(startPoint, [...selectedPlaces, ...otherLocations]);
 
     const selectedText = selectedPlaces.map(place => `${place.icon} ${place.name}`).join("\n");
@@ -943,8 +905,8 @@ ${specialNotes}`;
     }
   }
 
-  window.addEventListener("load", function(){
-    initGooglePlaces();
+  window.addEventListener("load", async function(){
+    await setupGooglePlaces();
     updateServiceType();
   });
 </script>

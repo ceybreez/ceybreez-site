@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 
-  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBvopQt4c5PqBnhhd8jNQEPb6HlJ32TvTw&libraries=places&v=weekly"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBvopQt4c5PqBnhhd8jNQEPb6HlJ32TvTw&libraries=places&v=beta&loading=async"></script>
 </head>
 
 <body>
@@ -685,66 +685,77 @@
   }
 
   function createGooglePlaceBox(containerId, type, PlaceAutocompleteElement){
-    const container = document.getElementById(containerId);
-    container.innerHTML = "";
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
 
-    const autocomplete = new PlaceAutocompleteElement({
-      componentRestrictions: {
-        country: ["lk"]
-      }
-    });
+  const autocomplete = new PlaceAutocompleteElement();
 
-    autocomplete.style.width = "100%";
-    autocomplete.style.display = "block";
+  autocomplete.includedRegionCodes = ["lk"];
 
-    container.appendChild(autocomplete);
-
-    autocomplete.addEventListener("gmp-select", async function(event){
-      const placePrediction = event.placePrediction;
-      const place = placePrediction.toPlace();
-
-      await place.fetchFields({
-        fields: ["displayName", "formattedAddress", "location"]
-      });
-
-      const displayName =
-        place.formattedAddress ||
-        place.displayName ||
-        "Selected Location";
-
-      const visual = guessIconAndHighlight(displayName);
-
-      const selectedPlace = {
-        name: displayName,
-        lat: place.location.lat(),
-        lng: place.location.lng(),
-        icon: visual.icon,
-        highlight: visual.highlight
-      };
-
-      if(type === "start"){
-        selectedStartLocation = {
-          ...selectedPlace,
-          icon: "🚩",
-          highlight: "Tour Start"
-        };
-      }
-
-      if(type === "end"){
-        selectedEndLocation = {
-          ...selectedPlace,
-          icon: "🏁",
-          highlight: "Tour End"
-        };
-      }
-
-      if(type === "other"){
-        selectedSuggestion = selectedPlace;
-      }
-
-      updateMapAndList();
-    });
+  if(type === "start"){
+    autocomplete.placeholder = "Search pickup / start location";
   }
+
+  if(type === "end"){
+    autocomplete.placeholder = "Search drop / end location";
+  }
+
+  if(type === "other"){
+    autocomplete.placeholder = "Search place or stop";
+  }
+
+  autocomplete.style.width = "100%";
+  autocomplete.style.display = "block";
+  autocomplete.style.colorScheme = "light";
+
+  container.appendChild(autocomplete);
+
+  autocomplete.addEventListener("gmp-select", async function(event){
+    const placePrediction = event.placePrediction;
+    const place = placePrediction.toPlace();
+
+    await place.fetchFields({
+      fields: ["displayName", "formattedAddress", "location"]
+    });
+
+    const displayName =
+      place.formattedAddress ||
+      place.displayName ||
+      "Selected Location";
+
+    const visual = guessIconAndHighlight(displayName);
+
+    const selectedPlace = {
+      name: displayName,
+      lat: place.location.lat(),
+      lng: place.location.lng(),
+      icon: visual.icon,
+      highlight: visual.highlight
+    };
+
+    if(type === "start"){
+      selectedStartLocation = {
+        ...selectedPlace,
+        icon: "🚩",
+        highlight: "Tour Start"
+      };
+    }
+
+    if(type === "end"){
+      selectedEndLocation = {
+        ...selectedPlace,
+        icon: "🏁",
+        highlight: "Tour End"
+      };
+    }
+
+    if(type === "other"){
+      selectedSuggestion = selectedPlace;
+    }
+
+    updateMapAndList();
+  });
+}
 
   function addSelectedSuggestion(){
     if(!selectedSuggestion){

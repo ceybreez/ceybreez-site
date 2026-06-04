@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>CeyBreez Tours | Explore Sri Lanka</title>
-  <meta name="description" content="Plan your Sri Lanka tour with CeyBreez. Select destinations, pickup/drop details, airport transfers, route map and send your travel inquiry.">
+  <meta name="description" content="Plan your Sri Lanka tour with CeyBreez. Airport transfers, round tours, one-way trips, route map and custom travel inquiry.">
 
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="stylesheet" href="tours.css">
@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBvopQt4c5PqBnhhd8jNQEPb6HlJ32TvTw&libraries=places&v=beta&loading=async"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY_HERE&libraries=places&v=beta&loading=async"></script>
 </head>
 
 <body>
@@ -36,8 +36,8 @@
 <section class="tour-hero">
   <div class="hero-content">
     <img src="logo.png" alt="CeyBreez Logo" class="hero-logo">
-    <h1>Explore Sri Lanka With CeyBreez</h1>
-    <p>Custom tours, scenic journeys, airport pickup, airport drop, and unforgettable island adventures.</p>
+    <h1>Plan A Custom Sri Lanka Journey</h1>
+    <p>Airport Transfers • Round Tours • One-way Trips • Private Drivers • Tailor-made Island Experiences</p>
     <a href="#tripPlanner" class="hero-btn">Plan My Trip</a>
   </div>
 </section>
@@ -96,7 +96,22 @@
     Choose your service type, select pickup/drop details, places to visit, and send us your inquiry.
   </p>
 
+  <div class="trust-badges">
+    <span>🚗 Private Tours</span>
+    <span>✈️ Airport Transfers</span>
+    <span>📍 Custom Routes</span>
+    <span>💬 Local Support</span>
+  </div>
+
   <div class="planner-box">
+
+    <div class="step-indicator">
+      <span>1 Service</span>
+      <span>2 Route</span>
+      <span>3 Dates</span>
+      <span>4 Guest Details</span>
+    </div>
+
     <form id="tripForm">
 
       <div class="planner-section">
@@ -227,7 +242,6 @@
         <div id="otherGoogleBox" class="google-place-box"></div>
 
         <button type="button" class="add-selected-btn" onclick="addSelectedSuggestion()">+ Add Selected Location</button>
-
         <ul id="otherLocationList" class="other-location-list"></ul>
       </div>
 
@@ -238,11 +252,19 @@
           <div id="tripMap"></div>
 
           <div class="selected-box">
-            <h4>Selected Route</h4>
+            <h4>Route Summary</h4>
 
             <div id="routeSummary" class="route-summary">
               Distance: Not calculated<br>
               Time: Not calculated
+            </div>
+
+            <div id="vehicleSuggestion" class="vehicle-suggestion">
+              🚗 Vehicle: Add guest count
+            </div>
+
+            <div id="routeDetails" class="route-details">
+              <p>Please select start and end location.</p>
             </div>
 
             <ul id="selectedPlacesList">
@@ -281,7 +303,7 @@
           <div><label>Email</label><input type="email" id="guestEmail" required></div>
           <div><label>WhatsApp / Mobile</label><input type="tel" id="guestMobile" required></div>
           <div><label>Country</label><input type="text" id="guestCountry" required></div>
-          <div><label>Number of Guests</label><input type="number" id="guestCount" min="1" required></div>
+          <div><label>Number of Guests</label><input type="number" id="guestCount" min="1" required oninput="updateVehicleSuggestion()"></div>
         </div>
       </div>
 
@@ -306,6 +328,20 @@
   <p>© 2026 CeyBreez. All rights reserved.</p>
 </footer>
 
+<div id="thankYouModal" class="thankyou-modal">
+  <div class="thankyou-card">
+    <button onclick="closeThankYouModal()" class="thankyou-close">×</button>
+    <div class="thankyou-icon">✅</div>
+    <h2>Inquiry Sent Successfully</h2>
+    <p>Thank you for choosing CeyBreez. We have received your travel inquiry.</p>
+    <div class="thankyou-ref">
+      Reference No:<br>
+      <strong id="thankYouReference">CB-000000</strong>
+    </div>
+    <p class="thankyou-small">Our team will contact you shortly with a custom plan and pricing.</p>
+  </div>
+</div>
+
 <a href="https://wa.me/94704620017" class="floating-whatsapp" target="_blank" aria-label="Chat on WhatsApp">
   <i class="fa-brands fa-whatsapp"></i>
 </a>
@@ -329,6 +365,7 @@
 
   let latestDistance = "";
   let latestDuration = "";
+  let latestRouteText = "";
 
   function getServiceType(){
     return document.querySelector('input[name="serviceType"]:checked').value;
@@ -441,7 +478,6 @@
 
   function getStartEndPoints(){
     const serviceType = getServiceType();
-
     let startPoint;
     let endPoint;
 
@@ -466,17 +502,13 @@
     const pickupRequired = document.getElementById("pickupRequired").value;
     const dropRequired = document.getElementById("dropRequired").value;
 
-    if(pickupRequired === "Yes"){
-      startPoint = getAirportPoint(document.getElementById("pickupAirport").value, "pickup");
-    }else{
-      startPoint = selectedStartLocation;
-    }
+    startPoint = pickupRequired === "Yes"
+      ? getAirportPoint(document.getElementById("pickupAirport").value, "pickup")
+      : selectedStartLocation;
 
-    if(dropRequired === "Yes"){
-      endPoint = getAirportPoint(document.getElementById("dropAirport").value, "drop");
-    }else{
-      endPoint = selectedEndLocation;
-    }
+    endPoint = dropRequired === "Yes"
+      ? getAirportPoint(document.getElementById("dropAirport").value, "drop")
+      : selectedEndLocation;
 
     return { startPoint, endPoint };
   }
@@ -512,7 +544,42 @@
     latestDuration = hours + " hrs " + minutes + " mins";
 
     document.getElementById("routeSummary").innerHTML =
-      `Distance: ${latestDistance}<br>Estimated Driving Time: ${latestDuration}`;
+      `🚗 Distance: ${latestDistance}<br>⏱ Estimated Driving Time: ${latestDuration}`;
+  }
+
+  function updateRouteDetails(fullRoute){
+    if(!fullRoute || fullRoute.length < 2){
+      document.getElementById("routeDetails").innerHTML = "<p>Please select start and end location.</p>";
+      return;
+    }
+
+    const start = fullRoute[0];
+    const end = fullRoute[fullRoute.length - 1];
+    const stops = fullRoute.slice(1, fullRoute.length - 1);
+
+    latestRouteText = fullRoute.map((place, index) => `${index + 1}. ${place.icon} ${place.name}`).join("\n");
+
+    let stopsHtml = stops.length
+      ? stops.map(place => `<li>${place.icon} ${place.name}</li>`).join("")
+      : "<li>No stops selected</li>";
+
+    document.getElementById("routeDetails").innerHTML = `
+      <div class="summary-row"><strong>🚩 Start</strong><span>${start.name}</span></div>
+      <div class="summary-row"><strong>📍 Stops</strong><ul>${stopsHtml}</ul></div>
+      <div class="summary-row"><strong>🏁 End</strong><span>${end.name}</span></div>
+    `;
+  }
+
+  function updateVehicleSuggestion(){
+    const count = parseInt(document.getElementById("guestCount").value || "0", 10);
+    let vehicle = "Add guest count";
+
+    if(count > 0 && count <= 3) vehicle = "Sedan Car";
+    if(count >= 4 && count <= 7) vehicle = "Private Van";
+    if(count >= 8 && count <= 15) vehicle = "Mini Coach";
+    if(count >= 16) vehicle = "Coach / Large Vehicle";
+
+    document.getElementById("vehicleSuggestion").innerHTML = `🚘 Suggested Vehicle: <strong>${vehicle}</strong>`;
   }
 
   async function updateMapAndList(){
@@ -541,8 +608,9 @@
     if(!startPoint || !endPoint){
       document.getElementById("routeSummary").innerHTML =
         "Distance: Not calculated<br>Time: Not calculated";
-
-      selectedList.innerHTML = "<li>Please select start and end location.</li>";
+      document.getElementById("routeDetails").innerHTML =
+        "<p>Please select start and end location.</p>";
+      selectedList.innerHTML = "<li>No route selected yet.</li>";
       return;
     }
 
@@ -554,6 +622,8 @@
 
     const orderedPlaces = sortRouteByNearest(startPoint, middlePlaces);
     const fullRoute = [startPoint, ...orderedPlaces, endPoint];
+
+    updateRouteDetails(fullRoute);
 
     fullRoute.forEach((place, index) => {
       const labelName =
@@ -676,8 +746,7 @@
   });
 
   async function setupGooglePlaces(){
-    const { PlaceAutocompleteElement } =
-      await google.maps.importLibrary("places");
+    const { PlaceAutocompleteElement } = await google.maps.importLibrary("places");
 
     createGooglePlaceBox("tourStartGoogleBox", "start", PlaceAutocompleteElement);
     createGooglePlaceBox("tourEndGoogleBox", "end", PlaceAutocompleteElement);
@@ -685,77 +754,69 @@
   }
 
   function createGooglePlaceBox(containerId, type, PlaceAutocompleteElement){
-  const container = document.getElementById(containerId);
-  container.innerHTML = "";
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
 
-  const autocomplete = new PlaceAutocompleteElement();
+    const autocomplete = new PlaceAutocompleteElement();
 
-  autocomplete.includedRegionCodes = ["lk"];
+    autocomplete.includedRegionCodes = ["lk"];
 
-  if(type === "start"){
-    autocomplete.placeholder = "Search pickup / start location";
-  }
+    if(type === "start") autocomplete.placeholder = "Search pickup / start location";
+    if(type === "end") autocomplete.placeholder = "Search drop / end location";
+    if(type === "other") autocomplete.placeholder = "Search place or stop";
 
-  if(type === "end"){
-    autocomplete.placeholder = "Search drop / end location";
-  }
+    autocomplete.style.width = "100%";
+    autocomplete.style.display = "block";
+    autocomplete.style.colorScheme = "light";
 
-  if(type === "other"){
-    autocomplete.placeholder = "Search place or stop";
-  }
+    container.appendChild(autocomplete);
 
-  autocomplete.style.width = "100%";
-  autocomplete.style.display = "block";
-  autocomplete.style.colorScheme = "light";
+    autocomplete.addEventListener("gmp-select", async function(event){
+      const placePrediction = event.placePrediction;
+      const place = placePrediction.toPlace();
 
-  container.appendChild(autocomplete);
+      await place.fetchFields({
+        fields: ["displayName", "formattedAddress", "location"]
+      });
 
-  autocomplete.addEventListener("gmp-select", async function(event){
-    const placePrediction = event.placePrediction;
-    const place = placePrediction.toPlace();
+      const displayName =
+        place.formattedAddress ||
+        place.displayName ||
+        "Selected Location";
 
-    await place.fetchFields({
-      fields: ["displayName", "formattedAddress", "location"]
+      const visual = guessIconAndHighlight(displayName);
+
+      const selectedPlace = {
+        name: displayName,
+        lat: place.location.lat(),
+        lng: place.location.lng(),
+        icon: visual.icon,
+        highlight: visual.highlight
+      };
+
+      if(type === "start"){
+        selectedStartLocation = {
+          ...selectedPlace,
+          icon: "🚩",
+          highlight: "Tour Start"
+        };
+      }
+
+      if(type === "end"){
+        selectedEndLocation = {
+          ...selectedPlace,
+          icon: "🏁",
+          highlight: "Tour End"
+        };
+      }
+
+      if(type === "other"){
+        selectedSuggestion = selectedPlace;
+      }
+
+      updateMapAndList();
     });
-
-    const displayName =
-      place.formattedAddress ||
-      place.displayName ||
-      "Selected Location";
-
-    const visual = guessIconAndHighlight(displayName);
-
-    const selectedPlace = {
-      name: displayName,
-      lat: place.location.lat(),
-      lng: place.location.lng(),
-      icon: visual.icon,
-      highlight: visual.highlight
-    };
-
-    if(type === "start"){
-      selectedStartLocation = {
-        ...selectedPlace,
-        icon: "🚩",
-        highlight: "Tour Start"
-      };
-    }
-
-    if(type === "end"){
-      selectedEndLocation = {
-        ...selectedPlace,
-        icon: "🏁",
-        highlight: "Tour End"
-      };
-    }
-
-    if(type === "other"){
-      selectedSuggestion = selectedPlace;
-    }
-
-    updateMapAndList();
-  });
-}
+  }
 
   function addSelectedSuggestion(){
     if(!selectedSuggestion){
@@ -852,6 +913,9 @@ ${latestDistance || "Not calculated"}
 Estimated Driving Time:
 ${latestDuration || "Not calculated"}
 
+Suggested Vehicle:
+${document.getElementById("vehicleSuggestion").innerText}
+
 Travel Dates:
 ${startDate || "Not provided"} to ${endDate || "Not provided"}
 Days: ${days || "Not calculated"}
@@ -905,8 +969,10 @@ ${specialNotes}`;
         }
       );
 
+      const result = await response.json();
+
       if(response.ok){
-        alert("Inquiry sent successfully!");
+        showThankYouModal(result.reference || "CB-000000");
       }else{
         alert("WhatsApp opened, but email sending failed.");
       }
@@ -916,8 +982,18 @@ ${specialNotes}`;
     }
   }
 
+  function showThankYouModal(reference){
+    document.getElementById("thankYouReference").textContent = reference;
+    document.getElementById("thankYouModal").style.display = "flex";
+  }
+
+  function closeThankYouModal(){
+    document.getElementById("thankYouModal").style.display = "none";
+  }
+
   window.addEventListener("load", async function(){
     await setupGooglePlaces();
+    updateVehicleSuggestion();
     updateServiceType();
   });
 </script>

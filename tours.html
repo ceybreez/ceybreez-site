@@ -1004,7 +1004,156 @@ ${specialNotes}`;
   function closeThankYouModal(){
     document.getElementById("thankYouModal").style.display = "none";
   }
+/* ===== DESTINATION DETAILS ===== */
 
+let destinationMiniMap = null;
+let destinationMiniMarker = null;
+let selectedDestinationKey = null;
+
+const destinationData = {
+  sigiriya:{
+    name:"Sigiriya",
+    lat:7.957650,
+    lng:80.751209,
+    description:"Sigiriya is one of Sri Lanka’s most iconic heritage sites, famous for its ancient rock fortress, royal gardens and panoramic views.",
+    bestFor:"History, Culture, Viewpoints",
+    time:"Half Day",
+    nearby:"Dambulla, Kandy",
+    checkbox:"Sigiriya"
+  },
+
+  ella:{
+    name:"Ella",
+    lat:6.873068,
+    lng:81.049114,
+    description:"Ella is famous for tea estates, Nine Arch Bridge, waterfalls and mountain scenery.",
+    bestFor:"Nature, Hiking, Train Views",
+    time:"1-2 Days",
+    nearby:"Nine Arch Bridge, Nuwara Eliya",
+    checkbox:"Ella"
+  },
+
+  kandy:{
+    name:"Kandy",
+    lat:7.293276,
+    lng:80.638779,
+    description:"Kandy is Sri Lanka’s cultural capital and home of the Temple of the Tooth.",
+    bestFor:"Culture, Temples, City Stay",
+    time:"1 Day",
+    nearby:"Peradeniya, Nuwara Eliya",
+    checkbox:"Kandy"
+  },
+
+  nuwara:{
+    name:"Nuwara Eliya",
+    lat:6.957393,
+    lng:80.775928,
+    description:"Cool climate, tea plantations and beautiful hill country scenery.",
+    bestFor:"Tea Country, Relaxation",
+    time:"1 Day",
+    nearby:"Ella, Horton Plains",
+    checkbox:"Nuwara Eliya"
+  },
+
+  yala:{
+    name:"Yala National Park",
+    lat:6.279202,
+    lng:81.402162,
+    description:"One of Sri Lanka’s best safari parks for leopards, elephants and wildlife.",
+    bestFor:"Safari, Wildlife",
+    time:"Half Day Safari",
+    nearby:"Tissamaharama",
+    checkbox:"Yala National Park"
+  },
+
+  galle:{
+    name:"Galle Fort",
+    lat:6.029502,
+    lng:80.215012,
+    description:"Historic colonial fort city with cafes, museums and ocean views.",
+    bestFor:"History, Walking Tours",
+    time:"Half Day",
+    nearby:"Hikkaduwa, Mirissa",
+    checkbox:"Galle Fort"
+  }
+};
+
+function showDestination(key){
+selectedDestinationKey = key;
+const item = destinationData[key];
+ document.getElementById("destinationDetail").style.display = "block";
+document.getElementById("destTitle").textContent = item.name;
+  document.getElementById("destDescription").textContent = item.description;
+  document.getElementById("destBestFor").textContent = item.bestFor;
+  document.getElementById("destTime").textContent = item.time;
+  document.getElementById("destNearby").textContent = item.nearby;
+
+  setTimeout(() => {
+
+    if(!destinationMiniMap){
+ destinationMiniMap = L.map("destinationMiniMap").setView(
+        [item.lat, item.lng],
+        12
+      );
+
+      L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          attribution:"© OpenStreetMap"
+        }
+      ).addTo(destinationMiniMap);
+    }
+
+    destinationMiniMap.setView(
+      [item.lat, item.lng],
+      12
+    );
+
+    if(destinationMiniMarker){
+      destinationMiniMap.removeLayer(destinationMiniMarker);
+    }
+
+    destinationMiniMarker = L.marker(
+      [item.lat, item.lng]
+    ).addTo(destinationMiniMap);
+
+    destinationMiniMarker
+      .bindPopup(item.name)
+      .openPopup();
+
+    destinationMiniMap.invalidateSize();
+
+  },150);
+
+  document.getElementById("destinationDetail")
+    .scrollIntoView({
+      behavior:"smooth",
+      block:"center"
+    });
+}
+
+function addDestinationToPlanner(){
+if(!selectedDestinationKey) return;
+const item = destinationData[selectedDestinationKey];
+const checkbox = Array.from(
+    document.querySelectorAll(".places-grid input")
+  ).find(
+    input => input.value === item.checkbox
+  );
+
+  if(checkbox){
+
+    checkbox.checked = true;
+updateMapAndList();
+document.getElementById("tripPlanner")
+      .scrollIntoView({
+        behavior:"smooth"
+      });
+  }
+}
+
+/* ===== END DESTINATION DETAILS ===== */
+  
   window.addEventListener("load", async function(){
     await setupGooglePlaces();
     updateVehicleSuggestion();

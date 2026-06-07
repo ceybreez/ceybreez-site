@@ -62,34 +62,79 @@
 
 <section class="destinations">
   <h2>Featured Destinations</h2>
-  <p class="destination-intro">Click a destination to view details, map location, travel style and recommended time.</p>
+  <p class="destination-intro">
+    Explore Sri Lanka by province. Click a place to view details, photos and map, then add it to your trip plan.
+  </p>
 
-  <div class="destination-grid">
-    <div class="destination-card" onclick="showDestination('sigiriya')"><img src="images/sigiriya.jpg"><h3>Sigiriya</h3><p>Ancient rock fortress and heritage site.</p></div>
-    <div class="destination-card" onclick="showDestination('ella')"><img src="images/ella.jpg"><h3>Ella</h3><p>Mountains, waterfalls and viewpoints.</p></div>
-    <div class="destination-card" onclick="showDestination('kandy')"><img src="images/kandy.jpg"><h3>Kandy</h3><p>Culture, temples and tradition.</p></div>
-    <div class="destination-card" onclick="showDestination('nuwara')"><img src="images/nuwara-eliya.jpg"><h3>Nuwara Eliya</h3><p>Tea country and cool climate.</p></div>
-    <div class="destination-card" onclick="showDestination('yala')"><img src="images/yala.jpg"><h3>Yala</h3><p>Wildlife safari and leopards.</p></div>
-    <div class="destination-card" onclick="showDestination('galle')"><img src="images/galle.jpg"><h3>Galle Fort</h3><p>Colonial streets and ocean views.</p></div>
-  </div>
+  <div class="province-grid">
 
-  <div id="destinationDetail" class="destination-detail">
-    <div class="destination-detail-content">
-      <div>
-        <h3 id="destTitle">Sigiriya</h3>
-        <p id="destDescription"></p>
-
-        <div class="dest-info-grid">
-          <div><strong>Best For</strong><span id="destBestFor"></span></div>
-          <div><strong>Time Needed</strong><span id="destTime"></span></div>
-          <div><strong>Nearby</strong><span id="destNearby"></span></div>
-        </div>
-
-        <button type="button" class="add-selected-btn" onclick="addDestinationToPlanner()">+ Add To Trip Planner</button>
-      </div>
-
-      <div id="destinationMiniMap"></div>
+    <div class="province-card">
+      <h3>Western Province</h3>
+      <button onclick="openLocationModal('colombo')">Colombo</button>
+      <button onclick="openLocationModal('negombo')">Negombo</button>
+      <button onclick="openLocationModal('kalutara')">Kalutara</button>
     </div>
+
+    <div class="province-card">
+      <h3>Central Province</h3>
+      <button onclick="openLocationModal('kandy')">Kandy</button>
+      <button onclick="openLocationModal('nuwaraEliya')">Nuwara Eliya</button>
+      <button onclick="openLocationModal('ramboda')">Ramboda</button>
+    </div>
+
+    <div class="province-card">
+      <h3>Southern Province</h3>
+      <button onclick="openLocationModal('galleFort')">Galle Fort</button>
+      <button onclick="openLocationModal('hikkaduwa')">Hikkaduwa</button>
+      <button onclick="openLocationModal('mirissa')">Mirissa</button>
+      <button onclick="openLocationModal('unawatuna')">Unawatuna</button>
+    </div>
+
+    <div class="province-card">
+      <h3>North Central Province</h3>
+      <button onclick="openLocationModal('sigiriya')">Sigiriya</button>
+      <button onclick="openLocationModal('dambulla')">Dambulla Cave Temple</button>
+      <button onclick="openLocationModal('polonnaruwa')">Polonnaruwa</button>
+      <button onclick="openLocationModal('minneriya')">Minneriya</button>
+    </div>
+
+    <div class="province-card">
+      <h3>Eastern Province</h3>
+      <button onclick="openLocationModal('trincomalee')">Trincomalee</button>
+      <button onclick="openLocationModal('nilaveli')">Nilaveli</button>
+      <button onclick="openLocationModal('pasikudah')">Pasikudah</button>
+      <button onclick="openLocationModal('arugamBay')">Arugam Bay</button>
+    </div>
+
+    <div class="province-card">
+      <h3>Uva Province</h3>
+      <button onclick="openLocationModal('ella')">Ella</button>
+      <button onclick="openLocationModal('nineArch')">Nine Arch Bridge</button>
+      <button onclick="openLocationModal('diyaluma')">Diyaluma Falls</button>
+      <button onclick="openLocationModal('liptonSeat')">Lipton’s Seat</button>
+    </div>
+
+    <div class="province-card">
+      <h3>Northern Province</h3>
+      <button onclick="openLocationModal('jaffna')">Jaffna</button>
+      <button onclick="openLocationModal('nallur')">Nallur Temple</button>
+      <button onclick="openLocationModal('casuarina')">Casuarina Beach</button>
+    </div>
+
+    <div class="province-card">
+      <h3>Sabaragamuwa Province</h3>
+      <button onclick="openLocationModal('pinnawala')">Pinnawala</button>
+      <button onclick="openLocationModal('kitulgala')">Kitulgala</button>
+      <button onclick="openLocationModal('adamsPeak')">Adam’s Peak</button>
+    </div>
+
+    <div class="province-card">
+      <h3>North Western Province</h3>
+      <button onclick="openLocationModal('wilpattu')">Wilpattu</button>
+      <button onclick="openLocationModal('chilaw')">Chilaw</button>
+      <button onclick="openLocationModal('anawilundawa')">Anawilundawa</button>
+    </div>
+
   </div>
 </section>
 
@@ -237,20 +282,25 @@
       <div class="planner-section" id="placesSection">
         <h3>3. Places / Stops To Visit</h3>
 
-        <div class="places-grid">
-          <label><input type="checkbox" value="Sigiriya" data-lat="7.957650" data-lng="80.751209" data-icon="🏰" data-highlight="Heritage Rock Fortress"> Sigiriya</label>
-          <label><input type="checkbox" value="Ella" data-lat="6.873068" data-lng="81.049114" data-icon="⛰" data-highlight="Hill Country & Waterfalls"> Ella</label>
-          <label><input type="checkbox" value="Kandy" data-lat="7.293276" data-lng="80.638779" data-icon="🛕" data-highlight="Culture & Temple"> Kandy</label>
-          <label><input type="checkbox" value="Nuwara Eliya" data-lat="6.957393" data-lng="80.775928" data-icon="🍃" data-highlight="Tea Country"> Nuwara Eliya</label>
-          <label><input type="checkbox" value="Yala National Park" data-lat="6.279202" data-lng="81.402162" data-icon="🐆" data-highlight="Wildlife Safari"> Yala National Park</label>
-          <label><input type="checkbox" value="Udawalawe National Park" data-lat="6.438522" data-lng="80.888620" data-icon="🐘" data-highlight="Elephant Safari"> Udawalawe National Park</label>
-          <label><input type="checkbox" value="Galle Fort" data-lat="6.029502" data-lng="80.215012" data-icon="🏛" data-highlight="Colonial Heritage"> Galle Fort</label>
-          <label><input type="checkbox" value="Mirissa" data-lat="5.944642" data-lng="80.460628" data-icon="🏄" data-highlight="Surfing & Beach"> Mirissa</label>
-          <label><input type="checkbox" value="Hikkaduwa" data-lat="6.140468" data-lng="80.099841" data-icon="🐠" data-highlight="Snorkeling & Coral Reef"> Hikkaduwa</label>
-          <label><input type="checkbox" value="Bentota" data-lat="6.425460" data-lng="79.997683" data-icon="🌊" data-highlight="Beach & River Safari"> Bentota</label>
-          <label><input type="checkbox" value="Nine Arch Bridge" data-lat="6.877257" data-lng="81.063007" data-icon="🚂" data-highlight="Scenic Railway"> Nine Arch Bridge</label>
-          <label><input type="checkbox" value="Dambulla Cave Temple" data-lat="7.857268" data-lng="80.652199" data-icon="🛕" data-highlight="Cave Temple"> Dambulla Cave Temple</label>
-        </div>
+       <div class="planner-section" id="placesSection">
+  <h3>3. Places / Stops To Visit</h3>
+
+  <div class="selected-destination-list">
+    <h4>Selected Places From Featured Destinations</h4>
+    <ul id="provinceSelectedList">
+      <li>No places added yet.</li>
+    </ul>
+  </div>
+
+  <label class="field-label">Other Place / Stop</label>
+  <div id="otherGoogleBox" class="google-place-box"></div>
+
+  <button type="button" class="add-selected-btn" onclick="addSelectedSuggestion()">
+    + Add Selected Location
+  </button>
+
+  <ul id="otherLocationList" class="other-location-list"></ul>
+</div>
 
         <label class="field-label">Other Place / Stop</label>
         <div id="otherGoogleBox" class="google-place-box"></div>
@@ -341,7 +391,35 @@
 <footer>
   <p>© 2026 CeyBreez. All rights reserved.</p>
 </footer>
+<div id="locationModal" class="destination-modal">
+  <div class="destination-modal-card">
+    <button class="destination-close" onclick="closeLocationModal()">×</button>
+<h2 id="modalLocationTitle">Location Name</h2>
+<div id="modalLocationGallery" class="modal-gallery"></div>
+<p id="modalLocationDescription"></p>
+<div class="dest-info-grid">
+      <div>
+        <strong>Best For</strong>
+        <span id="modalLocationBestFor"></span>
+      </div>
 
+      <div>
+        <strong>Time Needed</strong>
+        <span id="modalLocationTime"></span>
+      </div>
+
+      <div>
+        <strong>Nearby</strong>
+        <span id="modalLocationNearby"></span>
+      </div>
+    </div>
+
+    <div id="modalLocationMap"></div>
+<button type="button" class="add-selected-btn" onclick="addModalLocationToTrip()">
+      + Add To Trip Planner
+    </button>
+  </div>
+</div>
 <div id="thankYouModal" class="thankyou-modal">
   <div class="thankyou-card">
     <button onclick="closeThankYouModal()" class="thankyou-close">×</button>

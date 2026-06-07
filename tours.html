@@ -454,6 +454,11 @@
   let selectedStartLocation = null;
   let selectedEndLocation = null;
   let otherLocations = [];
+  let provinceSelectedLocations = [];
+
+let modalLocationMap = null;
+let modalLocationMarker = null;
+let selectedModalLocationKey = null;
 
   let latestDistance = "";
   let latestDuration = "";
@@ -559,6 +564,8 @@
   }
 
   function getSelectedPredefinedPlaces(){
+  return provinceSelectedLocations;
+}
     return Array.from(document.querySelectorAll('.places-grid input:checked')).map(place => ({
       name: place.value,
       lat: parseFloat(place.dataset.lat),
@@ -1229,7 +1236,267 @@ document.getElementById("tripPlanner")
       });
   }
 }
+/* ===========================
+   FEATURED DESTINATION SYSTEM
+=========================== */
 
+const locationData = {
+
+  sigiriya:{
+    name:"Sigiriya",
+    lat:7.957650,
+    lng:80.751209,
+    bestFor:"History, Heritage, Photography",
+    time:"Half Day",
+    nearby:"Dambulla, Minneriya",
+    description:"Sigiriya is Sri Lanka's most famous UNESCO World Heritage site. Climb the iconic Lion Rock, explore ancient frescoes and enjoy breathtaking views.",
+    photos:[
+      "images/sigiriya.jpg",
+      "images/dambulla.jpg",
+      "images/kandy.jpg"
+    ]
+  },
+
+  ella:{
+    name:"Ella",
+    lat:6.873068,
+    lng:81.049114,
+    bestFor:"Nature, Hiking, Scenic Views",
+    time:"1-2 Days",
+    nearby:"Nine Arch Bridge, Lipton's Seat",
+    description:"Ella is one of Sri Lanka’s most beautiful hill country destinations with waterfalls, tea estates and mountain views.",
+    photos:[
+      "images/ella.jpg",
+      "images/nine-arch.jpg",
+      "images/nuwara-eliya.jpg"
+    ]
+  },
+
+  kandy:{
+    name:"Kandy",
+    lat:7.293276,
+    lng:80.638779,
+    bestFor:"Culture, Temples",
+    time:"1 Day",
+    nearby:"Peradeniya, Nuwara Eliya",
+    description:"Kandy is Sri Lanka's cultural capital and home of the Temple of the Sacred Tooth Relic.",
+    photos:[
+      "images/kandy.jpg"
+    ]
+  },
+
+  galleFort:{
+    name:"Galle Fort",
+    lat:6.029502,
+    lng:80.215012,
+    bestFor:"History, Coastal Walks",
+    time:"Half Day",
+    nearby:"Unawatuna, Hikkaduwa",
+    description:"Explore the Dutch colonial fort, boutique cafes and ocean views.",
+    photos:[
+      "images/galle.jpg"
+    ]
+  },
+
+  hikkaduwa:{
+    name:"Hikkaduwa",
+    lat:6.140468,
+    lng:80.099841,
+    bestFor:"Beach, Snorkeling",
+    time:"1 Day",
+    nearby:"Galle, Bentota",
+    description:"Famous for coral reefs, surfing and beach life.",
+    photos:[
+      "images/hikkaduwa.jpg"
+    ]
+  },
+
+  mirissa:{
+    name:"Mirissa",
+    lat:5.944642,
+    lng:80.460628,
+    bestFor:"Beach, Whale Watching",
+    time:"1 Day",
+    nearby:"Weligama, Galle",
+    description:"One of Sri Lanka’s most popular beach destinations.",
+    photos:[
+      "images/mirissa.jpg"
+    ]
+  }
+
+};
+
+/* OPEN MODAL */
+
+function openLocationModal(key){
+
+  const item = locationData[key];
+
+  if(!item) return;
+
+  selectedModalLocationKey = key;
+
+  document.getElementById("locationModal").style.display = "flex";
+
+  document.getElementById("modalLocationTitle").textContent =
+    item.name;
+
+  document.getElementById("modalLocationDescription").textContent =
+    item.description;
+
+  document.getElementById("modalLocationBestFor").textContent =
+    item.bestFor;
+
+  document.getElementById("modalLocationTime").textContent =
+    item.time;
+
+  document.getElementById("modalLocationNearby").textContent =
+    item.nearby;
+
+  const gallery =
+    document.getElementById("modalLocationGallery");
+
+  gallery.innerHTML = "";
+
+  item.photos.forEach(photo => {
+
+    const img = document.createElement("img");
+
+    img.src = photo;
+    img.alt = item.name;
+
+    gallery.appendChild(img);
+
+  });
+
+  setTimeout(() => {
+
+    if(!modalLocationMap){
+
+      modalLocationMap =
+        L.map("modalLocationMap").setView(
+          [item.lat, item.lng],
+          12
+        );
+
+      L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          attribution:"© OpenStreetMap"
+        }
+      ).addTo(modalLocationMap);
+
+    }
+
+    modalLocationMap.setView(
+      [item.lat, item.lng],
+      12
+    );
+
+    if(modalLocationMarker){
+      modalLocationMap.removeLayer(
+        modalLocationMarker
+      );
+    }
+
+    modalLocationMarker =
+      L.marker([item.lat,item.lng])
+      .addTo(modalLocationMap);
+
+    modalLocationMarker
+      .bindPopup(item.name)
+      .openPopup();
+
+    modalLocationMap.invalidateSize();
+
+  },200);
+
+}
+
+/* CLOSE MODAL */
+
+function closeLocationModal(){
+
+  document.getElementById(
+    "locationModal"
+  ).style.display = "none";
+
+}
+
+/* ADD TO TRIP */
+
+function addModalLocationToTrip(){
+
+  if(!selectedModalLocationKey) return;
+
+  const item =
+    locationData[selectedModalLocationKey];
+
+  const alreadyExists =
+    provinceSelectedLocations.some(
+      place => place.name === item.name
+    );
+
+  if(alreadyExists){
+
+    closeLocationModal();
+    return;
+
+  }
+
+  provinceSelectedLocations.push({
+    name:item.name,
+    lat:item.lat,
+    lng:item.lng,
+    icon:"📍",
+    highlight:item.bestFor
+  });
+
+  renderProvinceSelectedList();
+
+  updateMapAndList();
+
+  closeLocationModal();
+
+}
+
+/* RENDER LIST */
+
+function renderProvinceSelectedList(){
+
+  const list =
+    document.getElementById(
+      "provinceSelectedList"
+    );
+
+  if(!list) return;
+
+  if(provinceSelectedLocations.length === 0){
+
+    list.innerHTML =
+      "<li>No places added yet.</li>";
+
+    return;
+
+  }
+
+  list.innerHTML = "";
+
+  provinceSelectedLocations.forEach(
+    (place,index) => {
+
+      const li =
+        document.createElement("li");
+
+      li.innerHTML =
+        `${index+1}. ${place.name}`;
+
+      list.appendChild(li);
+
+    }
+  );
+
+}
 /* ===== END DESTINATION DETAILS ===== */
   
   window.addEventListener("load", async function(){

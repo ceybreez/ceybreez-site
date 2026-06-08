@@ -38,7 +38,20 @@
         <input id="destTime" placeholder="Time Needed" />
         <input id="destNearby" placeholder="Nearby Places" />
         <textarea id="destDescription" placeholder="Description"></textarea>
-        <textarea id="destPhotos" placeholder="Photo URLs / paths, one per line"></textarea>
+
+        <div class="upload-box"
+             ondragover="handleDragOver(event)"
+             ondragleave="handleDragLeave(event)"
+             ondrop="handleDrop(event, 'dest')">
+          <h3>Upload Destination Photos</h3>
+          <p>Drag & drop photos here, or browse from your computer.</p>
+          <input type="file" id="destPhotoUploader" multiple accept="image/*" onchange="uploadPhotos('dest')" />
+          <button type="button" onclick="document.getElementById('destPhotoUploader').click()">Browse Photos</button>
+          <p id="destUploadStatus" class="upload-status"></p>
+        </div>
+
+        <textarea id="destPhotos" placeholder="Photo URLs will appear here automatically, one per line"></textarea>
+        <div id="destPhotoPreview" class="photo-preview"></div>
 
         <label><input type="checkbox" id="destActive" checked /> Active / Show on website</label>
 
@@ -71,7 +84,20 @@
         <input id="propBathrooms" placeholder="Bathrooms" />
         <textarea id="propFacilities" placeholder="Facilities, one per line"></textarea>
         <textarea id="propDescription" placeholder="Description"></textarea>
-        <textarea id="propPhotos" placeholder="Photo URLs / paths, one per line"></textarea>
+
+        <div class="upload-box"
+             ondragover="handleDragOver(event)"
+             ondragleave="handleDragLeave(event)"
+             ondrop="handleDrop(event, 'prop')">
+          <h3>Upload Property Photos</h3>
+          <p>Drag & drop photos here, or browse from your computer.</p>
+          <input type="file" id="propPhotoUploader" multiple accept="image/*" onchange="uploadPhotos('prop')" />
+          <button type="button" onclick="document.getElementById('propPhotoUploader').click()">Browse Photos</button>
+          <p id="propUploadStatus" class="upload-status"></p>
+        </div>
+
+        <textarea id="propPhotos" placeholder="Photo URLs will appear here automatically, one per line"></textarea>
+        <div id="propPhotoPreview" class="photo-preview"></div>
 
         <label><input type="checkbox" id="propActive" checked /> Active / Show on website</label>
 

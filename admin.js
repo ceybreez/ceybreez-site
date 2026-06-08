@@ -11,11 +11,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("destinationForm").addEventListener("submit", saveDestination);
   document.getElementById("propertyForm").addEventListener("submit", saveProperty);
+
+  document.getElementById("destPhotos").addEventListener("input", () => renderPhotoPreview("dest"));
+  document.getElementById("propPhotos").addEventListener("input", () => renderPhotoPreview("prop"));
 });
 
 function authHeaders() {
   return {
     "Content-Type": "application/json",
+    "Authorization": `Bearer ${ADMIN_TOKEN}`
+  };
+}
+
+function uploadHeaders() {
+  return {
     "Authorization": `Bearer ${ADMIN_TOKEN}`
   };
 }
@@ -60,6 +69,154 @@ async function loadAll() {
   await loadProperties();
 }
 
+function getUploadFolder(type) {
+  if (type === "dest") return "tours";
+
+  const propType = document.getElementById("propType").value || "property";
+  if (propType === "villa") return "villas";
+  if (propType === "homestay") return "homestays";
+  if (propType === "apartment") return "apartments";
+
+  return "properties";
+}
+
+function getUploader(type) {
+  return type === "dest"
+    ? document.getElementById("destPhotoUploader")
+    : document.getElementById("propPhotoUploader");
+}
+
+function getPhotosBox(type) {
+  return type === "dest"
+    ? document.getElementById("destPhotos")
+    : document.getElementById("propPhotos");
+}
+
+function getStatusBox(type) {
+  return type === "dest"
+    ? document.getElementById("destUploadStatus")
+    : document.getElementById("propUploadStatus");
+}
+
+function handleDragOver(event) {
+  event.preventDefault();
+  event.currentTarget.classList.add("drag-active");
+}
+
+function handleDragLeave(event) {
+  event.preventDefault();
+  event.currentTarget.classList.remove("drag-active");
+}
+
+function handleDrop(event, type) {
+  event.preventDefault();
+  event.currentTarget.classList.remove("drag-active");
+
+  const files = event.dataTransfer.files;
+  uploadFileList(type, files);
+}
+
+async function uploadPhotos(type) {
+  const input = getUploader(type);
+
+  if (!input.files.length) {
+    alert("Please select photos first.");
+    return;
+  }
+
+  await uploadFileList(type, input.files);
+  input.value = "";
+}
+
+async function uploadFileList(type, files) {
+  const status = getStatusBox(type);
+  const photosBox = getPhotosBox(type);
+  const folder = getUploadFolder(type);
+
+  if (!files || !files.length) {
+    alert("Please select photos first.");
+    return;
+  }
+
+  status.textContent = `Uploading ${files.length} photo(s)...`;
+
+  const uploadedUrls = [];
+
+  for (const file of files) {
+    if (!file.type.startsWith("image/")) {
+      continue;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folder", folder);
+
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/upload-image`, {
+        method: "POST",
+        headers: uploadHeaders(),
+        body: formData
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.error || "Upload failed");
+      }
+
+      uploadedUrls.push(result.url);
+      status.textContent = `Uploaded ${uploadedUrls.length} of ${files.length} photo(s)...`;
+
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  if (uploadedUrls.length) {
+    const existing = photosBox.value.trim();
+    photosBox.value = [existing, ...uploadedUrls]
+      .filter(Boolean)
+      .join("\n");
+
+    renderPhotoPreview(type);
+    status.textContent = "Upload completed.";
+  } else {
+    status.textContent = "No photos uploaded.";
+  }
+}
+
+function renderPhotoPreview(type) {
+  const photosBox = getPhotosBox(type);
+  const previewBox = type === "dest"
+    ? document.getElementById("destPhotoPreview")
+    : document.getElementById("propPhotoPreview");
+
+  const urls = linesToArray(photosBox.value);
+  previewBox.innerHTML = "";
+
+  urls.forEach((url, index) => {
+    const item = document.createElement("div");
+    item.className = "preview-item";
+
+    item.innerHTML = `
+      <img src="${url}" alt="Photo ${index + 1}">
+      <button type="button" onclick="removePhoto('${type}', ${index})">×</button>
+    `;
+
+    previewBox.appendChild(item);
+  });
+}
+
+function removePhoto(type, index) {
+  const photosBox = getPhotosBox(type);
+  const urls = linesToArray(photosBox.value);
+
+  urls.splice(index, 1);
+  photosBox.value = urls.join("\n");
+
+  renderPhotoPreview(type);
+}
+
 async function loadDestinations() {
   try {
     const res = await fetch(`${API_BASE}/api/admin/destinations`, {
@@ -77,7 +234,10 @@ async function loadDestinations() {
       const card = document.createElement("div");
       card.className = "card";
 
+      const firstPhoto = item.photos && item.photos.length ? item.photos[0] : "";
+
       card.innerHTML = `
+        ${firstPhoto ? `<img src="${firstPhoto}" class="card-thumb" alt="${item.name}">` : ""}
         <span class="status ${item.active ? "" : "off"}">${item.active ? "Active" : "Hidden"}</span>
         <h3>${item.name}</h3>
         <p><strong>Province:</strong> ${item.province || ""}</p>
@@ -152,6 +312,8 @@ function editDestination(item) {
   document.getElementById("destPhotos").value = arrayToLines(item.photos);
   document.getElementById("destActive").checked = !!item.active;
 
+  renderPhotoPreview("dest");
+
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -159,6 +321,8 @@ function resetDestinationForm() {
   document.getElementById("destinationForm").reset();
   document.getElementById("destEditId").value = "";
   document.getElementById("destActive").checked = true;
+  document.getElementById("destUploadStatus").textContent = "";
+  document.getElementById("destPhotoPreview").innerHTML = "";
 }
 
 async function deleteDestination(id) {
@@ -197,7 +361,10 @@ async function loadProperties() {
       const card = document.createElement("div");
       card.className = "card";
 
+      const firstPhoto = item.photos && item.photos.length ? item.photos[0] : "";
+
       card.innerHTML = `
+        ${firstPhoto ? `<img src="${firstPhoto}" class="card-thumb" alt="${item.name}">` : ""}
         <span class="status ${item.active ? "" : "off"}">${item.active ? "Active" : "Hidden"}</span>
         <h3>${item.name}</h3>
         <p><strong>Type:</strong> ${item.type}</p>
@@ -278,6 +445,8 @@ function editProperty(item) {
   document.getElementById("propPhotos").value = arrayToLines(item.photos);
   document.getElementById("propActive").checked = !!item.active;
 
+  renderPhotoPreview("prop");
+
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -285,6 +454,8 @@ function resetPropertyForm() {
   document.getElementById("propertyForm").reset();
   document.getElementById("propEditId").value = "";
   document.getElementById("propActive").checked = true;
+  document.getElementById("propUploadStatus").textContent = "";
+  document.getElementById("propPhotoPreview").innerHTML = "";
 }
 
 async function deleteProperty(id) {

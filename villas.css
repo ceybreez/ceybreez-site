@@ -68,6 +68,7 @@ nav a:hover{color:#facc15;background:rgba(255,255,255,.10)}
   padding:12px 20px;border:none;border-radius:50px;background:#0f766e;color:white;
   font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;
 }
+.property-card button:hover{background:#115e59}
 .loading-text{grid-column:1/-1;text-align:center;color:#444;font-size:18px}
 
 .property-modal{
@@ -95,9 +96,131 @@ nav a:hover{color:#facc15;background:rgba(255,255,255,.10)}
 .modal-info-grid span{font-size:13px;color:#333}
 #modalDescription{line-height:1.7;color:#333;margin-bottom:18px}
 #modalFacilities{padding-left:20px;color:#333;line-height:1.8}
-.modal-whatsapp{
-  display:inline-block;margin-top:18px;padding:14px 28px;border-radius:50px;
-  background:#25D366;color:white;text-decoration:none;font-weight:700;
+
+.villa-inquiry-box{
+  margin-top:24px;
+  background:#f8f3eb;
+  border-radius:22px;
+  padding:22px;
+}
+
+.villa-inquiry-box h3{
+  color:#0f766e;
+  font-size:30px;
+  margin-bottom:16px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+
+.villa-inquiry-box input,
+.villa-inquiry-box textarea{
+  width:100%;
+  padding:13px 14px;
+  border:1px solid rgba(15,118,110,0.18);
+  border-radius:14px;
+  font-family:'Poppins',sans-serif;
+  font-size:14px;
+  outline:none;
+  background:white;
+  color:#111;
+}
+
+.villa-inquiry-box textarea{
+  margin-top:12px;
+  resize:none;
+}
+
+.villa-inquiry-box input:focus,
+.villa-inquiry-box textarea:focus{
+  border-color:#0f766e;
+  box-shadow:0 0 0 2px rgba(15,118,110,0.15);
+}
+
+.send-inquiry-btn{
+  width:100%;
+  margin-top:14px;
+  padding:15px;
+  border:none;
+  border-radius:50px;
+  background:#0f766e;
+  color:white;
+  font-weight:700;
+  font-family:'Poppins',sans-serif;
+  cursor:pointer;
+}
+
+.send-inquiry-btn:hover{
+  background:#115e59;
+}
+
+.thankyou-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  z-index:10001;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.thankyou-card{
+  position:relative;
+  max-width:480px;
+  width:100%;
+  background:#fff;
+  border-radius:28px;
+  padding:34px 26px;
+  text-align:center;
+  box-shadow:0 25px 70px rgba(0,0,0,0.35);
+}
+
+.thankyou-close{
+  position:absolute;
+  top:12px;
+  right:16px;
+  border:none;
+  background:transparent;
+  font-size:28px;
+  cursor:pointer;
+  color:#333;
+}
+
+.thankyou-icon{
+  font-size:46px;
+  margin-bottom:10px;
+}
+
+.thankyou-card h2{
+  color:#0f766e;
+  font-size:34px;
+  margin-bottom:10px;
+}
+
+.thankyou-card p{
+  color:#444;
+  line-height:1.6;
+}
+
+.thankyou-ref{
+  background:#f8f3eb;
+  padding:16px;
+  border-radius:18px;
+  margin:18px 0;
+  color:#222;
+}
+
+.thankyou-ref strong{
+  color:#0f766e;
+  font-size:22px;
+}
+
+.thankyou-small{
+  font-size:14px;
 }
 
 footer{text-align:center;padding:10px;background:black;color:white}
@@ -106,11 +229,13 @@ footer{text-align:center;padding:10px;background:black;color:white}
   color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;
   text-decoration:none;font-size:34px;z-index:3000;box-shadow:0 10px 30px rgba(0,0,0,.25);
 }
+.floating-whatsapp:hover{transform:translateY(-5px) scale(1.08)}
 
 @media(max-width:1100px){
   .property-grid{grid-template-columns:repeat(2,1fr)}
   .modal-info-grid{grid-template-columns:repeat(2,1fr)}
 }
+
 @media(max-width:768px){
   header{padding:12px 10px;overflow-x:auto;white-space:nowrap}
   nav{flex-wrap:nowrap;gap:10px;min-width:max-content}
@@ -125,7 +250,11 @@ footer{text-align:center;padding:10px;background:black;color:white}
   .property-card img{height:220px}
   .modal-gallery{grid-template-columns:1fr}
   .modal-info-grid{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
   .property-modal-card{padding:20px 15px}
   .property-modal-card h2{font-size:32px}
+  .villa-inquiry-box{padding:18px 14px}
+  .villa-inquiry-box h3{font-size:26px}
+  .thankyou-card h2{font-size:28px}
   .floating-whatsapp{width:56px;height:56px;right:18px;bottom:18px;font-size:30px}
 }

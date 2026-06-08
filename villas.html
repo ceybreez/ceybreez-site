@@ -53,10 +53,37 @@
   </div>
 </section>
 
+<section class="villa-inquiry-section" id="villaInquiry">
+  <h2>Send Villa Inquiry</h2>
+  <p class="section-intro">Select a villa, add your travel details, and send your inquiry to CeyBreez.</p>
+
+  <div class="villa-inquiry-box">
+    <div class="form-grid">
+      <select id="inqVillaSelect" onchange="selectVillaFromDropdown()">
+        <option value="">Select Villa</option>
+      </select>
+
+      <input id="inqVillaName" type="text" placeholder="Selected Villa" readonly>
+      <input id="inqName" type="text" placeholder="Your Name" required>
+      <input id="inqEmail" type="email" placeholder="Email" required>
+      <input id="inqMobile" type="tel" placeholder="WhatsApp / Mobile" required>
+      <input id="inqCountry" type="text" placeholder="Country" required>
+      <input id="inqGuests" type="number" min="1" placeholder="Number of Guests" required>
+      <input id="inqCheckIn" type="date" required>
+      <input id="inqCheckOut" type="date" required>
+      <input id="inqDays" type="text" placeholder="Number of Nights" readonly>
+    </div>
+
+    <textarea id="inqNotes" rows="4" placeholder="Special notes, budget, room preference or anything special..."></textarea>
+
+    <button type="button" class="send-inquiry-btn" onclick="sendPropertyInquiry()">Send Inquiry</button>
+  </div>
+</section>
+
 <section class="cta">
   <h2>Need Help Choosing a Villa?</h2>
   <p>Tell us your dates, guest count and preferred location. We’ll help you find a suitable stay.</p>
-  <a href="contact.html">Contact CeyBreez</a>
+  <a href="#villaInquiry">Send Inquiry</a>
 </section>
 
 <footer>
@@ -83,24 +110,7 @@
     <h3>Facilities</h3>
     <ul id="modalFacilities"></ul>
 
-    <div class="villa-inquiry-box">
-      <h3>Send Villa Inquiry</h3>
-
-      <div class="form-grid">
-        <input id="inqName" type="text" placeholder="Your Name" required>
-        <input id="inqEmail" type="email" placeholder="Email" required>
-        <input id="inqMobile" type="tel" placeholder="WhatsApp / Mobile" required>
-        <input id="inqCountry" type="text" placeholder="Country" required>
-        <input id="inqGuests" type="number" min="1" placeholder="Number of Guests" required>
-        <input id="inqCheckIn" type="date" required>
-        <input id="inqCheckOut" type="date" required>
-        <input id="inqDays" type="text" placeholder="Number of Nights" readonly>
-      </div>
-
-      <textarea id="inqNotes" rows="4" placeholder="Special notes, budget, room preference or anything special..."></textarea>
-
-      <button type="button" class="send-inquiry-btn" onclick="sendPropertyInquiry()">Send Inquiry</button>
-    </div>
+    <button type="button" class="select-villa-btn" onclick="selectVillaForInquiry()">Select This Villa</button>
   </div>
 </div>
 
@@ -121,13 +131,23 @@
 
 <script>
 const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
+
 let properties = [];
 let selectedProperty = null;
 
-window.addEventListener("load", loadProperties);
+window.addEventListener("load", function(){
+  loadProperties();
+
+  document.addEventListener("change", function(e){
+    if(e.target.id === "inqCheckIn" || e.target.id === "inqCheckOut"){
+      calculateInquiryDays();
+    }
+  });
+});
 
 async function loadProperties(){
   const grid = document.getElementById("propertyGrid");
+  const select = document.getElementById("inqVillaSelect");
 
   try{
     const response = await fetch(API_BASE + "/api/properties?type=villa");
@@ -135,6 +155,7 @@ async function loadProperties(){
 
     properties = data || [];
     grid.innerHTML = "";
+    select.innerHTML = '<option value="">Select Villa</option>';
 
     if(properties.length === 0){
       grid.innerHTML = '<p class="loading-text">No villas available yet. Please check again soon.</p>';
@@ -142,6 +163,11 @@ async function loadProperties(){
     }
 
     properties.forEach(item => {
+      const option = document.createElement("option");
+      option.value = item.id;
+      option.textContent = item.name;
+      select.appendChild(option);
+
       const card = document.createElement("div");
       card.className = "property-card";
 
@@ -160,6 +186,7 @@ async function loadProperties(){
           </div>
           <strong class="price">${item.price || "Price on request"}</strong>
           <button onclick="openPropertyModal('${item.id}')">View Details</button>
+          <button onclick="quickSelectVilla('${item.id}')" class="quick-inquiry-btn">Inquiry</button>
         </div>
       `;
 
@@ -217,11 +244,45 @@ function closePropertyModal(){
   document.getElementById("propertyModal").style.display = "none";
 }
 
-document.addEventListener("change", function(e){
-  if(e.target.id === "inqCheckIn" || e.target.id === "inqCheckOut"){
-    calculateInquiryDays();
+function selectVillaForInquiry(){
+  if(!selectedProperty) return;
+
+  fillSelectedVilla(selectedProperty.id);
+  closePropertyModal();
+
+  document.getElementById("villaInquiry").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
+function quickSelectVilla(id){
+  fillSelectedVilla(id);
+
+  document.getElementById("villaInquiry").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
+function selectVillaFromDropdown(){
+  const id = document.getElementById("inqVillaSelect").value;
+  fillSelectedVilla(id);
+}
+
+function fillSelectedVilla(id){
+  const item = properties.find(p => p.id === id);
+
+  if(!item){
+    selectedProperty = null;
+    document.getElementById("inqVillaName").value = "";
+    return;
   }
-});
+
+  selectedProperty = item;
+  document.getElementById("inqVillaSelect").value = item.id;
+  document.getElementById("inqVillaName").value = item.name;
+}
 
 function calculateInquiryDays(){
   const checkIn = document.getElementById("inqCheckIn").value;
@@ -232,7 +293,6 @@ function calculateInquiryDays(){
     const start = new Date(checkIn);
     const end = new Date(checkOut);
     const diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-
     daysBox.value = diff > 0 ? diff + " Nights" : "Invalid date range";
   }
 }
@@ -311,13 +371,25 @@ ${notes || "None"}`;
 
     if(response.ok){
       showThankYouModal(result.reference || "CB-000000");
-      closePropertyModal();
+      resetInquiryForm();
     }else{
       alert("WhatsApp opened, but email sending failed.");
     }
   }catch(error){
     alert("WhatsApp opened, but email sending failed.");
   }
+}
+
+function resetInquiryForm(){
+  document.getElementById("inqName").value = "";
+  document.getElementById("inqEmail").value = "";
+  document.getElementById("inqMobile").value = "";
+  document.getElementById("inqCountry").value = "";
+  document.getElementById("inqGuests").value = "";
+  document.getElementById("inqCheckIn").value = "";
+  document.getElementById("inqCheckOut").value = "";
+  document.getElementById("inqDays").value = "";
+  document.getElementById("inqNotes").value = "";
 }
 
 function showThankYouModal(reference){

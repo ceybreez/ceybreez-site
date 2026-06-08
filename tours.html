@@ -391,47 +391,70 @@
   let latestRouteText = "";
   let latestItineraryText = "";
 
-  const locationData = {
-    colombo:{ name:"Colombo", lat:6.9271, lng:79.8612, bestFor:"City, Shopping, Food", time:"Half Day", nearby:"Negombo, Mount Lavinia", description:"Colombo is Sri Lanka’s commercial capital with hotels, shopping, restaurants, colonial buildings and city experiences.", photos:["images/colombo.jpg","images/negombo.jpg","images/galle.jpg"] },
-    negombo:{ name:"Negombo", lat:7.2083, lng:79.8358, bestFor:"Beach, Airport Stay", time:"Half Day", nearby:"Colombo Airport, Colombo", description:"Negombo is a coastal city close to the airport, popular for beach stays, seafood and lagoon boat rides.", photos:["images/negombo.jpg","images/colombo.jpg","images/bentota.jpg"] },
-    kalutara:{ name:"Kalutara", lat:6.5854, lng:79.9607, bestFor:"Beach, River, Relaxation", time:"Half Day", nearby:"Bentota, Colombo", description:"Kalutara is known for beaches, river scenery and relaxed coastal stays south of Colombo.", photos:["images/kalutara.jpg","images/bentota.jpg","images/hikkaduwa.jpg"] },
+ let locationData = {};
 
-    kandy:{ name:"Kandy", lat:7.293276, lng:80.638779, bestFor:"Culture, Temples", time:"1 Day", nearby:"Peradeniya, Nuwara Eliya", description:"Kandy is Sri Lanka’s cultural capital and home of the Temple of the Sacred Tooth Relic.", photos:["images/kandy.jpg","images/nuwara-eliya.jpg","images/ramboda.jpg"] },
-    nuwaraEliya:{ name:"Nuwara Eliya", lat:6.957393, lng:80.775928, bestFor:"Tea Country, Cool Climate", time:"1 Day", nearby:"Ramboda, Ella", description:"Nuwara Eliya is famous for tea plantations, colonial charm, cool climate and scenic landscapes.", photos:["images/nuwara-eliya.jpg","images/ramboda.jpg","images/ella.jpg"] },
-    ramboda:{ name:"Ramboda", lat:7.0525, lng:80.6969, bestFor:"Waterfalls, Tea, Views", time:"Half Day", nearby:"Kandy, Nuwara Eliya", description:"Ramboda is a scenic hill country stop with waterfalls, tea estates and mountain views.", photos:["images/ramboda.jpg","images/nuwara-eliya.jpg","images/kandy.jpg"] },
+const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 
-    galleFort:{ name:"Galle Fort", lat:6.029502, lng:80.215012, bestFor:"History, Walking, Coastal Charm", time:"Half Day", nearby:"Unawatuna, Hikkaduwa", description:"Galle Fort is a UNESCO-listed colonial fort city with boutique cafés, museums, ocean views and sunset walks.", photos:["images/galle.jpg","images/hikkaduwa.jpg","images/mirissa.jpg"] },
-    hikkaduwa:{ name:"Hikkaduwa", lat:6.140468, lng:80.099841, bestFor:"Beach, Snorkeling, Surfing", time:"1 Day", nearby:"Galle, Bentota", description:"Hikkaduwa is famous for coral reefs, surfing, snorkeling and lively beach experiences.", photos:["images/hikkaduwa.jpg","images/galle.jpg","images/bentota.jpg"] },
-    mirissa:{ name:"Mirissa", lat:5.944642, lng:80.460628, bestFor:"Beach, Whale Watching", time:"1 Day", nearby:"Weligama, Galle", description:"Mirissa is a popular southern beach destination known for sunsets, surfing and whale watching.", photos:["images/mirissa.jpg","images/galle.jpg","images/hikkaduwa.jpg"] },
-    unawatuna:{ name:"Unawatuna", lat:6.0108, lng:80.2495, bestFor:"Beach, Swimming, Cafes", time:"Half Day", nearby:"Galle Fort, Mirissa", description:"Unawatuna is a beautiful beach town close to Galle with calm water, cafés and coastal charm.", photos:["images/unawatuna.jpg","images/galle.jpg","images/mirissa.jpg"] },
+async function loadDestinationsFromAPI(){
+  try{
+    const response = await fetch(API_BASE + "/api/destinations");
+    const data = await response.json();
 
-    sigiriya:{ name:"Sigiriya", lat:7.957650, lng:80.751209, bestFor:"History, Heritage, Photography", time:"Half Day", nearby:"Dambulla, Minneriya", description:"Sigiriya is one of Sri Lanka’s most iconic UNESCO World Heritage sites, famous for Lion Rock, royal gardens, frescoes and panoramic views.", photos:["images/sigiriya.jpg","images/dambulla.jpg","images/minneriya.jpg"] },
-    dambulla:{ name:"Dambulla Cave Temple", lat:7.857268, lng:80.652199, bestFor:"Cave Temple, Culture", time:"Half Day", nearby:"Sigiriya, Kandy", description:"Dambulla Cave Temple is a historic Buddhist cave complex with ancient paintings and statues.", photos:["images/dambulla.jpg","images/sigiriya.jpg","images/kandy.jpg"] },
-    polonnaruwa:{ name:"Polonnaruwa", lat:7.9403, lng:81.0188, bestFor:"Ancient City, History", time:"Half Day to 1 Day", nearby:"Sigiriya, Minneriya", description:"Polonnaruwa is an ancient royal city with ruins, temples and archaeological heritage.", photos:["images/polonnaruwa.jpg","images/sigiriya.jpg","images/dambulla.jpg"] },
-    minneriya:{ name:"Minneriya", lat:8.0362, lng:80.9039, bestFor:"Elephant Safari, Wildlife", time:"Half Day Safari", nearby:"Sigiriya, Polonnaruwa", description:"Minneriya is famous for elephant gatherings and wildlife safaris near Sigiriya.", photos:["images/minneriya.jpg","images/sigiriya.jpg","images/yala.jpg"] },
+    locationData = {};
 
-    trincomalee:{ name:"Trincomalee", lat:8.5874, lng:81.2152, bestFor:"Beach, Culture, Snorkeling", time:"1-2 Days", nearby:"Nilaveli, Pigeon Island", description:"Trincomalee is an east coast destination with beaches, temples and marine experiences.", photos:["images/trincomalee.jpg","images/nilaveli.jpg","images/pasikudah.jpg"] },
-    nilaveli:{ name:"Nilaveli", lat:8.6920, lng:81.1885, bestFor:"Beach, Snorkeling", time:"1 Day", nearby:"Trincomalee, Pigeon Island", description:"Nilaveli is known for calm beaches and access to Pigeon Island marine park.", photos:["images/nilaveli.jpg","images/trincomalee.jpg","images/pasikudah.jpg"] },
-    pasikudah:{ name:"Pasikudah", lat:7.9266, lng:81.5612, bestFor:"Beach, Family, Relaxation", time:"1 Day", nearby:"Batticaloa, Trincomalee", description:"Pasikudah is famous for shallow turquoise water and relaxing beach resorts.", photos:["images/pasikudah.jpg","images/trincomalee.jpg","images/nilaveli.jpg"] },
-    arugamBay:{ name:"Arugam Bay", lat:6.8404, lng:81.8368, bestFor:"Surfing, Beach, Nightlife", time:"1-2 Days", nearby:"Pottuvil, Kumana", description:"Arugam Bay is Sri Lanka’s most famous surf destination with beach cafés and laid-back vibes.", photos:["images/arugam-bay.jpg","images/pasikudah.jpg","images/mirissa.jpg"] },
+    data.forEach(item => {
+      locationData[item.id] = {
+        name: item.name,
+        lat: Number(item.lat),
+        lng: Number(item.lng),
+        bestFor: item.bestFor || "",
+        time: item.timeNeeded || "",
+        nearby: item.nearby || "",
+        description: item.description || "",
+        photos: item.photos || []
+      };
+    });
 
-    ella:{ name:"Ella", lat:6.873068, lng:81.049114, bestFor:"Nature, Hiking, Scenic Views", time:"1-2 Days", nearby:"Nine Arch Bridge, Lipton’s Seat", description:"Ella is one of Sri Lanka’s most beautiful hill country destinations with waterfalls, tea estates and mountain views.", photos:["images/ella.jpg","images/nine-arch.jpg","images/nuwara-eliya.jpg"] },
-    nineArch:{ name:"Nine Arch Bridge", lat:6.877257, lng:81.063007, bestFor:"Scenic Railway, Photography", time:"1-2 Hours", nearby:"Ella, Little Adam’s Peak", description:"Nine Arch Bridge is one of Sri Lanka’s most iconic railway landmarks surrounded by lush greenery.", photos:["images/nine-arch.jpg","images/ella.jpg","images/lipton-seat.jpg"] },
-    diyaluma:{ name:"Diyaluma Falls", lat:6.7330, lng:81.0310, bestFor:"Waterfalls, Nature", time:"Half Day", nearby:"Ella, Haputale", description:"Diyaluma Falls is one of Sri Lanka’s highest waterfalls and a popular nature stop.", photos:["images/diyaluma.jpg","images/ella.jpg","images/lipton-seat.jpg"] },
-    liptonSeat:{ name:"Lipton’s Seat", lat:6.7873, lng:81.0130, bestFor:"Tea Views, Photography", time:"Half Day", nearby:"Haputale, Ella", description:"Lipton’s Seat offers panoramic tea plantation views and sunrise scenery.", photos:["images/lipton-seat.jpg","images/ella.jpg","images/nuwara-eliya.jpg"] },
+    buildProvinceGrid(data);
+  }catch(error){
+    console.log("Destination load failed:", error);
+  }
+}
 
-    jaffna:{ name:"Jaffna", lat:9.6615, lng:80.0255, bestFor:"Culture, Food, Temples", time:"1-2 Days", nearby:"Nallur, Casuarina Beach", description:"Jaffna offers northern culture, temples, local food and unique heritage.", photos:["images/jaffna.jpg","images/nallur.jpg","images/casuarina.jpg"] },
-    nallur:{ name:"Nallur Temple", lat:9.6747, lng:80.0293, bestFor:"Culture, Temple", time:"1-2 Hours", nearby:"Jaffna, Casuarina Beach", description:"Nallur Kandaswamy Temple is one of the most important Hindu temples in Sri Lanka.", photos:["images/nallur.jpg","images/jaffna.jpg","images/casuarina.jpg"] },
-    casuarina:{ name:"Casuarina Beach", lat:9.7736, lng:79.8817, bestFor:"Beach, Relaxation", time:"Half Day", nearby:"Jaffna, Nallur", description:"Casuarina Beach is a calm northern beach ideal for relaxing and swimming.", photos:["images/casuarina.jpg","images/jaffna.jpg","images/nallur.jpg"] },
+function buildProvinceGrid(data){
+  const provinceGrid = document.querySelector(".province-grid");
+  if(!provinceGrid) return;
 
-    pinnawala:{ name:"Pinnawala", lat:7.3000, lng:80.3865, bestFor:"Elephants, Family", time:"Half Day", nearby:"Kandy, Kitulgala", description:"Pinnawala is known for elephant experiences and family-friendly visits.", photos:["images/pinnawala.jpg","images/kandy.jpg","images/kitulgala.jpg"] },
-    kitulgala:{ name:"Kitulgala", lat:6.9897, lng:80.4114, bestFor:"Rafting, Adventure, Nature", time:"Half Day to 1 Day", nearby:"Adam’s Peak, Kandy", description:"Kitulgala is famous for white-water rafting, rainforest scenery and adventure activities.", photos:["images/kitulgala.jpg","images/adams-peak.jpg","images/pinnawala.jpg"] },
-    adamsPeak:{ name:"Adam’s Peak", lat:6.8096, lng:80.4994, bestFor:"Hiking, Sunrise, Pilgrimage", time:"1 Day / Overnight", nearby:"Kitulgala, Nuwara Eliya", description:"Adam’s Peak is a sacred mountain known for pilgrimage climbs and sunrise views.", photos:["images/adams-peak.jpg","images/kitulgala.jpg","images/nuwara-eliya.jpg"] },
+  provinceGrid.innerHTML = "";
 
-    wilpattu:{ name:"Wilpattu", lat:8.3700, lng:80.0700, bestFor:"Safari, Wildlife", time:"Half Day Safari", nearby:"Anuradhapura, Chilaw", description:"Wilpattu is a large national park famous for leopards, lakes and wilderness safaris.", photos:["images/wilpattu.jpg","images/anawilundawa.jpg","images/yala.jpg"] },
-    chilaw:{ name:"Chilaw", lat:7.5758, lng:79.7953, bestFor:"Coastal Town, Culture", time:"Half Day", nearby:"Negombo, Anawilundawa", description:"Chilaw is a coastal town with cultural sites, lagoon areas and local life.", photos:["images/chilaw.jpg","images/anawilundawa.jpg","images/negombo.jpg"] },
-    anawilundawa:{ name:"Anawilundawa", lat:7.7000, lng:79.8333, bestFor:"Bird Watching, Wetlands", time:"Half Day", nearby:"Chilaw, Wilpattu", description:"Anawilundawa Wetland Sanctuary is known for birds, wetlands and peaceful nature.", photos:["images/anawilundawa.jpg","images/chilaw.jpg","images/wilpattu.jpg"] }
-  };
+  const grouped = {};
+
+  data.forEach(item => {
+    if(!grouped[item.province]){
+      grouped[item.province] = [];
+    }
+    grouped[item.province].push(item);
+  });
+
+  Object.keys(grouped).forEach(province => {
+    const card = document.createElement("div");
+    card.className = "province-card";
+
+    const title = document.createElement("h3");
+    title.textContent = province;
+    card.appendChild(title);
+
+    grouped[province].forEach(place => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = place.name;
+      button.onclick = () => openLocationModal(place.id);
+      card.appendChild(button);
+    });
+
+    provinceGrid.appendChild(card);
+  });
+}
 
   function getServiceType(){
     return document.querySelector('input[name="serviceType"]:checked').value;
@@ -1208,11 +1231,11 @@ ${specialNotes}`;
   }
 
   window.addEventListener("load", async function(){
-    await setupGooglePlaces();
-    updateVehicleSuggestion();
-    updateServiceType();
-    renderProvinceSelectedList();
-    generateItinerary();
+  await loadDestinationsFromAPI();
+  await setupGooglePlaces();
+  updateVehicleSuggestion();
+  updateServiceType();
+  renderProvinceSelectedList();
   });
 </script>
 

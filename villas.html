@@ -66,6 +66,7 @@
 <div id="propertyModal" class="property-modal">
   <div class="property-modal-card">
     <button class="modal-close" onclick="closePropertyModal()">×</button>
+
     <h2 id="modalTitle"></h2>
     <div id="modalGallery" class="modal-gallery"></div>
 
@@ -82,7 +83,35 @@
     <h3>Facilities</h3>
     <ul id="modalFacilities"></ul>
 
-    <a id="modalWhatsApp" class="modal-whatsapp" target="_blank">Ask on WhatsApp</a>
+    <div class="villa-inquiry-box">
+      <h3>Send Villa Inquiry</h3>
+
+      <div class="form-grid">
+        <input id="inqName" type="text" placeholder="Your Name" required>
+        <input id="inqEmail" type="email" placeholder="Email" required>
+        <input id="inqMobile" type="tel" placeholder="WhatsApp / Mobile" required>
+        <input id="inqCountry" type="text" placeholder="Country" required>
+        <input id="inqGuests" type="number" min="1" placeholder="Number of Guests" required>
+        <input id="inqCheckIn" type="date" required>
+        <input id="inqCheckOut" type="date" required>
+        <input id="inqDays" type="text" placeholder="Number of Nights" readonly>
+      </div>
+
+      <textarea id="inqNotes" rows="4" placeholder="Special notes, budget, room preference or anything special..."></textarea>
+
+      <button type="button" class="send-inquiry-btn" onclick="sendPropertyInquiry()">Send Inquiry</button>
+    </div>
+  </div>
+</div>
+
+<div id="thankYouModal" class="thankyou-modal">
+  <div class="thankyou-card">
+    <button onclick="closeThankYouModal()" class="thankyou-close">×</button>
+    <div class="thankyou-icon">✅</div>
+    <h2>Inquiry Sent Successfully</h2>
+    <p>Thank you for choosing CeyBreez. We have received your villa inquiry.</p>
+    <div class="thankyou-ref">Reference No:<br><strong id="thankYouReference">CB-000000</strong></div>
+    <p class="thankyou-small">Our team will contact you shortly.</p>
   </div>
 </div>
 
@@ -93,6 +122,7 @@
 <script>
 const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 let properties = [];
+let selectedProperty = null;
 
 window.addEventListener("load", loadProperties);
 
@@ -145,6 +175,8 @@ function openPropertyModal(id){
   const item = properties.find(p => p.id === id);
   if(!item) return;
 
+  selectedProperty = item;
+
   document.getElementById("modalTitle").textContent = item.name;
   document.getElementById("modalLocation").textContent = item.location || "Sri Lanka";
   document.getElementById("modalGuests").textContent = item.guests || "Not specified";
@@ -168,20 +200,133 @@ function openPropertyModal(id){
   const facilities = document.getElementById("modalFacilities");
   facilities.innerHTML = "";
 
-  (item.facilities || []).forEach(f => {
-    const li = document.createElement("li");
-    li.textContent = f;
-    facilities.appendChild(li);
-  });
-
-  const msg = `Hello CeyBreez, I am interested in this villa: ${item.name}`;
-  document.getElementById("modalWhatsApp").href = "https://wa.me/94704620017?text=" + encodeURIComponent(msg);
+  if(item.facilities && item.facilities.length){
+    item.facilities.forEach(f => {
+      const li = document.createElement("li");
+      li.textContent = f;
+      facilities.appendChild(li);
+    });
+  }else{
+    facilities.innerHTML = "<li>Facilities will be confirmed on request.</li>";
+  }
 
   document.getElementById("propertyModal").style.display = "flex";
 }
 
 function closePropertyModal(){
   document.getElementById("propertyModal").style.display = "none";
+}
+
+document.addEventListener("change", function(e){
+  if(e.target.id === "inqCheckIn" || e.target.id === "inqCheckOut"){
+    calculateInquiryDays();
+  }
+});
+
+function calculateInquiryDays(){
+  const checkIn = document.getElementById("inqCheckIn").value;
+  const checkOut = document.getElementById("inqCheckOut").value;
+  const daysBox = document.getElementById("inqDays");
+
+  if(checkIn && checkOut){
+    const start = new Date(checkIn);
+    const end = new Date(checkOut);
+    const diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+
+    daysBox.value = diff > 0 ? diff + " Nights" : "Invalid date range";
+  }
+}
+
+async function sendPropertyInquiry(){
+  if(!selectedProperty){
+    alert("Please select a villa first.");
+    return;
+  }
+
+  const name = document.getElementById("inqName").value.trim();
+  const email = document.getElementById("inqEmail").value.trim();
+  const mobile = document.getElementById("inqMobile").value.trim();
+  const country = document.getElementById("inqCountry").value.trim();
+  const guests = document.getElementById("inqGuests").value.trim();
+  const checkIn = document.getElementById("inqCheckIn").value;
+  const checkOut = document.getElementById("inqCheckOut").value;
+  const days = document.getElementById("inqDays").value;
+  const notes = document.getElementById("inqNotes").value.trim();
+
+  if(!name || !email || !mobile || !country || !guests || !checkIn || !checkOut){
+    alert("Please fill all required details.");
+    return;
+  }
+
+  const message =
+`New CeyBreez Villa Inquiry
+
+Selected Villa:
+${selectedProperty.name}
+
+Location:
+${selectedProperty.location || "Sri Lanka"}
+
+Price:
+${selectedProperty.price || "Price on request"}
+
+Stay Dates:
+Check-in: ${checkIn}
+Check-out: ${checkOut}
+Duration: ${days || "Not calculated"}
+
+Guest Details:
+Name: ${name}
+Email: ${email}
+Mobile: ${mobile}
+Country: ${country}
+Guests: ${guests}
+
+Special Notes:
+${notes || "None"}`;
+
+  window.open("https://wa.me/94704620017?text=" + encodeURIComponent(message), "_blank");
+
+  const inquiryData = {
+    name,
+    email,
+    mobile,
+    country,
+    countryCode: "",
+    experiences: "Villa Inquiry - " + selectedProperty.name,
+    dateFrom: checkIn,
+    dateTo: checkOut,
+    guests,
+    message
+  };
+
+  try{
+    const response = await fetch(API_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(inquiryData)
+    });
+
+    const result = await response.json();
+
+    if(response.ok){
+      showThankYouModal(result.reference || "CB-000000");
+      closePropertyModal();
+    }else{
+      alert("WhatsApp opened, but email sending failed.");
+    }
+  }catch(error){
+    alert("WhatsApp opened, but email sending failed.");
+  }
+}
+
+function showThankYouModal(reference){
+  document.getElementById("thankYouReference").textContent = reference;
+  document.getElementById("thankYouModal").style.display = "flex";
+}
+
+function closeThankYouModal(){
+  document.getElementById("thankYouModal").style.display = "none";
 }
 </script>
 

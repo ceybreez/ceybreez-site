@@ -247,3 +247,30 @@ button:hover{
     grid-template-columns:1fr;
   }
 }
+.image-preview-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  z-index:99999;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.image-preview-modal img{
+  max-width:95%;
+  max-height:95vh;
+  object-fit:contain;
+  border-radius:12px;
+}
+
+.image-preview-close{
+  position:absolute;
+  top:20px;
+  right:30px;
+  color:#fff;
+  font-size:45px;
+  cursor:pointer;
+  font-weight:bold;
+}

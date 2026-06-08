@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>CeyBreez Homestays | Authentic Sri Lankan Stays</title>
+  <meta name="description" content="Explore authentic Sri Lankan homestays with CeyBreez. Comfortable local stays, family homes and peaceful village experiences." />
+
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="stylesheet" href="homestays.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+
+<body>
+
+<header>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="villas.html">Villas</a>
+    <a href="apartments.html">Apartments</a>
+    <a href="homestays.html">HomeStays</a>
+    <a href="tours.html">Tours</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="hero-content">
+    <img src="logo.png" alt="CeyBreez Logo" class="hero-logo" />
+    <h1>Authentic Homestays in Sri Lanka</h1>
+    <p>Warm local homes, peaceful surroundings and meaningful Sri Lankan hospitality.</p>
+    <a href="#properties" class="hero-btn">Explore Homestays</a>
+  </div>
+</section>
+
+<section class="intro">
+  <h2>Feel Sri Lanka Like Home</h2>
+  <p>Discover handpicked homestays across Sri Lanka with CeyBreez. Perfect for travelers who love local culture, comfort and friendly hospitality.</p>
+</section>
+
+<section class="properties-section" id="properties">
+  <h2>Featured Homestays</h2>
+  <p class="section-intro">These homestays are managed from the CeyBreez admin panel.</p>
+
+  <div id="propertyGrid" class="property-grid">
+    <p class="loading-text">Loading homestays...</p>
+  </div>
+</section>
+
+<section class="property-inquiry-section" id="propertyInquiry">
+  <h2>Send Homestay Inquiry</h2>
+  <p class="section-intro">Select a homestay, add your travel details, and send your inquiry to CeyBreez.</p>
+
+  <div class="property-inquiry-box">
+    <div class="form-grid">
+
+      <div class="field-group">
+        <label>🏡 Select Homestay *</label>
+        <select id="inqPropertySelect" onchange="selectPropertyFromDropdown()">
+          <option value="">Select Homestay</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label>✅ Selected Homestay</label>
+        <input id="inqPropertyName" type="text" placeholder="Selected homestay will appear here" readonly>
+      </div>
+
+      <div class="field-group">
+        <label>👤 Full Name *</label>
+        <input id="inqName" type="text" placeholder="Enter your full name" required>
+      </div>
+
+      <div class="field-group">
+        <label>📧 Email Address *</label>
+        <input id="inqEmail" type="email" placeholder="example@email.com" required>
+      </div>
+
+      <div class="field-group">
+        <label>📱 WhatsApp / Mobile *</label>
+        <input id="inqMobile" type="tel" placeholder="+94 77 123 4567" required>
+      </div>
+
+      <div class="field-group">
+        <label>🌍 Country *</label>
+        <input id="inqCountry" type="text" placeholder="Your country" required>
+      </div>
+
+      <div class="field-group">
+        <label>👥 Number of Guests *</label>
+        <input id="inqGuests" type="number" min="1" placeholder="Number of guests" required>
+      </div>
+
+      <div class="field-group">
+        <label>📅 Check-In Date *</label>
+        <input id="inqCheckIn" type="date" required>
+      </div>
+
+      <div class="field-group">
+        <label>📅 Check-Out Date *</label>
+        <input id="inqCheckOut" type="date" required>
+      </div>
+
+      <div class="field-group">
+        <label>🌙 Number of Nights</label>
+        <input id="inqDays" type="text" placeholder="Auto calculated" readonly>
+      </div>
+    </div>
+
+    <div class="field-group full-width">
+      <label>📝 Special Notes / Requests</label>
+      <textarea id="inqNotes" rows="4" placeholder="Airport pickup, early check-in, room preferences, budget or special requests..."></textarea>
+    </div>
+
+    <button type="button" class="send-inquiry-btn" onclick="sendPropertyInquiry()">Send Inquiry</button>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Need Help Choosing a Homestay?</h2>
+  <p>Tell us your dates, guest count and preferred location. We’ll help you find a suitable stay.</p>
+  <a href="#propertyInquiry">Send Inquiry</a>
+</section>
+
+<footer>
+  <p>© 2026 CeyBreez. All rights reserved.</p>
+</footer>
+
+<div id="propertyModal" class="property-modal">
+  <div class="property-modal-card">
+    <button class="modal-close" onclick="closePropertyModal()">×</button>
+
+    <h2 id="modalTitle"></h2>
+    <div id="modalGallery" class="modal-gallery"></div>
+
+    <div class="modal-info-grid">
+      <div><strong>Location</strong><span id="modalLocation"></span></div>
+      <div><strong>Guests</strong><span id="modalGuests"></span></div>
+      <div><strong>Bedrooms</strong><span id="modalBedrooms"></span></div>
+      <div><strong>Bathrooms</strong><span id="modalBathrooms"></span></div>
+      <div><strong>Price</strong><span id="modalPrice"></span></div>
+    </div>
+
+    <p id="modalDescription"></p>
+
+    <h3>Facilities</h3>
+    <ul id="modalFacilities"></ul>
+
+    <button type="button" class="select-property-btn" onclick="selectPropertyForInquiry()">Select This Homestay</button>
+  </div>
+</div>
+
+<div id="thankYouModal" class="thankyou-modal">
+  <div class="thankyou-card">
+    <button onclick="closeThankYouModal()" class="thankyou-close">×</button>
+    <div class="thankyou-icon">✅</div>
+    <h2>Inquiry Sent Successfully</h2>
+    <p>Thank you for choosing CeyBreez. We have received your homestay inquiry.</p>
+    <div class="thankyou-ref">Reference No:<br><strong id="thankYouReference">CB-000000</strong></div>
+    <p class="thankyou-small">Our team will contact you shortly.</p>
+  </div>
+</div>
+
+<a href="https://wa.me/94704620017" class="floating-whatsapp" target="_blank" aria-label="Chat on WhatsApp">
+  <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+<script>
+const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
+const PROPERTY_TYPE = "homestay";
+const PROPERTY_LABEL = "Homestay";
+
+let properties = [];
+let selectedProperty = null;
+
+window.addEventListener("load", function(){
+  loadProperties();
+
+  document.addEventListener("change", function(e){
+    if(e.target.id === "inqCheckIn" || e.target.id === "inqCheckOut"){
+      calculateInquiryDays();
+    }
+  });
+});
+
+async function loadProperties(){
+  const grid = document.getElementById("propertyGrid");
+  const select = document.getElementById("inqPropertySelect");
+
+  try{
+    const response = await fetch(API_BASE + "/api/properties?type=" + PROPERTY_TYPE);
+    const data = await response.json();
+
+    properties = data || [];
+    grid.innerHTML = "";
+    select.innerHTML = '<option value="">Select ' + PROPERTY_LABEL + '</option>';
+
+    if(properties.length === 0){
+      grid.innerHTML = '<p class="loading-text">No ' + PROPERTY_TYPE + 's available yet. Please check again soon.</p>';
+      return;
+    }
+
+    properties.forEach(item => {
+      const option = document.createElement("option");
+      option.value = item.id;
+      option.textContent = item.name;
+      select.appendChild(option);
+
+      const card = document.createElement("div");
+      card.className = "property-card";
+
+      const photo = item.photos && item.photos.length ? item.photos[0] : "images/cover.jpg";
+
+      card.innerHTML = `
+        <img src="${photo}" alt="${item.name}" loading="lazy">
+        <div class="property-content">
+          <h3>${item.name}</h3>
+          <p class="location">📍 ${item.location || "Sri Lanka"}</p>
+          <p>${item.description || ""}</p>
+          <div class="property-meta">
+            <span>👥 ${item.guests || "Guests"}</span>
+            <span>🛏 ${item.bedrooms || "Bedrooms"}</span>
+            <span>🚿 ${item.bathrooms || "Bathrooms"}</span>
+          </div>
+          <strong class="price">${item.price || "Price on request"}</strong>
+          <button onclick="openPropertyModal('${item.id}')">View Details</button>
+          <button onclick="quickSelectProperty('${item.id}')" class="quick-inquiry-btn">Inquiry</button>
+        </div>
+      `;
+
+      grid.appendChild(card);
+    });
+
+  }catch(error){
+    grid.innerHTML = '<p class="loading-text">Unable to load ' + PROPERTY_TYPE + 's. Please try again later.</p>';
+  }
+}
+
+function openPropertyModal(id){
+  const item = properties.find(p => p.id === id);
+  if(!item) return;
+
+  selectedProperty = item;
+
+  document.getElementById("modalTitle").textContent = item.name;
+  document.getElementById("modalLocation").textContent = item.location || "Sri Lanka";
+  document.getElementById("modalGuests").textContent = item.guests || "Not specified";
+  document.getElementById("modalBedrooms").textContent = item.bedrooms || "Not specified";
+  document.getElementById("modalBathrooms").textContent = item.bathrooms || "Not specified";
+  document.getElementById("modalPrice").textContent = item.price || "Price on request";
+  document.getElementById("modalDescription").textContent = item.description || "";
+
+  const gallery = document.getElementById("modalGallery");
+  gallery.innerHTML = "";
+
+  const photos = item.photos && item.photos.length ? item.photos : ["images/cover.jpg"];
+  photos.forEach(photo => {
+    const img = document.createElement("img");
+    img.src = photo;
+    img.alt = item.name;
+    img.loading = "lazy";
+    gallery.appendChild(img);
+  });
+
+  const facilities = document.getElementById("modalFacilities");
+  facilities.innerHTML = "";
+
+  if(item.facilities && item.facilities.length){
+    item.facilities.forEach(f => {
+      const li = document.createElement("li");
+      li.textContent = f;
+      facilities.appendChild(li);
+    });
+  }else{
+    facilities.innerHTML = "<li>Facilities will be confirmed on request.</li>";
+  }
+
+  document.getElementById("propertyModal").style.display = "flex";
+}
+
+function closePropertyModal(){
+  document.getElementById("propertyModal").style.display = "none";
+}
+
+function selectPropertyForInquiry(){
+  if(!selectedProperty) return;
+
+  fillSelectedProperty(selectedProperty.id);
+  closePropertyModal();
+
+  document.getElementById("propertyInquiry").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
+function quickSelectProperty(id){
+  fillSelectedProperty(id);
+
+  document.getElementById("propertyInquiry").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
+function selectPropertyFromDropdown(){
+  const id = document.getElementById("inqPropertySelect").value;
+  fillSelectedProperty(id);
+}
+
+function fillSelectedProperty(id){
+  const item = properties.find(p => p.id === id);
+
+  if(!item){
+    selectedProperty = null;
+    document.getElementById("inqPropertyName").value = "";
+    return;
+  }
+
+  selectedProperty = item;
+  document.getElementById("inqPropertySelect").value = item.id;
+  document.getElementById("inqPropertyName").value = item.name;
+}
+
+function calculateInquiryDays(){
+  const checkIn = document.getElementById("inqCheckIn").value;
+  const checkOut = document.getElementById("inqCheckOut").value;
+  const daysBox = document.getElementById("inqDays");
+
+  if(checkIn && checkOut){
+    const start = new Date(checkIn);
+    const end = new Date(checkOut);
+    const diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    daysBox.value = diff > 0 ? diff + " Nights" : "Invalid date range";
+  }
+}
+
+async function sendPropertyInquiry(){
+  if(!selectedProperty){
+    alert("Please select a " + PROPERTY_LABEL.toLowerCase() + " first.");
+    return;
+  }
+
+  const name = document.getElementById("inqName").value.trim();
+  const email = document.getElementById("inqEmail").value.trim();
+  const mobile = document.getElementById("inqMobile").value.trim();
+  const country = document.getElementById("inqCountry").value.trim();
+  const guests = document.getElementById("inqGuests").value.trim();
+  const checkIn = document.getElementById("inqCheckIn").value;
+  const checkOut = document.getElementById("inqCheckOut").value;
+  const days = document.getElementById("inqDays").value;
+  const notes = document.getElementById("inqNotes").value.trim();
+
+  if(!name || !email || !mobile || !country || !guests || !checkIn || !checkOut){
+    alert("Please fill all required details.");
+    return;
+  }
+
+  const message =
+`New CeyBreez ${PROPERTY_LABEL} Inquiry
+
+Selected ${PROPERTY_LABEL}:
+${selectedProperty.name}
+
+Location:
+${selectedProperty.location || "Sri Lanka"}
+
+Price:
+${selectedProperty.price || "Price on request"}
+
+Stay Dates:
+Check-in: ${checkIn}
+Check-out: ${checkOut}
+Duration: ${days || "Not calculated"}
+
+Guest Details:
+Name: ${name}
+Email: ${email}
+Mobile: ${mobile}
+Country: ${country}
+Guests: ${guests}
+
+Special Notes:
+${notes || "None"}`;
+
+  window.open("https://wa.me/94704620017?text=" + encodeURIComponent(message), "_blank");
+
+  const inquiryData = {
+    name,
+    email,
+    mobile,
+    country,
+    countryCode: "",
+    experiences: PROPERTY_LABEL + " Inquiry - " + selectedProperty.name,
+    dateFrom: checkIn,
+    dateTo: checkOut,
+    guests,
+    message
+  };
+
+  try{
+    const response = await fetch(API_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(inquiryData)
+    });
+
+    const result = await response.json();
+
+    if(response.ok){
+      showThankYouModal(result.reference || "CB-000000");
+      resetInquiryForm();
+    }else{
+      alert("WhatsApp opened, but email sending failed.");
+    }
+  }catch(error){
+    alert("WhatsApp opened, but email sending failed.");
+  }
+}
+
+function resetInquiryForm(){
+  document.getElementById("inqName").value = "";
+  document.getElementById("inqEmail").value = "";
+  document.getElementById("inqMobile").value = "";
+  document.getElementById("inqCountry").value = "";
+  document.getElementById("inqGuests").value = "";
+  document.getElementById("inqCheckIn").value = "";
+  document.getElementById("inqCheckOut").value = "";
+  document.getElementById("inqDays").value = "";
+  document.getElementById("inqNotes").value = "";
+}
+
+function showThankYouModal(reference){
+  document.getElementById("thankYouReference").textContent = reference;
+  document.getElementById("thankYouModal").style.display = "flex";
+}
+
+function closeThankYouModal(){
+  document.getElementById("thankYouModal").style.display = "none";
+}
+</script>
+
+</body>
+</html>

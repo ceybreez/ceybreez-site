@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>CeyBreez Villas | Luxury Villa Stays in Sri Lanka</title>
+  <meta name="description" content="Explore handpicked villas in Sri Lanka with CeyBreez. Beach villas, private stays and luxury holiday homes." />
+
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="stylesheet" href="villas.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+
+<body>
+
+<header>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="villas.html">Villas</a>
+    <a href="apartments.html">Apartments</a>
+    <a href="homestays.html">HomeStays</a>
+    <a href="tours.html">Tours</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="hero-content">
+    <img src="logo.png" alt="CeyBreez Logo" class="hero-logo" />
+    <h1>Private Villas in Sri Lanka</h1>
+    <p>Handpicked villas for peaceful holidays, family escapes and luxury island stays.</p>
+    <a href="#properties" class="hero-btn">Explore Villas</a>
+  </div>
+</section>
+
+<section class="intro">
+  <h2>Stay With Comfort & Style</h2>
+  <p>Discover beautiful villas across Sri Lanka with CeyBreez. Each stay is selected for comfort, location and authentic island feeling.</p>
+</section>
+
+<section class="properties-section" id="properties">
+  <h2>Featured Villas</h2>
+  <p class="section-intro">These villas are managed from the CeyBreez admin panel.</p>
+
+  <div id="propertyGrid" class="property-grid">
+    <p class="loading-text">Loading villas...</p>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Need Help Choosing a Villa?</h2>
+  <p>Tell us your dates, guest count and preferred location. We’ll help you find a suitable stay.</p>
+  <a href="contact.html">Contact CeyBreez</a>
+</section>
+
+<footer>
+  <p>© 2026 CeyBreez. All rights reserved.</p>
+</footer>
+
+<div id="propertyModal" class="property-modal">
+  <div class="property-modal-card">
+    <button class="modal-close" onclick="closePropertyModal()">×</button>
+    <h2 id="modalTitle"></h2>
+    <div id="modalGallery" class="modal-gallery"></div>
+
+    <div class="modal-info-grid">
+      <div><strong>Location</strong><span id="modalLocation"></span></div>
+      <div><strong>Guests</strong><span id="modalGuests"></span></div>
+      <div><strong>Bedrooms</strong><span id="modalBedrooms"></span></div>
+      <div><strong>Bathrooms</strong><span id="modalBathrooms"></span></div>
+      <div><strong>Price</strong><span id="modalPrice"></span></div>
+    </div>
+
+    <p id="modalDescription"></p>
+
+    <h3>Facilities</h3>
+    <ul id="modalFacilities"></ul>
+
+    <a id="modalWhatsApp" class="modal-whatsapp" target="_blank">Ask on WhatsApp</a>
+  </div>
+</div>
+
+<a href="https://wa.me/94704620017" class="floating-whatsapp" target="_blank" aria-label="Chat on WhatsApp">
+  <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+<script>
+const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
+let properties = [];
+
+window.addEventListener("load", loadProperties);
+
+async function loadProperties(){
+  const grid = document.getElementById("propertyGrid");
+
+  try{
+    const response = await fetch(API_BASE + "/api/properties?type=villa");
+    const data = await response.json();
+
+    properties = data || [];
+    grid.innerHTML = "";
+
+    if(properties.length === 0){
+      grid.innerHTML = '<p class="loading-text">No villas available yet. Please check again soon.</p>';
+      return;
+    }
+
+    properties.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "property-card";
+
+      const photo = item.photos && item.photos.length ? item.photos[0] : "images/cover.jpg";
+
+      card.innerHTML = `
+        <img src="${photo}" alt="${item.name}" loading="lazy">
+        <div class="property-content">
+          <h3>${item.name}</h3>
+          <p class="location">📍 ${item.location || "Sri Lanka"}</p>
+          <p>${item.description || ""}</p>
+          <div class="property-meta">
+            <span>👥 ${item.guests || "Guests"}</span>
+            <span>🛏 ${item.bedrooms || "Bedrooms"}</span>
+            <span>🚿 ${item.bathrooms || "Bathrooms"}</span>
+          </div>
+          <strong class="price">${item.price || "Price on request"}</strong>
+          <button onclick="openPropertyModal('${item.id}')">View Details</button>
+        </div>
+      `;
+
+      grid.appendChild(card);
+    });
+
+  }catch(error){
+    grid.innerHTML = '<p class="loading-text">Unable to load villas. Please try again later.</p>';
+  }
+}
+
+function openPropertyModal(id){
+  const item = properties.find(p => p.id === id);
+  if(!item) return;
+
+  document.getElementById("modalTitle").textContent = item.name;
+  document.getElementById("modalLocation").textContent = item.location || "Sri Lanka";
+  document.getElementById("modalGuests").textContent = item.guests || "Not specified";
+  document.getElementById("modalBedrooms").textContent = item.bedrooms || "Not specified";
+  document.getElementById("modalBathrooms").textContent = item.bathrooms || "Not specified";
+  document.getElementById("modalPrice").textContent = item.price || "Price on request";
+  document.getElementById("modalDescription").textContent = item.description || "";
+
+  const gallery = document.getElementById("modalGallery");
+  gallery.innerHTML = "";
+
+  const photos = item.photos && item.photos.length ? item.photos : ["images/cover.jpg"];
+  photos.forEach(photo => {
+    const img = document.createElement("img");
+    img.src = photo;
+    img.alt = item.name;
+    img.loading = "lazy";
+    gallery.appendChild(img);
+  });
+
+  const facilities = document.getElementById("modalFacilities");
+  facilities.innerHTML = "";
+
+  (item.facilities || []).forEach(f => {
+    const li = document.createElement("li");
+    li.textContent = f;
+    facilities.appendChild(li);
+  });
+
+  const msg = `Hello CeyBreez, I am interested in this villa: ${item.name}`;
+  document.getElementById("modalWhatsApp").href = "https://wa.me/94704620017?text=" + encodeURIComponent(msg);
+
+  document.getElementById("propertyModal").style.display = "flex";
+}
+
+function closePropertyModal(){
+  document.getElementById("propertyModal").style.display = "none";
+}
+</script>
+
+</body>
+</html>

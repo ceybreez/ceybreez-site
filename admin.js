@@ -199,7 +199,7 @@ function renderPhotoPreview(type) {
     item.className = "preview-item";
 
     item.innerHTML = `
-      <img src="${url}" alt="Photo ${index + 1}">
+      <img src="${url}" alt="Photo ${index + 1}" onclick="openImagePreview('${url}')">
       <button type="button" onclick="removePhoto('${type}', ${index})">×</button>
     `;
 
@@ -475,4 +475,12 @@ async function deleteProperty(id) {
 
   alert("Deleted");
   loadProperties();
+}
+function openImagePreview(url){
+  document.getElementById("previewFullImage").src = url;
+  document.getElementById("imagePreviewModal").style.display = "flex";
+}
+
+function closeImagePreview(){
+  document.getElementById("imagePreviewModal").style.display = "none";
 }

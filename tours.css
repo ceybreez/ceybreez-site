@@ -872,6 +872,78 @@ nav a:hover{
   font-size:14px;
 }
 
+
+
+/* AUTO ITINERARY PREVIEW */
+
+.itinerary-section{
+  background:rgba(255,255,255,0.44);
+  border-radius:26px;
+  padding:24px;
+  border:1px solid rgba(15,118,110,0.10);
+}
+
+.itinerary-note{
+  color:#555;
+  font-size:14px;
+  line-height:1.6;
+  margin:-6px 0 18px;
+}
+
+.itinerary-output{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+
+.itinerary-output > p{
+  grid-column:1 / -1;
+  background:#ffffff;
+  border-radius:18px;
+  padding:18px;
+  color:#555;
+  font-weight:600;
+  border:1px solid rgba(15,118,110,0.10);
+}
+
+.itinerary-day{
+  background:#ffffff;
+  border-radius:20px;
+  padding:18px 16px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.07);
+  border:1px solid rgba(15,118,110,0.12);
+  min-height:116px;
+}
+
+.itinerary-day strong{
+  display:inline-block;
+  background:#0f766e;
+  color:#ffffff;
+  padding:7px 13px;
+  border-radius:50px;
+  font-size:13px;
+  margin-bottom:12px;
+}
+
+.itinerary-day span{
+  display:block;
+  color:#0f3d3e;
+  font-weight:700;
+  line-height:1.45;
+  margin-bottom:8px;
+}
+
+.itinerary-day small{
+  display:block;
+  color:#666;
+  font-size:12px;
+  line-height:1.45;
+}
+
+.itinerary-main-day{
+  background:rgba(242,232,220,0.90);
+}
+
 /* CTA */
 
 .cta{
@@ -967,6 +1039,10 @@ nav a:active{
   .airport-grid{
     grid-template-columns:1fr;
   }
+
+  .itinerary-output{
+    grid-template-columns:repeat(2,1fr);
+  }
 }
 
 /* MOBILE */
@@ -1055,7 +1131,8 @@ nav a:active{
   .type-grid,
   .why-grid,
   .province-grid,
-  .form-grid{
+  .form-grid,
+  .itinerary-output{
     grid-template-columns:1fr;
   }
 
@@ -1171,6 +1248,16 @@ nav a:active{
 
   .route-summary{
     padding:12px 14px;
+  }
+
+  .itinerary-section{
+    padding:18px 14px;
+    border-radius:20px;
+  }
+
+  .itinerary-day{
+    min-height:auto;
+    padding:16px 14px;
   }
 
   .send-plan-btn{

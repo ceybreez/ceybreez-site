@@ -285,8 +285,16 @@
         </div>
       </div>
 
+      <div class="planner-section itinerary-section">
+        <h3>5. Suggested Itinerary</h3>
+        <p class="itinerary-note">This preview is generated from your selected destinations and route order.</p>
+        <div id="itineraryOutput" class="itinerary-output">
+          <p>Select destinations and start/end locations to generate your itinerary.</p>
+        </div>
+      </div>
+
       <div class="planner-section">
-        <h3>5. Travel Dates</h3>
+        <h3>6. Travel Dates</h3>
         <div class="form-grid">
           <div><label>Start Date</label><input type="date" id="startDate" required></div>
           <div><label>End Date</label><input type="date" id="endDate" required></div>
@@ -295,7 +303,7 @@
       </div>
 
       <div class="planner-section">
-        <h3>6. Guest Details</h3>
+        <h3>7. Guest Details</h3>
         <div class="form-grid">
           <div><label>Your Name</label><input type="text" id="guestName" required></div>
           <div><label>Email</label><input type="email" id="guestEmail" required></div>
@@ -306,7 +314,7 @@
       </div>
 
       <div class="planner-section">
-        <h3>7. Special Notes</h3>
+        <h3>8. Special Notes</h3>
         <textarea id="specialNotes" rows="5" placeholder="Budget, hotel preference, vehicle preference or anything special..."></textarea>
       </div>
 
@@ -381,6 +389,7 @@
   let latestDistance = "";
   let latestDuration = "";
   let latestRouteText = "";
+  let latestItineraryText = "";
 
   const locationData = {
     colombo:{ name:"Colombo", lat:6.9271, lng:79.8612, bestFor:"City, Shopping, Food", time:"Half Day", nearby:"Negombo, Mount Lavinia", description:"Colombo is Sri Lanka’s commercial capital with hotels, shopping, restaurants, colonial buildings and city experiences.", photos:["images/colombo.jpg","images/negombo.jpg","images/galle.jpg"] },
@@ -615,6 +624,88 @@
     `;
   }
 
+
+  function generateItinerary(fullRoute = null){
+    const output = document.getElementById("itineraryOutput");
+    if(!output) return;
+
+    let route = fullRoute;
+
+    if(!route){
+      const selectedPlaces = [
+        ...getSelectedPredefinedPlaces(),
+        ...otherLocations
+      ];
+      const { startPoint, endPoint } = getStartEndPoints();
+
+      if(startPoint && endPoint){
+        route = [startPoint, ...sortRouteByNearest(startPoint, selectedPlaces), endPoint];
+      }else{
+        route = selectedPlaces;
+      }
+    }
+
+    if(!route || route.length === 0){
+      output.innerHTML = "<p>Select destinations and start/end locations to generate your itinerary.</p>";
+      latestItineraryText = "Not generated";
+      return;
+    }
+
+    let daysText = "";
+    let html = "";
+
+    if(route.length >= 2){
+      const start = route[0];
+      const end = route[route.length - 1];
+      const stops = route.slice(1, route.length - 1);
+
+      html += `
+        <div class="itinerary-day itinerary-main-day">
+          <strong>Day 1</strong>
+          <span>${start.icon || "🚩"} ${start.name}</span>
+          <small>Arrival / Start point</small>
+        </div>
+      `;
+      daysText += `Day 1 - ${start.icon || "🚩"} ${start.name}\n`;
+
+      stops.forEach((place, index) => {
+        const dayNo = index + 2;
+        html += `
+          <div class="itinerary-day">
+            <strong>Day ${dayNo}</strong>
+            <span>${place.icon || "📍"} ${place.name}</span>
+            <small>${place.highlight || "Selected destination"}</small>
+          </div>
+        `;
+        daysText += `Day ${dayNo} - ${place.icon || "📍"} ${place.name}\n`;
+      });
+
+      const finalDay = stops.length + 2;
+      html += `
+        <div class="itinerary-day itinerary-main-day">
+          <strong>Day ${finalDay}</strong>
+          <span>${end.icon || "🏁"} ${end.name}</span>
+          <small>Departure / End point</small>
+        </div>
+      `;
+      daysText += `Day ${finalDay} - ${end.icon || "🏁"} ${end.name}`;
+    }else{
+      route.forEach((place, index) => {
+        html += `
+          <div class="itinerary-day">
+            <strong>Day ${index + 1}</strong>
+            <span>${place.icon || "📍"} ${place.name}</span>
+            <small>${place.highlight || "Selected destination"}</small>
+          </div>
+        `;
+        daysText += `Day ${index + 1} - ${place.icon || "📍"} ${place.name}\n`;
+      });
+    }
+
+    latestItineraryText = daysText.trim();
+    output.innerHTML = html;
+  }
+
   function updateVehicleSuggestion(){
     const count = parseInt(document.getElementById("guestCount").value || "0", 10);
     let vehicle = "Add guest count";
@@ -656,6 +747,7 @@
       document.getElementById("routeDetails").innerHTML =
         "<p>Please select start and end location.</p>";
       selectedList.innerHTML = "<li>No route selected yet.</li>";
+      generateItinerary();
       return;
     }
 
@@ -669,6 +761,7 @@
     const fullRoute = [startPoint, ...orderedPlaces, endPoint];
 
     updateRouteDetails(fullRoute);
+    generateItinerary(fullRoute);
 
     fullRoute.forEach((place, index) => {
       const labelName =
@@ -917,6 +1010,7 @@
 
     renderProvinceSelectedList();
     updateMapAndList();
+    generateItinerary();
     closeLocationModal();
 
     document.getElementById("tripPlanner").scrollIntoView({
@@ -960,6 +1054,7 @@
 
     selectedSuggestion = null;
     updateMapAndList();
+    generateItinerary();
   }
 
   function calculateDays(){
@@ -1021,6 +1116,9 @@ ${serviceType}
 
 Route:
 ${routeText}
+
+Suggested Itinerary:
+${latestItineraryText || "Not generated"}
 
 Places / Stops:
 ${selectedText || "None"}
@@ -1114,6 +1212,7 @@ ${specialNotes}`;
     updateVehicleSuggestion();
     updateServiceType();
     renderProvinceSelectedList();
+    generateItinerary();
   });
 </script>
 

@@ -608,3 +608,67 @@ body.dynamic-text .card p,
 body.dynamic-text .thing-card p{
   color:var(--dynamic-text-color) !important;
 }
+.cms-bg-video{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  z-index:0;
+}
+
+[data-section]{
+  position:relative;
+  overflow:hidden;
+}
+
+[data-section] > *:not(.cms-bg-video){
+  position:relative;
+  z-index:1;
+}
+
+.cms-card img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  border-radius:18px;
+  margin-bottom:16px;
+}
+
+.cms-card a{
+  display:inline-block;
+  margin-top:12px;
+  padding:12px 22px;
+  border-radius:50px;
+  background:#0f766e;
+  color:#fff;
+  text-decoration:none;
+  font-weight:700;
+}
+
+.cms-animate.fade-up{
+  animation:cmsFadeUp .8s ease both;
+}
+
+.cms-animate.zoom-in{
+  animation:cmsZoomIn .8s ease both;
+}
+
+.cms-animate.slide-left{
+  animation:cmsSlideLeft .8s ease both;
+}
+
+@keyframes cmsFadeUp{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes cmsZoomIn{
+  from{opacity:0;transform:scale(.95)}
+  to{opacity:1;transform:scale(1)}
+}
+
+@keyframes cmsSlideLeft{
+  from{opacity:0;transform:translateX(40px)}
+  to{opacity:1;transform:translateX(0)}
+}

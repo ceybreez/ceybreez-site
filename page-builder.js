@@ -25,6 +25,16 @@ function applySection(section){
 
   if(!target) return;
 
+  let settings = {};
+
+  try{
+    settings = typeof section.settings === "string"
+      ? JSON.parse(section.settings || "{}")
+      : section.settings || {};
+  }catch{
+    settings = {};
+  }
+
   if(section.title){
     const title = target.querySelector("[data-field='title']");
     if(title) title.textContent = section.title;
@@ -55,19 +65,23 @@ function applySection(section){
     if(img) img.src = section.mediaUrl;
   }
 
-  applySectionStyles(target, section);
+  if(settings.videoUrl){
+    applyVideoBackground(target, settings.videoUrl);
+  }
+
+  if(settings.gallery && Array.isArray(settings.gallery)){
+    renderGallery(target, settings.gallery);
+  }
+
+  if(settings.cards && Array.isArray(settings.cards)){
+    renderCards(target, settings.cards);
+  }
+
+  applySectionStyles(target, section, settings);
 }
 
-function applySectionStyles(target, section){
-  let settings = {};
-
-  try{
-    settings = typeof section.settings === "string"
-      ? JSON.parse(section.settings || "{}")
-      : section.settings || {};
-  }catch{
-    settings = {};
-  }
+function applySectionStyles(target, section, passedSettings){
+ let settings = passedSettings || {};
 
   if(section.backgroundImage){
     target.style.backgroundImage =
@@ -127,4 +141,56 @@ function applySectionStyles(target, section){
   if(settings.animation){
     target.classList.add("cms-animate", settings.animation);
   }
+}
+function applyVideoBackground(target, videoUrl){
+  let video = target.querySelector(".cms-bg-video");
+
+  if(!video){
+    video = document.createElement("video");
+    video.className = "cms-bg-video";
+    video.autoplay = true;
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+
+    target.prepend(video);
+  }
+
+  video.src = videoUrl;
+}
+
+function renderGallery(target, gallery){
+  const galleryBox = target.querySelector("[data-field='gallery']");
+  if(!galleryBox) return;
+
+  galleryBox.innerHTML = "";
+
+  gallery.forEach(url => {
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = "CeyBreez Gallery";
+    img.loading = "lazy";
+    galleryBox.appendChild(img);
+  });
+}
+
+function renderCards(target, cards){
+  const cardsBox = target.querySelector("[data-field='cards']");
+  if(!cardsBox) return;
+
+  cardsBox.innerHTML = "";
+
+  cards.forEach(card => {
+    const item = document.createElement("div");
+    item.className = "cms-card";
+
+    item.innerHTML = `
+      ${card.image ? `<img src="${card.image}" alt="${card.title || ''}">` : ""}
+      <h3>${card.title || ""}</h3>
+      <p>${card.description || ""}</p>
+      ${card.buttonText ? `<a href="${card.buttonUrl || "#"}">${card.buttonText}</a>` : ""}
+    `;
+
+    cardsBox.appendChild(item);
+  });
 }

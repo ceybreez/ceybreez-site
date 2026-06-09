@@ -434,3 +434,24 @@ input[readonly]{
   margin-top:-4px;
   margin-bottom:8px;
 }
+.settings-toggle-row{
+  margin-bottom:18px;
+}
+
+.settings-toggle-btn{
+  width:100%;
+  background:#111827;
+  color:#fff;
+  border-radius:18px;
+  padding:16px 22px;
+  text-align:left;
+  font-size:16px;
+}
+
+.settings-toggle-btn:hover{
+  background:#0f766e;
+}
+
+.global-settings-box{
+  border:2px solid #0f766e;
+}

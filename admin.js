@@ -789,3 +789,55 @@ function toggleSectionBuilder() {
   const box = document.getElementById("sectionBuilderBox");
   if (box) box.classList.toggle("hidden");
 }
+function addCardItem(card = {}) {
+  const box = document.getElementById("cardsBuilder");
+  if (!box) return;
+
+  const index = box.children.length;
+
+  const item = document.createElement("div");
+  item.className = "card-builder-item";
+
+  item.innerHTML = `
+    <h4>Card ${index + 1}</h4>
+
+    <label>Card Title</label>
+    <input class="card-title" value="${card.title || ""}" />
+
+    <label>Card Description</label>
+    <textarea class="card-description">${card.description || ""}</textarea>
+
+    <label>Card Image URL</label>
+    <input class="card-image" value="${card.image || ""}" />
+
+    <label>Button Text</label>
+    <input class="card-button-text" value="${card.buttonText || ""}" />
+
+    <label>Button URL</label>
+    <input class="card-button-url" value="${card.buttonUrl || ""}" />
+
+    <button type="button" class="delete-btn" onclick="this.parentElement.remove()">
+      Remove Card
+    </button>
+  `;
+
+  box.appendChild(item);
+}
+
+function collectCards() {
+  return Array.from(document.querySelectorAll(".card-builder-item")).map(item => ({
+    title: item.querySelector(".card-title")?.value.trim() || "",
+    description: item.querySelector(".card-description")?.value.trim() || "",
+    image: item.querySelector(".card-image")?.value.trim() || "",
+    buttonText: item.querySelector(".card-button-text")?.value.trim() || "",
+    buttonUrl: item.querySelector(".card-button-url")?.value.trim() || ""
+  })).filter(card => card.title || card.description || card.image);
+}
+
+function loadCards(cards = []) {
+  const box = document.getElementById("cardsBuilder");
+  if (!box) return;
+
+  box.innerHTML = "";
+  cards.forEach(card => addCardItem(card));
+}

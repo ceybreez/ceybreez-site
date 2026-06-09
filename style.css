@@ -584,3 +584,27 @@ font-size:30px;
   }
 
 }
+.hero-subtitle{
+  font-size:20px;
+  max-width:750px;
+  margin:14px auto 24px;
+  line-height:1.6;
+  color:inherit;
+}
+
+body.dynamic-bg .about,
+body.dynamic-bg .things,
+body.dynamic-bg .cards,
+body.dynamic-bg .contact{
+  background:var(--dynamic-bg-color) !important;
+}
+
+body.dynamic-text,
+body.dynamic-text .about,
+body.dynamic-text .things,
+body.dynamic-text .cards,
+body.dynamic-text .contact,
+body.dynamic-text .card p,
+body.dynamic-text .thing-card p{
+  color:var(--dynamic-text-color) !important;
+}

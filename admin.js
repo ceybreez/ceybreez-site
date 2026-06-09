@@ -578,11 +578,20 @@ async function loadPageSections() {
     box.appendChild(card);
   });
 }
-
 async function savePageSection(e) {
   e.preventDefault();
 
   const editId = document.getElementById("sectionEditId").value;
+
+  const settings = {
+    gradientStart: document.getElementById("sectionGradientStart")?.value || "",
+    gradientEnd: document.getElementById("sectionGradientEnd")?.value || "",
+    paddingTop: document.getElementById("sectionPaddingTop")?.value || "",
+    paddingBottom: document.getElementById("sectionPaddingBottom")?.value || "",
+    borderRadius: document.getElementById("sectionBorderRadius")?.value || "",
+    shadow: document.getElementById("sectionShadow")?.value || "",
+    animation: document.getElementById("sectionAnimation")?.value || ""
+  };
 
   const data = {
     id: editId || "",
@@ -595,11 +604,13 @@ async function savePageSection(e) {
     mediaUrl: document.getElementById("sectionImage").value.trim(),
     backgroundType: "color",
     backgroundColor: document.getElementById("sectionBgColor").value,
+    backgroundImage: document.getElementById("sectionBackgroundImage")?.value.trim() || "",
     textColor: document.getElementById("sectionTextColor").value,
     buttonColor: document.getElementById("sectionButtonColor").value,
     fontFamily: document.getElementById("sectionFontFamily").value,
     sortOrder: document.getElementById("sectionSortOrder").value,
-    active: document.getElementById("sectionActive").checked
+    active: document.getElementById("sectionActive").checked,
+    settings
   };
 
   const res = await fetch(`${API_BASE}/api/admin/page-sections`, {
@@ -632,6 +643,16 @@ async function editPageSection(id) {
 
   if (!item) return;
 
+  let settings = {};
+
+  try {
+    settings = typeof item.settings === "string"
+      ? JSON.parse(item.settings || "{}")
+      : item.settings || {};
+  } catch {
+    settings = {};
+  }
+
   document.getElementById("sectionEditId").value = item.id;
   document.getElementById("sectionPage").value = item.page || "home";
   document.getElementById("sectionKey").value = item.sectionKey || "";
@@ -642,11 +663,20 @@ async function editPageSection(id) {
   document.getElementById("sectionImage").value = item.mediaUrl || "";
   document.getElementById("sectionVideo").value = item.video || "";
   document.getElementById("sectionBgColor").value = item.backgroundColor || "#ffffff";
+  document.getElementById("sectionBackgroundImage").value = item.backgroundImage || "";
   document.getElementById("sectionTextColor").value = item.textColor || "#222222";
   document.getElementById("sectionButtonColor").value = item.buttonColor || "#0f766e";
   document.getElementById("sectionFontFamily").value = item.fontFamily || "";
   document.getElementById("sectionSortOrder").value = item.sortOrder || 0;
   document.getElementById("sectionActive").checked = !!item.active;
+
+  document.getElementById("sectionGradientStart").value = settings.gradientStart || "#ffffff";
+  document.getElementById("sectionGradientEnd").value = settings.gradientEnd || "#f8f3eb";
+  document.getElementById("sectionPaddingTop").value = settings.paddingTop || "";
+  document.getElementById("sectionPaddingBottom").value = settings.paddingBottom || "";
+  document.getElementById("sectionBorderRadius").value = settings.borderRadius || "";
+  document.getElementById("sectionShadow").value = settings.shadow || "";
+  document.getElementById("sectionAnimation").value = settings.animation || "";
 
   window.scrollTo({ top: 0, behavior: "smooth" });
 }

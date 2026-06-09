@@ -671,7 +671,7 @@ async function savePageSection(e) {
   animation: document.getElementById("sectionAnimation")?.value || "",
   cards: collectCards()
 };
-  };
+
 
   const backgroundImage = document.getElementById("sectionBackgroundImage")?.value.trim() || "";
 

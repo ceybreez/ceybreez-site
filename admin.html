@@ -106,9 +106,14 @@
     <section id="pageControlTab" class="hidden">
       <h2>Page Control</h2>
 
-      <div class="page-control-grid">
-        <form id="siteContentForm">
-          <h3>Global Settings</h3>
+      <div class="settings-toggle-row">
+  <button type="button" class="settings-toggle-btn" onclick="toggleGlobalSettings()">
+    ⚙ Global Settings
+  </button>
+</div>
+
+<form id="siteContentForm" class="hidden global-settings-box">
+  <h3>Global Settings</h3>
 
           <label>Logo URL</label>
           <input id="site_logo" placeholder="logo.png or uploaded image URL" />

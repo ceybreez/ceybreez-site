@@ -1,1 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>CeyBreez | Cafes & Services in Sri Lanka</title>
+
+  <meta name="description" content="Find cafes, restaurants, grocery shops, rentals, laundry, salons, clothing shops and local services with CeyBreez.">
+  <meta name="keywords" content="Sri Lanka cafes, coffee shops, grocery stores, restaurants, vehicle rental, bike rental, laundry, salons, CeyBreez">
+  <meta name="author" content="CeyBreez">
+
+  <meta property="og:title" content="CeyBreez | Cafes & Services">
+  <meta property="og:description" content="Discover useful local services and places around Sri Lanka.">
+  <meta property="og:image" content="https://ceybreez.com/logo.png">
+  <meta property="og:url" content="https://ceybreez.com/services.html">
+  <meta property="og:type" content="website">
+
+  <link id="siteFavicon" rel="icon" type="image/png" href="logo.png">
+  <link rel="stylesheet" href="services.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body data-page="services">
+
+<header>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="villas.html">Villas</a>
+    <a href="apartments.html">Apartments</a>
+    <a href="homestays.html">HomeStays</a>
+    <a href="tours.html">Tours</a>
+    <a href="services.html">Services</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<section class="services-hero" data-section="hero">
+  <div class="hero-content">
+    <img id="heroLogo" class="hero-logo-img" src="logo.png" alt="CeyBreez Logo">
+
+    <h1 data-field="title">Cafes & Services</h1>
+    <p data-field="subtitle">
+      Discover cafes, restaurants, grocery shops, rentals, laundry, salons, and useful local services around Sri Lanka.
+    </p>
+
+    <a href="#services-list" class="btn" data-field="button">Explore Services</a>
+  </div>
+</section>
+
+<section class="services-intro" data-section="intro">
+  <h2 data-field="title">Useful Places Near Your Stay</h2>
+  <p data-field="content">
+    CeyBreez helps guests find trusted local places and services including coffee shops, tea spots, restaurants,
+    grocery stores, supermarkets, vehicle rentals, laundry, salons, clothing shops, and more.
+  </p>
+</section>
+
+<section class="services-categories" id="services-list" data-section="categories">
+  <h2 data-field="title">Service Categories</h2>
+  <p data-field="subtitle">Browse useful services and places for your Sri Lanka stay.</p>
+
+  <div class="services-grid" data-field="cards">
+    <div class="service-card">
+      <h3>☕ Coffee Shops</h3>
+      <p>Find cozy places for coffee, snacks, and relaxed moments.</p>
+    </div>
+
+    <div class="service-card">
+      <h3>🍽 Restaurants</h3>
+      <p>Discover local food, seafood, rice & curry, and family restaurants.</p>
+    </div>
+
+    <div class="service-card">
+      <h3>🛒 Grocery Stores</h3>
+      <p>Useful grocery shops, supermarkets, and daily essentials.</p>
+    </div>
+
+    <div class="service-card">
+      <h3>🛵 Bike Rental</h3>
+      <p>Find scooter and bike rental options for easy local travel.</p>
+    </div>
+
+    <div class="service-card">
+      <h3>🚗 Vehicle Rental</h3>
+      <p>Cars, vans, and transport options for trips around Sri Lanka.</p>
+    </div>
+
+    <div class="service-card">
+      <h3>🧺 Laundry</h3>
+      <p>Laundry and cleaning services useful during longer stays.</p>
+    </div>
+  </div>
+</section>
+
+<section class="featured-services" data-section="featured">
+  <h2 data-field="title">Featured Services</h2>
+  <p data-field="content">
+    Recommended cafes, shops, rentals, and local services selected for CeyBreez guests.
+  </p>
+
+  <div class="services-grid" data-field="cards"></div>
+</section>
+
+<section class="services-gallery" data-section="gallery">
+  <h2 data-field="title">Services Gallery</h2>
+  <p data-field="content">A glimpse of places to relax, eat, shop, and enjoy.</p>
+
+  <div class="gallery-grid" data-field="gallery"></div>
+</section>
+
+<section class="services-contact" data-section="contact">
+  <h2 data-field="title">Want to list a service?</h2>
+  <p data-field="content">
+    Contact CeyBreez to suggest or list a cafe, restaurant, grocery, rental service, laundry, salon, or local business.
+  </p>
+
+  <a href="contact.html" class="btn contact-btn" data-field="button">Contact Us</a>
+</section>
+
+<footer data-section="footer">
+  <p data-field="content">© 2026 CeyBreez. All rights reserved.</p>
+</footer>
+
+<a id="floatingWhatsApp"
+   href="https://wa.me/94704620017"
+   class="floating-whatsapp"
+   target="_blank"
+   aria-label="Chat on WhatsApp">
+  <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+<script>
+const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
+
+async function loadSiteContent(){
+  try{
+    const response = await fetch(API_BASE + "/api/site-content");
+    const data = await response.json();
+
+    if(data.site_logo){
+      const heroLogo = document.getElementById("heroLogo");
+      if(heroLogo) heroLogo.src = data.site_logo;
+    }
+
+    if(data.site_favicon){
+      const favicon = document.getElementById("siteFavicon");
+      if(favicon) favicon.href = data.site_favicon;
+    }
+
+    if(data.contact_whatsapp){
+      const wa = document.getElementById("floatingWhatsApp");
+      if(wa) wa.href = "https://wa.me/" + data.contact_whatsapp;
+    }
+
+    if(data.site_background_color){
+      document.body.style.background = data.site_background_color;
+    }
+
+    if(data.site_text_color){
+      document.body.style.color = data.site_text_color;
+    }
+
+  }catch(error){
+    console.error("Site content load failed", error);
+  }
+}
+
+loadSiteContent();
+</script>
+
+<script src="page-builder.js"></script>
+
+</body>
+</html>

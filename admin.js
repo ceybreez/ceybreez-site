@@ -661,14 +661,16 @@ async function savePageSection(e) {
   const videoUrl = document.getElementById("sectionVideo")?.value.trim() || "";
 
   const settings = {
-    videoUrl,
-    gradientStart: document.getElementById("sectionGradientStart")?.value || "",
-    gradientEnd: document.getElementById("sectionGradientEnd")?.value || "",
-    paddingTop: pxValue("sectionPaddingTop"),
-    paddingBottom: pxValue("sectionPaddingBottom"),
-    borderRadius: pxValue("sectionBorderRadius"),
-    shadow: document.getElementById("sectionShadow")?.value || "",
-    animation: document.getElementById("sectionAnimation")?.value || ""
+  videoUrl,
+  gradientStart: document.getElementById("sectionGradientStart")?.value || "",
+  gradientEnd: document.getElementById("sectionGradientEnd")?.value || "",
+  paddingTop: pxValue("sectionPaddingTop"),
+  paddingBottom: pxValue("sectionPaddingBottom"),
+  borderRadius: pxValue("sectionBorderRadius"),
+  shadow: document.getElementById("sectionShadow")?.value || "",
+  animation: document.getElementById("sectionAnimation")?.value || "",
+  cards: collectCards()
+};
   };
 
   const backgroundImage = document.getElementById("sectionBackgroundImage")?.value.trim() || "";
@@ -758,6 +760,7 @@ if (builderBox) builderBox.classList.remove("hidden");
   document.getElementById("sectionBorderRadius").value = stripPx(settings.borderRadius);
   document.getElementById("sectionShadow").value = settings.shadow || "";
   document.getElementById("sectionAnimation").value = settings.animation || "";
+  loadCards(settings.cards || []);
 
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -766,6 +769,9 @@ function resetSectionForm() {
   document.getElementById("sectionForm").reset();
   document.getElementById("sectionEditId").value = "";
   document.getElementById("sectionActive").checked = true;
+
+  const cardsBox = document.getElementById("cardsBuilder");
+  if (cardsBox) cardsBox.innerHTML = "";
 }
 
 async function deleteSection(id) {

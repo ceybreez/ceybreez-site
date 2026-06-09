@@ -808,19 +808,19 @@ function addCardItem(card = {}) {
     <h4>Card ${index + 1}</h4>
 
     <label>Card Title</label>
-    <input class="card-title" value="${card.title || ""}" />
+    <input class="card-title" />
 
     <label>Card Description</label>
-    <textarea class="card-description">${card.description || ""}</textarea>
+    <textarea class="card-description"></textarea>
 
     <label>Card Image URL</label>
-    <input class="card-image" value="${card.image || ""}" />
+    <input class="card-image" />
 
     <label>Button Text</label>
-    <input class="card-button-text" value="${card.buttonText || ""}" />
+    <input class="card-button-text" />
 
     <label>Button URL</label>
-    <input class="card-button-url" value="${card.buttonUrl || ""}" />
+    <input class="card-button-url" />
 
     <button type="button" class="delete-btn" onclick="this.parentElement.remove()">
       Remove Card
@@ -828,6 +828,12 @@ function addCardItem(card = {}) {
   `;
 
   box.appendChild(item);
+
+  item.querySelector(".card-title").value = card.title || "";
+  item.querySelector(".card-description").value = card.description || "";
+  item.querySelector(".card-image").value = card.image || "";
+  item.querySelector(".card-button-text").value = card.buttonText || "";
+  item.querySelector(".card-button-url").value = card.buttonUrl || "";
 }
 
 function collectCards() {

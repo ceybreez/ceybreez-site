@@ -185,7 +185,15 @@
             <option value="contact">Contact</option>
           </select>
 <label>Section Key</label>
-<input id="sectionKey" placeholder="hero / about / things / experiences / contact / footer" />
+<select id="sectionKey">
+  <option value="hero">Hero</option>
+  <option value="about">About Section</option>
+  <option value="things">Things To Do</option>
+  <option value="experiences">Experiences</option>
+  <option value="contact">Contact Section</option>
+  <option value="footer">Footer</option>
+  <option value="custom">Custom Section</option>
+</select>
           <label>Section Type</label>
           <select id="sectionType">
             <option value="hero">Hero</option>
@@ -206,16 +214,37 @@
           <label>Content</label>
           <textarea id="sectionContent"></textarea>
 
-          <label>Image URL</label>
-          <input id="sectionImage" />
+          <label>Section Image</label>
+          <div class="upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleSectionImageDrop(event)">
+            <h3>Upload Section Image</h3>
+            <p>Drag & drop image here, or browse from your computer.</p>
+            <input type="file" id="sectionImageUploader" accept="image/*" onchange="uploadSectionImage()" />
+            <button type="button" onclick="document.getElementById('sectionImageUploader').click()">Browse Image</button>
+            <p id="sectionImageUploadStatus" class="upload-status"></p>
+          </div>
+          <input id="sectionImage" readonly placeholder="Uploaded image URL will appear here" />
 
-          <label>Video URL</label>
-          <input id="sectionVideo" />
+          <label>Section Video</label>
+          <div class="upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleSectionVideoDrop(event)">
+            <h3>Upload Section Video</h3>
+            <p>Drag & drop video here, or browse from your computer.</p>
+            <input type="file" id="sectionVideoUploader" accept="video/*" onchange="uploadSectionVideo()" />
+            <button type="button" onclick="document.getElementById('sectionVideoUploader').click()">Browse Video</button>
+            <p id="sectionVideoUploadStatus" class="upload-status"></p>
+          </div>
+          <input id="sectionVideo" readonly placeholder="Uploaded video URL will appear here" />
 
           <label>Background Color</label>
           <input id="sectionBgColor" type="color" value="#ffffff" />
-          <label>Background Image URL</label>
-<input id="sectionBackgroundImage" placeholder="Paste background image URL" />
+          <label>Background Image</label>
+          <div class="upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleSectionBackgroundDrop(event)">
+            <h3>Upload Background Image</h3>
+            <p>Drag & drop background image here, or browse from your computer.</p>
+            <input type="file" id="sectionBackgroundUploader" accept="image/*" onchange="uploadSectionBackground()" />
+            <button type="button" onclick="document.getElementById('sectionBackgroundUploader').click()">Browse Background</button>
+            <p id="sectionBackgroundUploadStatus" class="upload-status"></p>
+          </div>
+          <input id="sectionBackgroundImage" readonly placeholder="Uploaded background image URL will appear here" />
 
 <label>Gradient Start Color</label>
 <input id="sectionGradientStart" type="color" value="#ffffff" />
@@ -223,14 +252,14 @@
 <label>Gradient End Color</label>
 <input id="sectionGradientEnd" type="color" value="#f8f3eb" />
 
-<label>Padding Top</label>
-<input id="sectionPaddingTop" placeholder="Example: 80px" />
+<label>Padding Top (px)</label>
+<input id="sectionPaddingTop" type="number" min="0" placeholder="80" />
 
-<label>Padding Bottom</label>
-<input id="sectionPaddingBottom" placeholder="Example: 80px" />
+<label>Padding Bottom (px)</label>
+<input id="sectionPaddingBottom" type="number" min="0" placeholder="80" />
 
-<label>Border Radius</label>
-<input id="sectionBorderRadius" placeholder="Example: 28px" />
+<label>Border Radius (px)</label>
+<input id="sectionBorderRadius" type="number" min="0" placeholder="28" />
 
 <label>Shadow</label>
 <select id="sectionShadow">

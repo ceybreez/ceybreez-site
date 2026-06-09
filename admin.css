@@ -411,3 +411,26 @@ input[type="color"]{
   }
 
 }
+
+/* =========================
+   SECTION BUILDER V2
+========================= */
+
+input[readonly]{
+  background:#f6f6f6;
+  cursor:default;
+}
+
+.unit-row{
+  display:grid;
+  grid-template-columns:1fr 70px;
+  gap:8px;
+  align-items:center;
+}
+
+.builder-note{
+  font-size:13px;
+  color:#666;
+  margin-top:-4px;
+  margin-bottom:8px;
+}

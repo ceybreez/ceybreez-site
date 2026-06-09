@@ -266,10 +266,11 @@ async function loadSiteContent(){
   });
 }
 
-    if(data.site_text_color){
-      document.body.style.color = data.site_text_color;
-    }
-
+   if(data.site_text_color){
+  document.documentElement.style.setProperty("--dynamic-text-color", data.site_text_color);
+  document.body.style.color = data.site_text_color;
+  document.body.classList.add("dynamic-text");
+}
     if(data.contact_whatsapp){
       const wa = document.getElementById("floatingWhatsApp");
       if(wa) wa.href = "https://wa.me/" + data.contact_whatsapp;

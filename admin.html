@@ -21,6 +21,7 @@
     <div class="topbar">
       <button onclick="showTab('destinations')">Tours Destinations</button>
       <button onclick="showTab('properties')">Villas / Homestays / Apartments</button>
+      <button onclick="showTab('pageControl')">Page Control</button>
       <button onclick="logoutAdmin()">Logout</button>
     </div>
 
@@ -39,10 +40,7 @@
         <input id="destNearby" placeholder="Nearby Places" />
         <textarea id="destDescription" placeholder="Description"></textarea>
 
-        <div class="upload-box"
-             ondragover="handleDragOver(event)"
-             ondragleave="handleDragLeave(event)"
-             ondrop="handleDrop(event, 'dest')">
+        <div class="upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'dest')">
           <h3>Upload Destination Photos</h3>
           <p>Drag & drop photos here, or browse from your computer.</p>
           <input type="file" id="destPhotoUploader" multiple accept="image/*" onchange="uploadPhotos('dest')" />
@@ -85,10 +83,7 @@
         <textarea id="propFacilities" placeholder="Facilities, one per line"></textarea>
         <textarea id="propDescription" placeholder="Description"></textarea>
 
-        <div class="upload-box"
-             ondragover="handleDragOver(event)"
-             ondragleave="handleDragLeave(event)"
-             ondrop="handleDrop(event, 'prop')">
+        <div class="upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'prop')">
           <h3>Upload Property Photos</h3>
           <p>Drag & drop photos here, or browse from your computer.</p>
           <input type="file" id="propPhotoUploader" multiple accept="image/*" onchange="uploadPhotos('prop')" />
@@ -107,14 +102,165 @@
 
       <div id="propertiesList" class="list"></div>
     </section>
+
+    <section id="pageControlTab" class="hidden">
+      <h2>Page Control</h2>
+
+      <div class="page-control-grid">
+        <form id="siteContentForm">
+          <h3>Global Settings</h3>
+
+          <label>Logo URL</label>
+          <input id="site_logo" placeholder="logo.png or uploaded image URL" />
+
+          <label>Favicon URL</label>
+          <input id="site_favicon" placeholder="logo.png or uploaded image URL" />
+
+          <label>Primary Color</label>
+          <input id="site_primary_color" type="color" />
+
+          <label>Secondary Color</label>
+          <input id="site_secondary_color" type="color" />
+
+          <label>Website Background Color</label>
+          <input id="site_background_color" type="color" />
+
+          <label>Website Text Color</label>
+          <input id="site_text_color" type="color" />
+
+          <label>Contact Email</label>
+          <input id="contact_email" placeholder="ceybreez@gmail.com" />
+
+          <label>WhatsApp Number</label>
+          <input id="contact_whatsapp" placeholder="94704620017" />
+
+          <label>Facebook URL</label>
+          <input id="facebook_url" />
+
+          <label>Instagram URL</label>
+          <input id="instagram_url" />
+
+          <h3>Home Hero Section</h3>
+
+          <label>Hero Title</label>
+          <input id="home_hero_title" />
+
+          <label>Hero Subtitle</label>
+          <textarea id="home_hero_subtitle"></textarea>
+
+          <label>Hero Background Image / Video URL</label>
+          <input id="home_hero_media" placeholder="Upload or paste media URL" />
+
+          <label>Hero Text Color</label>
+          <input id="home_hero_text_color" type="color" value="#ffffff" />
+
+          <label>Hero Button Color</label>
+          <input id="home_hero_button_color" type="color" value="#0f766e" />
+
+          <div class="upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handlePageMediaDrop(event)">
+            <h3>Upload Logo / Hero Image / Video</h3>
+            <p>Upload media, then copy the URL into the field you want.</p>
+            <input type="file" id="pageMediaUploader" multiple accept="image/*,video/*" onchange="uploadPageMedia()" />
+            <button type="button" onclick="document.getElementById('pageMediaUploader').click()">Browse Media</button>
+            <p id="pageMediaUploadStatus" class="upload-status"></p>
+          </div>
+
+          <textarea id="pageUploadedUrls" placeholder="Uploaded URLs will appear here"></textarea>
+
+          <button type="submit">Save Page Control Settings</button>
+        </form>
+
+        <form id="sectionForm">
+          <h3>Add / Edit Page Section</h3>
+
+          <input type="hidden" id="sectionEditId" />
+
+          <label>Page</label>
+          <select id="sectionPage">
+            <option value="home">Home</option>
+            <option value="villas">Villas</option>
+            <option value="homestays">Homestays</option>
+            <option value="apartments">Apartments</option>
+            <option value="tours">Tours</option>
+            <option value="contact">Contact</option>
+          </select>
+
+          <label>Section Type</label>
+          <select id="sectionType">
+            <option value="hero">Hero</option>
+            <option value="text">Text Section</option>
+            <option value="cards">Cards Section</option>
+            <option value="gallery">Gallery</option>
+            <option value="video">Video</option>
+            <option value="cta">CTA</option>
+            <option value="custom">Custom</option>
+          </select>
+
+          <label>Title</label>
+          <input id="sectionTitle" />
+
+          <label>Subtitle</label>
+          <input id="sectionSubtitle" />
+
+          <label>Content</label>
+          <textarea id="sectionContent"></textarea>
+
+          <label>Image URL</label>
+          <input id="sectionImage" />
+
+          <label>Video URL</label>
+          <input id="sectionVideo" />
+
+          <label>Background Color</label>
+          <input id="sectionBgColor" type="color" value="#ffffff" />
+
+          <label>Text Color</label>
+          <input id="sectionTextColor" type="color" value="#222222" />
+
+          <label>Button Color</label>
+          <input id="sectionButtonColor" type="color" value="#0f766e" />
+
+          <label>Font Family</label>
+          <select id="sectionFontFamily">
+            <option value="">Default</option>
+            <option value="Poppins">Poppins</option>
+            <option value="Cormorant Garamond">Cormorant Garamond</option>
+            <option value="Arial">Arial</option>
+            <option value="Georgia">Georgia</option>
+          </select>
+
+          <label>Sort Order</label>
+          <input id="sectionSortOrder" type="number" value="0" />
+
+          <label><input type="checkbox" id="sectionActive" checked /> Active / Show on website</label>
+
+          <button type="submit">Save Section</button>
+          <button type="button" onclick="resetSectionForm()">Clear</button>
+        </form>
+      </div>
+
+      <h3>Page Sections</h3>
+      <div class="filter-row">
+        <select id="sectionFilterPage" onchange="loadPageSections()">
+          <option value="home">Home</option>
+          <option value="villas">Villas</option>
+          <option value="homestays">Homestays</option>
+          <option value="apartments">Apartments</option>
+          <option value="tours">Tours</option>
+          <option value="contact">Contact</option>
+        </select>
+      </div>
+
+      <div id="sectionsList" class="list"></div>
+    </section>
   </section>
 </div>
 
-<script src="admin.js"></script>
 <div id="imagePreviewModal" class="image-preview-modal">
   <span class="image-preview-close" onclick="closeImagePreview()">×</span>
   <img id="previewFullImage" src="" alt="Preview">
 </div>
-  
+
+<script src="admin.js"></script>
 </body>
 </html>

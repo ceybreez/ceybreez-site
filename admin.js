@@ -1,5 +1,4 @@
 const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
-
 let ADMIN_TOKEN = localStorage.getItem("CEYBREEZ_ADMIN_TOKEN") || "";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -70,9 +69,19 @@ function arrayToLines(value) {
   return Array.isArray(value) ? value.join("\n") : "";
 }
 
+function pxValue(id) {
+  const value = document.getElementById(id)?.value;
+  return value ? `${value}px` : "";
+}
+
+function stripPx(value) {
+  return String(value || "").replace("px", "");
+}
+
 async function loadAll() {
   await loadDestinations();
   await loadProperties();
+
   if (document.getElementById("pageControlTab")) {
     await loadSiteContent();
     await loadPageSections();
@@ -87,6 +96,7 @@ function getUploadFolder(type) {
   if (propType === "villa") return "villas";
   if (propType === "homestay") return "homestays";
   if (propType === "apartment") return "apartments";
+
   return "properties";
 }
 
@@ -226,6 +236,75 @@ async function uploadPageMediaList(files) {
   }
 }
 
+/* SECTION BUILDER MEDIA UPLOADS */
+
+function handleSectionImageDrop(event) {
+  event.preventDefault();
+  event.currentTarget.classList.remove("drag-active");
+  uploadSectionFile(event.dataTransfer.files[0], "sectionImage", "section-images");
+}
+
+function handleSectionVideoDrop(event) {
+  event.preventDefault();
+  event.currentTarget.classList.remove("drag-active");
+  uploadSectionFile(event.dataTransfer.files[0], "sectionVideo", "section-videos");
+}
+
+function handleSectionBackgroundDrop(event) {
+  event.preventDefault();
+  event.currentTarget.classList.remove("drag-active");
+  uploadSectionFile(event.dataTransfer.files[0], "sectionBackgroundImage", "section-backgrounds");
+}
+
+function uploadSectionImage() {
+  const input = document.getElementById("sectionImageUploader");
+  if (!input.files.length) return;
+  uploadSectionFile(input.files[0], "sectionImage", "section-images");
+  input.value = "";
+}
+
+function uploadSectionVideo() {
+  const input = document.getElementById("sectionVideoUploader");
+  if (!input.files.length) return;
+  uploadSectionFile(input.files[0], "sectionVideo", "section-videos");
+  input.value = "";
+}
+
+function uploadSectionBackground() {
+  const input = document.getElementById("sectionBackgroundUploader");
+  if (!input.files.length) return;
+  uploadSectionFile(input.files[0], "sectionBackgroundImage", "section-backgrounds");
+  input.value = "";
+}
+
+async function uploadSectionFile(file, targetInputId, folder) {
+  if (!file) return alert("Please select a file first.");
+
+  const target = document.getElementById(targetInputId);
+  if (target) target.value = "Uploading...";
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("folder", folder);
+
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/upload-image`, {
+      method: "POST",
+      headers: uploadHeaders(),
+      body: formData
+    });
+
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || "Upload failed");
+
+    if (target) target.value = result.url;
+    alert("Upload completed");
+  } catch (err) {
+    if (target) target.value = "";
+    alert(err.message);
+  }
+}
+
 function renderPhotoPreview(type) {
   const photosBox = getPhotosBox(type);
   const previewBox = type === "dest"
@@ -318,7 +397,6 @@ async function saveDestination(e) {
   });
 
   const result = await res.json();
-
   if (!res.ok) return alert(result.error || "Save failed");
 
   alert(result.message || "Saved");
@@ -371,7 +449,6 @@ async function loadProperties() {
   try {
     const res = await fetch(`${API_BASE}/api/admin/properties`, { headers: authHeaders() });
     const data = await res.json();
-
     if (!res.ok) throw new Error(data.error || "Failed to load properties");
 
     const box = document.getElementById("propertiesList");
@@ -380,7 +457,6 @@ async function loadProperties() {
     data.forEach(item => {
       const card = document.createElement("div");
       card.className = "card";
-
       const firstPhoto = item.photos && item.photos.length ? item.photos[0] : "";
 
       card.innerHTML = `
@@ -434,7 +510,6 @@ async function saveProperty(e) {
   });
 
   const result = await res.json();
-
   if (!res.ok) return alert(result.error || "Save failed");
 
   alert(result.message || "Saved");
@@ -555,7 +630,6 @@ async function loadPageSections() {
 
   const data = await res.json();
   const box = document.getElementById("sectionsList");
-
   if (!box) return;
 
   box.innerHTML = "";
@@ -578,33 +652,39 @@ async function loadPageSections() {
     box.appendChild(card);
   });
 }
+
 async function savePageSection(e) {
   e.preventDefault();
 
   const editId = document.getElementById("sectionEditId").value;
 
+  const videoUrl = document.getElementById("sectionVideo")?.value.trim() || "";
+
   const settings = {
+    videoUrl,
     gradientStart: document.getElementById("sectionGradientStart")?.value || "",
     gradientEnd: document.getElementById("sectionGradientEnd")?.value || "",
-    paddingTop: document.getElementById("sectionPaddingTop")?.value || "",
-    paddingBottom: document.getElementById("sectionPaddingBottom")?.value || "",
-    borderRadius: document.getElementById("sectionBorderRadius")?.value || "",
+    paddingTop: pxValue("sectionPaddingTop"),
+    paddingBottom: pxValue("sectionPaddingBottom"),
+    borderRadius: pxValue("sectionBorderRadius"),
     shadow: document.getElementById("sectionShadow")?.value || "",
     animation: document.getElementById("sectionAnimation")?.value || ""
   };
 
+  const backgroundImage = document.getElementById("sectionBackgroundImage")?.value.trim() || "";
+
   const data = {
     id: editId || "",
     page: document.getElementById("sectionPage").value,
-    sectionKey: document.getElementById("sectionKey").value.trim(),
+    sectionKey: document.getElementById("sectionKey").value,
     sectionType: document.getElementById("sectionType").value,
     title: document.getElementById("sectionTitle").value.trim(),
     subtitle: document.getElementById("sectionSubtitle").value.trim(),
     content: document.getElementById("sectionContent").value.trim(),
     mediaUrl: document.getElementById("sectionImage").value.trim(),
-    backgroundType: "color",
+    backgroundType: backgroundImage ? "image" : "color",
     backgroundColor: document.getElementById("sectionBgColor").value,
-    backgroundImage: document.getElementById("sectionBackgroundImage")?.value.trim() || "",
+    backgroundImage,
     textColor: document.getElementById("sectionTextColor").value,
     buttonColor: document.getElementById("sectionButtonColor").value,
     fontFamily: document.getElementById("sectionFontFamily").value,
@@ -644,7 +724,6 @@ async function editPageSection(id) {
   if (!item) return;
 
   let settings = {};
-
   try {
     settings = typeof item.settings === "string"
       ? JSON.parse(item.settings || "{}")
@@ -655,13 +734,13 @@ async function editPageSection(id) {
 
   document.getElementById("sectionEditId").value = item.id;
   document.getElementById("sectionPage").value = item.page || "home";
-  document.getElementById("sectionKey").value = item.sectionKey || "";
+  document.getElementById("sectionKey").value = item.sectionKey || "custom";
   document.getElementById("sectionType").value = item.sectionType || "custom";
   document.getElementById("sectionTitle").value = item.title || "";
   document.getElementById("sectionSubtitle").value = item.subtitle || "";
   document.getElementById("sectionContent").value = item.content || "";
   document.getElementById("sectionImage").value = item.mediaUrl || "";
-  document.getElementById("sectionVideo").value = item.video || "";
+  document.getElementById("sectionVideo").value = settings.videoUrl || "";
   document.getElementById("sectionBgColor").value = item.backgroundColor || "#ffffff";
   document.getElementById("sectionBackgroundImage").value = item.backgroundImage || "";
   document.getElementById("sectionTextColor").value = item.textColor || "#222222";
@@ -672,9 +751,9 @@ async function editPageSection(id) {
 
   document.getElementById("sectionGradientStart").value = settings.gradientStart || "#ffffff";
   document.getElementById("sectionGradientEnd").value = settings.gradientEnd || "#f8f3eb";
-  document.getElementById("sectionPaddingTop").value = settings.paddingTop || "";
-  document.getElementById("sectionPaddingBottom").value = settings.paddingBottom || "";
-  document.getElementById("sectionBorderRadius").value = settings.borderRadius || "";
+  document.getElementById("sectionPaddingTop").value = stripPx(settings.paddingTop);
+  document.getElementById("sectionPaddingBottom").value = stripPx(settings.paddingBottom);
+  document.getElementById("sectionBorderRadius").value = stripPx(settings.borderRadius);
   document.getElementById("sectionShadow").value = settings.shadow || "";
   document.getElementById("sectionAnimation").value = settings.animation || "";
 

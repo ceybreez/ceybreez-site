@@ -280,8 +280,40 @@ async function loadSiteContent(){
     console.error("Site content load failed", error);
   }
 }
+async function loadPageSections(){
+  try{
+    const response = await fetch(API_BASE + "/api/page-sections?page=home");
+    const sections = await response.json();
 
+    sections.forEach(section => {
+      if(section.sectionKey === "hero"){
+        if(section.title){
+          document.getElementById("homeHeroTitle").textContent = section.title;
+        }
+
+        if(section.subtitle){
+          document.getElementById("homeHeroSubtitle").textContent = section.subtitle;
+        }
+
+        if(section.backgroundColor){
+          document.querySelector(".hero").style.backgroundColor = section.backgroundColor;
+        }
+
+        if(section.textColor){
+          document.querySelector(".hero-content").style.color = section.textColor;
+        }
+
+        if(section.buttonColor){
+          document.getElementById("heroButton").style.background = section.buttonColor;
+        }
+      }
+    });
+  }catch(error){
+    console.error("Page sections load failed", error);
+  }
+}
 loadSiteContent();
+loadPageSections();
 </script>
 
 </body>

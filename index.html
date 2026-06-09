@@ -259,8 +259,12 @@ async function loadSiteContent(){
     }
 
     if(data.site_background_color){
-      document.body.style.background = data.site_background_color;
-    }
+  document.body.style.background = data.site_background_color;
+
+  document.querySelectorAll(".about, .things, .cards, .contact").forEach(section => {
+    section.style.background = data.site_background_color;
+  });
+}
 
     if(data.site_text_color){
       document.body.style.color = data.site_text_color;

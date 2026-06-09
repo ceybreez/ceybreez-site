@@ -813,8 +813,17 @@ function addCardItem(card = {}) {
     <label>Card Description</label>
     <textarea class="card-description"></textarea>
 
-    <label>Card Image URL</label>
-    <input class="card-image" />
+   <label>Card Image</label>
+<div class="upload-box"
+     ondragover="handleDragOver(event)"
+     ondragleave="handleDragLeave(event)"
+     ondrop="handleCardImageDrop(event, this)">
+  <h3>Upload Card Image</h3>
+  <p>Drag & drop image here, or browse.</p>
+  <input type="file" class="card-image-uploader" accept="image/*" onchange="uploadCardImage(this)" />
+  <button type="button" onclick="this.previousElementSibling.click()">Browse Image</button>
+</div>
+<input class="card-image" readonly />
 
     <label>Button Text</label>
     <input class="card-button-text" />
@@ -852,4 +861,51 @@ function loadCards(cards = []) {
 
   box.innerHTML = "";
   cards.forEach(card => addCardItem(card));
+}
+function handleCardImageDrop(event, box) {
+  event.preventDefault();
+  box.classList.remove("drag-active");
+
+  const file = event.dataTransfer.files[0];
+  const cardItem = box.closest(".card-builder-item");
+  const input = cardItem.querySelector(".card-image");
+
+  uploadCardImageFile(file, input);
+}
+
+function uploadCardImage(fileInput) {
+  const file = fileInput.files[0];
+  const cardItem = fileInput.closest(".card-builder-item");
+  const input = cardItem.querySelector(".card-image");
+
+  uploadCardImageFile(file, input);
+  fileInput.value = "";
+}
+
+async function uploadCardImageFile(file, input) {
+  if (!file) return alert("Please select an image first.");
+
+  input.value = "Uploading...";
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("folder", "card-images");
+
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/upload-image`, {
+      method: "POST",
+      headers: uploadHeaders(),
+      body: formData
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) throw new Error(result.error || "Upload failed");
+
+    input.value = result.url;
+    alert("Card image uploaded");
+  } catch (err) {
+    input.value = "";
+    alert(err.message);
+  }
 }

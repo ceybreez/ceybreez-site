@@ -776,3 +776,10 @@ async function deleteSection(id) {
 
   loadPageSections();
 }
+function toggleGlobalSettings() {
+  const box = document.getElementById("siteContentForm");
+
+  if (!box) return;
+
+  box.classList.toggle("hidden");
+}

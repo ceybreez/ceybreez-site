@@ -713,6 +713,8 @@ async function savePageSection(e) {
 
 async function editPageSection(id) {
   const page = document.getElementById("sectionFilterPage")?.value || "home";
+  const builderBox = document.getElementById("sectionBuilderBox");
+if (builderBox) builderBox.classList.remove("hidden");
 
   const res = await fetch(`${API_BASE}/api/admin/page-sections?page=${page}`, {
     headers: authHeaders()
@@ -782,4 +784,8 @@ function toggleGlobalSettings() {
   if (!box) return;
 
   box.classList.toggle("hidden");
+}
+function toggleSectionBuilder() {
+  const box = document.getElementById("sectionBuilderBox");
+  if (box) box.classList.toggle("hidden");
 }

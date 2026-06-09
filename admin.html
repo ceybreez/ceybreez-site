@@ -172,10 +172,20 @@
 
           <textarea id="pageUploadedUrls" placeholder="Uploaded URLs will appear here"></textarea>
 
-          <button type="submit">Save Page Control Settings</button>
-        </form>
+         <button type="submit">Save Page Control Settings</button>
+</form>
 
-        <form id="sectionForm">
+<div class="settings-toggle-row">
+  <button type="button"
+          class="settings-toggle-btn"
+          onclick="toggleSectionBuilder()">
+    📄 Add / Edit Page Section
+  </button>
+</div>
+
+<div id="sectionBuilderBox" class="hidden">
+
+<form id="sectionForm">
           <h3>Add / Edit Page Section</h3>
 
           <input type="hidden" id="sectionEditId" />
@@ -303,9 +313,11 @@
           <label><input type="checkbox" id="sectionActive" checked /> Active / Show on website</label>
 
           <button type="submit">Save Section</button>
-          <button type="button" onclick="resetSectionForm()">Clear</button>
-        </form>
-      </div>
+<button type="button" onclick="resetSectionForm()">Clear</button>
+</form>
+
+</div>
+</div>
 
       <h3>Page Sections</h3>
       <div class="filter-row">

@@ -16,7 +16,7 @@
   <meta property="og:url" content="https://ceybreez.com">
   <meta property="og:type" content="website">
 
-  <link rel="icon" type="image/png" href="logo.png">
+  <link id="siteFavicon" rel="icon" type="image/png" href="logo.png">
   <link rel="stylesheet" href="style.css">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,17 +28,14 @@
 
 <body>
 
-  <!-- WELCOME SCREEN -->
   <section class="welcome-screen" id="welcomeScreen">
     <div class="welcome-content">
       <h1>Welcome</h1>
       <h1>To</h1> 
-      <img src="logo.png" alt="CeyBreez Logo">
-      
+      <img id="welcomeLogo" src="logo.png" alt="CeyBreez Logo">
     </div>
   </section>
 
-  <!-- MAIN WEBSITE -->
   <main id="mainSite">
 
     <header>
@@ -53,114 +50,115 @@
 
     <section class="hero" id="home">
       <div class="hero-content">
-        <img class="hero-logo-img" src="logo.png" alt="CeyBreez Logo">
+        <img id="heroLogo" class="hero-logo-img" src="logo.png" alt="CeyBreez Logo">
 
-        <h2>
+        <h2 id="homeHeroTitle">
           Stay With Comfort, 
           Taste The Island,
           Explore Sri Lanka
         </h2>
 
-        <a href="#contact" class="btn">Book Your Experience</a>
+        <p id="homeHeroSubtitle" class="hero-subtitle"></p>
+
+        <a href="#contact" class="btn" id="heroButton">Book Your Experience</a>
       </div>
     </section>
     
-        <section class="about">
-        <h2>Experience the Soul of Sri Lanka</h2>
+    <section class="about" id="aboutSection">
+      <h2>Experience the Soul of Sri Lanka</h2>
 
       <p>
-      CeyBreez brings together unforgettable stays,
-      breathtaking island tours,
-      authentic local food,
-      and unique travel experiences
-      across the heart of Sri Lanka.
-    </p>
+        CeyBreez brings together unforgettable stays,
+        breathtaking island tours,
+        authentic local food,
+        and unique travel experiences
+        across the heart of Sri Lanka.
+      </p>
     </section>
     
-<section class="things">
-  <h2>Things To Do In Sri Lanka</h2>
+    <section class="things" id="thingsSection">
+      <h2>Things To Do In Sri Lanka</h2>
 
-  <p class="things-intro">
-    Discover the beauty, culture, nature, and unforgettable moments that make Sri Lanka truly special.
-  </p>
+      <p class="things-intro">
+        Discover the beauty, culture, nature, and unforgettable moments that make Sri Lanka truly special.
+      </p>
 
-  <div class="things-grid">
+      <div class="things-grid">
 
-    <div class="thing-card">
-      <img src="images/beach.jpg">
-      <h3>Beach Escapes</h3>
-      <p>Relax on golden beaches, enjoy sunsets, and feel the island breeze.</p>
-    </div>
+        <div class="thing-card">
+          <img src="images/beach.jpg">
+          <h3>Beach Escapes</h3>
+          <p>Relax on golden beaches, enjoy sunsets, and feel the island breeze.</p>
+        </div>
 
-    <div class="thing-card">
-      <img src="images/mountains.jpg">
-      <h3>Mountain Adventures</h3>
-      <p>Explore misty hills, waterfalls, tea estates, and scenic viewpoints.</p>
-    </div>
+        <div class="thing-card">
+          <img src="images/mountains.jpg">
+          <h3>Mountain Adventures</h3>
+          <p>Explore misty hills, waterfalls, tea estates, and scenic viewpoints.</p>
+        </div>
 
-    <div class="thing-card">
-      <img src="images/train.jpg">
-      <h3>Scenic Train Rides</h3>
-      <p>Experience one of the world’s most beautiful train journeys.</p>
-    </div>
+        <div class="thing-card">
+          <img src="images/train.jpg">
+          <h3>Scenic Train Rides</h3>
+          <p>Experience one of the world’s most beautiful train journeys.</p>
+        </div>
 
-    <div class="thing-card">
-      <img src="images/temple.jpg">
-      <h3>Cultural Heritage</h3>
-      <p>Visit ancient temples, sacred cities, and historical landmarks.</p>
-    </div>
+        <div class="thing-card">
+          <img src="images/temple.jpg">
+          <h3>Cultural Heritage</h3>
+          <p>Visit ancient temples, sacred cities, and historical landmarks.</p>
+        </div>
 
-    <div class="thing-card">
-      <img src="images/nature.jpg">
-      <h3>Wildlife & Nature</h3>
-      <p>Discover elephants, leopards, birds, forests, and national parks.</p>
-    </div>
+        <div class="thing-card">
+          <img src="images/nature.jpg">
+          <h3>Wildlife & Nature</h3>
+          <p>Discover elephants, leopards, birds, forests, and national parks.</p>
+        </div>
 
-    <div class="thing-card">
-      <img src="images/food.jpg">
-      <h3>Local Food Experiences</h3>
-      <p>Taste authentic Sri Lankan flavours, spices, tea, and local meals.</p>
-    </div>
+        <div class="thing-card">
+          <img src="images/food.jpg">
+          <h3>Local Food Experiences</h3>
+          <p>Taste authentic Sri Lankan flavours, spices, tea, and local meals.</p>
+        </div>
 
-  </div>
-</section>
-    
+      </div>
+    </section>
     
     <section class="cards" id="villas">
-  <h2>Our Experiences</h2>
+      <h2>Our Experiences</h2>
 
-  <div class="grid">
+      <div class="grid">
 
-    <a href="villas.html" class="card-link">
-      <div class="card">
-        <h3>Villas</h3>
-        <p>Relax in beautiful private villas surrounded by tropical nature.</p>
+        <a href="villas.html" class="card-link">
+          <div class="card">
+            <h3>Villas</h3>
+            <p>Relax in beautiful private villas surrounded by tropical nature.</p>
+          </div>
+        </a>
+
+        <a href="apartments.html" class="card-link">
+          <div class="card">
+            <h3>Apartments</h3>
+            <p>Comfortable modern apartments for your perfect island stay.</p>
+          </div>
+        </a>
+
+        <a href="homestays.html" class="card-link">
+          <div class="card">
+            <h3>HomeStays</h3>
+            <p>Stay in cozy homestays filled with local charm and warm Sri Lankan hospitality.</p>
+          </div>
+        </a>
+
+        <a href="tours.html" class="card-link">
+          <div class="card">
+            <h3>Tours</h3>
+            <p>Explore beaches, mountains, waterfalls, temples, and cultural sites.</p>
+          </div>
+        </a>
+
       </div>
-    </a>
-
-    <a href="apartments.html" class="card-link">
-      <div class="card">
-        <h3>Apartments</h3>
-        <p>Comfortable modern apartments for your perfect island stay.</p>
-      </div>
-    </a>
-
-    <a href="homestays.html" class="card-link">
-      <div class="card">
-        <h3>HomeStays</h3>
-        <p>Stay in cozy homestays filled with local charm and warm Sri Lankan hospitality.</p>
-      </div>
-    </a>
-
-    <a href="tours.html" class="card-link">
-      <div class="card">
-        <h3>Tours</h3>
-        <p>Explore beaches, mountains, waterfalls, temples, and cultural sites.</p>
-      </div>
-    </a>
-
-  </div>
-</section>
+    </section>
 
     <section class="contact" id="contact">
       <h2>Start Your Journey</h2>
@@ -169,50 +167,117 @@
         or custom Sri Lanka Travel Plans.
       </p>
 
-      <a href="contact.html"
-        class="whatsapp">
-              Contact Us
+      <a href="contact.html" class="whatsapp">
+        Contact Us
       </a>
     </section>
 
     <footer>
       <p>© 2026 CeyBreez. All rights reserved.</p>
     </footer>
-</main>
+
+  </main>
+
+  <a id="floatingWhatsApp"
+     href="https://wa.me/94704620017"
+     class="floating-whatsapp"
+     target="_blank"
+     aria-label="Chat on WhatsApp">
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+
 <script>
+const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 
-  const welcomeScreen =
-  document.getElementById("welcomeScreen");
+const welcomeScreen = document.getElementById("welcomeScreen");
+
 if(sessionStorage.getItem("ceybreezEntered") === "yes"){
-welcomeScreen.style.display = "none";
-document.body.classList.add("entered");
+  welcomeScreen.style.display = "none";
+  document.body.classList.add("entered");
 }
+
 function enterSite(){
-sessionStorage.setItem(
-      "ceybreezEntered",
-      "yes"
-    );
- welcomeScreen.classList.add("hide");
- document.body.classList.add("entered");
-setTimeout(() => {
-welcomeScreen.style.display = "none";
- }, 900);
- }
+  sessionStorage.setItem("ceybreezEntered", "yes");
+  welcomeScreen.classList.add("hide");
+  document.body.classList.add("entered");
+
+  setTimeout(() => {
+    welcomeScreen.style.display = "none";
+  }, 900);
+}
+
 window.addEventListener("click", enterSite);
-  window.addEventListener("wheel", enterSite);
-  window.addEventListener("keydown", enterSite);
-  window.addEventListener("touchstart", enterSite);
+window.addEventListener("wheel", enterSite);
+window.addEventListener("keydown", enterSite);
+window.addEventListener("touchstart", enterSite);
 
+async function loadSiteContent(){
+  try{
+    const response = await fetch(API_BASE + "/api/site-content");
+    const data = await response.json();
+
+    if(data.site_logo){
+      const welcomeLogo = document.getElementById("welcomeLogo");
+      const heroLogo = document.getElementById("heroLogo");
+
+      if(welcomeLogo) welcomeLogo.src = data.site_logo;
+      if(heroLogo) heroLogo.src = data.site_logo;
+    }
+
+    if(data.site_favicon){
+      const favicon = document.getElementById("siteFavicon");
+      if(favicon) favicon.href = data.site_favicon;
+    }
+
+    if(data.home_hero_title){
+      const heroTitle = document.getElementById("homeHeroTitle");
+      if(heroTitle) heroTitle.textContent = data.home_hero_title;
+    }
+
+    if(data.home_hero_subtitle){
+      const heroSubtitle = document.getElementById("homeHeroSubtitle");
+      if(heroSubtitle) heroSubtitle.textContent = data.home_hero_subtitle;
+    }
+
+    if(data.home_hero_text_color){
+      const heroContent = document.querySelector(".hero-content");
+      if(heroContent) heroContent.style.color = data.home_hero_text_color;
+    }
+
+    if(data.home_hero_button_color){
+      document.querySelectorAll(".btn").forEach(btn => {
+        btn.style.background = data.home_hero_button_color;
+      });
+    }
+
+    if(data.site_primary_color){
+      document.documentElement.style.setProperty("--primary-color", data.site_primary_color);
+    }
+
+    if(data.site_secondary_color){
+      document.documentElement.style.setProperty("--secondary-color", data.site_secondary_color);
+    }
+
+    if(data.site_background_color){
+      document.body.style.background = data.site_background_color;
+    }
+
+    if(data.site_text_color){
+      document.body.style.color = data.site_text_color;
+    }
+
+    if(data.contact_whatsapp){
+      const wa = document.getElementById("floatingWhatsApp");
+      if(wa) wa.href = "https://wa.me/" + data.contact_whatsapp;
+    }
+
+  }catch(error){
+    console.error("Site content load failed", error);
+  }
+}
+
+loadSiteContent();
 </script>
-
-  <a href="https://wa.me/94704620017"
-   class="floating-whatsapp"
-   target="_blank"
-   aria-label="Chat on WhatsApp">
-<i class="fa-brands fa-whatsapp"></i>
-
-</a>
-  
 
 </body>
 </html>

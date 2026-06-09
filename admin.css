@@ -274,3 +274,140 @@ button:hover{
   cursor:pointer;
   font-weight:bold;
 }
+/* =========================
+   PAGE CONTROL
+========================= */
+
+.page-control-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  margin-bottom:25px;
+}
+
+.page-control-grid form{
+  margin-bottom:0;
+}
+
+.page-control-grid h3{
+  color:#0f766e;
+  margin-bottom:15px;
+}
+
+.page-control-grid label{
+  display:block;
+  margin-top:10px;
+  margin-bottom:5px;
+  font-weight:600;
+}
+
+.filter-row{
+  margin-bottom:20px;
+}
+
+.filter-row select{
+  max-width:250px;
+}
+
+.card-thumb{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  border-radius:12px;
+  margin-bottom:12px;
+}
+
+input[type="color"]{
+  width:100%;
+  height:55px;
+  padding:5px;
+  cursor:pointer;
+}
+
+.upload-box{
+  border:2px dashed #0f766e;
+  border-radius:15px;
+  padding:20px;
+  text-align:center;
+  margin:15px 0;
+  background:#f9fffd;
+}
+
+.upload-box.drag-active{
+  background:#dff8f2;
+  border-color:#115e59;
+}
+
+.upload-status{
+  margin-top:10px;
+  font-size:14px;
+  color:#0f766e;
+  font-weight:bold;
+}
+
+.photo-preview{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+  gap:12px;
+  margin-top:15px;
+}
+
+.preview-item{
+  position:relative;
+}
+
+.preview-item img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+  border-radius:12px;
+  cursor:pointer;
+  border:2px solid #eee;
+}
+
+.preview-item button{
+  position:absolute;
+  top:5px;
+  right:5px;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:#dc2626;
+  color:#fff;
+  border:none;
+  padding:0;
+  font-size:18px;
+}
+
+.image-preview-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  z-index:99999;
+  justify-content:center;
+  align-items:center;
+}
+
+.image-preview-modal img{
+  max-width:90%;
+  max-height:90%;
+  border-radius:12px;
+}
+
+.image-preview-close{
+  position:absolute;
+  top:20px;
+  right:30px;
+  color:#fff;
+  font-size:50px;
+  cursor:pointer;
+}
+
+@media(max-width:900px){
+
+  .page-control-grid{
+    grid-template-columns:1fr;
+  }
+
+}

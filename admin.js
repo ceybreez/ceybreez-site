@@ -13,14 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("propertyForm").addEventListener("submit", saveProperty);
 
   const siteContentForm = document.getElementById("siteContentForm");
-  if (siteContentForm) {
-    siteContentForm.addEventListener("submit", saveSiteContent);
-  }
+  if (siteContentForm) siteContentForm.addEventListener("submit", saveSiteContent);
 
   const sectionForm = document.getElementById("sectionForm");
-  if (sectionForm) {
-    sectionForm.addEventListener("submit", savePageSection);
-  }
+  if (sectionForm) sectionForm.addEventListener("submit", savePageSection);
 
   document.getElementById("destPhotos").addEventListener("input", () => renderPhotoPreview("dest"));
   document.getElementById("propPhotos").addEventListener("input", () => renderPhotoPreview("prop"));
@@ -34,24 +30,16 @@ function authHeaders() {
 }
 
 function uploadHeaders() {
-  return {
-    "Authorization": `Bearer ${ADMIN_TOKEN}`
-  };
+  return { "Authorization": `Bearer ${ADMIN_TOKEN}` };
 }
 
 function loginAdmin() {
   ADMIN_TOKEN = document.getElementById("adminToken").value.trim();
-
-  if (!ADMIN_TOKEN) {
-    alert("Enter admin token");
-    return;
-  }
+  if (!ADMIN_TOKEN) return alert("Enter admin token");
 
   localStorage.setItem("CEYBREEZ_ADMIN_TOKEN", ADMIN_TOKEN);
-
   document.getElementById("loginBox").classList.add("hidden");
   document.getElementById("adminPanel").classList.remove("hidden");
-
   loadAll();
 }
 
@@ -66,9 +54,7 @@ function showTab(tab) {
   document.getElementById("propertiesTab").classList.toggle("hidden", tab !== "properties");
 
   const pageTab = document.getElementById("pageControlTab");
-  if (pageTab) {
-    pageTab.classList.toggle("hidden", tab !== "pageControl");
-  }
+  if (pageTab) pageTab.classList.toggle("hidden", tab !== "pageControl");
 
   if (tab === "pageControl") {
     loadSiteContent();
@@ -87,7 +73,6 @@ function arrayToLines(value) {
 async function loadAll() {
   await loadDestinations();
   await loadProperties();
-
   if (document.getElementById("pageControlTab")) {
     await loadSiteContent();
     await loadPageSections();
@@ -102,7 +87,6 @@ function getUploadFolder(type) {
   if (propType === "villa") return "villas";
   if (propType === "homestay") return "homestays";
   if (propType === "apartment") return "apartments";
-
   return "properties";
 }
 
@@ -113,9 +97,7 @@ function getUploader(type) {
 }
 
 function getPhotosBox(type) {
-  return type === "dest"
-    ? document.getElementById("destPhotos")
-    : document.getElementById("propPhotos");
+  return type === "dest" ? document.getElementById("destPhotos") : document.getElementById("propPhotos");
 }
 
 function getStatusBox(type) {
@@ -137,9 +119,7 @@ function handleDragLeave(event) {
 function handleDrop(event, type) {
   event.preventDefault();
   event.currentTarget.classList.remove("drag-active");
-
-  const files = event.dataTransfer.files;
-  uploadFileList(type, files);
+  uploadFileList(type, event.dataTransfer.files);
 }
 
 function handlePageMediaDrop(event) {
@@ -150,12 +130,7 @@ function handlePageMediaDrop(event) {
 
 async function uploadPhotos(type) {
   const input = getUploader(type);
-
-  if (!input.files.length) {
-    alert("Please select photos first.");
-    return;
-  }
-
+  if (!input.files.length) return alert("Please select photos first.");
   await uploadFileList(type, input.files);
   input.value = "";
 }
@@ -165,13 +140,9 @@ async function uploadFileList(type, files) {
   const photosBox = getPhotosBox(type);
   const folder = getUploadFolder(type);
 
-  if (!files || !files.length) {
-    alert("Please select photos first.");
-    return;
-  }
+  if (!files || !files.length) return alert("Please select photos first.");
 
   status.textContent = `Uploading ${files.length} photo(s)...`;
-
   const uploadedUrls = [];
 
   for (const file of files) {
@@ -189,12 +160,10 @@ async function uploadFileList(type, files) {
       });
 
       const result = await res.json();
-
       if (!res.ok) throw new Error(result.error || "Upload failed");
 
       uploadedUrls.push(result.url);
       status.textContent = `Uploaded ${uploadedUrls.length} of ${files.length} photo(s)...`;
-
     } catch (err) {
       alert(err.message);
     }
@@ -203,7 +172,6 @@ async function uploadFileList(type, files) {
   if (uploadedUrls.length) {
     const existing = photosBox.value.trim();
     photosBox.value = [existing, ...uploadedUrls].filter(Boolean).join("\n");
-
     renderPhotoPreview(type);
     status.textContent = "Upload completed.";
   } else {
@@ -213,12 +181,7 @@ async function uploadFileList(type, files) {
 
 async function uploadPageMedia() {
   const input = document.getElementById("pageMediaUploader");
-
-  if (!input.files.length) {
-    alert("Please select media first.");
-    return;
-  }
-
+  if (!input.files.length) return alert("Please select media first.");
   await uploadPageMediaList(input.files);
   input.value = "";
 }
@@ -227,13 +190,9 @@ async function uploadPageMediaList(files) {
   const status = document.getElementById("pageMediaUploadStatus");
   const urlBox = document.getElementById("pageUploadedUrls");
 
-  if (!files || !files.length) {
-    alert("Please select media first.");
-    return;
-  }
+  if (!files || !files.length) return alert("Please select media first.");
 
   status.textContent = `Uploading ${files.length} file(s)...`;
-
   const uploadedUrls = [];
 
   for (const file of files) {
@@ -249,12 +208,10 @@ async function uploadPageMediaList(files) {
       });
 
       const result = await res.json();
-
       if (!res.ok) throw new Error(result.error || "Upload failed");
 
       uploadedUrls.push(result.url);
       status.textContent = `Uploaded ${uploadedUrls.length} of ${files.length} file(s)...`;
-
     } catch (err) {
       alert(err.message);
     }
@@ -281,12 +238,10 @@ function renderPhotoPreview(type) {
   urls.forEach((url, index) => {
     const item = document.createElement("div");
     item.className = "preview-item";
-
     item.innerHTML = `
       <img src="${url}" alt="Photo ${index + 1}" onclick="openImagePreview('${url}')">
       <button type="button" onclick="removePhoto('${type}', ${index})">×</button>
     `;
-
     previewBox.appendChild(item);
   });
 }
@@ -294,21 +249,17 @@ function renderPhotoPreview(type) {
 function removePhoto(type, index) {
   const photosBox = getPhotosBox(type);
   const urls = linesToArray(photosBox.value);
-
   urls.splice(index, 1);
   photosBox.value = urls.join("\n");
-
   renderPhotoPreview(type);
 }
 
+/* DESTINATIONS */
+
 async function loadDestinations() {
   try {
-    const res = await fetch(`${API_BASE}/api/admin/destinations`, {
-      headers: authHeaders()
-    });
-
+    const res = await fetch(`${API_BASE}/api/admin/destinations`, { headers: authHeaders() });
     const data = await res.json();
-
     if (!res.ok) throw new Error(data.error || "Failed to load destinations");
 
     const box = document.getElementById("destinationsList");
@@ -317,7 +268,6 @@ async function loadDestinations() {
     data.forEach(item => {
       const card = document.createElement("div");
       card.className = "card";
-
       const firstPhoto = item.photos && item.photos.length ? item.photos[0] : "";
 
       card.innerHTML = `
@@ -333,7 +283,6 @@ async function loadDestinations() {
 
       card.querySelector(".edit-btn").onclick = () => editDestination(item);
       card.querySelector(".delete-btn").onclick = () => deleteDestination(item.id);
-
       box.appendChild(card);
     });
   } catch (err) {
@@ -359,10 +308,7 @@ async function saveDestination(e) {
     active: document.getElementById("destActive").checked
   };
 
-  const url = editId
-    ? `${API_BASE}/api/admin/destinations/${editId}`
-    : `${API_BASE}/api/admin/destinations`;
-
+  const url = editId ? `${API_BASE}/api/admin/destinations/${editId}` : `${API_BASE}/api/admin/destinations`;
   const method = editId ? "PUT" : "POST";
 
   const res = await fetch(url, {
@@ -373,10 +319,7 @@ async function saveDestination(e) {
 
   const result = await res.json();
 
-  if (!res.ok) {
-    alert(result.error || "Save failed");
-    return;
-  }
+  if (!res.ok) return alert(result.error || "Save failed");
 
   alert(result.message || "Saved");
   resetDestinationForm();
@@ -395,9 +338,7 @@ function editDestination(item) {
   document.getElementById("destDescription").value = item.description || "";
   document.getElementById("destPhotos").value = arrayToLines(item.photos);
   document.getElementById("destActive").checked = !!item.active;
-
   renderPhotoPreview("dest");
-
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -418,22 +359,17 @@ async function deleteDestination(id) {
   });
 
   const result = await res.json();
-
-  if (!res.ok) {
-    alert(result.error || "Delete failed");
-    return;
-  }
+  if (!res.ok) return alert(result.error || "Delete failed");
 
   alert("Deleted");
   loadDestinations();
 }
 
+/* PROPERTIES */
+
 async function loadProperties() {
   try {
-    const res = await fetch(`${API_BASE}/api/admin/properties`, {
-      headers: authHeaders()
-    });
-
+    const res = await fetch(`${API_BASE}/api/admin/properties`, { headers: authHeaders() });
     const data = await res.json();
 
     if (!res.ok) throw new Error(data.error || "Failed to load properties");
@@ -460,7 +396,6 @@ async function loadProperties() {
 
       card.querySelector(".edit-btn").onclick = () => editProperty(item);
       card.querySelector(".delete-btn").onclick = () => deleteProperty(item.id);
-
       box.appendChild(card);
     });
   } catch (err) {
@@ -489,10 +424,7 @@ async function saveProperty(e) {
     active: document.getElementById("propActive").checked
   };
 
-  const url = editId
-    ? `${API_BASE}/api/admin/properties/${editId}`
-    : `${API_BASE}/api/admin/properties`;
-
+  const url = editId ? `${API_BASE}/api/admin/properties/${editId}` : `${API_BASE}/api/admin/properties`;
   const method = editId ? "PUT" : "POST";
 
   const res = await fetch(url, {
@@ -503,10 +435,7 @@ async function saveProperty(e) {
 
   const result = await res.json();
 
-  if (!res.ok) {
-    alert(result.error || "Save failed");
-    return;
-  }
+  if (!res.ok) return alert(result.error || "Save failed");
 
   alert(result.message || "Saved");
   resetPropertyForm();
@@ -528,9 +457,7 @@ function editProperty(item) {
   document.getElementById("propDescription").value = item.description || "";
   document.getElementById("propPhotos").value = arrayToLines(item.photos);
   document.getElementById("propActive").checked = !!item.active;
-
   renderPhotoPreview("prop");
-
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -551,15 +478,13 @@ async function deleteProperty(id) {
   });
 
   const result = await res.json();
-
-  if (!res.ok) {
-    alert(result.error || "Delete failed");
-    return;
-  }
+  if (!res.ok) return alert(result.error || "Delete failed");
 
   alert("Deleted");
   loadProperties();
 }
+
+/* IMAGE PREVIEW */
 
 function openImagePreview(url) {
   document.getElementById("previewFullImage").src = url;
@@ -570,23 +495,17 @@ function closeImagePreview() {
   document.getElementById("imagePreviewModal").style.display = "none";
 }
 
-/* =====================================
-   PAGE CONTROL
-===================================== */
+/* PAGE CONTROL */
 
 async function loadSiteContent() {
   try {
-    const res = await fetch(`${API_BASE}/api/admin/site-content`, {
-      headers: authHeaders()
-    });
-
+    const res = await fetch(`${API_BASE}/api/admin/site-content`, { headers: authHeaders() });
     const data = await res.json();
 
     data.forEach(item => {
       const el = document.getElementById(item.key);
       if (el) el.value = item.value || "";
     });
-
   } catch (err) {
     console.error(err);
   }
@@ -620,10 +539,7 @@ async function saveSiteContent(e) {
     await fetch(`${API_BASE}/api/admin/site-content`, {
       method: "POST",
       headers: authHeaders(),
-      body: JSON.stringify({
-        key,
-        value: el.value
-      })
+      body: JSON.stringify({ key, value: el.value })
     });
   }
 
@@ -638,8 +554,8 @@ async function loadPageSections() {
   });
 
   const data = await res.json();
-
   const box = document.getElementById("sectionsList");
+
   if (!box) return;
 
   box.innerHTML = "";
@@ -651,9 +567,10 @@ async function loadPageSections() {
     card.innerHTML = `
       <span class="status ${item.active ? "" : "off"}">${item.active ? "Active" : "Hidden"}</span>
       <h3>${item.title || "Untitled Section"}</h3>
-      <p><strong>Type:</strong> ${item.section_type}</p>
-      <p><strong>Page:</strong> ${item.page}</p>
-      <p><strong>Sort:</strong> ${item.sort_order || 0}</p>
+      <p><strong>Key:</strong> ${item.sectionKey || ""}</p>
+      <p><strong>Type:</strong> ${item.sectionType || ""}</p>
+      <p><strong>Page:</strong> ${item.page || ""}</p>
+      <p><strong>Sort:</strong> ${item.sortOrder || 0}</p>
       <button class="edit-btn" onclick="editPageSection('${item.id}')">Edit</button>
       <button class="delete-btn" onclick="deleteSection('${item.id}')">Delete</button>
     `;
@@ -670,17 +587,18 @@ async function savePageSection(e) {
   const data = {
     id: editId || "",
     page: document.getElementById("sectionPage").value,
-    section_type: document.getElementById("sectionType").value,
+    sectionKey: document.getElementById("sectionKey").value.trim(),
+    sectionType: document.getElementById("sectionType").value,
     title: document.getElementById("sectionTitle").value.trim(),
     subtitle: document.getElementById("sectionSubtitle").value.trim(),
     content: document.getElementById("sectionContent").value.trim(),
-    image: document.getElementById("sectionImage").value.trim(),
-    video: document.getElementById("sectionVideo").value.trim(),
-    bg_color: document.getElementById("sectionBgColor").value,
-    text_color: document.getElementById("sectionTextColor").value,
-    button_color: document.getElementById("sectionButtonColor").value,
-    font_family: document.getElementById("sectionFontFamily").value,
-    sort_order: document.getElementById("sectionSortOrder").value,
+    mediaUrl: document.getElementById("sectionImage").value.trim(),
+    backgroundType: "color",
+    backgroundColor: document.getElementById("sectionBgColor").value,
+    textColor: document.getElementById("sectionTextColor").value,
+    buttonColor: document.getElementById("sectionButtonColor").value,
+    fontFamily: document.getElementById("sectionFontFamily").value,
+    sortOrder: document.getElementById("sectionSortOrder").value,
     active: document.getElementById("sectionActive").checked
   };
 
@@ -716,17 +634,18 @@ async function editPageSection(id) {
 
   document.getElementById("sectionEditId").value = item.id;
   document.getElementById("sectionPage").value = item.page || "home";
-  document.getElementById("sectionType").value = item.section_type || "custom";
+  document.getElementById("sectionKey").value = item.sectionKey || "";
+  document.getElementById("sectionType").value = item.sectionType || "custom";
   document.getElementById("sectionTitle").value = item.title || "";
   document.getElementById("sectionSubtitle").value = item.subtitle || "";
   document.getElementById("sectionContent").value = item.content || "";
-  document.getElementById("sectionImage").value = item.image || "";
+  document.getElementById("sectionImage").value = item.mediaUrl || "";
   document.getElementById("sectionVideo").value = item.video || "";
-  document.getElementById("sectionBgColor").value = item.bg_color || "#ffffff";
-  document.getElementById("sectionTextColor").value = item.text_color || "#222222";
-  document.getElementById("sectionButtonColor").value = item.button_color || "#0f766e";
-  document.getElementById("sectionFontFamily").value = item.font_family || "";
-  document.getElementById("sectionSortOrder").value = item.sort_order || 0;
+  document.getElementById("sectionBgColor").value = item.backgroundColor || "#ffffff";
+  document.getElementById("sectionTextColor").value = item.textColor || "#222222";
+  document.getElementById("sectionButtonColor").value = item.buttonColor || "#0f766e";
+  document.getElementById("sectionFontFamily").value = item.fontFamily || "";
+  document.getElementById("sectionSortOrder").value = item.sortOrder || 0;
   document.getElementById("sectionActive").checked = !!item.active;
 
   window.scrollTo({ top: 0, behavior: "smooth" });

@@ -40,6 +40,16 @@ function applySection(section){
     if(content) content.textContent = section.content;
   }
 
+  if(section.buttonText){
+    const button = target.querySelector("[data-field='button']");
+    if(button) button.textContent = section.buttonText;
+  }
+
+  if(section.buttonUrl){
+    const button = target.querySelector("[data-field='button']");
+    if(button) button.href = section.buttonUrl;
+  }
+
   if(section.mediaUrl){
     const img = target.querySelector("[data-field='image']");
     if(img) img.src = section.mediaUrl;
@@ -75,8 +85,18 @@ function applySectionStyles(target, section){
     target.style.color = section.textColor;
   }
 
+  if(section.headingColor){
+    target.querySelectorAll("h1,h2,h3").forEach(h => {
+      h.style.color = section.headingColor;
+    });
+  }
+
   if(section.fontFamily){
     target.style.fontFamily = section.fontFamily;
+  }
+
+  if(section.fontSize){
+    target.style.fontSize = section.fontSize;
   }
 
   if(settings.paddingTop){
@@ -98,13 +118,13 @@ function applySectionStyles(target, section){
     if(settings.shadow === "strong") target.style.boxShadow = "0 28px 70px rgba(0,0,0,.25)";
   }
 
-  if(settings.animation){
-    target.classList.add("cms-animate", settings.animation);
-  }
-
   if(section.buttonColor){
     target.querySelectorAll("a, button").forEach(btn => {
       btn.style.background = section.buttonColor;
     });
+  }
+
+  if(settings.animation){
+    target.classList.add("cms-animate", settings.animation);
   }
 }

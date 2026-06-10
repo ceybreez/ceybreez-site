@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("destinationForm").addEventListener("submit", saveDestination);
   document.getElementById("propertyForm").addEventListener("submit", saveProperty);
+  const serviceForm = document.getElementById("serviceForm");
+if (serviceForm) serviceForm.addEventListener("submit", saveService);
 
   const siteContentForm = document.getElementById("siteContentForm");
   if (siteContentForm) siteContentForm.addEventListener("submit", saveSiteContent);
@@ -51,7 +53,11 @@ function logoutAdmin() {
 function showTab(tab) {
   document.getElementById("destinationsTab").classList.toggle("hidden", tab !== "destinations");
   document.getElementById("propertiesTab").classList.toggle("hidden", tab !== "properties");
-
+const servicesTab = document.getElementById("servicesTab");
+if (servicesTab) servicesTab.classList.toggle("hidden", tab !== "services");
+  if (tab === "services") {
+  loadServices();
+}
   const pageTab = document.getElementById("pageControlTab");
   if (pageTab) pageTab.classList.toggle("hidden", tab !== "pageControl");
 
@@ -81,7 +87,9 @@ function stripPx(value) {
 async function loadAll() {
   await loadDestinations();
   await loadProperties();
-
+if (document.getElementById("servicesTab")) {
+  await loadServices();
+}
   if (document.getElementById("pageControlTab")) {
     await loadSiteContent();
     await loadPageSections();
@@ -908,4 +916,277 @@ async function uploadCardImageFile(file, input) {
     input.value = "";
     alert(err.message);
   }
+}
+/* SERVICES */
+
+async function loadServices() {
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/services`, {
+      headers: authHeaders()
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || "Failed to load services");
+
+    const box = document.getElementById("servicesList");
+    if (!box) return;
+
+    box.innerHTML = "";
+
+    data.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      card.innerHTML = `
+        ${item.image ? `<img src="${item.image}" class="card-thumb" alt="${item.name}">` : ""}
+        <span class="status ${item.active ? "" : "off"}">${item.active ? "Active" : "Hidden"}</span>
+        <h3>${item.name}</h3>
+        <p><strong>Category:</strong> ${item.category || ""}</p>
+        <p><strong>Location:</strong> ${item.location || ""}</p>
+        <p><strong>Short:</strong> ${item.shortDescription || ""}</p>
+        <button class="edit-btn">Edit</button>
+        <button class="delete-btn">Delete</button>
+      `;
+
+      card.querySelector(".edit-btn").onclick = () => editService(item);
+      card.querySelector(".delete-btn").onclick = () => deleteService(item.id);
+
+      box.appendChild(card);
+    });
+
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function saveService(e) {
+  e.preventDefault();
+
+  const editId = document.getElementById("serviceEditId").value;
+
+  const data = {
+    id: editId || "",
+    name: document.getElementById("serviceName").value.trim(),
+    category: document.getElementById("serviceCategory").value,
+    location: document.getElementById("serviceLocation").value.trim(),
+    shortDescription: document.getElementById("serviceShortDescription").value.trim(),
+    fullDescription: document.getElementById("serviceFullDescription").value.trim(),
+    phone: document.getElementById("servicePhone").value.trim(),
+    whatsapp: document.getElementById("serviceWhatsapp").value.trim(),
+    website: document.getElementById("serviceWebsite").value.trim(),
+    mapUrl: document.getElementById("serviceMapUrl").value.trim(),
+    openingHours: document.getElementById("serviceOpeningHours").value.trim(),
+    image: document.getElementById("serviceImage").value.trim(),
+    photos: linesToArray(document.getElementById("servicePhotos").value),
+    active: document.getElementById("serviceActive").checked
+  };
+
+  const res = await fetch(`${API_BASE}/api/admin/services`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify(data)
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    alert(result.error || "Service save failed");
+    return;
+  }
+
+  alert(result.message || "Service saved");
+  resetServiceForm();
+  loadServices();
+}
+
+function editService(item) {
+  document.getElementById("serviceEditId").value = item.id || "";
+  document.getElementById("serviceName").value = item.name || "";
+  document.getElementById("serviceCategory").value = item.category || "Cafe";
+  document.getElementById("serviceLocation").value = item.location || "";
+  document.getElementById("serviceShortDescription").value = item.shortDescription || "";
+  document.getElementById("serviceFullDescription").value = item.fullDescription || "";
+  document.getElementById("servicePhone").value = item.phone || "";
+  document.getElementById("serviceWhatsapp").value = item.whatsapp || "";
+  document.getElementById("serviceWebsite").value = item.website || "";
+  document.getElementById("serviceMapUrl").value = item.mapUrl || "";
+  document.getElementById("serviceOpeningHours").value = item.openingHours || "";
+  document.getElementById("serviceImage").value = item.image || "";
+  document.getElementById("servicePhotos").value = arrayToLines(item.photos);
+  document.getElementById("serviceActive").checked = !!item.active;
+
+  renderServicePhotosPreview();
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function resetServiceForm() {
+  document.getElementById("serviceForm").reset();
+  document.getElementById("serviceEditId").value = "";
+  document.getElementById("serviceActive").checked = true;
+  document.getElementById("serviceImageUploadStatus").textContent = "";
+  document.getElementById("servicePhotosUploadStatus").textContent = "";
+  document.getElementById("servicePhotos").value = "";
+  document.getElementById("servicePhotosPreview").innerHTML = "";
+}
+
+async function deleteService(id) {
+  if (!confirm("Delete this service?")) return;
+
+  const res = await fetch(`${API_BASE}/api/admin/services/${id}`, {
+    method: "DELETE",
+    headers: authHeaders()
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    alert(result.error || "Delete failed");
+    return;
+  }
+
+  alert("Deleted");
+  loadServices();
+}
+
+/* SERVICE IMAGE UPLOADS */
+
+function handleServiceImageDrop(event) {
+  event.preventDefault();
+  event.currentTarget.classList.remove("drag-active");
+
+  const file = event.dataTransfer.files[0];
+  uploadSingleServiceImage(file);
+}
+
+function uploadServiceImage() {
+  const input = document.getElementById("serviceImageUploader");
+  if (!input.files.length) return;
+
+  uploadSingleServiceImage(input.files[0]);
+  input.value = "";
+}
+
+async function uploadSingleServiceImage(file) {
+  if (!file) return alert("Please select image first.");
+
+  const status = document.getElementById("serviceImageUploadStatus");
+  const imageBox = document.getElementById("serviceImage");
+
+  status.textContent = "Uploading image...";
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("folder", "services");
+
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/upload-image`, {
+      method: "POST",
+      headers: uploadHeaders(),
+      body: formData
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) throw new Error(result.error || "Upload failed");
+
+    imageBox.value = result.url;
+    status.textContent = "Main image uploaded.";
+  } catch (err) {
+    status.textContent = "";
+    alert(err.message);
+  }
+}
+
+function handleServicePhotosDrop(event) {
+  event.preventDefault();
+  event.currentTarget.classList.remove("drag-active");
+
+  uploadServicePhotosList(event.dataTransfer.files);
+}
+
+function uploadServicePhotos() {
+  const input = document.getElementById("servicePhotosUploader");
+  if (!input.files.length) return;
+
+  uploadServicePhotosList(input.files);
+  input.value = "";
+}
+
+async function uploadServicePhotosList(files) {
+  const status = document.getElementById("servicePhotosUploadStatus");
+  const photosBox = document.getElementById("servicePhotos");
+
+  if (!files || !files.length) return alert("Please select photos first.");
+
+  status.textContent = `Uploading ${files.length} photo(s)...`;
+
+  const uploadedUrls = [];
+
+  for (const file of files) {
+    if (!file.type.startsWith("image/")) continue;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folder", "services");
+
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/upload-image`, {
+        method: "POST",
+        headers: uploadHeaders(),
+        body: formData
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) throw new Error(result.error || "Upload failed");
+
+      uploadedUrls.push(result.url);
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  if (uploadedUrls.length) {
+    const existing = photosBox.value.trim();
+    photosBox.value = [existing, ...uploadedUrls].filter(Boolean).join("\n");
+    renderServicePhotosPreview();
+    status.textContent = "Gallery photos uploaded.";
+  } else {
+    status.textContent = "No photos uploaded.";
+  }
+}
+
+function renderServicePhotosPreview() {
+  const box = document.getElementById("servicePhotosPreview");
+  const photosBox = document.getElementById("servicePhotos");
+
+  if (!box || !photosBox) return;
+
+  const urls = linesToArray(photosBox.value);
+
+  box.innerHTML = "";
+
+  urls.forEach((url, index) => {
+    const item = document.createElement("div");
+    item.className = "preview-item";
+
+    item.innerHTML = `
+      <img src="${url}" alt="Service Photo ${index + 1}" onclick="openImagePreview('${url}')">
+      <button type="button" onclick="removeServicePhoto(${index})">×</button>
+    `;
+
+    box.appendChild(item);
+  });
+}
+
+function removeServicePhoto(index) {
+  const photosBox = document.getElementById("servicePhotos");
+  const urls = linesToArray(photosBox.value);
+
+  urls.splice(index, 1);
+  photosBox.value = urls.join("\n");
+
+  renderServicePhotosPreview();
 }

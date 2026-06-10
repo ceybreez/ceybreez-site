@@ -505,7 +505,7 @@ async function saveProperty(e) {
     facilities: linesToArray(document.getElementById("propFacilities").value),
     description: document.getElementById("propDescription").value.trim(),
     photos: linesToArray(document.getElementById("propPhotos").value),
-    active: document.getElementById("propActive").checked
+    active: document.getElementById("propActive").checked,
     featured: document.getElementById("propFeatured").checked,
   };
 
@@ -982,7 +982,7 @@ async function saveService(e) {
     openingHours: document.getElementById("serviceOpeningHours").value.trim(),
     image: document.getElementById("serviceImage").value.trim(),
     photos: linesToArray(document.getElementById("servicePhotos").value),
-    active: document.getElementById("serviceActive").checked
+    active: document.getElementById("serviceActive").checked,
     featured: document.getElementById("serviceFeatured").checked,
   };
 

@@ -31,6 +31,37 @@
 
 <section class="properties-section" id="properties">
   <h2>Featured Villas</h2><p class="section-intro">These villas are managed from the CeyBreez admin panel.</p>
+  <div class="property-filters">
+
+  <input
+    type="text"
+    id="propertySearch"
+    placeholder="Search villas..."
+  >
+
+  <input
+    type="text"
+    id="propertyLocationFilter"
+    placeholder="Location"
+  >
+
+  <select id="propertyGuestsFilter">
+    <option value="">Guests</option>
+    <option value="2">2+</option>
+    <option value="4">4+</option>
+    <option value="6">6+</option>
+    <option value="8">8+</option>
+  </select>
+
+  <select id="propertyBedroomsFilter">
+    <option value="">Bedrooms</option>
+    <option value="1">1+</option>
+    <option value="2">2+</option>
+    <option value="3">3+</option>
+    <option value="4">4+</option>
+  </select>
+
+</div>
   <div id="propertyGrid" class="property-grid"><p class="loading-text">Loading villas...</p></div>
 </section>
 

@@ -144,7 +144,7 @@
     </span>
 
     <img id="modalServiceImage" src="" alt="Service">
-
+<div id="modalServiceGallery" class="service-modal-gallery"></div>
     <h2 id="modalServiceTitle"></h2>
 
     <p id="modalServiceDescription"></p>
@@ -381,7 +381,25 @@ if(service.image){
 
   modal.classList.add("show");
 }
+const galleryBox = document.getElementById("modalServiceGallery");
 
+if(galleryBox){
+  galleryBox.innerHTML = "";
+
+  const photos = Array.isArray(service.photos) ? service.photos : [];
+
+  photos.forEach(url => {
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = service.name || "Service photo";
+    img.onclick = () => {
+      const modalImage = document.getElementById("modalServiceImage");
+      modalImage.src = url;
+      modalImage.style.display = "block";
+    };
+    galleryBox.appendChild(img);
+  });
+}
 function closeServiceModal(){
   document.getElementById("serviceModal")
     ?.classList.remove("show");

@@ -518,3 +518,15 @@ footer{
   }
 
 }
+.featured-services .services-grid{
+  min-height:220px;
+}
+
+.featured-services{
+  padding-bottom:90px;
+}
+
+.service-view-btn{
+  border:none;
+  cursor:pointer;
+}

@@ -111,6 +111,7 @@
 const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 let properties = [];
 let selectedProperty = null;
+  let allProperties = [];
 
 window.addEventListener("load", function(){
   loadProperties();
@@ -126,6 +127,7 @@ async function loadProperties(){
     const response = await fetch(API_BASE + "/api/properties?type=villa");
     const data = await response.json();
     properties = data || [];
+    allProperties = [...properties];
     grid.innerHTML = "";
     select.innerHTML = '<option value="">Select Villa</option>';
     if(properties.length === 0){

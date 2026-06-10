@@ -138,7 +138,11 @@
     <button class="modal-close" onclick="closePropertyModal()">×</button>
 
     <h2 id="modalTitle"></h2>
-    <div id="modalGallery" class="modal-gallery"></div>
+    <div class="modal-main-image-wrap">
+  <img id="modalMainImage" class="modal-main-image" src="" alt="">
+</div>
+
+<div id="modalGallery" class="modal-gallery"></div>
 
     <div class="modal-info-grid">
       <div><strong>Location</strong><span id="modalLocation"></span></div>
@@ -261,13 +265,22 @@ function openPropertyModal(id){
   gallery.innerHTML = "";
 
   const photos = item.photos && item.photos.length ? item.photos : ["images/cover.jpg"];
-  photos.forEach(photo => {
-    const img = document.createElement("img");
-    img.src = photo;
-    img.alt = item.name;
-    img.loading = "lazy";
-    gallery.appendChild(img);
-  });
+  const mainImage = document.getElementById("modalMainImage");
+
+mainImage.src = photos[0];
+
+photos.forEach(photo => {
+  const img = document.createElement("img");
+  img.src = photo;
+  img.alt = item.name;
+  img.loading = "lazy";
+
+  img.onclick = () => {
+    mainImage.src = photo;
+  };
+
+  gallery.appendChild(img);
+});
 
   const facilities = document.getElementById("modalFacilities");
   facilities.innerHTML = "";

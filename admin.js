@@ -983,6 +983,7 @@ async function saveService(e) {
     image: document.getElementById("serviceImage").value.trim(),
     photos: linesToArray(document.getElementById("servicePhotos").value),
     active: document.getElementById("serviceActive").checked
+    featured: document.getElementById("serviceFeatured").checked,
   };
 
   const res = await fetch(`${API_BASE}/api/admin/services`, {
@@ -1018,6 +1019,7 @@ function editService(item) {
   document.getElementById("serviceImage").value = item.image || "";
   document.getElementById("servicePhotos").value = arrayToLines(item.photos);
   document.getElementById("serviceActive").checked = !!item.active;
+  document.getElementById("serviceFeatured").checked = item.featured || false;
 
   renderServicePhotosPreview();
 
@@ -1032,6 +1034,7 @@ function resetServiceForm() {
   document.getElementById("servicePhotosUploadStatus").textContent = "";
   document.getElementById("servicePhotos").value = "";
   document.getElementById("servicePhotosPreview").innerHTML = "";
+  document.getElementById("serviceFeatured").checked = false;
 }
 
 async function deleteService(id) {

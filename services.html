@@ -349,8 +349,15 @@ function openServiceModal(service){
   document.getElementById("modalServiceTitle").textContent =
     service.name || "";
 
-  document.getElementById("modalServiceImage").src =
-    service.image || "";
+  const modalImage = document.getElementById("modalServiceImage");
+
+if(service.image){
+  modalImage.src = service.image;
+  modalImage.style.display = "block";
+}else{
+  modalImage.removeAttribute("src");
+  modalImage.style.display = "none";
+}
 
   document.getElementById("modalServiceDescription").textContent =
     service.fullDescription || "";

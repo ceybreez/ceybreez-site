@@ -103,7 +103,93 @@
 
       <div id="propertiesList" class="list"></div>
     </section>
+<section id="servicesTab" class="hidden">
+  <h2>Cafes & Services</h2>
 
+  <form id="serviceForm">
+    <input type="hidden" id="serviceEditId" />
+
+    <label>Business / Service Name</label>
+    <input id="serviceName" placeholder="Demo Cafe" required />
+
+    <label>Category</label>
+    <select id="serviceCategory">
+      <option value="Cafe">Cafe</option>
+      <option value="Coffee Shop">Coffee Shop</option>
+      <option value="Tea Spot">Tea Spot</option>
+      <option value="Restaurant">Restaurant</option>
+      <option value="Grocery">Grocery</option>
+      <option value="Super Market">Super Market</option>
+      <option value="Bike Rental">Bike Rental</option>
+      <option value="Vehicle Rental">Vehicle Rental</option>
+      <option value="Laundry">Laundry</option>
+      <option value="Salon">Salon</option>
+      <option value="Clothing Shop">Clothing Shop</option>
+      <option value="Taxi Service">Taxi Service</option>
+      <option value="Pharmacy">Pharmacy</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <label>Location</label>
+    <input id="serviceLocation" placeholder="Hikkaduwa / Galle / Colombo" required />
+
+    <label>Short Description</label>
+    <input id="serviceShortDescription" placeholder="Short summary for card" />
+
+    <label>Full Description</label>
+    <textarea id="serviceFullDescription" placeholder="Full details shown in popup"></textarea>
+
+    <label>Phone</label>
+    <input id="servicePhone" placeholder="+94700000000" />
+
+    <label>WhatsApp</label>
+    <input id="serviceWhatsapp" placeholder="94700000000" />
+
+    <label>Website</label>
+    <input id="serviceWebsite" placeholder="https://..." />
+
+    <label>Google Map URL</label>
+    <input id="serviceMapUrl" placeholder="https://maps.google.com/..." />
+
+    <label>Opening Hours</label>
+    <input id="serviceOpeningHours" placeholder="8.00 AM - 10.00 PM" />
+
+    <label>Main Image</label>
+    <div class="upload-box"
+         ondragover="handleDragOver(event)"
+         ondragleave="handleDragLeave(event)"
+         ondrop="handleServiceImageDrop(event)">
+      <h3>Upload Service Main Image</h3>
+      <p>Drag & drop image here, or browse from your computer.</p>
+      <input type="file" id="serviceImageUploader" accept="image/*" onchange="uploadServiceImage()" />
+      <button type="button" onclick="document.getElementById('serviceImageUploader').click()">Browse Image</button>
+      <p id="serviceImageUploadStatus" class="upload-status"></p>
+    </div>
+    <input id="serviceImage" readonly placeholder="Uploaded image URL will appear here" />
+
+    <label>Gallery Photos</label>
+    <div class="upload-box"
+         ondragover="handleDragOver(event)"
+         ondragleave="handleDragLeave(event)"
+         ondrop="handleServicePhotosDrop(event)">
+      <h3>Upload Service Gallery Photos</h3>
+      <p>Drag & drop photos here, or browse from your computer.</p>
+      <input type="file" id="servicePhotosUploader" multiple accept="image/*" onchange="uploadServicePhotos()" />
+      <button type="button" onclick="document.getElementById('servicePhotosUploader').click()">Browse Photos</button>
+      <p id="servicePhotosUploadStatus" class="upload-status"></p>
+    </div>
+
+    <textarea id="servicePhotos" placeholder="Uploaded photo URLs will appear here, one per line"></textarea>
+    <div id="servicePhotosPreview" class="photo-preview"></div>
+
+    <label><input type="checkbox" id="serviceActive" checked /> Active / Show on website</label>
+
+    <button type="submit">Save Service</button>
+    <button type="button" onclick="resetServiceForm()">Clear</button>
+  </form>
+
+  <div id="servicesList" class="list"></div>
+</section>
     <section id="pageControlTab" class="hidden">
       <h2>Page Control</h2>
 

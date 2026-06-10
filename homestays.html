@@ -48,7 +48,37 @@
 <section class="properties-section" id="properties">
   <h2>Featured Homestays</h2>
   <p class="section-intro">These homestays are managed from the CeyBreez admin panel.</p>
+<div class="property-filters">
 
+  <input
+    type="text"
+    id="propertySearch"
+    placeholder="Search homestays..."
+  >
+
+  <input
+    type="text"
+    id="propertyLocationFilter"
+    placeholder="Location"
+  >
+
+  <select id="propertyGuestsFilter">
+    <option value="">Guests</option>
+    <option value="2">2+</option>
+    <option value="4">4+</option>
+    <option value="6">6+</option>
+    <option value="8">8+</option>
+  </select>
+
+  <select id="propertyBedroomsFilter">
+    <option value="">Bedrooms</option>
+    <option value="1">1+</option>
+    <option value="2">2+</option>
+    <option value="3">3+</option>
+    <option value="4">4+</option>
+  </select>
+
+</div>
   <div id="propertyGrid" class="property-grid">
     <p class="loading-text">Loading homestays...</p>
   </div>
@@ -183,15 +213,41 @@ const PROPERTY_LABEL = "Homestay";
 
 let properties = [];
 let selectedProperty = null;
+let allProperties = [];
 
 window.addEventListener("load", function(){
+
   loadProperties();
 
   document.addEventListener("change", function(e){
-    if(e.target.id === "inqCheckIn" || e.target.id === "inqCheckOut"){
+
+    if(
+      e.target.id === "inqCheckIn" ||
+      e.target.id === "inqCheckOut"
+    ){
       calculateInquiryDays();
     }
+
+    if(
+      e.target.id === "propertyGuestsFilter" ||
+      e.target.id === "propertyBedroomsFilter"
+    ){
+      applyPropertyFilters();
+    }
+
   });
+
+  document.addEventListener("input", function(e){
+
+    if(
+      e.target.id === "propertySearch" ||
+      e.target.id === "propertyLocationFilter"
+    ){
+      applyPropertyFilters();
+    }
+
+  });
+
 });
 
 async function loadProperties(){
@@ -203,6 +259,7 @@ async function loadProperties(){
     const data = await response.json();
 
     properties = data || [];
+    allProperties = [...properties];
     grid.innerHTML = "";
     select.innerHTML = '<option value="">Select ' + PROPERTY_LABEL + '</option>';
 
@@ -211,36 +268,110 @@ async function loadProperties(){
       return;
     }
 
-    properties.forEach(item => {
-      const option = document.createElement("option");
-      option.value = item.id;
-      option.textContent = item.name;
-      select.appendChild(option);
+   function renderPropertyCards(){
 
-      const card = document.createElement("div");
-      card.className = "property-card";
+  const grid = document.getElementById("propertyGrid");
 
-      const photo = item.photos && item.photos.length ? item.photos[0] : "images/cover.jpg";
+  if(!grid) return;
 
-      card.innerHTML = `
-        <img src="${photo}" alt="${item.name}" loading="lazy">
-        <div class="property-content">
-          <h3>${item.name}</h3>
-          <p class="location">📍 ${item.location || "Sri Lanka"}</p>
-          <p>${item.description || ""}</p>
-          <div class="property-meta">
-            <span>👥 ${item.guests || "Guests"}</span>
-            <span>🛏 ${item.bedrooms || "Bedrooms"}</span>
-            <span>🚿 ${item.bathrooms || "Bathrooms"}</span>
-          </div>
-          <strong class="price">${item.price || "Price on request"}</strong>
-          <button onclick="openPropertyModal('${item.id}')">View Details</button>
-          <button onclick="quickSelectProperty('${item.id}')" class="quick-inquiry-btn">Inquiry</button>
+  grid.innerHTML = "";
+
+  if(properties.length === 0){
+    grid.innerHTML =
+      '<p class="loading-text">No matching homestays found.</p>';
+    return;
+  }
+
+  properties.forEach(item => {
+
+    const card = document.createElement("div");
+    card.className = "property-card";
+
+    const photo =
+      item.photos && item.photos.length
+        ? item.photos[0]
+        : "images/cover.jpg";
+
+    card.innerHTML = `
+      <img src="${photo}" alt="${item.name}" loading="lazy">
+
+      <div class="property-content">
+
+        <h3>${item.name}</h3>
+
+        <p class="location">
+          📍 ${item.location || "Sri Lanka"}
+        </p>
+
+        <p>${item.description || ""}</p>
+
+        <div class="property-meta">
+          <span>👥 ${item.guests || "Guests"}</span>
+          <span>🛏 ${item.bedrooms || "Bedrooms"}</span>
+          <span>🚿 ${item.bathrooms || "Bathrooms"}</span>
         </div>
-      `;
 
-      grid.appendChild(card);
-    });
+        <strong class="price">
+          ${item.price || "Price on request"}
+        </strong>
+
+        <button onclick="openPropertyModal('${item.id}')">
+          View Details
+        </button>
+
+        <button onclick="quickSelectProperty('${item.id}')"
+                class="quick-inquiry-btn">
+          Inquiry
+        </button>
+
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
+function applyPropertyFilters(){
+
+  const search =
+    document.getElementById("propertySearch")?.value.toLowerCase() || "";
+
+  const location =
+    document.getElementById("propertyLocationFilter")?.value.toLowerCase() || "";
+
+  const guests =
+    Number(document.getElementById("propertyGuestsFilter")?.value || 0);
+
+  const bedrooms =
+    Number(document.getElementById("propertyBedroomsFilter")?.value || 0);
+
+  properties = allProperties.filter(item => {
+
+    const searchMatch =
+      !search ||
+      (item.name || "").toLowerCase().includes(search) ||
+      (item.description || "").toLowerCase().includes(search);
+
+    const locationMatch =
+      !location ||
+      (item.location || "").toLowerCase().includes(location);
+
+    const guestMatch =
+      !guests ||
+      Number(item.guests || 0) >= guests;
+
+    const bedroomMatch =
+      !bedrooms ||
+      Number(item.bedrooms || 0) >= bedrooms;
+
+    return searchMatch &&
+           locationMatch &&
+           guestMatch &&
+           bedroomMatch;
+  });
+
+  renderPropertyCards();
+}
 
   }catch(error){
     grid.innerHTML = '<p class="loading-text">Unable to load ' + PROPERTY_TYPE + 's. Please try again later.</p>';

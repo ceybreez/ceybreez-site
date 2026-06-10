@@ -530,3 +530,29 @@ footer{
   border:none;
   cursor:pointer;
 }
+.service-modal-gallery{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin:15px 0 20px;
+}
+
+.service-modal-gallery img{
+  width:100%;
+  height:95px;
+  object-fit:cover;
+  border-radius:12px;
+  cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,0.12);
+  transition:.25s ease;
+}
+
+.service-modal-gallery img:hover{
+  transform:scale(1.04);
+}
+
+@media(max-width:768px){
+  .service-modal-gallery{
+    grid-template-columns:repeat(2,1fr);
+  }
+}

@@ -116,7 +116,7 @@
     </div>
   </section>
 
-  <section class="cards" id="villas" data-section="experiences">
+  <"cards" id="villas" data-section="experiences">
     <h2 data-field="title">Our Experiences</h2>
 
     <div class="grid" data-field="cards">
@@ -149,7 +149,23 @@
       </a>
     </div>
   </section>
+<section class="featured-home">
+  <h2>Featured Stays</h2>
+  <p>Handpicked villas, apartments, and homestays selected by CeyBreez.</p>
+  <div id="featuredStaysGrid" class="featured-grid"></div>
+</section>
 
+<section class="featured-home destinations-featured">
+  <h2>Popular Destinations</h2>
+  <p>Explore selected destinations and travel experiences across Sri Lanka.</p>
+  <div id="featuredDestinationsGrid" class="featured-grid"></div>
+</section>
+
+<section class="featured-home services-featured">
+  <h2>Featured Services</h2>
+  <p>Useful cafes, restaurants, rentals, shops, and local services for your stay.</p>
+  <div id="featuredServicesGrid" class="featured-grid"></div>
+</section>
   <section class="contact" id="contact" data-section="contact">
     <h2 data-field="title">Start Your Journey</h2>
     <p data-field="content">
@@ -238,8 +254,142 @@ async function loadSiteContent(){
 }
 
 loadSiteContent();
+  
 </script>
+<script>
+async function loadHomeFeatured(){
+  await loadFeaturedStays();
+  await loadFeaturedDestinations();
+  await loadFeaturedServices();
+}
 
+async function loadFeaturedStays(){
+  const box = document.getElementById("featuredStaysGrid");
+  if(!box) return;
+
+  try{
+    const res = await fetch(API_BASE + "/api/properties?featured=1");
+    const data = await res.json();
+
+    box.innerHTML = "";
+
+    if(!data.length){
+      box.innerHTML = "<p>No featured stays selected yet.</p>";
+      return;
+    }
+
+    data.forEach(item => {
+      const img = item.photos && item.photos.length ? item.photos[0] : "images/cover.jpg";
+
+      const page =
+        item.type === "villa" ? "villas.html" :
+        item.type === "apartment" ? "apartments.html" :
+        "homestays.html";
+
+      const card = document.createElement("a");
+      card.href = page;
+      card.className = "featured-card";
+
+      card.innerHTML = `
+        <img src="${img}" alt="${item.name}">
+        <div>
+          <span>${item.type || "Stay"}</span>
+          <h3>${item.name}</h3>
+          <p>${item.location || "Sri Lanka"}</p>
+          <strong>${item.price || "Price on request"}</strong>
+        </div>
+      `;
+
+      box.appendChild(card);
+    });
+
+  }catch(error){
+    box.innerHTML = "<p>Unable to load featured stays.</p>";
+  }
+}
+
+async function loadFeaturedDestinations(){
+  const box = document.getElementById("featuredDestinationsGrid");
+  if(!box) return;
+
+  try{
+    const res = await fetch(API_BASE + "/api/destinations?featured=1");
+    const data = await res.json();
+
+    box.innerHTML = "";
+
+    if(!data.length){
+      box.innerHTML = "<p>No featured destinations selected yet.</p>";
+      return;
+    }
+
+    data.forEach(item => {
+      const img = item.photos && item.photos.length ? item.photos[0] : "images/cover.jpg";
+
+      const card = document.createElement("a");
+      card.href = "tours.html";
+      card.className = "featured-card";
+
+      card.innerHTML = `
+        <img src="${img}" alt="${item.name}">
+        <div>
+          <span>${item.province || "Destination"}</span>
+          <h3>${item.name}</h3>
+          <p>${item.bestFor || ""}</p>
+          <strong>${item.timeNeeded || ""}</strong>
+        </div>
+      `;
+
+      box.appendChild(card);
+    });
+
+  }catch(error){
+    box.innerHTML = "<p>Unable to load featured destinations.</p>";
+  }
+}
+
+async function loadFeaturedServices(){
+  const box = document.getElementById("featuredServicesGrid");
+  if(!box) return;
+
+  try{
+    const res = await fetch(API_BASE + "/api/services?featured=1");
+    const data = await res.json();
+
+    box.innerHTML = "";
+
+    if(!data.length){
+      box.innerHTML = "<p>No featured services selected yet.</p>";
+      return;
+    }
+
+    data.forEach(item => {
+      const img = item.image || "images/cover.jpg";
+
+      const card = document.createElement("a");
+      card.href = "services.html";
+      card.className = "featured-card";
+
+      card.innerHTML = `
+        <img src="${img}" alt="${item.name}">
+        <div>
+          <span>${item.category || "Service"}</span>
+          <h3>${item.name}</h3>
+          <p>${item.location || ""}</p>
+          <strong>${item.openingHours || ""}</strong>
+        </div>
+      `;
+
+      box.appendChild(card);
+    });
+
+  }catch(error){
+    box.innerHTML = "<p>Unable to load featured services.</p>";
+  }
+}
+
+loadHomeFeatured();
+</script>
 <script src="page-builder.js"></script>
 
 </body>

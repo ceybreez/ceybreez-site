@@ -506,6 +506,7 @@ async function saveProperty(e) {
     description: document.getElementById("propDescription").value.trim(),
     photos: linesToArray(document.getElementById("propPhotos").value),
     active: document.getElementById("propActive").checked
+    featured: document.getElementById("propFeatured").checked,
   };
 
   const url = editId ? `${API_BASE}/api/admin/properties/${editId}` : `${API_BASE}/api/admin/properties`;
@@ -540,6 +541,7 @@ function editProperty(item) {
   document.getElementById("propDescription").value = item.description || "";
   document.getElementById("propPhotos").value = arrayToLines(item.photos);
   document.getElementById("propActive").checked = !!item.active;
+  document.getElementById("propFeatured").checked = item.featured || false;
   renderPhotoPreview("prop");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -550,6 +552,7 @@ function resetPropertyForm() {
   document.getElementById("propActive").checked = true;
   document.getElementById("propUploadStatus").textContent = "";
   document.getElementById("propPhotoPreview").innerHTML = "";
+  document.getElementById("propFeatured").checked = false;
 }
 
 async function deleteProperty(id) {

@@ -226,187 +226,147 @@ async function loadSiteContent(){
 loadSiteContent();
 </script>
 <script>
+let allServices = [];
 
 async function loadServicesPage() {
-
   try {
-
     const response = await fetch(API_BASE + "/api/services");
     const services = await response.json();
+
+    allServices = services;
 
     const categories = [...new Set(services.map(x => x.category).filter(Boolean))];
     const locations = [...new Set(services.map(x => x.location).filter(Boolean))];
 
     createServiceFilters(categories, locations);
-
     renderServices(services);
 
-  } catch(error){
+  } catch(error) {
     console.error("Services load failed", error);
   }
-
 }
 
-function createServiceFilters(categories, locations){
-
+function createServiceFilters(categories, locations) {
   const section = document.querySelector("[data-section='categories']");
+  if (!section) return;
 
-  if(!section) return;
+  const oldFilters = document.querySelector(".service-filters");
+  if (oldFilters) oldFilters.remove();
 
   const filters = document.createElement("div");
+  filters.className = "service-filters";
 
   filters.innerHTML = `
-    <div class="service-filters">
+    <select id="serviceCategoryFilter">
+      <option value="">All Categories</option>
+      ${categories.map(c => `<option value="${c}">${c}</option>`).join("")}
+    </select>
 
-      <select id="serviceCategoryFilter">
-        <option value="">All Categories</option>
-        ${categories.map(c => `<option value="${c}">${c}</option>`).join("")}
-      </select>
-
-      <select id="serviceLocationFilter">
-        <option value="">All Locations</option>
-        ${locations.map(l => `<option value="${l}">${l}</option>`).join("")}
-      </select>
-
-    </div>
+    <select id="serviceLocationFilter">
+      <option value="">All Locations</option>
+      ${locations.map(l => `<option value="${l}">${l}</option>`).join("")}
+    </select>
   `;
 
-  section.insertBefore(filters, section.querySelector(".services-grid"));
+  const grid = section.querySelector(".services-grid");
+  section.insertBefore(filters, grid);
 
-  document.getElementById("serviceCategoryFilter")
-    .addEventListener("change", applyServiceFilters);
-
-  document.getElementById("serviceLocationFilter")
-    .addEventListener("change", applyServiceFilters);
+  document.getElementById("serviceCategoryFilter").addEventListener("change", applyServiceFilters);
+  document.getElementById("serviceLocationFilter").addEventListener("change", applyServiceFilters);
 }
 
-let allServices = [];
-
-function renderServices(data){
-
-  allServices = data;
-
+function renderServices(data) {
   const grid = document.querySelector(".featured-services .services-grid");
-
-  if(!grid) return;
+  if (!grid) return;
 
   grid.innerHTML = "";
 
   data.forEach(service => {
-
     const card = document.createElement("div");
-
     card.className = "cms-card";
 
     card.innerHTML = `
       ${service.image ? `<img src="${service.image}" alt="${service.name}">` : ""}
-
       <h3>${service.name}</h3>
-
       <p>${service.shortDescription || ""}</p>
-
       <p><strong>${service.location || ""}</strong></p>
-
-      <button class="btn service-view-btn">
-        View Details
-      </button>
+      <button class="btn service-view-btn">View Details</button>
     `;
 
-    card.querySelector(".service-view-btn")
-      .addEventListener("click", () => openServiceModal(service));
+    card.querySelector(".service-view-btn").addEventListener("click", () => {
+      openServiceModal(service);
+    });
 
     grid.appendChild(card);
   });
-
 }
 
-function applyServiceFilters(){
-
-  const category =
-    document.getElementById("serviceCategoryFilter")?.value || "";
-
-  const location =
-    document.getElementById("serviceLocationFilter")?.value || "";
+function applyServiceFilters() {
+  const category = document.getElementById("serviceCategoryFilter")?.value || "";
+  const location = document.getElementById("serviceLocationFilter")?.value || "";
 
   const filtered = allServices.filter(item => {
-
-    const catMatch =
-      !category || item.category === category;
-
-    const locMatch =
-      !location || item.location === location;
-
-    return catMatch && locMatch;
+    return (!category || item.category === category) &&
+           (!location || item.location === location);
   });
 
   renderServices(filtered);
 }
 
-function openServiceModal(service){
-
+function openServiceModal(service) {
   const modal = document.getElementById("serviceModal");
-
-  document.getElementById("modalServiceTitle").textContent =
-    service.name || "";
-
   const modalImage = document.getElementById("modalServiceImage");
 
-if(service.image){
-  modalImage.src = service.image;
-  modalImage.style.display = "block";
-}else{
-  modalImage.removeAttribute("src");
-  modalImage.style.display = "none";
-}
+  document.getElementById("modalServiceTitle").textContent = service.name || "";
 
-  document.getElementById("modalServiceDescription").textContent =
-    service.fullDescription || "";
+  if (service.image) {
+    modalImage.src = service.image;
+    modalImage.style.display = "block";
+  } else {
+    modalImage.removeAttribute("src");
+    modalImage.style.display = "none";
+  }
 
-  document.getElementById("modalServiceLocation").textContent =
-    service.location || "";
-
-  document.getElementById("modalServicePhone").textContent =
-    service.phone || "";
-
-  document.getElementById("modalServiceHours").textContent =
-    service.openingHours || "";
+  document.getElementById("modalServiceDescription").textContent = service.fullDescription || "";
+  document.getElementById("modalServiceLocation").textContent = service.location || "";
+  document.getElementById("modalServicePhone").textContent = service.phone || "";
+  document.getElementById("modalServiceHours").textContent = service.openingHours || "";
 
   document.getElementById("modalServiceWhatsapp").href =
-    service.whatsapp
-      ? `https://wa.me/${service.whatsapp}`
-      : "#";
+    service.whatsapp ? `https://wa.me/${service.whatsapp}` : "#";
 
   document.getElementById("modalServiceMap").href =
     service.mapUrl || "#";
 
+  const galleryBox = document.getElementById("modalServiceGallery");
+
+  if (galleryBox) {
+    galleryBox.innerHTML = "";
+
+    const photos = Array.isArray(service.photos) ? service.photos : [];
+
+    photos.forEach(url => {
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = service.name || "Service photo";
+
+      img.onclick = () => {
+        modalImage.src = url;
+        modalImage.style.display = "block";
+      };
+
+      galleryBox.appendChild(img);
+    });
+  }
+
   modal.classList.add("show");
 }
-const galleryBox = document.getElementById("modalServiceGallery");
 
-if(galleryBox){
-  galleryBox.innerHTML = "";
-
-  const photos = Array.isArray(service.photos) ? service.photos : [];
-
-  photos.forEach(url => {
-    const img = document.createElement("img");
-    img.src = url;
-    img.alt = service.name || "Service photo";
-    img.onclick = () => {
-      const modalImage = document.getElementById("modalServiceImage");
-      modalImage.src = url;
-      modalImage.style.display = "block";
-    };
-    galleryBox.appendChild(img);
-  });
-}
-function closeServiceModal(){
-  document.getElementById("serviceModal")
-    ?.classList.remove("show");
+function closeServiceModal() {
+  document.getElementById("serviceModal")?.classList.remove("show");
 }
 
 loadServicesPage();
-
 </script>
 <script src="page-builder.js"></script>
 

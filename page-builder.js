@@ -13,7 +13,7 @@ async function loadCeyBreezSections(page){
     sections.forEach(section => {
       applySection(section);
     });
-
+document.body.classList.add("cms-ready");
   }catch(error){
     console.error("Page Builder load failed", error);
   }

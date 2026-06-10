@@ -266,6 +266,12 @@ function createServiceFilters(categories, locations) {
       <option value="">All Locations</option>
       ${locations.map(l => `<option value="${l}">${l}</option>`).join("")}
     </select>
+
+    <input
+      type="text"
+      id="serviceSearchFilter"
+      placeholder="Search services..."
+    >
   `;
 
   const grid = section.querySelector(".services-grid");
@@ -273,6 +279,7 @@ function createServiceFilters(categories, locations) {
 
   document.getElementById("serviceCategoryFilter").addEventListener("change", applyServiceFilters);
   document.getElementById("serviceLocationFilter").addEventListener("change", applyServiceFilters);
+  document.getElementById("serviceSearchFilter").addEventListener("input", applyServiceFilters);
 }
 
 function renderServices(data) {
@@ -302,12 +309,32 @@ function renderServices(data) {
 }
 
 function applyServiceFilters() {
-  const category = document.getElementById("serviceCategoryFilter")?.value || "";
-  const location = document.getElementById("serviceLocationFilter")?.value || "";
+
+  const category =
+    document.getElementById("serviceCategoryFilter")?.value || "";
+
+  const location =
+    document.getElementById("serviceLocationFilter")?.value || "";
+
+  const search =
+    document.getElementById("serviceSearchFilter")?.value.toLowerCase() || "";
 
   const filtered = allServices.filter(item => {
-    return (!category || item.category === category) &&
-           (!location || item.location === location);
+
+    const catMatch =
+      !category || item.category === category;
+
+    const locMatch =
+      !location || item.location === location;
+
+    const searchMatch =
+      !search ||
+      (item.name || "").toLowerCase().includes(search) ||
+      (item.shortDescription || "").toLowerCase().includes(search) ||
+      (item.fullDescription || "").toLowerCase().includes(search);
+
+    return catMatch && locMatch && searchMatch;
+
   });
 
   renderServices(filtered);

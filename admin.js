@@ -392,7 +392,8 @@ async function saveDestination(e) {
     nearby: document.getElementById("destNearby").value.trim(),
     description: document.getElementById("destDescription").value.trim(),
     photos: linesToArray(document.getElementById("destPhotos").value),
-    active: document.getElementById("destActive").checked
+    active: document.getElementById("destActive").checked,
+featured: document.getElementById("destFeatured").checked
   };
 
   const url = editId ? `${API_BASE}/api/admin/destinations/${editId}` : `${API_BASE}/api/admin/destinations`;
@@ -424,6 +425,7 @@ function editDestination(item) {
   document.getElementById("destDescription").value = item.description || "";
   document.getElementById("destPhotos").value = arrayToLines(item.photos);
   document.getElementById("destActive").checked = !!item.active;
+  document.getElementById("destFeatured").checked = item.featured || false;
   renderPhotoPreview("dest");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -434,6 +436,7 @@ function resetDestinationForm() {
   document.getElementById("destActive").checked = true;
   document.getElementById("destUploadStatus").textContent = "";
   document.getElementById("destPhotoPreview").innerHTML = "";
+  document.getElementById("destFeatured").checked = false;
 }
 
 async function deleteDestination(id) {

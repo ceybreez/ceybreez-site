@@ -672,3 +672,6 @@ body.dynamic-text .thing-card p{
   from{opacity:0;transform:translateX(40px)}
   to{opacity:1;transform:translateX(0)}
 }
+body:not(.cms-ready) [data-section] [data-field]{
+  visibility:hidden;
+}

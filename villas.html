@@ -114,56 +114,156 @@ let selectedProperty = null;
   let allProperties = [];
 
 window.addEventListener("load", function(){
-  loadProperties();
-  document.addEventListener("change", function(e){
-    if(e.target.id === "inqCheckIn" || e.target.id === "inqCheckOut") calculateInquiryDays();
-  });
-});
 
+  loadProperties();
+
+  document.addEventListener("change", function(e){
+
+    if(
+      e.target.id === "inqCheckIn" ||
+      e.target.id === "inqCheckOut"
+    ){
+      calculateInquiryDays();
+    }
+
+    if(
+      e.target.id === "propertyGuestsFilter" ||
+      e.target.id === "propertyBedroomsFilter"
+    ){
+      applyPropertyFilters();
+    }
+
+  });
+
+  document.addEventListener("input", function(e){
+
+    if(
+      e.target.id === "propertySearch" ||
+      e.target.id === "propertyLocationFilter"
+    ){
+      applyPropertyFilters();
+    }
+
+  });
+
+});
 async function loadProperties(){
   const grid = document.getElementById("propertyGrid");
   const select = document.getElementById("inqVillaSelect");
+
   try{
     const response = await fetch(API_BASE + "/api/properties?type=villa");
     const data = await response.json();
+
     properties = data || [];
     allProperties = [...properties];
-    grid.innerHTML = "";
+
     select.innerHTML = '<option value="">Select Villa</option>';
-    if(properties.length === 0){
-      grid.innerHTML = '<p class="loading-text">No villas available yet. Please check again soon.</p>';
-      return;
-    }
-    properties.forEach(item => {
+
+    allProperties.forEach(item => {
       const option = document.createElement("option");
       option.value = item.id;
       option.textContent = item.name;
       select.appendChild(option);
-      const card = document.createElement("div");
-      card.className = "property-card";
-      const photo = item.photos && item.photos.length ? item.photos[0] : "images/cover.jpg";
-      card.innerHTML = `
-        <img src="${photo}" alt="${item.name}" loading="lazy">
-        <div class="property-content">
-          <h3>${item.name}</h3>
-          <p class="location">📍 ${item.location || "Sri Lanka"}</p>
-          <p>${item.description || ""}</p>
-          <div class="property-meta">
-            <span>👥 ${item.guests || "Guests"}</span>
-            <span>🛏 ${item.bedrooms || "Bedrooms"}</span>
-            <span>🚿 ${item.bathrooms || "Bathrooms"}</span>
-          </div>
-          <strong class="price">${item.price || "Price on request"}</strong>
-          <button onclick="openPropertyModal('${item.id}')">View Details</button>
-          <button onclick="quickSelectVilla('${item.id}')" class="quick-inquiry-btn">Inquiry</button>
-        </div>`;
-      grid.appendChild(card);
     });
+
+    renderPropertyCards();
+
   }catch(error){
     grid.innerHTML = '<p class="loading-text">Unable to load villas. Please try again later.</p>';
   }
 }
+function renderPropertyCards(){
 
+  const grid = document.getElementById("propertyGrid");
+  if(!grid) return;
+
+  grid.innerHTML = "";
+
+  if(properties.length === 0){
+    grid.innerHTML = '<p class="loading-text">No matching villas found.</p>';
+    return;
+  }
+
+  properties.forEach(item => {
+
+    const card = document.createElement("div");
+    card.className = "property-card";
+
+    const photo =
+      item.photos && item.photos.length
+        ? item.photos[0]
+        : "images/cover.jpg";
+
+    card.innerHTML = `
+      <img src="${photo}" alt="${item.name}" loading="lazy">
+
+      <div class="property-content">
+        <h3>${item.name}</h3>
+
+        <p class="location">📍 ${item.location || "Sri Lanka"}</p>
+
+        <p>${item.description || ""}</p>
+
+        <div class="property-meta">
+          <span>👥 ${item.guests || "Guests"}</span>
+          <span>🛏 ${item.bedrooms || "Bedrooms"}</span>
+          <span>🚿 ${item.bathrooms || "Bathrooms"}</span>
+        </div>
+
+        <strong class="price">${item.price || "Price on request"}</strong>
+
+        <button onclick="openPropertyModal('${item.id}')">View Details</button>
+
+        <button onclick="quickSelectVilla('${item.id}')" class="quick-inquiry-btn">Inquiry</button>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
+function applyPropertyFilters(){
+
+  const search =
+    document.getElementById("propertySearch")?.value.toLowerCase() || "";
+
+  const location =
+    document.getElementById("propertyLocationFilter")?.value.toLowerCase() || "";
+
+  const guests =
+    Number(document.getElementById("propertyGuestsFilter")?.value || 0);
+
+  const bedrooms =
+    Number(document.getElementById("propertyBedroomsFilter")?.value || 0);
+
+  properties = allProperties.filter(item => {
+
+    const searchMatch =
+      !search ||
+      (item.name || "").toLowerCase().includes(search) ||
+      (item.description || "").toLowerCase().includes(search);
+
+    const locationMatch =
+      !location ||
+      (item.location || "").toLowerCase().includes(location);
+
+    const guestMatch =
+      !guests ||
+      Number(item.guests || 0) >= guests;
+
+    const bedroomMatch =
+      !bedrooms ||
+      Number(item.bedrooms || 0) >= bedrooms;
+
+    return searchMatch &&
+           locationMatch &&
+           guestMatch &&
+           bedroomMatch;
+  });
+
+  renderPropertyCards();
+}
 function openPropertyModal(id){
   const item = properties.find(p => p.id === id);
   if(!item) return;

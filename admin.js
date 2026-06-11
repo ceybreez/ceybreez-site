@@ -397,6 +397,7 @@ async function saveDestination(e) {
     province: document.getElementById("destProvince").value.trim(),
     lat: document.getElementById("destLat").value.trim(),
     lng: document.getElementById("destLng").value.trim(),
+    mapUrl: document.getElementById("destMapUrl").value.trim(),
     bestFor: document.getElementById("destBestFor").value.trim(),
     timeNeeded: document.getElementById("destTime").value.trim(),
     nearby: document.getElementById("destNearby").value.trim(),
@@ -429,6 +430,7 @@ function editDestination(item) {
   document.getElementById("destProvince").value = item.province || "";
   document.getElementById("destLat").value = item.lat || "";
   document.getElementById("destLng").value = item.lng || "";
+  document.getElementById("destMapUrl").value = item.mapUrl || "";
   document.getElementById("destBestFor").value = item.bestFor || "";
   document.getElementById("destTime").value = item.timeNeeded || "";
   document.getElementById("destNearby").value = item.nearby || "";
@@ -447,6 +449,7 @@ function resetDestinationForm() {
   document.getElementById("destUploadStatus").textContent = "";
   document.getElementById("destPhotoPreview").innerHTML = "";
   document.getElementById("destFeatured").checked = false;
+  document.getElementById("destMapUrl").value = "";
 }
 
 async function deleteDestination(id) {

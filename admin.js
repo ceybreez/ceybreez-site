@@ -505,21 +505,22 @@ async function saveProperty(e) {
 
   const editId = document.getElementById("propEditId").value;
 
-  const data = {
-    type: document.getElementById("propType").value,
-    name: document.getElementById("propName").value.trim(),
-    location: document.getElementById("propLocation").value.trim(),
-    lat: document.getElementById("propLat").value.trim(),
-    lng: document.getElementById("propLng").value.trim(),
-    price: document.getElementById("propPrice").value.trim(),
-    guests: document.getElementById("propGuests").value.trim(),
-    bedrooms: document.getElementById("propBedrooms").value.trim(),
-    bathrooms: document.getElementById("propBathrooms").value.trim(),
-    facilities: linesToArray(document.getElementById("propFacilities").value),
-    description: document.getElementById("propDescription").value.trim(),
-    photos: linesToArray(document.getElementById("propPhotos").value),
-    active: document.getElementById("propActive").checked,
-    featured: document.getElementById("propFeatured").checked,
+ const data = {
+  type: document.getElementById("propType").value,
+  name: document.getElementById("propName").value.trim(),
+  location: document.getElementById("propLocation").value.trim(),
+  lat: document.getElementById("propLat").value.trim(),
+  lng: document.getElementById("propLng").value.trim(),
+  mapUrl: document.getElementById("propMapUrl").value.trim(),
+  price: document.getElementById("propPrice").value.trim(),
+  guests: document.getElementById("propGuests").value.trim(),
+  bedrooms: document.getElementById("propBedrooms").value.trim(),
+  bathrooms: document.getElementById("propBathrooms").value.trim(),
+  facilities: linesToArray(document.getElementById("propFacilities").value),
+  description: document.getElementById("propDescription").value.trim(),
+  photos: linesToArray(document.getElementById("propPhotos").value),
+  active: document.getElementById("propActive").checked,
+  featured: document.getElementById("propFeatured").checked,
   };
 
   const url = editId ? `${API_BASE}/api/admin/properties/${editId}` : `${API_BASE}/api/admin/properties`;
@@ -546,6 +547,7 @@ function editProperty(item) {
   document.getElementById("propLocation").value = item.location || "";
   document.getElementById("propLat").value = item.lat || "";
   document.getElementById("propLng").value = item.lng || "";
+  document.getElementById("propMapUrl").value = item.mapUrl || "";
   document.getElementById("propPrice").value = item.price || "";
   document.getElementById("propGuests").value = item.guests || "";
   document.getElementById("propBedrooms").value = item.bedrooms || "";
@@ -566,6 +568,7 @@ function resetPropertyForm() {
   document.getElementById("propUploadStatus").textContent = "";
   document.getElementById("propPhotoPreview").innerHTML = "";
   document.getElementById("propFeatured").checked = false;
+  document.getElementById("propMapUrl").value = "";
 }
 
 async function deleteProperty(id) {

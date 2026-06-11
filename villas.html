@@ -311,13 +311,7 @@ photos.forEach(photo => {
   document.getElementById("propertyModal").style.display = "flex";
   
 }
-document.getElementById("modalMapBtn").onclick = () => {
-  openMap(item.lat, item.lng);
-};
 
-document.getElementById("modalDirectionsBtn").onclick = () => {
-  getDirections(item.lat, item.lng);
-};
 function closePropertyModal(){ document.getElementById("propertyModal").style.display = "none"; }
 
 function selectVillaForInquiry(){

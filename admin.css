@@ -455,3 +455,25 @@ input[readonly]{
 .global-settings-box{
   border:2px solid #0f766e;
 }
+.inquiry-card pre{
+  white-space:pre-wrap;
+  background:#f8f3eb;
+  padding:12px;
+  border-radius:12px;
+  margin-top:10px;
+  font-size:13px;
+}
+
+.inquiry-card details{
+  margin:12px 0;
+}
+
+.inquiry-card summary{
+  cursor:pointer;
+  font-weight:700;
+  color:#0f766e;
+}
+
+.inquiry-card select{
+  margin:8px 0 12px;
+}

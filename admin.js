@@ -53,6 +53,12 @@ function logoutAdmin() {
 function showTab(tab) {
   document.getElementById("destinationsTab").classList.toggle("hidden", tab !== "destinations");
   document.getElementById("propertiesTab").classList.toggle("hidden", tab !== "properties");
+  const inquiriesTab = document.getElementById("inquiriesTab");
+if (inquiriesTab) inquiriesTab.classList.toggle("hidden", tab !== "inquiriesTab");
+
+if (tab === "inquiriesTab") {
+  loadInquiries();
+}
 const servicesTab = document.getElementById("servicesTab");
 if (servicesTab) servicesTab.classList.toggle("hidden", tab !== "services");
   if (tab === "services") {
@@ -94,6 +100,9 @@ if (document.getElementById("servicesTab")) {
     await loadSiteContent();
     await loadPageSections();
   }
+  if (document.getElementById("inquiriesTab")) {
+  await loadInquiries();
+}
 }
 
 function getUploadFolder(type) {
@@ -1198,4 +1207,115 @@ function removeServicePhoto(index) {
   photosBox.value = urls.join("\n");
 
   renderServicePhotosPreview();
+}
+/* INQUIRIES */
+
+async function loadInquiries() {
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/inquiries`, {
+      headers: authHeaders()
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || "Failed to load inquiries");
+
+    const box = document.getElementById("inquiriesList");
+    if (!box) return;
+
+    box.innerHTML = "";
+
+    if (!data.length) {
+      box.innerHTML = "<p>No inquiries yet.</p>";
+      return;
+    }
+
+    data.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "card inquiry-card";
+
+      card.innerHTML = `
+        <span class="status">${item.status || "New"}</span>
+
+        <h3>${item.reference || "Inquiry"}</h3>
+
+        <p><strong>Service:</strong> ${item.serviceType || ""}</p>
+        <p><strong>Item:</strong> ${item.itemName || ""}</p>
+        <p><strong>Name:</strong> ${item.guestName || ""}</p>
+        <p><strong>Email:</strong> ${item.guestEmail || ""}</p>
+        <p><strong>Mobile:</strong> ${item.guestMobile || ""}</p>
+        <p><strong>Country:</strong> ${item.guestCountry || ""}</p>
+        <p><strong>Guests:</strong> ${item.guests || ""}</p>
+        <p><strong>Dates:</strong> ${item.dateFrom || ""} to ${item.dateTo || ""}</p>
+        <p><strong>Created:</strong> ${item.createdAt || ""}</p>
+
+        <details>
+          <summary>View Message</summary>
+          <pre>${item.message || ""}</pre>
+        </details>
+
+        <label>Status</label>
+        <select class="inquiry-status">
+          <option value="New">New</option>
+          <option value="Contacted">Contacted</option>
+          <option value="Quoted">Quoted</option>
+          <option value="Booked">Booked</option>
+          <option value="Closed">Closed</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+
+        <button class="edit-btn">Update Status</button>
+        <button class="delete-btn">Delete</button>
+      `;
+
+      card.querySelector(".inquiry-status").value = item.status || "New";
+      card.querySelector(".edit-btn").onclick = () => {
+        const status = card.querySelector(".inquiry-status").value;
+        updateInquiryStatus(item.id, status);
+      };
+      card.querySelector(".delete-btn").onclick = () => deleteInquiry(item.id);
+
+      box.appendChild(card);
+    });
+
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function updateInquiryStatus(id, status) {
+  const res = await fetch(`${API_BASE}/api/admin/inquiries/${id}`, {
+    method: "PUT",
+    headers: authHeaders(),
+    body: JSON.stringify({ status })
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    alert(result.error || "Status update failed");
+    return;
+  }
+
+  alert("Inquiry updated");
+  loadInquiries();
+}
+
+async function deleteInquiry(id) {
+  if (!confirm("Delete this inquiry?")) return;
+
+  const res = await fetch(`${API_BASE}/api/admin/inquiries/${id}`, {
+    method: "DELETE",
+    headers: authHeaders()
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    alert(result.error || "Delete failed");
+    return;
+  }
+
+  alert("Inquiry deleted");
+  loadInquiries();
 }

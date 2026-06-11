@@ -418,6 +418,7 @@ async function loadDestinationsFromAPI(){
         name: item.name,
         lat: Number(item.lat),
         lng: Number(item.lng),
+        mapUrl: item.mapUrl || "",
         bestFor: item.bestFor || "",
         time: item.timeNeeded || "",
         nearby: item.nearby || "",
@@ -982,11 +983,11 @@ function buildProvinceGrid(data){
 const dirBtn = document.getElementById("tourDirectionsBtn");
 
 if(mapBtn){
-  mapBtn.onclick = () => openMap(item.lat, item.lng);
+  mapBtn.onclick = () => openMapUrl(item.mapUrl, item.lat, item.lng);
 }
 
 if(dirBtn){
-  dirBtn.onclick = () => getDirections(item.lat, item.lng);
+  dirBtn.onclick = () => getDirectionsUrl(item.mapUrl, item.lat, item.lng);
 }
 
     document.getElementById("locationModal").style.display = "flex";

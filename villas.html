@@ -455,7 +455,33 @@ function getDirections(lat, lng){
     alert("Directions not available.");
     return;
   }
+function openMapUrl(mapUrl, lat, lng){
+  if(mapUrl){
+    window.open(mapUrl, "_blank");
+    return;
+  }
 
+  if(lat && lng && Number(lat) !== 0 && Number(lng) !== 0){
+    window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
+    return;
+  }
+
+  alert("Map location not available.");
+}
+
+function getDirectionsUrl(mapUrl, lat, lng){
+  if(mapUrl){
+    window.open(mapUrl, "_blank");
+    return;
+  }
+
+  if(lat && lng && Number(lat) !== 0 && Number(lng) !== 0){
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, "_blank");
+    return;
+  }
+
+  alert("Directions not available.");
+}
   window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, "_blank");
 }
 </script>

@@ -441,7 +441,29 @@
 </div>
 <section id="inquiriesTab" class="hidden">
   <h2>Customer Inquiries</h2>
+<div class="inquiry-toolbar">
 
+  <input
+    type="text"
+    id="inquirySearch"
+    placeholder="Search reference, name, email..."
+  >
+
+  <select id="inquiryFilter">
+    <option value="">All Status</option>
+    <option value="New">New</option>
+    <option value="Contacted">Contacted</option>
+    <option value="Quoted">Quoted</option>
+    <option value="Booked">Booked</option>
+    <option value="Closed">Closed</option>
+    <option value="Cancelled">Cancelled</option>
+  </select>
+
+  <button onclick="exportInquiriesCSV()">Export CSV</button>
+
+</div>
+
+<div id="inquiryStats" class="inquiry-stats"></div>
   <div id="inquiriesList" class="list"></div>
 </section>
 <script src="admin.js"></script>

@@ -267,7 +267,21 @@ function applyPropertyFilters(){
 function openPropertyModal(id){
   const item = properties.find(p => p.id === id);
   if(!item) return;
+
   selectedProperty = item;
+
+  const mapBtn = document.getElementById("modalMapBtn");
+  const dirBtn = document.getElementById("modalDirectionsBtn");
+
+  if(mapBtn){
+    mapBtn.onclick = () => openMap(item.lat, item.lng);
+  }
+
+  if(dirBtn){
+    dirBtn.onclick = () => getDirections(item.lat, item.lng);
+  }
+
+  document.getElementById("modalTitle").textContent = item.name;
   document.getElementById("modalTitle").textContent = item.name;
   document.getElementById("modalLocation").textContent = item.location || "Sri Lanka";
   document.getElementById("modalGuests").textContent = item.guests || "Not specified";

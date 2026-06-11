@@ -170,19 +170,23 @@
 
     <div class="service-actions">
 
-      <a id="modalServiceWhatsapp"
-         class="btn"
-         target="_blank">
-         WhatsApp
-      </a>
+  <a id="modalServiceWhatsapp" class="btn" target="_blank">
+     WhatsApp
+  </a>
 
-      <a id="modalServiceMap"
-         class="btn"
-         target="_blank">
-         View Map
-      </a>
+  <a id="modalServiceMap" class="btn" target="_blank">
+     View Map
+  </a>
 
-    </div>
+  <a id="modalServiceDirections" class="btn" target="_blank">
+     Directions
+  </a>
+
+  <a id="modalServiceCall" class="btn">
+     Call Now
+  </a>
+
+</div>
 
   </div>
 
@@ -362,8 +366,17 @@ function openServiceModal(service) {
   document.getElementById("modalServiceWhatsapp").href =
     service.whatsapp ? `https://wa.me/${service.whatsapp}` : "#";
 
-  document.getElementById("modalServiceMap").href =
-    service.mapUrl || "#";
+  document.getElementById("modalServiceWhatsapp").href =
+  service.whatsapp ? `https://wa.me/${service.whatsapp}` : "#";
+
+document.getElementById("modalServiceMap").href =
+  service.mapUrl || "#";
+
+document.getElementById("modalServiceDirections").href =
+  service.mapUrl || "#";
+
+document.getElementById("modalServiceCall").href =
+  service.phone ? `tel:${service.phone}` : "#";
 
   const galleryBox = document.getElementById("modalServiceGallery");
 

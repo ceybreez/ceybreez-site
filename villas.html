@@ -112,6 +112,7 @@
     🧭 Get Directions
   </button>
 </div>
+</div>  
 
 <button type="button" class="select-villa-btn" onclick="selectVillaForInquiry()">Select This Villa</button>
 
@@ -450,13 +451,9 @@ function closeThankYouModal(){ document.getElementById("thankYouModal").style.di
   window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
 }
 
-function getDirections(lat, lng){
-  if(!lat || !lng || Number(lat) === 0 || Number(lng) === 0){
-    alert("Directions not available.");
-    return;
-  }
 function openMapUrl(mapUrl, lat, lng){
-  if(mapUrl){
+
+  if(mapUrl && mapUrl.trim() !== ""){
     window.open(mapUrl, "_blank");
     return;
   }
@@ -470,7 +467,8 @@ function openMapUrl(mapUrl, lat, lng){
 }
 
 function getDirectionsUrl(mapUrl, lat, lng){
-  if(mapUrl){
+
+  if(mapUrl && mapUrl.trim() !== ""){
     window.open(mapUrl, "_blank");
     return;
   }

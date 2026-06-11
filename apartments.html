@@ -594,6 +594,23 @@ function showThankYouModal(reference){
 function closeThankYouModal(){
   document.getElementById("thankYouModal").style.display = "none";
 }
+  function openMap(lat, lng){
+  if(!lat || !lng || Number(lat) === 0 || Number(lng) === 0){
+    alert("Map location not available.");
+    return;
+  }
+
+  window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
+}
+
+function getDirections(lat, lng){
+  if(!lat || !lng || Number(lat) === 0 || Number(lng) === 0){
+    alert("Directions not available.");
+    return;
+  }
+
+  window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, "_blank");
+}
 </script>
 
 </body>

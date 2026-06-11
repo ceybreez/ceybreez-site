@@ -110,3 +110,17 @@ footer{text-align:center;padding:10px;background:black;color:white}.floating-wha
   }
 
 }
+.modal-actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:20px 0;
+}
+
+.modal-actions button{
+  padding:12px 20px;
+  border:none;
+  border-radius:30px;
+  cursor:pointer;
+  font-weight:600;
+}

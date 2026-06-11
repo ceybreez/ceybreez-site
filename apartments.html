@@ -400,11 +400,11 @@ function openPropertyModal(id){
   const dirBtn = document.getElementById("modalDirectionsBtn");
 
   if(mapBtn){
-    mapBtn.onclick = () => openMap(item.lat, item.lng);
+    mapBtn.onclick = () => openMapUrl(item.mapUrl, item.lat, item.lng);
   }
 
   if(dirBtn){
-    dirBtn.onclick = () => getDirections(item.lat, item.lng);
+    dirBtn.onclick = () => getDirectionsUrl(item.mapUrl, item.lat, item.lng);
   }
 
   document.getElementById("modalTitle").textContent = item.name;

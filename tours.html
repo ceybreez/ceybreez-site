@@ -347,11 +347,21 @@
       <div><strong>Nearby</strong><span id="modalLocationNearby"></span></div>
     </div>
 
-    <div id="modalLocationMap"></div>
+   <div id="modalLocationMap"></div>
 
-    <button type="button" class="add-selected-btn" onclick="addModalLocationToTrip()">+ Add To Trip Planner</button>
-  </div>
+<div class="modal-actions">
+  <button type="button" id="tourMapBtn">
+    📍 Open Map
+  </button>
+
+  <button type="button" id="tourDirectionsBtn">
+    🧭 Get Directions
+  </button>
 </div>
+
+<button type="button" class="add-selected-btn" onclick="addModalLocationToTrip()">
+  + Add To Trip Planner
+</button>
 
 <div id="thankYouModal" class="thankyou-modal">
   <div class="thankyou-card">
@@ -968,6 +978,16 @@ function buildProvinceGrid(data){
     if(!item) return;
 
     selectedModalLocationKey = key;
+    const mapBtn = document.getElementById("tourMapBtn");
+const dirBtn = document.getElementById("tourDirectionsBtn");
+
+if(mapBtn){
+  mapBtn.onclick = () => openMap(item.lat, item.lng);
+}
+
+if(dirBtn){
+  dirBtn.onclick = () => getDirections(item.lat, item.lng);
+}
 
     document.getElementById("locationModal").style.display = "flex";
     document.getElementById("modalLocationTitle").textContent = item.name;

@@ -22,6 +22,7 @@
       <button onclick="showTab('destinations')">Tours Destinations</button>
       <button onclick="showTab('properties')">Villas / Homestays / Apartments</button>
       <button onclick="showTab('services')">Cafes & Services</button>
+      <button onclick="showTab('inquiriesTab')">Inquiries</button>
       <button onclick="showTab('pageControl')">Page Control</button>
       <button onclick="logoutAdmin()">Logout</button>
     </div>
@@ -438,7 +439,11 @@
   <span class="image-preview-close" onclick="closeImagePreview()">×</span>
   <img id="previewFullImage" src="" alt="Preview">
 </div>
+<section id="inquiriesTab" class="hidden">
+  <h2>Customer Inquiries</h2>
 
+  <div id="inquiriesList" class="list"></div>
+</section>
 <script src="admin.js"></script>
 </body>
 </html>

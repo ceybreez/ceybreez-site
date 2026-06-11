@@ -279,6 +279,7 @@ function openPropertyModal(id){
   gallery.innerHTML = "";
   const photos = item.photos && item.photos.length ? item.photos : ["images/cover.jpg"];
  const mainImage = document.getElementById("modalMainImage");
+  
 
 mainImage.src = photos[0];
 
@@ -308,8 +309,15 @@ photos.forEach(photo => {
     facilities.innerHTML = "<li>Facilities will be confirmed on request.</li>";
   }
   document.getElementById("propertyModal").style.display = "flex";
+  
 }
+document.getElementById("modalMapBtn").onclick = () => {
+  openMap(item.lat, item.lng);
+};
 
+document.getElementById("modalDirectionsBtn").onclick = () => {
+  getDirections(item.lat, item.lng);
+};
 function closePropertyModal(){ document.getElementById("propertyModal").style.display = "none"; }
 
 function selectVillaForInquiry(){

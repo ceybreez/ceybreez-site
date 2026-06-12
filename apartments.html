@@ -562,7 +562,7 @@ Guests: ${guests}
 Special Notes:
 ${notes || "None"}`;
 
-  window.open("https://wa.me/94704620017?text=" + encodeURIComponent(message), "_blank");
+  window.open("https://api.whatsapp.com/send?phone=94704620017&text=" + encodeURIComponent(message), "_blank");
 
   const inquiryData = {
     name,

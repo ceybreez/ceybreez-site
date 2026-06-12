@@ -197,7 +197,10 @@
   </button>
 </div>
 
-<button type="button" class="select-villa-btn" onclick="selectVillaForInquiry()">Select This Villa</button>
+<button type="button" class="select-villa-btn" onclick="selectPropertyForInquiry()">Select This Apartment</button>
+
+</div>
+</div>
 
 <div id="thankYouModal" class="thankyou-modal">
   <div class="thankyou-card">
@@ -614,22 +617,8 @@ function showThankYouModal(reference){
 function closeThankYouModal(){
   document.getElementById("thankYouModal").style.display = "none";
 }
-  function openMap(lat, lng){
-  if(!lat || !lng || Number(lat) === 0 || Number(lng) === 0){
-    alert("Map location not available.");
-    return;
-  }
-
-  window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
-}
-
-function getDirections(lat, lng){
-  if(!lat || !lng || Number(lat) === 0 || Number(lng) === 0){
-    alert("Directions not available.");
-    return;
-  }
-function openMapUrl(mapUrl, lat, lng){
-  if(mapUrl){
+ function openMapUrl(mapUrl, lat, lng){
+  if(mapUrl && mapUrl.trim() !== ""){
     window.open(mapUrl, "_blank");
     return;
   }
@@ -643,7 +632,7 @@ function openMapUrl(mapUrl, lat, lng){
 }
 
 function getDirectionsUrl(mapUrl, lat, lng){
-  if(mapUrl){
+  if(mapUrl && mapUrl.trim() !== ""){
     window.open(mapUrl, "_blank");
     return;
   }
@@ -654,8 +643,6 @@ function getDirectionsUrl(mapUrl, lat, lng){
   }
 
   alert("Directions not available.");
-}
-  window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, "_blank");
 }
 </script>
 

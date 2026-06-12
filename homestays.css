@@ -209,3 +209,21 @@ footer{text-align:center;padding:10px;background:black;color:white}
   cursor:pointer;
   font-weight:600;
 }
+.select-villa-btn{
+  display:block;
+  width:100%;
+  margin-top:20px;
+  padding:14px 20px;
+  border:none;
+  border-radius:12px;
+  background:#0f766e;
+  color:#fff;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.select-villa-btn:hover{
+  background:#115e59;
+}

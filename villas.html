@@ -416,7 +416,7 @@ Guests: ${guests}
 
 Special Notes:
 ${notes || "None"}`;
-  window.open("https://wa.me/94704620017?text=" + encodeURIComponent(message), "_blank");
+  window.open( "https://api.whatsapp.com/send?phone=94704620017&text=" + encodeURIComponent(message), "_blank");
   const inquiryData = { name, email, mobile, country, countryCode: "", experiences: "Villa Inquiry - " + selectedProperty.name, dateFrom: checkIn, dateTo: checkOut, guests, message };
   try{
     const response = await fetch(API_BASE, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(inquiryData) });

@@ -196,7 +196,10 @@
   </button>
 </div>
 
-<button type="button" class="select-villa-btn" onclick="selectVillaForInquiry()">Select This Villa</button>
+<button type="button" class="select-villa-btn" onclick="selectPropertyForInquiry()">Select This Homestay</button>
+
+</div>
+</div>
 
 <div id="thankYouModal" class="thankyou-modal">
   <div class="thankyou-card">
@@ -267,6 +270,7 @@ async function loadProperties(){
 
     properties = data || [];
     allProperties = [...properties];
+
     grid.innerHTML = "";
     select.innerHTML = '<option value="">Select ' + PROPERTY_LABEL + '</option>';
 
@@ -274,6 +278,20 @@ async function loadProperties(){
       grid.innerHTML = '<p class="loading-text">No ' + PROPERTY_TYPE + 's available yet. Please check again soon.</p>';
       return;
     }
+
+    allProperties.forEach(item => {
+      const option = document.createElement("option");
+      option.value = item.id;
+      option.textContent = item.name;
+      select.appendChild(option);
+    });
+
+    renderPropertyCards();
+
+  }catch(error){
+    grid.innerHTML = '<p class="loading-text">Unable to load ' + PROPERTY_TYPE + 's. Please try again later.</p>';
+  }
+}
 
    function renderPropertyCards(){
 

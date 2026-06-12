@@ -288,11 +288,6 @@ async function loadProperties(){
 
     renderPropertyCards();
 
-  }catch(error){
-    grid.innerHTML = '<p class="loading-text">Unable to load ' + PROPERTY_TYPE + 's. Please try again later.</p>';
-  }
-}
-
    function renderPropertyCards(){
 
   const grid = document.getElementById("propertyGrid");

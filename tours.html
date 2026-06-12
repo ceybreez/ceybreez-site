@@ -1205,7 +1205,7 @@ Departure Flight: ${document.getElementById("departureFlight").value}
 Special Notes:
 ${specialNotes}`;
 
-    window.open("https://wa.me/94704620017?text=" + encodeURIComponent(tripMessage), "_blank");
+    window.open("https://api.whatsapp.com/send?phone=94704620017&text=" + encodeURIComponent(tripMessage), "_blank");
 
     const inquiryData = {
       name: guestName,

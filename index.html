@@ -64,8 +64,8 @@
   </section>
 
   <section class="about" id="aboutSection" data-section="about">
-    <h2 data-field="title">Experience the Soul of Sri Lanka</h2>
-    <p data-field="content">
+    <h2 id="homeAboutTitle" data-field="title">Experience the Soul of Sri Lanka</h2>
+    <p id="homeAboutText" data-field="content">
       CeyBreez brings together unforgettable stays, breathtaking island tours,
       authentic local food, and unique travel experiences across the heart of Sri Lanka.
     </p>
@@ -116,29 +116,29 @@
     </div>
   </section>
   
-<section class="cards" id="experiences" data-section="experiences">
-  <h2 data-field="title">Our Experiences</h2>
-
-  <div class="grid" data-field="cards"></div>
-</section>
+  <section class="cards" id="experiences" data-section="experiences">
+    <h2 data-field="title">Our Experiences</h2>
+    <div class="grid" data-field="cards"></div>
+  </section>
  
-<section class="featured-home">
-  <h2>Featured Stays</h2>
-  <p>Handpicked villas, apartments, and homestays selected by CeyBreez.</p>
-  <div id="featuredStaysGrid" class="featured-grid"></div>
-</section>
+  <section class="featured-home">
+    <h2>Featured Stays</h2>
+    <p>Handpicked villas, apartments, and homestays selected by CeyBreez.</p>
+    <div id="featuredStaysGrid" class="featured-grid"></div>
+  </section>
 
-<section class="featured-home destinations-featured">
-  <h2>Popular Destinations</h2>
-  <p>Explore selected destinations and travel experiences across Sri Lanka.</p>
-  <div id="featuredDestinationsGrid" class="featured-grid"></div>
-</section>
+  <section class="featured-home destinations-featured">
+    <h2>Popular Destinations</h2>
+    <p>Explore selected destinations and travel experiences across Sri Lanka.</p>
+    <div id="featuredDestinationsGrid" class="featured-grid"></div>
+  </section>
 
-<section class="featured-home services-featured">
-  <h2>Featured Services</h2>
-  <p>Useful cafes, restaurants, rentals, shops, and local services for your stay.</p>
-  <div id="featuredServicesGrid" class="featured-grid"></div>
-</section>
+  <section class="featured-home services-featured">
+    <h2>Featured Services</h2>
+    <p>Useful cafes, restaurants, rentals, shops, and local services for your stay.</p>
+    <div id="featuredServicesGrid" class="featured-grid"></div>
+  </section>
+
   <section class="contact" id="contact" data-section="contact">
     <h2 data-field="title">Start Your Journey</h2>
     <p data-field="content">
@@ -149,7 +149,7 @@
   </section>
 
   <footer data-section="footer">
-    <p data-field="content">© 2026 CeyBreez. All rights reserved.</p>
+    <p id="footerText" data-field="content">© 2026 CeyBreez. All rights reserved.</p>
   </footer>
 
 </main>
@@ -158,6 +158,7 @@
    href="https://api.whatsapp.com/send?phone=94704620017"
    class="floating-whatsapp"
    target="_blank"
+   rel="noopener noreferrer"
    aria-label="Chat on WhatsApp">
   <i class="fa-brands fa-whatsapp"></i>
 </a>
@@ -218,7 +219,45 @@ async function loadSiteContent(){
     }
 
     if(data.contact_whatsapp){
-      document.getElementById("floatingWhatsApp").href = "https://api.whatsapp.com/send?phone=" + data.contact_whatsapp;
+      document.getElementById("floatingWhatsApp").href =
+        "https://api.whatsapp.com/send?phone=" + data.contact_whatsapp;
+    }
+
+    if(data.home_hero_title){
+      document.getElementById("homeHeroTitle").textContent = data.home_hero_title;
+    }
+
+    if(data.home_hero_subtitle){
+      document.getElementById("homeHeroSubtitle").textContent = data.home_hero_subtitle;
+    }
+
+    if(data.home_hero_media){
+      const hero = document.querySelector(".hero");
+      hero.style.backgroundImage =
+        `linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)), url('${data.home_hero_media}')`;
+      hero.style.backgroundSize = "cover";
+      hero.style.backgroundPosition = "center";
+    }
+
+    if(data.home_hero_text_color){
+      document.querySelector(".hero-content").style.color = data.home_hero_text_color;
+    }
+
+    if(data.home_hero_button_color){
+      const heroButton = document.getElementById("heroButton");
+      heroButton.style.background = data.home_hero_button_color;
+    }
+
+    if(data.home_about_title){
+      document.getElementById("homeAboutTitle").textContent = data.home_about_title;
+    }
+
+    if(data.home_about_text){
+      document.getElementById("homeAboutText").textContent = data.home_about_text;
+    }
+
+    if(data.footer_text){
+      document.getElementById("footerText").textContent = data.footer_text;
     }
 
   }catch(error){
@@ -227,8 +266,8 @@ async function loadSiteContent(){
 }
 
 loadSiteContent();
-  
 </script>
+
 <script>
 async function loadHomeFeatured(){
   await loadFeaturedStays();
@@ -363,6 +402,7 @@ async function loadFeaturedServices(){
 
 loadHomeFeatured();
 </script>
+
 <script src="page-builder.js"></script>
 
 </body>

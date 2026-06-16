@@ -604,3 +604,36 @@ input[readonly]{
     grid-template-columns:1fr;
   }
 }
+.inquiry-card .status{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:999px;
+  color:#fff;
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.status-new{
+  background:#2563eb;
+}
+
+.status-contacted{
+  background:#f59e0b;
+}
+
+.status-quoted{
+  background:#7c3aed;
+}
+
+.status-booked{
+  background:#16a34a;
+}
+
+.status-closed{
+  background:#6b7280;
+}
+
+.status-cancelled{
+  background:#dc2626;
+}

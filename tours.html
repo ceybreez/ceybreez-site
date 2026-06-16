@@ -1259,22 +1259,32 @@ ${specialNotes}`;
   updateServiceType();
   renderProvinceSelectedList();
   });
-  function openMap(lat, lng){
-  if(!lat || !lng || Number(lat) === 0 || Number(lng) === 0){
-    alert("Map location not available.");
+ function openMapUrl(mapUrl, lat, lng){
+  if(mapUrl && mapUrl.trim() !== ""){
+    window.open(mapUrl, "_blank");
     return;
   }
 
-  window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
+  if(lat && lng && Number(lat) !== 0 && Number(lng) !== 0){
+    window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
+    return;
+  }
+
+  alert("Map location not available.");
 }
 
-function getDirections(lat, lng){
-  if(!lat || !lng || Number(lat) === 0 || Number(lng) === 0){
-    alert("Directions not available.");
+function getDirectionsUrl(mapUrl, lat, lng){
+  if(mapUrl && mapUrl.trim() !== ""){
+    window.open(mapUrl, "_blank");
     return;
   }
 
-  window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, "_blank");
+  if(lat && lng && Number(lat) !== 0 && Number(lng) !== 0){
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, "_blank");
+    return;
+  }
+
+  alert("Directions not available.");
 }
 </script>
 

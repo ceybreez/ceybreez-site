@@ -1321,7 +1321,9 @@ function renderInquiryCards(data){
     card.className = "card inquiry-card";
 
     card.innerHTML = `
-      <span class="status">${item.status || "New"}</span>
+      <span class="status status-${(item.status || "New").toLowerCase()}">
+  ${item.status || "New"}
+</span>
 
       <h3>${item.reference || "Inquiry"}</h3>
 

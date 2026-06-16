@@ -128,7 +128,7 @@
 </footer>
 
 <a id="floatingWhatsApp"
-   href="https://wa.me/94704620017"
+   href="https://api.whatsapp.com/send?phone=94704620017"
    class="floating-whatsapp"
    target="_blank"
    aria-label="Chat on WhatsApp">
@@ -211,7 +211,7 @@ async function loadSiteContent(){
 
     if(data.contact_whatsapp){
       const wa = document.getElementById("floatingWhatsApp");
-      if(wa) wa.href = "https://wa.me/" + data.contact_whatsapp;
+      if(wa) wa.href = "https://api.whatsapp.com/send?phone=" + data.contact_whatsapp;
     }
 
     if(data.site_background_color){
@@ -364,11 +364,9 @@ function openServiceModal(service) {
   document.getElementById("modalServiceHours").textContent = service.openingHours || "";
 
   document.getElementById("modalServiceWhatsapp").href =
-    service.whatsapp ? `https://wa.me/${service.whatsapp}` : "#";
+    service.whatsapp ? `https://api.whatsapp.com/send?phone=${service.whatsapp}` : "#";
 
-  document.getElementById("modalServiceWhatsapp").href =
-  service.whatsapp ? `https://wa.me/${service.whatsapp}` : "#";
-
+ 
 document.getElementById("modalServiceMap").href =
   service.mapUrl || "#";
 

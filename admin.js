@@ -607,10 +607,13 @@ async function loadSiteContent() {
     const res = await fetch(`${API_BASE}/api/admin/site-content`, { headers: authHeaders() });
     const data = await res.json();
 
-    data.forEach(item => {
-      const el = document.getElementById(item.key);
-      if (el) el.value = item.value || "";
-    });
+  Object.entries(data).forEach(([key, value]) => {
+  const el = document.getElementById(key);
+
+  if (el) {
+    el.value = value || "";
+  }
+});
   } catch (err) {
     console.error(err);
   }
@@ -637,16 +640,27 @@ async function saveSiteContent(e) {
     "home_hero_button_color"
   ];
 
-  for (const key of keys) {
-    const el = document.getElementById(key);
-    if (!el) continue;
+ const payload = {};
 
-    await fetch(`${API_BASE}/api/admin/site-content`, {
-      method: "POST",
-      headers: authHeaders(),
-      body: JSON.stringify({ key, value: el.value })
-    });
+for (const key of keys) {
+  const el = document.getElementById(key);
+  if (el) {
+    payload[key] = el.value;
   }
+}
+
+const res = await fetch(`${API_BASE}/api/admin/site-content`, {
+  method: "PUT",
+  headers: authHeaders(),
+  body: JSON.stringify(payload)
+});
+
+const result = await res.json();
+
+if (!res.ok) {
+  alert(result.error || "Save failed");
+  return;
+}
 
   alert("Page Control Saved");
 }

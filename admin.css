@@ -477,3 +477,130 @@ input[readonly]{
 .inquiry-card select{
   margin:8px 0 12px;
 }
+#inquiriesTab{
+  max-width:1100px;
+  margin:40px auto;
+}
+
+.inquiry-toolbar{
+  display:grid;
+  grid-template-columns:1fr 220px auto;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.inquiry-toolbar input,
+.inquiry-toolbar select{
+  height:42px;
+  border:1px solid #ddd;
+  border-radius:12px;
+  padding:0 14px;
+}
+
+.inquiry-toolbar button{
+  border:none;
+  border-radius:12px;
+  background:#0f766e;
+  color:white;
+  font-weight:700;
+  padding:0 18px;
+  cursor:pointer;
+}
+
+.inquiry-stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:12px;
+  margin:18px 0 24px;
+}
+
+.inquiry-stats .stat{
+  background:white;
+  border-radius:16px;
+  padding:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+  font-weight:700;
+  color:#0f766e;
+  text-align:center;
+}
+
+#inquiriesList{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:18px;
+}
+
+.inquiry-card{
+  background:white;
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
+  border:1px solid #eee;
+}
+
+.inquiry-card .status{
+  display:inline-block;
+  background:#0f766e;
+  color:white;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.inquiry-card h3{
+  margin:6px 0 14px;
+  color:#0f766e;
+}
+
+.inquiry-card p{
+  margin:7px 0;
+  font-size:14px;
+}
+
+.inquiry-card details{
+  margin:12px 0;
+}
+
+.inquiry-card pre{
+  white-space:pre-wrap;
+  background:#f8f3eb;
+  padding:12px;
+  border-radius:12px;
+  font-size:13px;
+}
+
+.inquiry-card select{
+  width:100%;
+  margin:10px 0;
+  height:40px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  padding:0 10px;
+}
+
+.inquiry-card button{
+  margin-right:8px;
+  margin-top:8px;
+  border:none;
+  border-radius:10px;
+  padding:10px 14px;
+  color:white;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.inquiry-card .edit-btn{
+  background:#0f766e;
+}
+
+.inquiry-card .delete-btn{
+  background:#b91c1c;
+}
+
+@media(max-width:700px){
+  .inquiry-toolbar{
+    grid-template-columns:1fr;
+  }
+}

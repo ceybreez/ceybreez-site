@@ -614,26 +614,32 @@ input[readonly]{
   margin-bottom:10px;
 }
 
-.status-new{
-  background:#2563eb;
+.status.status-new{
+  background:#2563eb !important;
+  color:#fff !important;
 }
 
-.status-contacted{
-  background:#f59e0b;
+.status.status-contacted{
+  background:#f59e0b !important;
+  color:#fff !important;
 }
 
-.status-quoted{
-  background:#7c3aed;
+.status.status-quoted{
+  background:#7c3aed !important;
+  color:#fff !important;
 }
 
-.status-booked{
-  background:#16a34a;
+.status.status-booked{
+  background:#16a34a !important;
+  color:#fff !important;
 }
 
-.status-closed{
-  background:#6b7280;
+.status.status-closed{
+  background:#6b7280 !important;
+  color:#fff !important;
 }
 
-.status-cancelled{
-  background:#dc2626;
+.status.status-cancelled{
+  background:#dc2626 !important;
+  color:#fff !important;
 }

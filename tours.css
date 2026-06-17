@@ -1315,3 +1315,22 @@ nav a:active{
   cursor:pointer;
   font-weight:600;
 }
+.footer-links{
+  margin-top:12px;
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.footer-links a{
+  color:inherit;
+  text-decoration:none;
+  opacity:.85;
+  font-size:14px;
+}
+
+.footer-links a:hover{
+  opacity:1;
+  text-decoration:underline;
+}

@@ -439,6 +439,19 @@ function getDirections(lat, lng){
 }
 
 loadServicesPage();
+  const socialWA = document.getElementById("socialWhatsApp");
+
+if(socialWA){
+  socialWA.addEventListener("click", () => {
+
+    if(typeof gtag !== "undefined"){
+      gtag("event", "social_whatsapp_click", {
+        page_location: window.location.pathname
+      });
+    }
+
+  });
+}
 </script>
 <script src="page-builder.js"></script>
 

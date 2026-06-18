@@ -456,6 +456,14 @@ function resetInquiryForm(){
 }
 
 function showThankYouModal(reference){
+
+  if(typeof gtag !== "undefined"){
+    gtag("event", "generate_lead", {
+      inquiry_type: "villa",
+      reference: reference || ""
+    });
+  }
+
   document.getElementById("thankYouReference").textContent = reference;
   document.getElementById("thankYouModal").style.display = "flex";
 }

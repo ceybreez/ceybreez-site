@@ -247,12 +247,20 @@ ${message}`;
         }
       );
 
-      if(response.ok){
-        alert("Inquiry sent successfully!");
-        document.getElementById("contactForm").reset();
-        iti.setCountry("lk");
-        countryInput.value = "";
-      }else{
+     if(response.ok){
+
+  if(typeof gtag !== "undefined"){
+    gtag("event", "generate_lead", {
+      inquiry_type: "contact"
+    });
+  }
+
+  alert("Inquiry sent successfully!");
+  document.getElementById("contactForm").reset();
+  iti.setCountry("lk");
+  countryInput.value = "";
+}
+      else{
         alert("WhatsApp opened, but email sending failed.");
       }
 

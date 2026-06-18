@@ -265,11 +265,27 @@ ${message}`;
       }
 
     }catch(error){
-      alert("WhatsApp opened, but email sending failed.");
-      console.log(error);
+  alert("WhatsApp opened, but email sending failed.");
+  console.log(error);
+}
+
+}
+
+const contactWA = document.getElementById("contactWhatsApp");
+
+if(contactWA){
+  contactWA.addEventListener("click", () => {
+
+    if(typeof gtag !== "undefined"){
+      gtag("event", "contact_whatsapp_click", {
+        page_location: window.location.pathname
+      });
     }
-  }
-  const socialWA = document.getElementById("socialWhatsApp");
+
+  });
+}
+
+const socialWA = document.getElementById("socialWhatsApp");
 
 if(socialWA){
   socialWA.addEventListener("click", () => {

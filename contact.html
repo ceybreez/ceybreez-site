@@ -261,6 +261,19 @@ ${message}`;
       console.log(error);
     }
   }
+  const socialWA = document.getElementById("socialWhatsApp");
+
+if(socialWA){
+  socialWA.addEventListener("click", () => {
+
+    if(typeof gtag !== "undefined"){
+      gtag("event", "social_whatsapp_click", {
+        page_location: window.location.pathname
+      });
+    }
+
+  });
+}
 </script>
 
 </body>

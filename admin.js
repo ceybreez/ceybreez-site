@@ -1243,6 +1243,7 @@ async function loadInquiries() {
 
     allInquiries = data || [];
     renderInquiryStats(allInquiries);
+    renderDashboardCards(allInquiries);
     applyInquiryFilters();
 
   } catch (err) {
@@ -1435,4 +1436,42 @@ function exportInquiriesCSV(){
   a.href = URL.createObjectURL(blob);
   a.download = "ceybreez-inquiries.csv";
   a.click();
+}
+function renderDashboardCards(data){
+
+  const box = document.getElementById("inquiryCards");
+  if(!box) return;
+
+  const total = data.length;
+  const newCount = data.filter(x => x.status === "New").length;
+  const contacted = data.filter(x => x.status === "Contacted").length;
+  const booked = data.filter(x => x.status === "Booked").length;
+  const closed = data.filter(x => x.status === "Closed").length;
+
+  box.innerHTML = `
+    <div class="dashboard-card">
+      <h3>Total Inquiries</h3>
+      <div class="value">${total}</div>
+    </div>
+
+    <div class="dashboard-card card-new">
+      <h3>New</h3>
+      <div class="value">${newCount}</div>
+    </div>
+
+    <div class="dashboard-card card-contacted">
+      <h3>Contacted</h3>
+      <div class="value">${contacted}</div>
+    </div>
+
+    <div class="dashboard-card card-booked">
+      <h3>Booked</h3>
+      <div class="value">${booked}</div>
+    </div>
+
+    <div class="dashboard-card card-closed">
+      <h3>Closed</h3>
+      <div class="value">${closed}</div>
+    </div>
+  `;
 }

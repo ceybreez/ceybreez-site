@@ -643,3 +643,46 @@ input[readonly]{
   background:#dc2626 !important;
   color:#fff !important;
 }
+.dashboard-cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.dashboard-card{
+  background:#fff;
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 4px 15px rgba(0,0,0,.08);
+  text-align:center;
+}
+
+.dashboard-card h3{
+  margin:0;
+  font-size:14px;
+  color:#666;
+}
+
+.dashboard-card .value{
+  margin-top:10px;
+  font-size:32px;
+  font-weight:700;
+  color:#0f766e;
+}
+
+.card-new .value{
+  color:#2563eb;
+}
+
+.card-contacted .value{
+  color:#d97706;
+}
+
+.card-booked .value{
+  color:#16a34a;
+}
+
+.card-closed .value{
+  color:#6b7280;
+}

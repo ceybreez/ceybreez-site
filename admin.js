@@ -1437,6 +1437,64 @@ function renderDashboardCards(data){
     </div>
   `;
 }
+function renderInquiryTypeCards(data){
+
+  const box = document.getElementById("inquiryTypeCards");
+  if(!box) return;
+
+  const countType = keyword =>
+    data.filter(x =>
+      (x.serviceType || "").toLowerCase().includes(keyword)
+    ).length;
+
+  box.innerHTML = `
+    <div class="dashboard-card"><h3>🏡 Villas</h3><div class="value">${countType("villa")}</div></div>
+    <div class="dashboard-card"><h3>🏢 Apartments</h3><div class="value">${countType("apartment")}</div></div>
+    <div class="dashboard-card"><h3>🏠 Homestays</h3><div class="value">${countType("homestay")}</div></div>
+    <div class="dashboard-card"><h3>🧭 Tours</h3><div class="value">${countType("tour")}</div></div>
+    <div class="dashboard-card"><h3>📞 Contact</h3><div class="value">${countType("contact")}</div></div>
+  `;
+}
+
+function renderMonthlyInquiryChart(data){
+
+  const box = document.getElementById("monthlyInquiryChart");
+  if(!box) return;
+
+  const months = {};
+
+  data.forEach(item => {
+    const date = item.createdAt || item.created_at || "";
+    if(!date) return;
+
+    const monthKey = date.slice(0,7);
+    months[monthKey] = (months[monthKey] || 0) + 1;
+  });
+
+  const entries = Object.entries(months).sort();
+
+  if(!entries.length){
+    box.innerHTML = "";
+    return;
+  }
+
+  const max = Math.max(...entries.map(x => x[1]));
+
+  box.innerHTML = `
+    <h3>Monthly Inquiry Trend</h3>
+    <div class="chart-bars">
+      ${entries.map(([month,count]) => `
+        <div class="chart-row">
+          <span>${month}</span>
+          <div class="bar-wrap">
+            <div class="bar" style="width:${max ? (count / max) * 100 : 0}%"></div>
+          </div>
+          <strong>${count}</strong>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
 function exportInquiriesCSV(){
 
   if(!allInquiries.length){

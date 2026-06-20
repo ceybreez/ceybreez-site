@@ -686,3 +686,36 @@ input[readonly]{
 .card-closed .value{
   color:#6b7280;
 }
+.monthly-chart{
+  background:#fff;
+  border-radius:18px;
+  padding:20px;
+  box-shadow:0 4px 15px rgba(0,0,0,.08);
+  margin-bottom:22px;
+}
+
+.monthly-chart h3{
+  margin:0 0 16px;
+  color:#0f766e;
+}
+
+.chart-row{
+  display:grid;
+  grid-template-columns:90px 1fr 40px;
+  align-items:center;
+  gap:12px;
+  margin:10px 0;
+}
+
+.bar-wrap{
+  background:#eef2f7;
+  border-radius:999px;
+  overflow:hidden;
+  height:14px;
+}
+
+.bar{
+  background:#0f766e;
+  height:100%;
+  border-radius:999px;
+}

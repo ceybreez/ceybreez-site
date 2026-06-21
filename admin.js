@@ -1242,8 +1242,12 @@ async function loadInquiries() {
     if (!res.ok) throw new Error(data.error || "Failed to load inquiries");
 
     allInquiries = data || [];
+
     renderInquiryStats(allInquiries);
     renderDashboardCards(allInquiries);
+    renderInquiryTypeCards(allInquiries);
+    renderMonthlyInquiryChart(allInquiries);
+
     applyInquiryFilters();
 
   } catch (err) {
@@ -1287,6 +1291,7 @@ async function deleteInquiry(id) {
   alert("Inquiry deleted");
   loadInquiries();
 }
+
 function applyInquiryFilters(){
   const search = document.getElementById("inquirySearch")?.value.toLowerCase() || "";
   const status = document.getElementById("inquiryFilter")?.value || "";
@@ -1296,6 +1301,8 @@ function applyInquiryFilters(){
       ${item.reference || ""}
       ${item.guestName || ""}
       ${item.guestEmail || ""}
+      ${item.serviceType || ""}
+      ${item.itemName || ""}
     `.toLowerCase();
 
     return (!status || item.status === status) &&
@@ -1304,8 +1311,8 @@ function applyInquiryFilters(){
 
   renderInquiryCards(filtered);
 }
-function renderInquiryCards(data){
 
+function renderInquiryCards(data){
   const box = document.getElementById("inquiriesList");
   if(!box) return;
 
@@ -1317,14 +1324,15 @@ function renderInquiryCards(data){
   }
 
   data.forEach(item => {
-
     const card = document.createElement("div");
     card.className = "card inquiry-card";
 
+    const statusClass = (item.status || "New").toLowerCase();
+
     card.innerHTML = `
-      <span class="status status-${(item.status || "New").toLowerCase()}">
-  ${item.status || "New"}
-</span>
+      <span class="status status-${statusClass}">
+        ${item.status || "New"}
+      </span>
 
       <h3>${item.reference || "Inquiry"}</h3>
 
@@ -1355,14 +1363,10 @@ function renderInquiryCards(data){
       <button class="delete-btn">Delete</button>
     `;
 
-    card.querySelector(".inquiry-status").value =
-      item.status || "New";
+    card.querySelector(".inquiry-status").value = item.status || "New";
 
     card.querySelector(".edit-btn").onclick = () => {
-      updateInquiryStatus(
-        item.id,
-        card.querySelector(".inquiry-status").value
-      );
+      updateInquiryStatus(item.id, card.querySelector(".inquiry-status").value);
     };
 
     card.querySelector(".delete-btn").onclick = () => {
@@ -1372,13 +1376,12 @@ function renderInquiryCards(data){
     box.appendChild(card);
   });
 }
-function renderInquiryStats(data){
 
+function renderInquiryStats(data){
   const box = document.getElementById("inquiryStats");
   if(!box) return;
 
-  const count = status =>
-    data.filter(x => x.status === status).length;
+  const count = status => data.filter(x => x.status === status).length;
 
   box.innerHTML = `
     <div class="stat">New (${count("New")})</div>
@@ -1386,29 +1389,16 @@ function renderInquiryStats(data){
     <div class="stat">Quoted (${count("Quoted")})</div>
     <div class="stat">Booked (${count("Booked")})</div>
     <div class="stat">Closed (${count("Closed")})</div>
+    <div class="stat">Cancelled (${count("Cancelled")})</div>
   `;
 }
-document.addEventListener("input", e => {
-  if(e.target.id === "inquirySearch"){
-    applyInquiryFilters();
-  }
-});
 
-document.addEventListener("change", e => {
-  if(e.target.id === "inquiryFilter"){
-    applyInquiryFilters();
-  }
-});
 function renderDashboardCards(data){
-
   const box = document.getElementById("inquiryCards");
   if(!box) return;
 
   const total = data.length;
-  const newCount = data.filter(x => x.status === "New").length;
-  const contacted = data.filter(x => x.status === "Contacted").length;
-  const booked = data.filter(x => x.status === "Booked").length;
-  const closed = data.filter(x => x.status === "Closed").length;
+  const count = status => data.filter(x => x.status === status).length;
 
   box.innerHTML = `
     <div class="dashboard-card">
@@ -1418,56 +1408,83 @@ function renderDashboardCards(data){
 
     <div class="dashboard-card card-new">
       <h3>New</h3>
-      <div class="value">${newCount}</div>
+      <div class="value">${count("New")}</div>
     </div>
 
     <div class="dashboard-card card-contacted">
       <h3>Contacted</h3>
-      <div class="value">${contacted}</div>
+      <div class="value">${count("Contacted")}</div>
     </div>
 
     <div class="dashboard-card card-booked">
       <h3>Booked</h3>
-      <div class="value">${booked}</div>
+      <div class="value">${count("Booked")}</div>
     </div>
 
     <div class="dashboard-card card-closed">
       <h3>Closed</h3>
-      <div class="value">${closed}</div>
+      <div class="value">${count("Closed")}</div>
     </div>
   `;
 }
-function renderInquiryTypeCards(data){
 
+function renderInquiryTypeCards(data){
   const box = document.getElementById("inquiryTypeCards");
   if(!box) return;
 
   const countType = keyword =>
     data.filter(x =>
-      (x.serviceType || "").toLowerCase().includes(keyword)
+      (x.serviceType || "").toLowerCase().includes(keyword) ||
+      (x.itemName || "").toLowerCase().includes(keyword)
     ).length;
 
   box.innerHTML = `
-    <div class="dashboard-card"><h3>🏡 Villas</h3><div class="value">${countType("villa")}</div></div>
-    <div class="dashboard-card"><h3>🏢 Apartments</h3><div class="value">${countType("apartment")}</div></div>
-    <div class="dashboard-card"><h3>🏠 Homestays</h3><div class="value">${countType("homestay")}</div></div>
-    <div class="dashboard-card"><h3>🧭 Tours</h3><div class="value">${countType("tour")}</div></div>
-    <div class="dashboard-card"><h3>📞 Contact</h3><div class="value">${countType("contact")}</div></div>
+    <div class="dashboard-card">
+      <h3>🏡 Villas</h3>
+      <div class="value">${countType("villa")}</div>
+    </div>
+
+    <div class="dashboard-card">
+      <h3>🏢 Apartments</h3>
+      <div class="value">${countType("apartment")}</div>
+    </div>
+
+    <div class="dashboard-card">
+      <h3>🏠 Homestays</h3>
+      <div class="value">${countType("homestay")}</div>
+    </div>
+
+    <div class="dashboard-card">
+      <h3>🧭 Tours</h3>
+      <div class="value">${countType("tour")}</div>
+    </div>
+
+    <div class="dashboard-card">
+      <h3>📞 Contact</h3>
+      <div class="value">${countType("contact")}</div>
+    </div>
   `;
 }
 
 function renderMonthlyInquiryChart(data){
-
   const box = document.getElementById("monthlyInquiryChart");
   if(!box) return;
 
   const months = {};
 
   data.forEach(item => {
-    const date = item.createdAt || item.created_at || "";
+    const date =
+      item.createdAt ||
+      item.created_at ||
+      item.created ||
+      item.dateFrom ||
+      "";
+
     if(!date) return;
 
-    const monthKey = date.slice(0,7);
+    const monthKey = String(date).slice(0, 7);
+    if(!monthKey || monthKey.length < 7) return;
+
     months[monthKey] = (months[monthKey] || 0) + 1;
   });
 
@@ -1495,8 +1512,20 @@ function renderMonthlyInquiryChart(data){
     </div>
   `;
 }
-function exportInquiriesCSV(){
 
+document.addEventListener("input", e => {
+  if(e.target.id === "inquirySearch"){
+    applyInquiryFilters();
+  }
+});
+
+document.addEventListener("change", e => {
+  if(e.target.id === "inquiryFilter"){
+    applyInquiryFilters();
+  }
+});
+
+function exportInquiriesCSV(){
   if(!allInquiries.length){
     alert("No inquiries to export");
     return;
@@ -1532,42 +1561,4 @@ function exportInquiriesCSV(){
   a.href = URL.createObjectURL(blob);
   a.download = "ceybreez-inquiries.csv";
   a.click();
-}
-function renderDashboardCards(data){
-
-  const box = document.getElementById("inquiryCards");
-  if(!box) return;
-
-  const total = data.length;
-  const newCount = data.filter(x => x.status === "New").length;
-  const contacted = data.filter(x => x.status === "Contacted").length;
-  const booked = data.filter(x => x.status === "Booked").length;
-  const closed = data.filter(x => x.status === "Closed").length;
-
-  box.innerHTML = `
-    <div class="dashboard-card">
-      <h3>Total Inquiries</h3>
-      <div class="value">${total}</div>
-    </div>
-
-    <div class="dashboard-card card-new">
-      <h3>New</h3>
-      <div class="value">${newCount}</div>
-    </div>
-
-    <div class="dashboard-card card-contacted">
-      <h3>Contacted</h3>
-      <div class="value">${contacted}</div>
-    </div>
-
-    <div class="dashboard-card card-booked">
-      <h3>Booked</h3>
-      <div class="value">${booked}</div>
-    </div>
-
-    <div class="dashboard-card card-closed">
-      <h3>Closed</h3>
-      <div class="value">${closed}</div>
-    </div>
-  `;
 }

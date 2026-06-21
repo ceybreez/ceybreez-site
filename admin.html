@@ -515,5 +515,33 @@
   <div id="inquiriesList" class="list"></div>
 </section>
 <script src="admin.js"></script>
+  <!-- Inquiry Modal -->
+<div id="inquiryModal" class="modal hidden">
+  <div class="modal-content inquiry-modal">
+
+    <div class="modal-header">
+      <h2>Inquiry Details</h2>
+      <button onclick="closeInquiryModal()">✕</button>
+    </div>
+
+    <div id="inquiryModalBody"></div>
+
+    <hr>
+
+    <h3>Admin Notes</h3>
+
+    <textarea
+      id="adminNoteText"
+      placeholder="Add internal note..."
+      rows="4"></textarea>
+
+    <button onclick="saveInquiryNote()">
+      Save Note
+    </button>
+
+    <div id="inquiryNotesList"></div>
+
+  </div>
+</div>
 </body>
 </html>

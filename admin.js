@@ -1430,8 +1430,8 @@ function renderInquiryTable(data) {
     const statusClass = normalizeStatus(item.status);
     const displayStatus = item.status || "New";
 
-    return `
-      <tr>
+   return `
+      <tr onclick="openInquiryModal('${item.id}')" style="cursor:pointer;">
         <td>${formatDate(item.createdAt || item.created_at)}</td>
 
         <td>
@@ -1671,4 +1671,75 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+let currentInquiry = null;
+
+function openInquiryModal(id){
+
+  const inquiry = allInquiries.find(
+    x => String(x.id) === String(id)
+  );
+
+  if(!inquiry) return;
+
+  currentInquiry = inquiry;
+
+  document.getElementById("inquiryModal").classList.remove("hidden");
+
+  document.getElementById("inquiryModalBody").innerHTML = `
+    <p><b>Reference:</b> ${inquiry.reference || "-"}</p>
+    <p><b>Name:</b> ${inquiry.guestName || "-"}</p>
+    <p><b>Email:</b> ${inquiry.guestEmail || "-"}</p>
+    <p><b>Mobile:</b> ${inquiry.guestMobile || "-"}</p>
+    <p><b>Country:</b> ${inquiry.guestCountry || "-"}</p>
+    <p><b>Guests:</b> ${inquiry.guests || "-"}</p>
+    <p><b>Service:</b> ${inquiry.serviceType || "-"}</p>
+    <p><b>Item:</b> ${inquiry.itemName || "-"}</p>
+    <p><b>Check In:</b> ${inquiry.dateFrom || "-"}</p>
+    <p><b>Check Out:</b> ${inquiry.dateTo || "-"}</p>
+
+    <hr>
+
+    <h4>Message</h4>
+    <pre>${inquiry.message || "-"}</pre>
+  `;
+
+  loadInquiryNotes();
+}
+
+function closeInquiryModal(){
+  document.getElementById("inquiryModal")
+    .classList.add("hidden");
+}
+
+function loadInquiryNotes(){
+
+  const notes = currentInquiry.notes || [];
+
+  document.getElementById("inquiryNotesList").innerHTML =
+    notes.map(note => `
+      <div class="note-item">
+        ${note}
+      </div>
+    `).join("");
+}
+
+function saveInquiryNote(){
+
+  const text =
+    document.getElementById("adminNoteText").value.trim();
+
+  if(!text) return;
+
+  if(!currentInquiry.notes){
+    currentInquiry.notes = [];
+  }
+
+  currentInquiry.notes.unshift(
+    `${new Date().toLocaleString()} - ${text}`
+  );
+
+  document.getElementById("adminNoteText").value = "";
+
+  loadInquiryNotes();
 }

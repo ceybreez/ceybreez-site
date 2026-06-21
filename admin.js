@@ -1700,8 +1700,10 @@ function openInquiryModal(id){
 
     <hr>
 
-    <h4>Message</h4>
-    <pre>${inquiry.message || "-"}</pre>
+   <h4>Message</h4>
+<div class="message-box">
+  ${inquiry.message || "No message provided"}
+</div>
   `;
 
   loadInquiryNotes();

@@ -1687,6 +1687,12 @@ function openInquiryModal(id){
   document.getElementById("inquiryModal").classList.remove("hidden");
 
   document.getElementById("inquiryModalBody").innerHTML = `
+  <div class="inquiry-actions">
+  <button onclick="openGuestWhatsApp()">WhatsApp</button>
+  <button onclick="emailGuest()">Email</button>
+  <button onclick="copyInquiryDetails()">Copy</button>
+  <button onclick="confirmBooking()">Confirm Booking</button>
+</div>
     <p><b>Reference:</b> ${inquiry.reference || "-"}</p>
     <p><b>Name:</b> ${inquiry.guestName || "-"}</p>
     <p><b>Email:</b> ${inquiry.guestEmail || "-"}</p>
@@ -1744,4 +1750,155 @@ function saveInquiryNote(){
   document.getElementById("adminNoteText").value = "";
 
   loadInquiryNotes();
+}
+async function loadInquiryNotes() {
+
+  if (!currentInquiry) return;
+
+  try {
+
+    const res = await fetch(
+      `${API_BASE}/api/admin/inquiries/${currentInquiry.id}/notes`,
+      {
+        headers: authHeaders()
+      }
+    );
+
+    const notes = await res.json();
+
+    document.getElementById("inquiryNotesList").innerHTML =
+      (notes || []).map(note => `
+        <div class="note-item">
+          <strong>${formatDate(note.createdAt)}</strong><br>
+          ${note.note}
+        </div>
+      `).join("");
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function saveInquiryNote() {
+
+  if (!currentInquiry) return;
+
+  const text =
+    document.getElementById("adminNoteText").value.trim();
+
+  if (!text) return;
+
+  try {
+
+    const res = await fetch(
+      `${API_BASE}/api/admin/inquiries/${currentInquiry.id}/notes`,
+      {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify({
+          note: text
+        })
+      }
+    );
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      alert(result.error || "Failed to save note");
+      return;
+    }
+
+    document.getElementById("adminNoteText").value = "";
+
+    loadInquiryNotes();
+
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function confirmBooking() {
+
+  if (!currentInquiry) return;
+
+  if (!confirm("Confirm this booking?")) return;
+
+  try {
+
+    const res = await fetch(
+      `${API_BASE}/api/admin/bookings`,
+      {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify(currentInquiry)
+      }
+    );
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      alert(result.error || "Booking failed");
+      return;
+    }
+
+    await updateInquiryStatus(
+      currentInquiry.id,
+      "Booked"
+    );
+
+    alert("Booking Confirmed");
+
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+function openGuestWhatsApp() {
+
+  if (!currentInquiry) return;
+
+  const mobile =
+    (currentInquiry.guestMobile || "")
+      .replace(/\D/g, "");
+
+  const text = encodeURIComponent(
+`Hello ${currentInquiry.guestName || ""},
+
+Thank you for contacting CeyBreez.
+
+Reference:
+${currentInquiry.reference || ""}
+
+We will contact you shortly.
+
+Best Regards
+CeyBreez`
+  );
+
+  window.open(
+    `https://wa.me/${mobile}?text=${text}`,
+    "_blank"
+  );
+}
+
+function emailGuest() {
+
+  if (!currentInquiry) return;
+
+  const email =
+    currentInquiry.guestEmail || "";
+
+  window.location.href =
+    `mailto:${email}`;
+}
+
+function copyInquiryDetails() {
+
+  if (!currentInquiry) return;
+
+  navigator.clipboard.writeText(
+JSON.stringify(currentInquiry, null, 2)
+  );
+
+  alert("Copied");
 }

@@ -1,4 +1,4 @@
-const API_BASE = "https://YOUR-WORKER-URL.workers.dev";
+const API_BASE = "https://ceybreez-api.YOURNAME.workers.dev";
 
 let allInquiries = [];
 
@@ -399,3 +399,23 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("inquirySearch")?.addEventListener("input", applyInquiryFilters);
   document.getElementById("inquiryStatusFilter")?.addEventListener("change", applyInquiryFilters);
 });
+function loginAdmin() {
+  const token = document.getElementById("adminToken").value;
+
+  if (!token) {
+    alert("Enter Admin Token");
+    return;
+  }
+
+  localStorage.setItem("adminToken", token);
+
+  document.getElementById("loginBox").classList.add("hidden");
+  document.getElementById("adminPanel").classList.remove("hidden");
+
+  loadInquiries();
+}
+
+function logoutAdmin() {
+  localStorage.removeItem("adminToken");
+  location.reload();
+}

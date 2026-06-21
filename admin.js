@@ -1819,7 +1819,12 @@ async function saveInquiryNote() {
 
 async function confirmBooking() {
 
-  if (!currentInquiry) return;
+  console.log("CONFIRM BOOKING CLICKED", currentInquiry);
+
+  if (!currentInquiry) {
+    alert("No inquiry selected");
+    return;
+  }
 
   if (!confirm("Confirm this booking?")) return;
 
@@ -1846,6 +1851,7 @@ async function confirmBooking() {
     );
 
     const result = await res.json();
+    console.log("BOOKING RESULT", result);
 
     if (!res.ok) {
       alert(result.error || "Booking failed");

@@ -420,6 +420,10 @@ async function sendPropertyInquiry(){
   if(!name || !email || !mobile || !country || !guests || !checkIn || !checkOut){
     alert("Please fill all required details."); return;
   }
+  if(isDateRangeBooked(checkIn, checkOut)){
+  alert("Sorry, this villa is already booked for the selected dates.");
+  return;
+  }
   const message =
 `New CeyBreez Villa Inquiry
 

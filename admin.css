@@ -921,3 +921,22 @@ input[readonly]{
   border-radius: 12px;
   margin-top: 10px;
 }
+.inquiry-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+.inquiry-actions button{
+  background:#0f766e;
+  color:#fff;
+  border:none;
+  padding:10px 15px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.inquiry-actions button:hover{
+  opacity:.9;
+}

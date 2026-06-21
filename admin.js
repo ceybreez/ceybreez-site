@@ -1,4 +1,4 @@
-const API_BASE = "https://ceybreez.com";
+const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 let allInquiries = [];
 
 /* =========================

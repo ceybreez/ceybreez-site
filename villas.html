@@ -547,23 +547,15 @@ function isDateRangeBooked(checkIn, checkOut) {
   });
 }
 
-/* END */
-
 const waBtn = document.getElementById("floatingWhatsApp");
 
 if(waBtn){
   waBtn.addEventListener("click", () => {
-  const waBtn = document.getElementById("floatingWhatsApp");
-
-if(waBtn){
-  waBtn.addEventListener("click", () => {
-
     if(typeof gtag !== "undefined"){
       gtag("event", "whatsapp_click", {
         page_location: window.location.pathname
       });
     }
-
   });
 }
 </script>

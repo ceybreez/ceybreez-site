@@ -144,6 +144,7 @@ content="Explore handpicked luxury villas in Sri Lanka. Beachfront villas, priva
 const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 let properties = [];
 let selectedProperty = null;
+  let bookedDates = [];
   let allProperties = [];
 
 window.addEventListener("load", function(){
@@ -380,14 +381,19 @@ function selectVillaFromDropdown(){
 
 function fillSelectedVilla(id){
   const item = properties.find(p => p.id === id);
+
   if(!item){
     selectedProperty = null;
     document.getElementById("inqVillaName").value = "";
     return;
   }
+
   selectedProperty = item;
+
   document.getElementById("inqVillaSelect").value = item.id;
   document.getElementById("inqVillaName").value = item.name;
+
+  loadBookedDates(item.name);
 }
 
 function calculateInquiryDays(){
@@ -498,6 +504,51 @@ function getDirectionsUrl(mapUrl, lat, lng){
 
   alert("Directions not available.");
 }
+
+/* PASTE HERE */
+
+async function loadBookedDates(itemName) {
+
+  try {
+
+    const res = await fetch(
+      API_BASE + "/api/bookings?itemName=" +
+      encodeURIComponent(itemName)
+    );
+
+    bookedDates = await res.json();
+
+  } catch (err) {
+
+    bookedDates = [];
+  }
+}
+
+function isDateRangeBooked(checkIn, checkOut) {
+
+  if(!checkIn || !checkOut) return false;
+
+  const start = new Date(checkIn);
+  const end = new Date(checkOut);
+
+  return bookedDates.some(b => {
+
+    const bookedStart = new Date(b.dateFrom);
+    const bookedEnd = new Date(b.dateTo);
+
+    return (
+      start < bookedEnd &&
+      end > bookedStart
+    );
+  });
+}
+
+/* END */
+
+const waBtn = document.getElementById("floatingWhatsApp");
+
+if(waBtn){
+  waBtn.addEventListener("click", () => {
   const waBtn = document.getElementById("floatingWhatsApp");
 
 if(waBtn){

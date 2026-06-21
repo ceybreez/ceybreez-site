@@ -1,4 +1,5 @@
 const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
+
 let allInquiries = [];
 
 /* =========================
@@ -15,6 +16,61 @@ function authHeaders() {
   };
 }
 
+function loginAdmin() {
+  const token = document.getElementById("adminToken").value;
+
+  if (!token) {
+    alert("Enter Admin Token");
+    return;
+  }
+
+  localStorage.setItem("adminToken", token);
+
+  document.getElementById("loginBox").classList.add("hidden");
+  document.getElementById("adminPanel").classList.remove("hidden");
+
+  showTab("destinations");
+}
+
+function logoutAdmin() {
+  localStorage.removeItem("adminToken");
+  location.reload();
+}
+
+/* =========================
+   TABS
+========================= */
+
+function showTab(tab) {
+  const sections = [
+    "destinationsTab",
+    "propertiesTab",
+    "servicesTab",
+    "inquiriesTab",
+    "pageControlTab"
+  ];
+
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add("hidden");
+  });
+
+  let targetId = "";
+
+  if (tab === "destinations") targetId = "destinationsTab";
+  if (tab === "properties") targetId = "propertiesTab";
+  if (tab === "services") targetId = "servicesTab";
+  if (tab === "inquiriesTab") targetId = "inquiriesTab";
+  if (tab === "pageControl") targetId = "pageControlTab";
+
+  const target = document.getElementById(targetId);
+  if (target) target.classList.remove("hidden");
+
+  if (tab === "inquiriesTab") {
+    loadInquiries();
+  }
+}
+
 /* =========================
    LOAD INQUIRIES
 ========================= */
@@ -22,21 +78,29 @@ function authHeaders() {
 async function loadInquiries() {
   try {
     const res = await fetch(`${API_BASE}/api/admin/inquiries`, {
+      method: "GET",
       headers: authHeaders()
     });
 
-    const data = await res.json();
+    const text = await res.text();
 
-    if (!res.ok) throw new Error(data.error || "Failed to load inquiries");
+    let data = [];
+    try {
+      data = text ? JSON.parse(text) : [];
+    } catch {
+      throw new Error(text || "Invalid API response");
+    }
 
-    allInquiries = data || [];
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to load inquiries");
+    }
+
+    allInquiries = Array.isArray(data) ? data : [];
 
     renderDashboardCards(allInquiries);
     renderInquiryTypeCards(allInquiries);
     renderMonthlyChart(allInquiries);
     renderInquiryStats(allInquiries);
-    renderInquiryTable(allInquiries);
-    renderInquiriesList(allInquiries);
     applyInquiryFilters();
 
   } catch (err) {
@@ -46,7 +110,7 @@ async function loadInquiries() {
 }
 
 /* =========================
-   DASHBOARD SUMMARY CARDS
+   DASHBOARD CARDS
 ========================= */
 
 function renderDashboardCards(inquiries) {
@@ -54,29 +118,31 @@ function renderDashboardCards(inquiries) {
   if (!box) return;
 
   const total = inquiries.length;
-  const newCount = inquiries.filter(i => (i.status || "new") === "new").length;
-  const contacted = inquiries.filter(i => i.status === "contacted").length;
-  const confirmed = inquiries.filter(i => i.status === "confirmed").length;
+  const newCount = inquiries.filter(i => normalizeStatus(i.status) === "new").length;
+  const contacted = inquiries.filter(i => normalizeStatus(i.status) === "contacted").length;
+  const confirmed = inquiries.filter(i => normalizeStatus(i.status) === "confirmed").length;
+  const closed = inquiries.filter(i => normalizeStatus(i.status) === "closed").length;
 
   box.innerHTML = `
     <div class="dashboard-card">
       <h3>Total Inquiries</h3>
       <strong>${total}</strong>
     </div>
-
     <div class="dashboard-card">
       <h3>New</h3>
       <strong>${newCount}</strong>
     </div>
-
     <div class="dashboard-card">
       <h3>Contacted</h3>
       <strong>${contacted}</strong>
     </div>
-
     <div class="dashboard-card">
       <h3>Confirmed</h3>
       <strong>${confirmed}</strong>
+    </div>
+    <div class="dashboard-card">
+      <h3>Closed</h3>
+      <strong>${closed}</strong>
     </div>
   `;
 }
@@ -92,13 +158,13 @@ function renderInquiryTypeCards(inquiries) {
   const types = {};
 
   inquiries.forEach(item => {
-    const type = item.type || "Other";
+    const type = item.serviceType || item.type || "Travel Inquiry";
     types[type] = (types[type] || 0) + 1;
   });
 
   box.innerHTML = Object.entries(types).map(([type, count]) => `
     <div class="dashboard-card type-card">
-      <h3>${capitalize(type)}</h3>
+      <h3>${escapeHtml(type)}</h3>
       <strong>${count}</strong>
     </div>
   `).join("");
@@ -115,12 +181,16 @@ function renderMonthlyChart(inquiries) {
   const months = {};
 
   inquiries.forEach(item => {
-    const date = new Date(item.created_at || item.date || Date.now());
-    const key = date.toLocaleString("en-US", { month: "short", year: "numeric" });
+    const date = new Date(item.createdAt || item.created_at || Date.now());
+    const key = date.toLocaleString("en-US", {
+      month: "short",
+      year: "numeric"
+    });
     months[key] = (months[key] || 0) + 1;
   });
 
-  const maxValue = Math.max(...Object.values(months), 1);
+  const values = Object.values(months);
+  const maxValue = Math.max(...values, 1);
 
   box.innerHTML = `
     <h2>Monthly Inquiries</h2>
@@ -128,8 +198,8 @@ function renderMonthlyChart(inquiries) {
       ${Object.entries(months).map(([month, count]) => `
         <div class="chart-row">
           <span>${month}</span>
-          <div class="bar-bg">
-            <div class="bar-fill" style="width:${(count / maxValue) * 100}%"></div>
+          <div class="bar-wrap">
+            <div class="bar" style="width:${(count / maxValue) * 100}%"></div>
           </div>
           <strong>${count}</strong>
         </div>
@@ -139,7 +209,7 @@ function renderMonthlyChart(inquiries) {
 }
 
 /* =========================
-   INQUIRY STATS
+   STATS
 ========================= */
 
 function renderInquiryStats(inquiries) {
@@ -149,32 +219,59 @@ function renderInquiryStats(inquiries) {
   const today = new Date().toDateString();
 
   const todayCount = inquiries.filter(item => {
-    const d = new Date(item.created_at || item.date);
+    const d = new Date(item.createdAt || item.created_at);
     return d.toDateString() === today;
   }).length;
 
   box.innerHTML = `
-    <div class="stat-item">
-      <span>Today</span>
-      <strong>${todayCount}</strong>
+    <div class="stat">
+      Today: <strong>${todayCount}</strong>
     </div>
-
-    <div class="stat-item">
-      <span>Total</span>
-      <strong>${inquiries.length}</strong>
+    <div class="stat">
+      Total: <strong>${inquiries.length}</strong>
     </div>
   `;
 }
 
 /* =========================
-   INQUIRY TABLE
+   FILTERS
+========================= */
+
+function applyInquiryFilters() {
+  const search = document.getElementById("inquirySearch")?.value.toLowerCase() || "";
+  const status = document.getElementById("inquiryStatusFilter")?.value || "all";
+
+  let filtered = [...allInquiries];
+
+  if (search) {
+    filtered = filtered.filter(item =>
+      (item.reference || "").toLowerCase().includes(search) ||
+      (item.guestName || "").toLowerCase().includes(search) ||
+      (item.guestEmail || "").toLowerCase().includes(search) ||
+      (item.guestMobile || "").toLowerCase().includes(search) ||
+      (item.serviceType || "").toLowerCase().includes(search) ||
+      (item.itemName || "").toLowerCase().includes(search) ||
+      (item.message || "").toLowerCase().includes(search)
+    );
+  }
+
+  if (status !== "all") {
+    filtered = filtered.filter(item => normalizeStatus(item.status) === status);
+  }
+
+  renderInquiryTable(filtered);
+  renderInquiriesList(filtered);
+}
+
+/* =========================
+   TABLE
 ========================= */
 
 function renderInquiryTable(inquiries) {
   const tbody = document.getElementById("inquiryTableBody");
   if (!tbody) return;
 
-  if (!inquiries || inquiries.length === 0) {
+  if (!inquiries.length) {
     tbody.innerHTML = `
       <tr>
         <td colspan="8" class="empty-row">No inquiries found</td>
@@ -184,27 +281,28 @@ function renderInquiryTable(inquiries) {
   }
 
   tbody.innerHTML = inquiries.map(item => {
-    const status = item.status || "new";
+    const status = normalizeStatus(item.status);
 
     return `
       <tr>
-        <td>${formatDate(item.created_at || item.date)}</td>
+        <td>${formatDate(item.createdAt)}</td>
 
         <td>
-          <strong>${item.name || "-"}</strong><br>
-          <small>${item.email || ""}</small><br>
-          <small>${item.phone || ""}</small>
+          <strong>${escapeHtml(item.guestName || "-")}</strong><br>
+          <small>${escapeHtml(item.guestEmail || "")}</small><br>
+          <small>${escapeHtml(item.guestMobile || "")}</small>
         </td>
 
-        <td>${capitalize(item.type || "-")}</td>
+        <td>${escapeHtml(item.serviceType || "-")}</td>
+
+        <td>${escapeHtml(item.itemName || item.reference || "-")}</td>
 
         <td>
-          ${item.property_name || item.tour_name || item.title || item.experience || "-"}
+          ${escapeHtml(item.dateFrom || "-")}
+          ${item.dateTo ? " to " + escapeHtml(item.dateTo) : ""}
         </td>
 
-        <td>${item.check_in || item.checkin || item.date || "-"}</td>
-
-        <td>${item.guests || item.guest_count || "-"}</td>
+        <td>${escapeHtml(item.guests || "-")}</td>
 
         <td>
           <span class="status-badge status-${status}">
@@ -226,52 +324,42 @@ function renderInquiryTable(inquiries) {
 }
 
 /* =========================
-   OLD CARD LIST SUPPORT
+   CARD LIST
 ========================= */
 
 function renderInquiriesList(inquiries) {
   const list = document.getElementById("inquiriesList");
   if (!list) return;
 
-  list.innerHTML = inquiries.map(item => `
-    <div class="inquiry-card">
-      <h3>${item.name || "Guest"}</h3>
-      <p><b>Email:</b> ${item.email || "-"}</p>
-      <p><b>Phone:</b> ${item.phone || "-"}</p>
-      <p><b>Type:</b> ${item.type || "-"}</p>
-      <p><b>Message:</b> ${item.message || "-"}</p>
-    </div>
-  `).join("");
-}
-
-/* =========================
-   FILTERS
-========================= */
-
-function applyInquiryFilters() {
-  const search = document.getElementById("inquirySearch")?.value.toLowerCase() || "";
-  const status = document.getElementById("inquiryStatusFilter")?.value || "all";
-
-  let filtered = [...allInquiries];
-
-  if (search) {
-    filtered = filtered.filter(item =>
-      (item.name || "").toLowerCase().includes(search) ||
-      (item.email || "").toLowerCase().includes(search) ||
-      (item.phone || "").toLowerCase().includes(search) ||
-      (item.property_name || "").toLowerCase().includes(search) ||
-      (item.tour_name || "").toLowerCase().includes(search) ||
-      (item.title || "").toLowerCase().includes(search) ||
-      (item.type || "").toLowerCase().includes(search)
-    );
+  if (!inquiries.length) {
+    list.innerHTML = "";
+    return;
   }
 
-  if (status !== "all") {
-    filtered = filtered.filter(item => (item.status || "new") === status);
-  }
+  list.innerHTML = inquiries.map(item => {
+    const status = normalizeStatus(item.status);
 
-  renderInquiryTable(filtered);
-  renderInquiriesList(filtered);
+    return `
+      <div class="inquiry-card">
+        <span class="status status-${status}">${capitalize(status)}</span>
+        <h3>${escapeHtml(item.reference || "Inquiry")}</h3>
+
+        <p><b>Name:</b> ${escapeHtml(item.guestName || "-")}</p>
+        <p><b>Email:</b> ${escapeHtml(item.guestEmail || "-")}</p>
+        <p><b>Mobile:</b> ${escapeHtml(item.guestMobile || "-")}</p>
+        <p><b>Country:</b> ${escapeHtml(item.guestCountry || "-")}</p>
+        <p><b>Type:</b> ${escapeHtml(item.serviceType || "-")}</p>
+        <p><b>Item:</b> ${escapeHtml(item.itemName || "-")}</p>
+        <p><b>Dates:</b> ${escapeHtml(item.dateFrom || "-")} to ${escapeHtml(item.dateTo || "-")}</p>
+        <p><b>Guests:</b> ${escapeHtml(item.guests || "-")}</p>
+
+        <details>
+          <summary>Message</summary>
+          <pre>${escapeHtml(item.message || "-")}</pre>
+        </details>
+      </div>
+    `;
+  }).join("");
 }
 
 /* =========================
@@ -289,7 +377,14 @@ async function updateInquiryStatus(id, status) {
       body: JSON.stringify({ status })
     });
 
-    const data = await res.json();
+    const text = await res.text();
+
+    let data = {};
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch {
+      throw new Error(text || "Invalid API response");
+    }
 
     if (!res.ok) {
       throw new Error(data.error || "Failed to update status");
@@ -312,47 +407,50 @@ async function updateInquiryStatus(id, status) {
 }
 
 /* =========================
-   EXPORT CSV
+   CSV
 ========================= */
 
 function exportInquiriesCSV() {
-  if (!allInquiries || allInquiries.length === 0) {
+  if (!allInquiries.length) {
     alert("No inquiries to export");
     return;
   }
 
   const headers = [
     "Date",
+    "Reference",
     "Name",
     "Email",
-    "Phone",
+    "Mobile",
+    "Country",
     "Type",
-    "Property/Tour",
-    "Check In",
+    "Item",
+    "Date From",
+    "Date To",
     "Guests",
     "Status",
     "Message"
   ];
 
   const rows = allInquiries.map(item => [
-    formatDate(item.created_at || item.date),
-    item.name || "",
-    item.email || "",
-    item.phone || "",
-    item.type || "",
-    item.property_name || item.tour_name || item.title || "",
-    item.check_in || item.checkin || item.date || "",
-    item.guests || item.guest_count || "",
-    item.status || "new",
+    formatDate(item.createdAt),
+    item.reference || "",
+    item.guestName || "",
+    item.guestEmail || "",
+    item.guestMobile || "",
+    item.guestCountry || "",
+    item.serviceType || "",
+    item.itemName || "",
+    item.dateFrom || "",
+    item.dateTo || "",
+    item.guests || "",
+    item.status || "",
     item.message || ""
   ]);
 
-  const csvContent = [
-    headers,
-    ...rows
-  ].map(row =>
-    row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(",")
-  ).join("\n");
+  const csvContent = [headers, ...rows]
+    .map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(","))
+    .join("\n");
 
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
@@ -369,11 +467,14 @@ function exportInquiriesCSV() {
    HELPERS
 ========================= */
 
+function normalizeStatus(status) {
+  return String(status || "new").toLowerCase();
+}
+
 function formatDate(value) {
   if (!value) return "-";
 
   const date = new Date(value);
-
   if (isNaN(date.getTime())) return value;
 
   return date.toLocaleDateString("en-GB", {
@@ -384,8 +485,54 @@ function formatDate(value) {
 }
 
 function capitalize(text) {
-  if (!text) return "";
-  return String(text).charAt(0).toUpperCase() + String(text).slice(1);
+  text = String(text || "");
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+/* =========================
+   SAFE EMPTY FUNCTIONS
+   old buttons error stop karanna
+========================= */
+
+function resetDestinationForm() {}
+function resetPropertyForm() {}
+function resetServiceForm() {}
+function resetSectionForm() {}
+function handleDragOver(e) { e.preventDefault(); }
+function handleDragLeave(e) { e.preventDefault(); }
+function handleDrop(e) { e.preventDefault(); }
+function uploadPhotos() {}
+function uploadServiceImage() {}
+function uploadServicePhotos() {}
+function handleServiceImageDrop(e) { e.preventDefault(); }
+function handleServicePhotosDrop(e) { e.preventDefault(); }
+function toggleGlobalSettings() {
+  document.getElementById("siteContentForm")?.classList.toggle("hidden");
+}
+function toggleSectionBuilder() {
+  document.getElementById("sectionBuilderBox")?.classList.toggle("hidden");
+}
+function addCardItem() {}
+function uploadPageMedia() {}
+function handlePageMediaDrop(e) { e.preventDefault(); }
+function uploadSectionImage() {}
+function handleSectionImageDrop(e) { e.preventDefault(); }
+function uploadSectionVideo() {}
+function handleSectionVideoDrop(e) { e.preventDefault(); }
+function uploadSectionBackground() {}
+function handleSectionBackgroundDrop(e) { e.preventDefault(); }
+function loadPageSections() {}
+function closeImagePreview() {
+  document.getElementById("imagePreviewModal").style.display = "none";
 }
 
 /* =========================
@@ -393,28 +540,6 @@ function capitalize(text) {
 ========================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-  loadInquiries();
-
   document.getElementById("inquirySearch")?.addEventListener("input", applyInquiryFilters);
   document.getElementById("inquiryStatusFilter")?.addEventListener("change", applyInquiryFilters);
 });
-function loginAdmin() {
-  const token = document.getElementById("adminToken").value;
-
-  if (!token) {
-    alert("Enter Admin Token");
-    return;
-  }
-
-  localStorage.setItem("adminToken", token);
-
-  document.getElementById("loginBox").classList.add("hidden");
-  document.getElementById("adminPanel").classList.remove("hidden");
-
-  loadInquiries();
-}
-
-function logoutAdmin() {
-  localStorage.removeItem("adminToken");
-  location.reload();
-}

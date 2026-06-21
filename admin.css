@@ -719,3 +719,105 @@ input[readonly]{
   height:100%;
   border-radius:999px;
 }
+.admin-section {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 22px;
+  margin-top: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #1f2937;
+}
+
+.section-head p {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.inquiry-tools {
+  display: flex;
+  gap: 10px;
+}
+
+.inquiry-tools input,
+.inquiry-tools select {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  outline: none;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 13px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+.admin-table th {
+  color: #374151;
+  background: #f9fafb;
+}
+
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-new {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-contacted {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.status-confirmed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status-closed {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.action-select {
+  padding: 8px 10px;
+  border-radius: 9px;
+  border: 1px solid #d1d5db;
+}
+
+.empty-row {
+  text-align: center;
+  color: #6b7280;
+  padding: 25px;
+}

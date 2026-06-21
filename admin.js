@@ -1830,7 +1830,18 @@ async function confirmBooking() {
       {
         method: "POST",
         headers: authHeaders(),
-        body: JSON.stringify(currentInquiry)
+        body: JSON.stringify({
+  inquiryId: currentInquiry.id,
+  reference: currentInquiry.reference,
+  itemName: currentInquiry.itemName || currentInquiry.serviceType?.replace("Villa Inquiry - ", ""),
+  serviceType: currentInquiry.serviceType,
+  guestName: currentInquiry.guestName,
+  guestEmail: currentInquiry.guestEmail,
+  guestMobile: currentInquiry.guestMobile,
+  dateFrom: currentInquiry.dateFrom,
+  dateTo: currentInquiry.dateTo,
+  guests: currentInquiry.guests
+})
       }
     );
 

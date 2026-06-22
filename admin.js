@@ -2309,3 +2309,14 @@ JSON.stringify(currentInquiry, null, 2)
 
   alert("Copied");
 }
+setInterval(() => {
+  const bookingsTab = document.getElementById("bookingsTab");
+
+  if (
+    bookingsTab &&
+    !bookingsTab.classList.contains("hidden") &&
+    ADMIN_TOKEN
+  ) {
+    loadBookings();
+  }
+}, 10000);

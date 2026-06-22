@@ -478,8 +478,7 @@ input[readonly]{
   margin:8px 0 12px;
 }
 #inquiriesTab{
-  width:85%;
-max-width:1500px;
+  max-width:1600px;
 }
 
 .inquiry-toolbar{

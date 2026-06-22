@@ -1032,3 +1032,39 @@ input[readonly]{
     display:none;
   }
 }
+/* FORCE Inquiry modal as popup */
+#inquiryModal.modal{
+  position:fixed !important;
+  inset:0 !important;
+  background:rgba(0,0,0,.65) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  z-index:99999 !important;
+  padding:20px !important;
+}
+
+#inquiryModal.hidden{
+  display:none !important;
+}
+
+#inquiryModal .inquiry-modal{
+  width:85% !important;
+  max-width:1500px !important;
+  height:90vh !important;
+  max-height:90vh !important;
+  overflow-y:auto !important;
+  background:#fff !important;
+  border-radius:22px !important;
+  padding:24px !important;
+  margin:auto !important;
+}
+
+/* Table row click feel */
+.clickable-row{
+  cursor:pointer !important;
+}
+
+.clickable-row:hover{
+  background:#f8f3eb !important;
+}

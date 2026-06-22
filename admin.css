@@ -478,7 +478,8 @@ input[readonly]{
   margin:8px 0 12px;
 }
 #inquiriesTab{
-  max-width:1600px;
+  max-width:1100px;
+  margin:40px auto;
 }
 
 .inquiry-toolbar{
@@ -820,329 +821,214 @@ input[readonly]{
   color: #6b7280;
   padding: 25px;
 }
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.6);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-}
 
-.hidden{
-  display:none;
-}
 
-.inquiry-modal{
-  width:min(900px,95%);
-  max-height:90vh;
-  overflow:auto;
-  background:#fff;
-  border-radius:16px;
-  padding:20px;
-}
-
-.modal-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.note-item{
-  padding:10px;
-  border:1px solid #ddd;
-  border-radius:8px;
-  margin-top:8px;
-}
-.message-box{
-  background:#f7f7f7;
-  border:1px solid #ddd;
-  padding:12px;
-  border-radius:8px;
-  white-space:pre-wrap;
-  margin-top:8px;
-}
-/* Inquiry Details Modal - improved style */
-
-.inquiry-modal {
-  max-width: 760px;
-  padding: 26px;
-  border-radius: 22px;
-}
-
-.inquiry-modal h2 {
-  margin-bottom: 18px;
-  color: #0f766e;
-}
-
-#inquiryModalBody {
-  background: #f8f3eb;
-  border: 1px solid #eadfce;
-  border-radius: 18px;
-  padding: 18px;
-  margin-bottom: 18px;
-}
-
-#inquiryModalBody p {
-  display: grid;
-  grid-template-columns: 130px 1fr;
-  gap: 12px;
-  margin: 8px 0;
-  line-height: 1.45;
-}
-
-#inquiryModalBody b {
-  color: #0f766e;
-}
-
-.message-box {
-  background: #ffffff;
-  border: 1px solid #ddd;
-  border-left: 5px solid #0f766e;
-  padding: 14px 16px;
-  border-radius: 12px;
-  white-space: pre-wrap;
-  margin-top: 10px;
-  line-height: 1.6;
-}
-
-#adminNoteText {
-  margin-top: 10px;
-  min-height: 95px;
-  border-radius: 14px;
-}
-
-.note-item {
-  background: #f8f3eb;
-  border-left: 4px solid #0f766e;
-  padding: 12px;
-  border-radius: 12px;
-  margin-top: 10px;
-}
-.inquiry-actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:20px;
-}
-
-.inquiry-actions button{
-  background:#0f766e;
-  color:#fff;
-  border:none;
-  padding:10px 15px;
-  border-radius:10px;
-  cursor:pointer;
-}
-
-.inquiry-actions button:hover{
-  opacity:.9;
-}
-/* Inquiry cards only for mobile */
-#inquiryCards{
-  display:none;
-}
-
-@media(max-width:768px){
-  #inquiriesList table{
-    display:none;
-  }
-
-  #inquiryCards{
-    display:grid;
-  }
-}
 /* =========================
-   CLEAN INQUIRY SUMMARY TABLE
+   FINAL ADMIN UX PATCH
 ========================= */
+
+#inquiriesList{
+  display:none !important;
+}
+
+#inquiriesTab,
+#bookingsTab{
+  width:95%;
+  max-width:1600px;
+  margin:40px auto;
+}
+
+.admin-table{
+  table-layout:auto;
+  width:100%;
+}
 
 .admin-table th,
 .admin-table td{
-  vertical-align:middle;
-  white-space:nowrap;
-}
-
-.admin-table th:nth-child(1),
-.admin-table td:nth-child(1){
-  width:150px;
-}
-
-.admin-table th:nth-child(2),
-.admin-table td:nth-child(2){
-  width:120px;
+  white-space:normal !important;
+  word-break:break-word;
+  vertical-align:top;
+  line-height:1.4;
 }
 
 .admin-table th:nth-child(3),
 .admin-table td:nth-child(3){
-  width:210px;
+  min-width:190px;
 }
 
 .admin-table th:nth-child(4),
 .admin-table td:nth-child(4){
-  width:220px;
+  min-width:190px;
 }
 
 .admin-table th:nth-child(5),
 .admin-table td:nth-child(5){
-  width:170px;
+  min-width:170px;
 }
-
-.clickable-row{
-  cursor:pointer;
-}
-
-.clickable-row:hover{
-  background:#f8f3eb;
-}
-
-/* =========================
-   CLEAN INQUIRY DETAILS MODAL
-========================= */
 
 .inquiry-modal{
-  max-width:950px;
-  width:95%;
+  width:85% !important;
+  max-width:1500px !important;
+  height:90vh;
+  max-height:90vh;
+  overflow-y:auto;
   padding:24px;
+  margin:auto;
 }
-
-#inquiryModalBody{
-  background:#fff;
-  border:none;
-  padding:0;
-}
-
-.modal-summary-head{
-  display:flex;
-  justify-content:space-between;
-  gap:16px;
-  align-items:flex-start;
-  background:#f8f3eb;
-  border:1px solid #eadfce;
-  border-radius:18px;
-  padding:18px;
-  margin-bottom:16px;
-}
-
-.modal-summary-head h3{
-  margin:0 0 5px;
-  color:#0f766e;
-}
-
-.modal-summary-head p{
-  margin:0;
-  color:#555;
-  font-size:14px;
-}
-
-.modal-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-}
-
-.modal-section{
-  background:#f8f3eb;
-  border:1px solid #eadfce;
-  border-radius:18px;
-  padding:16px;
-  margin-bottom:16px;
-}
-
-.modal-section h4{
-  margin:0 0 12px;
-  color:#0f766e;
-  font-size:16px;
-}
-
-#inquiryModalBody .modal-section p{
-  display:block;
-  margin:8px 0;
-  line-height:1.45;
-}
-
-#inquiryModalBody b{
-  color:#0f766e;
-}
-
-.action-panel{
-  background:#eef7f2;
-  border-color:#cde9dc;
-}
-
-.status-action-row{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:12px;
-  align-items:center;
-  margin-top:12px;
-}
-
-.status-action-row select{
-  margin:0;
-}
-
-.status-action-row button{
-  margin:0;
-  border-radius:12px;
-}
-
-.inquiry-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  margin-bottom:0;
-}
-
-.inquiry-actions button{
-  border-radius:12px;
-  padding:10px 16px;
-}
-
-@media(max-width:768px){
-  .modal-grid{
-    grid-template-columns:1fr;
-  }
-
-  .status-action-row{
-    grid-template-columns:1fr;
-  }
-}
-/* Sticky modal header */
 
 .modal-header{
   position:sticky;
   top:0;
-  z-index:100;
+  z-index:200;
   background:#fff;
-  padding-bottom:12px;
+  padding:0 0 12px;
   border-bottom:1px solid #e5e7eb;
 }
 
 .modal-summary-head{
   position:sticky;
-  top:65px;
-  z-index:99;
+  top:64px;
+  z-index:190;
   background:#f8f3eb;
 }
 
-/* Admin actions always near top */
-
-.action-panel{
-  order:-1;
+.status-booked{
+  background:#dcfce7;
+  color:#15803d;
 }
 
-/* Modal scroll */
-
-.inquiry-modal{
-  max-height:90vh;
-  overflow-y:auto;
+.status-cancelled{
+  background:#fee2e2;
+  color:#b91c1c;
 }
 
-/* Close button */
+.status-quoted{
+  background:#ede9fe;
+  color:#6d28d9;
+}
 
-.modal-header button{
-  position:sticky;
-  top:0;
-  z-index:101;
+.mini-btn{
+  padding:8px 12px;
+  border-radius:10px;
+  font-size:12px;
+}
+
+.booking-tools{
+  display:grid;
+  grid-template-columns:1fr 150px 150px;
+  gap:10px;
+}
+
+.calendar-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.calendar-actions button{
+  border-radius:12px;
+  margin:0;
+}
+
+.booking-calendar{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:8px;
+}
+
+.calendar-week-head{
+  background:#0f766e;
+  color:#fff;
+  padding:10px;
+  border-radius:10px;
+  text-align:center;
+  font-weight:700;
+  font-size:13px;
+}
+
+.calendar-day{
+  min-height:105px;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:8px;
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+
+.calendar-day.empty{
+  background:transparent;
+  border:none;
+}
+
+.calendar-day.has-booking{
+  border-color:#16a34a;
+  background:#ecfdf5;
+}
+
+.calendar-day strong{
+  color:#0f766e;
+}
+
+.calendar-day span{
+  display:block;
+  background:#16a34a;
+  color:#fff;
+  border-radius:8px;
+  padding:4px 6px;
+  font-size:11px;
+  line-height:1.2;
+}
+
+.calendar-day small{
+  color:#166534;
+  font-weight:700;
+}
+
+.manual-booking-form{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  box-shadow:none;
+  padding:0;
+  margin:0;
+}
+
+.manual-booking-form input,
+.manual-booking-form select{
+  margin:0;
+}
+
+.manual-booking-form button{
+  grid-column:1/-1;
+  border-radius:12px;
+}
+
+@media(max-width:900px){
+  #inquiriesTab,
+  #bookingsTab{
+    width:100%;
+    padding:0 10px;
+  }
+
+  .inquiry-modal{
+    width:96% !important;
+    height:92vh;
+    padding:16px;
+  }
+
+  .booking-tools,
+  .manual-booking-form{
+    grid-template-columns:1fr;
+  }
+
+  .booking-calendar{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .calendar-week-head{
+    display:none;
+  }
 }

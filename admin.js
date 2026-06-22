@@ -1768,7 +1768,7 @@ function renderBookingsTable(data) {
     const statusClass = normalizeStatus(status);
 
     return `
-      <tr>
+      <tr onclick="openBookingDetails('${escapeJs(item.id)}')" class="clickable-row">
         <td>${escapeHtml(item.reference || item.id || "-")}</td>
         <td>${formatDate(item.createdAt || item.created_at)}</td>
         <td>${escapeHtml(item.serviceType || "-")}</td>
@@ -1782,7 +1782,7 @@ function renderBookingsTable(data) {
         <td>${escapeHtml(item.dateTo || "-")}</td>
         <td><span class="status-badge status-${statusClass}">${escapeHtml(status)}</span></td>
         <td>
-          ${statusClass === "booked" ? `<button class="delete-btn mini-btn" onclick="cancelBooking('${item.id}')">Cancel</button>` : "-"}
+          ${statusClass === "booked" ? `<button class="delete-btn mini-btn" onclick="event.stopPropagation(); cancelBooking('${escapeJs(item.id)}')">Cancel</button>` : "-"}
         </td>
       </tr>
     `;
@@ -1830,10 +1830,11 @@ function renderBookingsCalendar(data) {
     const dayBookings = activeBookings.filter(b => bookingCoversDate(b, dateValue));
 
     html += `
-      <div class="calendar-day ${dayBookings.length ? "has-booking" : ""}">
+      <div class="calendar-day ${dayBookings.length ? "has-booking clickable-row" : ""}"
+           ${dayBookings.length ? `onclick="openBookingDateDetails('${dateValue}')"` : ""}>
         <strong>${day}</strong>
         ${dayBookings.slice(0, 3).map(b => `
-          <span title="${escapeHtml(b.itemName || "")}">${escapeHtml(b.itemName || "Booking")}</span>
+          <span title="${escapeHtml(b.itemName || "")}" onclick="event.stopPropagation(); openBookingDetails('${escapeJs(b.id)}')">${escapeHtml(b.itemName || "Booking")}</span>
         `).join("")}
         ${dayBookings.length > 3 ? `<small>+${dayBookings.length - 3} more</small>` : ""}
       </div>
@@ -1928,6 +1929,84 @@ async function createManualBooking(e) {
   loadBookings();
 }
 
+
+function escapeJs(value) {
+  return String(value || "")
+    .replaceAll("\\", "\\\\")
+    .replaceAll("'", "\\'")
+    .replaceAll('"', '\\"')
+    .replaceAll("\n", "\\n")
+    .replaceAll("\r", "");
+}
+
+function openBookingDetails(id) {
+  const booking = allBookings.find(x => String(x.id) === String(id));
+  if (!booking) return;
+  showBookingDetailsModal([booking], booking.reference || booking.id || "Booking Details");
+}
+
+function openBookingDateDetails(dateValue) {
+  const dayBookings = allBookings.filter(b =>
+    normalizeStatus(b.status) === "booked" && bookingCoversDate(b, dateValue)
+  );
+
+  if (!dayBookings.length) return;
+
+  showBookingDetailsModal(
+    dayBookings,
+    `Bookings on ${formatDate(dateValue)}`
+  );
+}
+
+function showBookingDetailsModal(bookings, title) {
+  let modal = document.getElementById("bookingDetailsModal");
+
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "bookingDetailsModal";
+    modal.className = "modal hidden";
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+    <div class="modal-content inquiry-modal booking-details-popup">
+      <div class="modal-header">
+        <h2>${escapeHtml(title || "Booking Details")}</h2>
+        <button onclick="closeBookingDetailsModal()">✕</button>
+      </div>
+
+      <div class="modal-grid">
+        ${bookings.map(b => `
+          <div class="modal-section">
+            <h4>${escapeHtml(b.itemName || "Booking")}</h4>
+            <p><b>Reference:</b> ${escapeHtml(b.reference || b.id || "-")}</p>
+            <p><b>Type:</b> ${escapeHtml(b.serviceType || "-")}</p>
+            <p><b>Guest:</b> ${escapeHtml(b.guestName || "-")}</p>
+            <p><b>Email:</b> ${escapeHtml(b.guestEmail || "-")}</p>
+            <p><b>Mobile:</b> ${escapeHtml(b.guestMobile || "-")}</p>
+            <p><b>Check In:</b> ${escapeHtml(b.dateFrom || "-")}</p>
+            <p><b>Check Out:</b> ${escapeHtml(b.dateTo || "-")}</p>
+            <p><b>Guests:</b> ${escapeHtml(b.guests || "-")}</p>
+            <p><b>Status:</b> <span class="status-badge status-${normalizeStatus(b.status)}">${escapeHtml(b.status || "Booked")}</span></p>
+            ${normalizeStatus(b.status) === "booked" ? `<button class="delete-btn" onclick="cancelBookingFromModal('${escapeJs(b.id)}')">Cancel Booking</button>` : ""}
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `;
+
+  modal.classList.remove("hidden");
+}
+
+function closeBookingDetailsModal() {
+  document.getElementById("bookingDetailsModal")?.classList.add("hidden");
+}
+
+async function cancelBookingFromModal(id) {
+  await cancelBooking(id);
+  closeBookingDetailsModal();
+}
+
 let currentInquiry = null;
 
 function openInquiryModal(id){
@@ -2015,6 +2094,7 @@ function openInquiryModal(id){
 
   loadInquiryNotes();
 }
+
 function getItemNameFromService(serviceType){
   return String(serviceType || "")
     .replace("Villa Inquiry - ", "")
@@ -2028,37 +2108,6 @@ function closeInquiryModal(){
     .classList.add("hidden");
 }
 
-function loadInquiryNotes(){
-
-  const notes = currentInquiry.notes || [];
-
-  document.getElementById("inquiryNotesList").innerHTML =
-    notes.map(note => `
-      <div class="note-item">
-        ${note}
-      </div>
-    `).join("");
-}
-
-function saveInquiryNote(){
-
-  const text =
-    document.getElementById("adminNoteText").value.trim();
-
-  if(!text) return;
-
-  if(!currentInquiry.notes){
-    currentInquiry.notes = [];
-  }
-
-  currentInquiry.notes.unshift(
-    `${new Date().toLocaleString()} - ${text}`
-  );
-
-  document.getElementById("adminNoteText").value = "";
-
-  loadInquiryNotes();
-}
 async function loadInquiryNotes() {
 
   if (!currentInquiry) return;
@@ -2171,8 +2220,11 @@ if (!res.ok) {
 
 currentInquiry.status = "Booked";
 
+await loadBookings();
+await loadInquiries();
+
 alert("Booking Confirmed");
-loadInquiries();
+closeInquiryModal();
 
   } catch (err) {
     alert(err.message);

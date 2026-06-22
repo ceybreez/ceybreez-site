@@ -506,11 +506,20 @@ async function deleteDestination(id) {
 
 async function loadProperties() {
   try {
-    const res = await fetch(`${API_BASE}/api/admin/properties`, { headers: authHeaders() });
+    const res = await fetch(`${API_BASE}/api/admin/properties`, {
+      headers: authHeaders()
+    });
+
     const data = await res.json();
+
     if (!res.ok) throw new Error(data.error || "Failed to load properties");
 
+    window.allProperties = data || [];
+    renderManualPropertyDropdown(window.allProperties);
+
     const box = document.getElementById("propertiesList");
+    if (!box) return;
+
     box.innerHTML = "";
 
     data.forEach(item => {
@@ -519,12 +528,12 @@ async function loadProperties() {
       const firstPhoto = item.photos && item.photos.length ? item.photos[0] : "";
 
       card.innerHTML = `
-        ${firstPhoto ? `<img src="${firstPhoto}" class="card-thumb" alt="${item.name}">` : ""}
+        ${firstPhoto ? `<img src="${firstPhoto}" class="card-thumb" alt="${escapeHtml(item.name)}">` : ""}
         <span class="status ${item.active ? "" : "off"}">${item.active ? "Active" : "Hidden"}</span>
-        <h3>${item.name}</h3>
-        <p><strong>Type:</strong> ${item.type}</p>
-        <p><strong>Location:</strong> ${item.location || ""}</p>
-        <p><strong>Price:</strong> ${item.price || ""}</p>
+        <h3>${escapeHtml(item.name)}</h3>
+        <p><strong>Type:</strong> ${escapeHtml(item.type)}</p>
+        <p><strong>Location:</strong> ${escapeHtml(item.location || "")}</p>
+        <p><strong>Price:</strong> ${escapeHtml(item.price || "")}</p>
         <button class="edit-btn">Edit</button>
         <button class="delete-btn">Delete</button>
       `;
@@ -533,6 +542,7 @@ async function loadProperties() {
       card.querySelector(".delete-btn").onclick = () => deleteProperty(item.id);
       box.appendChild(card);
     });
+
   } catch (err) {
     alert(err.message);
   }
@@ -2331,4 +2341,41 @@ async function deleteCurrentInquiry() {
 
   await loadInquiries();
   await loadBookings();
+}
+function renderManualPropertyDropdown(properties){
+  const box = document.getElementById("manualItemName");
+  if(!box) return;
+
+  if(box.tagName.toLowerCase() === "select"){
+    box.innerHTML = `
+      <option value="">Select Property / Tour</option>
+      ${(properties || []).map(p => `
+        <option value="${escapeHtml(p.name)}">
+          ${escapeHtml(p.name)} (${escapeHtml(p.type || "property")})
+        </option>
+      `).join("")}
+    `;
+    return;
+  }
+
+  const currentValue = box.value || "";
+
+  const select = document.createElement("select");
+  select.id = "manualItemName";
+  select.required = true;
+
+  select.innerHTML = `
+    <option value="">Select Property / Tour</option>
+    ${(properties || []).map(p => `
+      <option value="${escapeHtml(p.name)}">
+        ${escapeHtml(p.name)} (${escapeHtml(p.type || "property")})
+      </option>
+    `).join("")}
+  `;
+
+  box.replaceWith(select);
+
+  if(currentValue){
+    select.value = currentValue;
+  }
 }

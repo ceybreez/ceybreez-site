@@ -89,6 +89,9 @@ content="Explore handpicked luxury villas in Sri Lanka. Beachfront villas, priva
       <div class="field-group"><label>👥 Number of Guests *</label><input id="inqGuests" type="number" min="1" placeholder="Number of guests" required></div>
       <div class="field-group"><label>📅 Check-In Date *</label><input id="inqCheckIn" type="date" required></div>
       <div class="field-group"><label>📅 Check-Out Date *</label><input id="inqCheckOut" type="date" required></div>
+      <div class="field-group full-width">
+  <div id="availabilityMsg" class="availability-msg"></div>
+</div>
       <div class="field-group"><label>🌙 Number of Nights</label><input id="inqDays" type="text" placeholder="Auto calculated" readonly></div>
     </div>
     <div class="field-group full-width"><label>📝 Special Notes / Requests</label><textarea id="inqNotes" rows="4" placeholder="Airport pickup, early check-in, room preferences, budget or special requests..."></textarea></div>
@@ -158,6 +161,7 @@ window.addEventListener("load", function(){
       e.target.id === "inqCheckOut"
     ){
       calculateInquiryDays();
+      checkAvailabilityLive();
     }
 
     if(
@@ -393,7 +397,7 @@ function fillSelectedVilla(id){
   document.getElementById("inqVillaSelect").value = item.id;
   document.getElementById("inqVillaName").value = item.name;
 
-  loadBookedDates(item.name);
+  loadBookedDates(item.name).then(checkAvailabilityLive);
 }
 
 function calculateInquiryDays(){
@@ -557,6 +561,36 @@ if(waBtn){
       });
     }
   });
+}
+  function checkAvailabilityLive() {
+  const box = document.getElementById("availabilityMsg");
+  if (!box) return;
+
+  const checkIn = document.getElementById("inqCheckIn").value;
+  const checkOut = document.getElementById("inqCheckOut").value;
+
+  box.className = "availability-msg";
+  box.textContent = "";
+
+  if (!selectedProperty) {
+    box.textContent = "Please select a villa first.";
+    box.classList.add("info");
+    return;
+  }
+
+  if (!checkIn || !checkOut) {
+    box.textContent = "Select check-in and check-out dates to check availability.";
+    box.classList.add("info");
+    return;
+  }
+
+  if (isDateRangeBooked(checkIn, checkOut)) {
+    box.textContent = "❌ This villa is already booked for the selected dates. Please choose different dates.";
+    box.classList.add("booked");
+  } else {
+    box.textContent = "✅ Available for selected dates.";
+    box.classList.add("available");
+  }
 }
 </script>
 </body>

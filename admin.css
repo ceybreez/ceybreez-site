@@ -1167,3 +1167,229 @@ input[readonly]{
 .booking-details-container{
   margin-top:20px;
 }
+@media (max-width: 768px){
+
+  .dashboard-cards,
+  .inquiry-type-cards{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .table-wrapper{
+    overflow-x:auto;
+  }
+
+  .inquiries-table{
+    min-width:900px;
+  }
+
+  .bookings-table{
+    min-width:900px;
+  }
+
+  .booking-calendar{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .calendar-day{
+    min-height:120px;
+  }
+
+  .calendar-booking{
+    font-size:11px;
+  }
+
+  .admin-nav{
+    flex-direction:column;
+  }
+
+  .admin-nav button{
+    width:100%;
+  }
+}
+/* =========================
+   MOBILE ADMIN FIX
+========================= */
+
+@media(max-width:768px){
+
+  body{
+    font-size:14px;
+  }
+
+  .admin-wrap{
+    padding:22px 14px;
+  }
+
+  h1{
+    font-size:34px;
+    line-height:1.15;
+  }
+
+  .topbar{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:14px;
+    padding:18px;
+  }
+
+  .topbar button{
+    width:100%;
+    height:58px;
+    font-size:16px;
+    border-radius:999px;
+  }
+
+  .inquiry-toolbar,
+  .inquiry-tools,
+  .booking-tools,
+  .filter-row{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:12px;
+  }
+
+  .dashboard-cards{
+    grid-template-columns:1fr 1fr !important;
+    gap:14px;
+  }
+
+  .dashboard-card{
+    min-height:125px;
+    padding:20px 10px;
+  }
+
+  .dashboard-card h3{
+    font-size:16px;
+  }
+
+  .dashboard-card .value{
+    font-size:38px;
+  }
+
+  .admin-section{
+    padding:18px;
+    border-radius:22px;
+  }
+
+  .section-head{
+    display:block;
+  }
+
+  .section-head h2{
+    font-size:28px;
+    line-height:1.15;
+    margin-bottom:8px;
+  }
+
+  .section-head p{
+    font-size:16px;
+    margin-bottom:14px;
+  }
+
+  .table-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .admin-table{
+    min-width:760px;
+    font-size:13px;
+  }
+
+  .admin-table th,
+  .admin-table td{
+    padding:12px 10px;
+    white-space:normal !important;
+    word-break:break-word;
+  }
+
+  .status-badge{
+    display:inline-block;
+    min-width:70px;
+    text-align:center;
+    font-size:12px;
+  }
+
+  /* Booking Calendar mobile */
+  .booking-calendar-head{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:12px;
+    text-align:center;
+  }
+
+  .booking-calendar-head button{
+    width:100%;
+    height:54px;
+    border-radius:16px;
+    font-size:16px;
+  }
+
+  #bookingCalendarTitle{
+    font-size:22px;
+    margin:8px 0;
+  }
+
+  .booking-calendar{
+    grid-template-columns:repeat(2, 1fr) !important;
+    gap:10px !important;
+  }
+
+  .calendar-week-head{
+    display:none !important;
+  }
+
+  .calendar-day{
+    min-height:135px !important;
+    padding:12px !important;
+    border-radius:18px !important;
+  }
+
+  .calendar-day strong{
+    font-size:24px;
+  }
+
+  .calendar-day span{
+    display:block;
+    font-size:12px !important;
+    padding:7px 8px !important;
+    margin-top:7px !important;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .manual-booking-grid,
+  #manualBookingForm{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:10px;
+  }
+
+  #manualBookingForm button{
+    width:100%;
+    height:48px;
+  }
+
+  .booking-detail-card{
+    max-width:100%;
+    width:100%;
+  }
+
+  .booking-detail-card p{
+    grid-template-columns:1fr !important;
+    gap:4px;
+  }
+
+  .modal-content,
+  .inquiry-modal{
+    width:94% !important;
+    max-width:94% !important;
+    height:90vh !important;
+    padding:18px !important;
+  }
+
+  .modal-grid{
+    grid-template-columns:1fr !important;
+  }
+}

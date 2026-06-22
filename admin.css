@@ -954,3 +954,158 @@ input[readonly]{
     display:grid;
   }
 }
+/* =========================
+   CLEAN INQUIRY SUMMARY TABLE
+========================= */
+
+.admin-table th,
+.admin-table td{
+  vertical-align:middle;
+  white-space:nowrap;
+}
+
+.admin-table th:nth-child(1),
+.admin-table td:nth-child(1){
+  width:150px;
+}
+
+.admin-table th:nth-child(2),
+.admin-table td:nth-child(2){
+  width:120px;
+}
+
+.admin-table th:nth-child(3),
+.admin-table td:nth-child(3){
+  width:210px;
+}
+
+.admin-table th:nth-child(4),
+.admin-table td:nth-child(4){
+  width:220px;
+}
+
+.admin-table th:nth-child(5),
+.admin-table td:nth-child(5){
+  width:170px;
+}
+
+.clickable-row{
+  cursor:pointer;
+}
+
+.clickable-row:hover{
+  background:#f8f3eb;
+}
+
+/* =========================
+   CLEAN INQUIRY DETAILS MODAL
+========================= */
+
+.inquiry-modal{
+  max-width:950px;
+  width:95%;
+  padding:24px;
+}
+
+#inquiryModalBody{
+  background:#fff;
+  border:none;
+  padding:0;
+}
+
+.modal-summary-head{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  align-items:flex-start;
+  background:#f8f3eb;
+  border:1px solid #eadfce;
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:16px;
+}
+
+.modal-summary-head h3{
+  margin:0 0 5px;
+  color:#0f766e;
+}
+
+.modal-summary-head p{
+  margin:0;
+  color:#555;
+  font-size:14px;
+}
+
+.modal-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.modal-section{
+  background:#f8f3eb;
+  border:1px solid #eadfce;
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:16px;
+}
+
+.modal-section h4{
+  margin:0 0 12px;
+  color:#0f766e;
+  font-size:16px;
+}
+
+#inquiryModalBody .modal-section p{
+  display:block;
+  margin:8px 0;
+  line-height:1.45;
+}
+
+#inquiryModalBody b{
+  color:#0f766e;
+}
+
+.action-panel{
+  background:#eef7f2;
+  border-color:#cde9dc;
+}
+
+.status-action-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:12px;
+  align-items:center;
+  margin-top:12px;
+}
+
+.status-action-row select{
+  margin:0;
+}
+
+.status-action-row button{
+  margin:0;
+  border-radius:12px;
+}
+
+.inquiry-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:0;
+}
+
+.inquiry-actions button{
+  border-radius:12px;
+  padding:10px 16px;
+}
+
+@media(max-width:768px){
+  .modal-grid{
+    grid-template-columns:1fr;
+  }
+
+  .status-action-row{
+    grid-template-columns:1fr;
+  }
+}

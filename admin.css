@@ -1164,3 +1164,6 @@ input[readonly]{
   border-radius:12px;
   padding:9px 14px;
 }
+.booking-details-container{
+  margin-top:20px;
+}

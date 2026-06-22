@@ -1838,7 +1838,10 @@ async function confirmBooking() {
         body: JSON.stringify({
   inquiryId: currentInquiry.id,
   reference: currentInquiry.reference,
-  itemName: currentInquiry.itemName || (currentInquiry.serviceType || "").replace("Villa Inquiry - ", ""),
+  itemName: currentInquiry.itemName || (currentInquiry.serviceType || "")
+  .replace("Villa Inquiry - ", "")
+  .replace("Apartment Inquiry - ", "")
+  .replace("Homestay Inquiry - ", ""),
   serviceType: currentInquiry.serviceType,
   guestName: currentInquiry.guestName,
   guestEmail: currentInquiry.guestEmail,

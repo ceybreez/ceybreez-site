@@ -23,6 +23,7 @@
       <button onclick="showTab('properties')">Villas / Homestays / Apartments</button>
       <button onclick="showTab('services')">Cafes & Services</button>
       <button onclick="showTab('inquiriesTab')">Inquiries</button>
+      <button onclick="showTab('bookingsTab')">Bookings</button>
       <button onclick="showTab('pageControl')">Page Control</button>
       <button onclick="logoutAdmin()">Logout</button>
     </div>
@@ -484,7 +485,9 @@
         <option value="all">All Status</option>
         <option value="new">New</option>
         <option value="contacted">Contacted</option>
-        <option value="confirmed">Confirmed</option>
+        <option value="booked">Booked</option>
+        <option value="quoted">Quoted</option>
+        <option value="cancelled">Cancelled</option>
         <option value="closed">Closed</option>
       </select>
     </div>
@@ -492,18 +495,18 @@
 
   <div class="table-wrap">
     <table class="admin-table">
-     <thead>
-  <tr>
-    <th>Reference No</th>
-    <th>Inquiry Date</th>
-    <th>Type of Inquiry</th>
-    <th>Selected Property / Tour</th>
-    <th>Guest Name</th>
-    <th>Check In</th>
-    <th>Check Out</th>
-    <th>Status</th>
-  </tr>
-</thead>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Guest</th>
+          <th>Type</th>
+          <th>Property / Tour</th>
+          <th>Check-in</th>
+          <th>Guests</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
       <tbody id="inquiryTableBody">
         <!-- JS render -->
       </tbody>
@@ -514,8 +517,107 @@
 <div id="inquiryStats" class="inquiry-stats"></div>
   <div id="inquiriesList" class="list"></div>
 </section>
-<script src="admin.js"></script>
-  <!-- Inquiry Modal -->
+
+<section id="bookingsTab" class="hidden">
+  <h2>Confirmed Bookings</h2>
+
+  <div id="bookingStats" class="dashboard-cards"></div>
+
+  <section class="admin-section">
+    <div class="section-head">
+      <div>
+        <h2>Bookings List</h2>
+        <p>Confirmed bookings and cancelled booking records.</p>
+      </div>
+
+      <div class="inquiry-tools booking-tools">
+        <input type="text" id="bookingSearch" placeholder="Search booking, guest, property..." />
+
+        <select id="bookingTypeFilter">
+          <option value="all">All Types</option>
+          <option value="villa">Villas</option>
+          <option value="apartment">Apartments</option>
+          <option value="homestay">Homestays</option>
+          <option value="tour">Tours</option>
+        </select>
+
+        <select id="bookingStatusFilter">
+          <option value="all">All Status</option>
+          <option value="booked">Booked</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="admin-table bookings-table">
+        <thead>
+          <tr>
+            <th>Reference No</th>
+            <th>Created Date</th>
+            <th>Type</th>
+            <th>Property / Tour</th>
+            <th>Guest Details</th>
+            <th>Check In</th>
+            <th>Check Out</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="bookingTableBody">
+          <tr><td colspan="9" class="empty-row">No bookings loaded</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="admin-section booking-calendar-section">
+    <div class="section-head">
+      <div>
+        <h2>Booking Calendar</h2>
+        <p>Monthly view of confirmed bookings.</p>
+      </div>
+      <div class="calendar-actions">
+        <button type="button" onclick="changeBookingMonth(-1)">‹ Previous</button>
+        <strong id="bookingCalendarTitle"></strong>
+        <button type="button" onclick="changeBookingMonth(1)">Next ›</button>
+      </div>
+    </div>
+    <div id="bookingCalendar" class="booking-calendar"></div>
+  </section>
+
+  <section class="admin-section manual-booking-section">
+    <div class="section-head">
+      <div>
+        <h2>Manual Booking</h2>
+        <p>Add direct phone / WhatsApp bookings without an inquiry.</p>
+      </div>
+    </div>
+
+    <form id="manualBookingForm" class="manual-booking-form">
+      <select id="manualServiceType" required>
+        <option value="">Select Type</option>
+        <option value="Villa Manual Booking">Villa</option>
+        <option value="Apartment Manual Booking">Apartment</option>
+        <option value="Homestay Manual Booking">Homestay</option>
+        <option value="Tour Manual Booking">Tour</option>
+      </select>
+
+      <input id="manualItemName" placeholder="Property / Tour Name" required />
+      <input id="manualGuestName" placeholder="Guest Name" required />
+      <input id="manualGuestEmail" placeholder="Guest Email" />
+      <input id="manualGuestMobile" placeholder="Guest Mobile / WhatsApp" />
+      <input id="manualDateFrom" type="date" required />
+      <input id="manualDateTo" type="date" required />
+      <input id="manualGuests" placeholder="Guests" />
+
+      <button type="submit">Save Manual Booking</button>
+    </form>
+  </section>
+</section>
+
+
+<!-- Inquiry Modal -->
 <div id="inquiryModal" class="modal hidden">
   <div class="modal-content inquiry-modal">
 
@@ -543,5 +645,7 @@
 
   </div>
 </div>
+
+<script src="admin.js"></script>
 </body>
 </html>

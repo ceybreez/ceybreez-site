@@ -1691,6 +1691,32 @@ function openInquiryModal(id){
       </span>
     </div>
 
+    <div class="modal-section action-panel">
+      <h4>Admin Actions</h4>
+
+      <div class="inquiry-actions">
+        <button onclick="openGuestWhatsApp()">WhatsApp</button>
+        <button onclick="emailGuest()">Email</button>
+        <button onclick="copyInquiryDetails()">Copy</button>
+        <button onclick="confirmBooking()">Confirm Booking</button>
+      </div>
+
+      <div class="status-action-row">
+        <select id="modalInquiryStatus">
+          <option value="New">New</option>
+          <option value="Contacted">Contacted</option>
+          <option value="Quoted">Quoted</option>
+          <option value="Booked">Booked</option>
+          <option value="Closed">Closed</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+
+        <button onclick="updateInquiryStatus(currentInquiry.id, document.getElementById('modalInquiryStatus').value)">
+          Update Status
+        </button>
+      </div>
+    </div>
+
     <div class="modal-grid">
       <div class="modal-section">
         <h4>Guest Details</h4>
@@ -1716,32 +1742,6 @@ function openInquiryModal(id){
       <h4>Customer Message</h4>
       <div class="message-box">
         ${escapeHtml(inquiry.message || "No message provided")}
-      </div>
-    </div>
-
-    <div class="modal-section action-panel">
-      <h4>Admin Actions</h4>
-
-      <div class="inquiry-actions">
-        <button onclick="openGuestWhatsApp()">WhatsApp</button>
-        <button onclick="emailGuest()">Email</button>
-        <button onclick="copyInquiryDetails()">Copy</button>
-        <button onclick="confirmBooking()">Confirm Booking</button>
-      </div>
-
-      <div class="status-action-row">
-        <select id="modalInquiryStatus">
-          <option value="New">New</option>
-          <option value="Contacted">Contacted</option>
-          <option value="Quoted">Quoted</option>
-          <option value="Booked">Booked</option>
-          <option value="Closed">Closed</option>
-          <option value="Cancelled">Cancelled</option>
-        </select>
-
-        <button onclick="updateInquiryStatus(currentInquiry.id, document.getElementById('modalInquiryStatus').value)">
-          Update Status
-        </button>
       </div>
     </div>
   `;

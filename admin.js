@@ -1939,10 +1939,39 @@ function escapeJs(value) {
     .replaceAll("\r", "");
 }
 
-function openBookingDetails(id) {
+function openBookingDetails(id){
+
   const booking = allBookings.find(x => String(x.id) === String(id));
-  if (!booking) return;
-  showBookingDetailsModal([booking], booking.reference || booking.id || "Booking Details");
+  if(!booking) return;
+
+  const box = document.getElementById("bookingDetailsBox");
+  if(!box) return;
+
+  box.innerHTML = `
+    <div class="booking-detail-card">
+      <h3>${escapeHtml(booking.reference || booking.id || "Booking Details")}</h3>
+
+      <p><b>Property:</b> ${escapeHtml(booking.itemName || "-")}</p>
+      <p><b>Type:</b> ${escapeHtml(booking.serviceType || "-")}</p>
+      <p><b>Guest:</b> ${escapeHtml(booking.guestName || "-")}</p>
+      <p><b>Email:</b> ${escapeHtml(booking.guestEmail || "-")}</p>
+      <p><b>Mobile:</b> ${escapeHtml(booking.guestMobile || "-")}</p>
+      <p><b>Check In:</b> ${escapeHtml(booking.dateFrom || "-")}</p>
+      <p><b>Check Out:</b> ${escapeHtml(booking.dateTo || "-")}</p>
+      <p><b>Guests:</b> ${escapeHtml(booking.guests || "-")}</p>
+      <p><b>Status:</b> ${escapeHtml(booking.status || "-")}</p>
+
+      <div class="booking-detail-actions">
+        ${
+          normalizeStatus(booking.status) === "booked"
+          ? `<button class="delete-btn" onclick="cancelBooking('${booking.id}')">Cancel Booking</button>`
+          : ""
+        }
+      </div>
+    </div>
+  `;
+
+  box.scrollIntoView({ behavior:"smooth", block:"center" });
 }
 
 function openBookingDateDetails(dateValue) {

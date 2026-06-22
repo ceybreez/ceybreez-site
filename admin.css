@@ -940,3 +940,17 @@ input[readonly]{
 .inquiry-actions button:hover{
   opacity:.9;
 }
+/* Inquiry cards only for mobile */
+#inquiryCards{
+  display:none;
+}
+
+@media(max-width:768px){
+  #inquiriesList table{
+    display:none;
+  }
+
+  #inquiryCards{
+    display:grid;
+  }
+}

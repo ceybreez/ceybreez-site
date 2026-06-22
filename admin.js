@@ -1444,42 +1444,19 @@ function renderInquiryTable(data) {
     const statusClass = normalizeStatus(item.status);
     const displayStatus = item.status || "New";
 
-   return `
-      <tr onclick="openInquiryModal('${item.id}')" style="cursor:pointer;">
+    return `
+      <tr onclick="openInquiryModal('${item.id}')" class="clickable-row">
+        <td>${escapeHtml(item.reference || item.id || "-")}</td>
         <td>${formatDate(item.createdAt || item.created_at)}</td>
-
-        <td>
-          <strong>${escapeHtml(item.guestName || "-")}</strong><br>
-          <small>${escapeHtml(item.guestEmail || "")}</small><br>
-          <small>${escapeHtml(item.guestMobile || "")}</small>
-        </td>
-
         <td>${escapeHtml(item.serviceType || "-")}</td>
-
-        <td>${escapeHtml(item.itemName || item.reference || "-")}</td>
-
-        <td>
-          ${escapeHtml(item.dateFrom || "-")}
-          ${item.dateTo ? " → " + escapeHtml(item.dateTo) : ""}
-        </td>
-
-        <td>${escapeHtml(item.guests || "-")}</td>
-
+        <td>${escapeHtml(item.itemName || getItemNameFromService(item.serviceType) || "-")}</td>
+        <td>${escapeHtml(item.guestName || "-")}</td>
+        <td>${escapeHtml(item.dateFrom || "-")}</td>
+        <td>${escapeHtml(item.dateTo || "-")}</td>
         <td>
           <span class="status-badge status-${statusClass}">
             ${escapeHtml(displayStatus)}
           </span>
-        </td>
-
-        <td>
-          <select class="action-select" onchange="updateInquiryStatus('${item.id}', this.value)">
-            <option value="New" ${displayStatus === "New" ? "selected" : ""}>New</option>
-            <option value="Contacted" ${displayStatus === "Contacted" ? "selected" : ""}>Contacted</option>
-            <option value="Quoted" ${displayStatus === "Quoted" ? "selected" : ""}>Quoted</option>
-            <option value="Booked" ${displayStatus === "Booked" ? "selected" : ""}>Booked</option>
-            <option value="Closed" ${displayStatus === "Closed" ? "selected" : ""}>Closed</option>
-            <option value="Cancelled" ${displayStatus === "Cancelled" ? "selected" : ""}>Cancelled</option>
-          </select>
         </td>
       </tr>
     `;
@@ -1698,37 +1675,89 @@ function openInquiryModal(id){
 
   currentInquiry = inquiry;
 
+  const selectedItem =
+    inquiry.itemName || getItemNameFromService(inquiry.serviceType) || "-";
+
   document.getElementById("inquiryModal").classList.remove("hidden");
 
   document.getElementById("inquiryModalBody").innerHTML = `
-  <div class="inquiry-actions">
-  <button onclick="openGuestWhatsApp()">WhatsApp</button>
-  <button onclick="emailGuest()">Email</button>
-  <button onclick="copyInquiryDetails()">Copy</button>
-  <button onclick="confirmBooking()">Confirm Booking</button>
-</div>
-    <p><b>Reference:</b> ${inquiry.reference || "-"}</p>
-    <p><b>Name:</b> ${inquiry.guestName || "-"}</p>
-    <p><b>Email:</b> ${inquiry.guestEmail || "-"}</p>
-    <p><b>Mobile:</b> ${inquiry.guestMobile || "-"}</p>
-    <p><b>Country:</b> ${inquiry.guestCountry || "-"}</p>
-    <p><b>Guests:</b> ${inquiry.guests || "-"}</p>
-    <p><b>Service:</b> ${inquiry.serviceType || "-"}</p>
-    <p><b>Item:</b> ${inquiry.itemName || "-"}</p>
-    <p><b>Check In:</b> ${inquiry.dateFrom || "-"}</p>
-    <p><b>Check Out:</b> ${inquiry.dateTo || "-"}</p>
+    <div class="modal-summary-head">
+      <div>
+        <h3>${escapeHtml(inquiry.reference || "-")}</h3>
+        <p>${escapeHtml(inquiry.serviceType || "-")}</p>
+      </div>
+      <span class="status-badge status-${normalizeStatus(inquiry.status)}">
+        ${escapeHtml(inquiry.status || "New")}
+      </span>
+    </div>
 
-    <hr>
+    <div class="modal-grid">
+      <div class="modal-section">
+        <h4>Guest Details</h4>
+        <p><b>Name:</b> ${escapeHtml(inquiry.guestName || "-")}</p>
+        <p><b>Email:</b> ${escapeHtml(inquiry.guestEmail || "-")}</p>
+        <p><b>Mobile:</b> ${escapeHtml(inquiry.guestMobile || "-")}</p>
+        <p><b>Country:</b> ${escapeHtml(inquiry.guestCountry || "-")}</p>
+        <p><b>Guests:</b> ${escapeHtml(inquiry.guests || "-")}</p>
+      </div>
 
-   <h4>Message</h4>
-<div class="message-box">
-  ${inquiry.message || "No message provided"}
-</div>
+      <div class="modal-section">
+        <h4>Inquiry / Booking Details</h4>
+        <p><b>Reference:</b> ${escapeHtml(inquiry.reference || "-")}</p>
+        <p><b>Inquiry Date:</b> ${formatDate(inquiry.createdAt || inquiry.created_at)}</p>
+        <p><b>Type:</b> ${escapeHtml(inquiry.serviceType || "-")}</p>
+        <p><b>Selected Property / Tour:</b> ${escapeHtml(selectedItem)}</p>
+        <p><b>Check In:</b> ${escapeHtml(inquiry.dateFrom || "-")}</p>
+        <p><b>Check Out:</b> ${escapeHtml(inquiry.dateTo || "-")}</p>
+      </div>
+    </div>
+
+    <div class="modal-section">
+      <h4>Customer Message</h4>
+      <div class="message-box">
+        ${escapeHtml(inquiry.message || "No message provided")}
+      </div>
+    </div>
+
+    <div class="modal-section action-panel">
+      <h4>Admin Actions</h4>
+
+      <div class="inquiry-actions">
+        <button onclick="openGuestWhatsApp()">WhatsApp</button>
+        <button onclick="emailGuest()">Email</button>
+        <button onclick="copyInquiryDetails()">Copy</button>
+        <button onclick="confirmBooking()">Confirm Booking</button>
+      </div>
+
+      <div class="status-action-row">
+        <select id="modalInquiryStatus">
+          <option value="New">New</option>
+          <option value="Contacted">Contacted</option>
+          <option value="Quoted">Quoted</option>
+          <option value="Booked">Booked</option>
+          <option value="Closed">Closed</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+
+        <button onclick="updateInquiryStatus(currentInquiry.id, document.getElementById('modalInquiryStatus').value)">
+          Update Status
+        </button>
+      </div>
+    </div>
   `;
+
+  document.getElementById("modalInquiryStatus").value = inquiry.status || "New";
 
   loadInquiryNotes();
 }
-
+function getItemNameFromService(serviceType){
+  return String(serviceType || "")
+    .replace("Villa Inquiry - ", "")
+    .replace("Apartment Inquiry - ", "")
+    .replace("Homestay Inquiry - ", "")
+    .replace("Tour Inquiry - ", "")
+    .trim();
+}
 function closeInquiryModal(){
   document.getElementById("inquiryModal")
     .classList.add("hidden");

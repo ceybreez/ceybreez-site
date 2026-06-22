@@ -2068,12 +2068,12 @@ function openInquiryModal(id){
       <h4>Admin Actions</h4>
 
       <div class="inquiry-actions">
-        <button onclick="openGuestWhatsApp()">WhatsApp</button>
-        <button onclick="emailGuest()">Email</button>
-        <button onclick="copyInquiryDetails()">Copy</button>
-        <button onclick="confirmBooking()">Confirm Booking</button>
-      </div>
-
+  <button onclick="openGuestWhatsApp()">WhatsApp</button>
+  <button onclick="emailGuest()">Email</button>
+  <button onclick="copyInquiryDetails()">Copy</button>
+  <button onclick="confirmBooking()">Confirm Booking</button>
+  <button class="delete-btn" onclick="deleteCurrentInquiry()">Delete Inquiry</button>
+</div>
       <div class="status-action-row">
         <select id="modalInquiryStatus">
           <option value="New">New</option>
@@ -2320,3 +2320,15 @@ setInterval(() => {
     loadBookings();
   }
 }, 10000);
+async function deleteCurrentInquiry() {
+  if (!currentInquiry) return;
+
+  if (!confirm("Delete this inquiry permanently?")) return;
+
+  await deleteInquiry(currentInquiry.id);
+
+  closeInquiryModal();
+
+  await loadInquiries();
+  await loadBookings();
+}

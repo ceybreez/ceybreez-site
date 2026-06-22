@@ -164,3 +164,74 @@ footer{text-align:center;padding:10px;background:black;color:white}.floating-wha
   background:#fee2e2;
   color:#991b1b;
 }
+
+
+/* Availability + Booked Calendar Styles */
+.availability-msg{
+  padding:12px 14px;
+  border-radius:12px;
+  margin-top:10px;
+  font-weight:600;
+  line-height:1.5;
+}
+
+.availability-msg.info{
+  background:#f3f4f6;
+  color:#374151;
+  border:1px solid #d1d5db;
+}
+
+.availability-msg.available{
+  background:#dcfce7;
+  color:#166534;
+  border:1px solid #86efac;
+}
+
+.availability-msg.booked{
+  background:#fee2e2;
+  color:#991b1b;
+  border:1px solid #fca5a5;
+}
+
+.booked-dates-list{
+  margin-top:10px;
+}
+
+.booked-dates-list h4{
+  margin:0 0 10px;
+  color:#991b1b;
+  font-family:'Poppins',sans-serif;
+  font-size:15px;
+}
+
+.booked-date-item{
+  background:#fee2e2;
+  color:#991b1b;
+  border:1px solid #fca5a5;
+  padding:10px 12px;
+  border-radius:10px;
+  margin-bottom:8px;
+  font-weight:600;
+}
+
+.no-bookings{
+  background:#ecfdf5;
+  color:#166534;
+  border:1px solid #86efac;
+  padding:10px 12px;
+  border-radius:10px;
+  font-weight:600;
+}
+
+.flatpickr-day.booked-day,
+.flatpickr-day.flatpickr-disabled.booked-day{
+  background:#fee2e2 !important;
+  color:#991b1b !important;
+  border-color:#fca5a5 !important;
+  text-decoration:line-through;
+  font-weight:700;
+}
+
+.flatpickr-day.flatpickr-disabled{
+  cursor:not-allowed;
+}

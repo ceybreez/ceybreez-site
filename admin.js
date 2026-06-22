@@ -1,6 +1,8 @@
 const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 let ADMIN_TOKEN = localStorage.getItem("CEYBREEZ_ADMIN_TOKEN") || "";
 let allInquiries = [];
+let allBookings = [];
+let bookingCalendarDate = new Date();
 
 document.addEventListener("DOMContentLoaded", () => {
   if (ADMIN_TOKEN) {
@@ -30,6 +32,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("inquiryFilter")?.addEventListener("change", applyInquiryFilters);
   document.getElementById("inquiryStatusFilter")?.addEventListener("change", applyInquiryFilters);
+
+  document.getElementById("bookingSearch")?.addEventListener("input", applyBookingFilters);
+  document.getElementById("bookingStatusFilter")?.addEventListener("change", applyBookingFilters);
+  document.getElementById("bookingTypeFilter")?.addEventListener("change", applyBookingFilters);
+
+  const manualBookingForm = document.getElementById("manualBookingForm");
+  if (manualBookingForm) manualBookingForm.addEventListener("submit", createManualBooking);
 });
 
 function authHeaders() {
@@ -77,6 +86,13 @@ function showTab(tab) {
     loadServices();
   }
 
+  const bookingsTab = document.getElementById("bookingsTab");
+  if (bookingsTab) bookingsTab.classList.toggle("hidden", tab !== "bookingsTab");
+
+  if (tab === "bookingsTab") {
+    loadBookings();
+  }
+
   const pageTab = document.getElementById("pageControlTab");
   if (pageTab) pageTab.classList.toggle("hidden", tab !== "pageControl");
 
@@ -118,6 +134,10 @@ async function loadAll() {
 
   if (document.getElementById("inquiriesTab")) {
     await loadInquiries();
+  }
+
+  if (document.getElementById("bookingsTab")) {
+    await loadBookings();
   }
 }
 
@@ -1357,8 +1377,10 @@ function applyInquiryFilters() {
            (!search || text.includes(search));
   });
 
-  renderInquiryCards(filtered);
   renderInquiryTable(filtered);
+
+  const inquiryCardsBox = document.getElementById("inquiriesList");
+  if (inquiryCardsBox) inquiryCardsBox.innerHTML = "";
 }
 
 function renderInquiryCards(data) {
@@ -1663,6 +1685,249 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
+
+/* =========================
+   BOOKINGS MANAGEMENT
+========================= */
+
+async function loadBookings() {
+  const tableBody = document.getElementById("bookingTableBody");
+  if (tableBody) {
+    tableBody.innerHTML = `<tr><td colspan="9" class="empty-row">Loading bookings...</td></tr>`;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/bookings`, {
+      headers: authHeaders()
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || "Failed to load bookings");
+
+    allBookings = data || [];
+    renderBookingStats(allBookings);
+    applyBookingFilters();
+  } catch (err) {
+    if (tableBody) {
+      tableBody.innerHTML = `<tr><td colspan="9" class="empty-row">${escapeHtml(err.message)}</td></tr>`;
+    }
+  }
+}
+
+function applyBookingFilters() {
+  const search = (document.getElementById("bookingSearch")?.value || "").toLowerCase();
+  const status = (document.getElementById("bookingStatusFilter")?.value || "all").toLowerCase();
+  const type = (document.getElementById("bookingTypeFilter")?.value || "all").toLowerCase();
+
+  const filtered = allBookings.filter(item => {
+    const statusMatch = status === "all" || normalizeStatus(item.status) === status;
+    const typeText = `${item.serviceType || ""} ${item.itemName || ""}`.toLowerCase();
+    const typeMatch = type === "all" || typeText.includes(type);
+    const searchText = `
+      ${item.id || ""}
+      ${item.reference || ""}
+      ${item.itemName || ""}
+      ${item.serviceType || ""}
+      ${item.guestName || ""}
+      ${item.guestEmail || ""}
+      ${item.guestMobile || ""}
+    `.toLowerCase();
+
+    return statusMatch && typeMatch && (!search || searchText.includes(search));
+  });
+
+  renderBookingsTable(filtered);
+  renderBookingsCalendar(filtered);
+}
+
+function renderBookingStats(data) {
+  const box = document.getElementById("bookingStats");
+  if (!box) return;
+
+  const count = status => data.filter(x => normalizeStatus(x.status) === status).length;
+
+  box.innerHTML = `
+    <div class="dashboard-card"><h3>Total Bookings</h3><div class="value">${data.length}</div></div>
+    <div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${count("booked")}</div></div>
+    <div class="dashboard-card card-closed"><h3>Cancelled</h3><div class="value">${count("cancelled")}</div></div>
+  `;
+}
+
+function renderBookingsTable(data) {
+  const tbody = document.getElementById("bookingTableBody");
+  if (!tbody) return;
+
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="9" class="empty-row">No bookings found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = data.map(item => {
+    const status = item.status || "Booked";
+    const statusClass = normalizeStatus(status);
+
+    return `
+      <tr>
+        <td>${escapeHtml(item.reference || item.id || "-")}</td>
+        <td>${formatDate(item.createdAt || item.created_at)}</td>
+        <td>${escapeHtml(item.serviceType || "-")}</td>
+        <td>${escapeHtml(item.itemName || "-")}</td>
+        <td>
+          <strong>${escapeHtml(item.guestName || "-")}</strong><br>
+          <small>${escapeHtml(item.guestEmail || "")}</small><br>
+          <small>${escapeHtml(item.guestMobile || "")}</small>
+        </td>
+        <td>${escapeHtml(item.dateFrom || "-")}</td>
+        <td>${escapeHtml(item.dateTo || "-")}</td>
+        <td><span class="status-badge status-${statusClass}">${escapeHtml(status)}</span></td>
+        <td>
+          ${statusClass === "booked" ? `<button class="delete-btn mini-btn" onclick="cancelBooking('${item.id}')">Cancel</button>` : "-"}
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function changeBookingMonth(offset) {
+  bookingCalendarDate.setMonth(bookingCalendarDate.getMonth() + offset);
+  applyBookingFilters();
+}
+
+function renderBookingsCalendar(data) {
+  const box = document.getElementById("bookingCalendar");
+  const title = document.getElementById("bookingCalendarTitle");
+  if (!box || !title) return;
+
+  const year = bookingCalendarDate.getFullYear();
+  const month = bookingCalendarDate.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startOffset = firstDay.getDay();
+
+  title.textContent = firstDay.toLocaleDateString("en-GB", {
+    month: "long",
+    year: "numeric"
+  });
+
+  const activeBookings = data.filter(x => normalizeStatus(x.status) === "booked");
+  let html = `
+    <div class="calendar-week-head">Sun</div>
+    <div class="calendar-week-head">Mon</div>
+    <div class="calendar-week-head">Tue</div>
+    <div class="calendar-week-head">Wed</div>
+    <div class="calendar-week-head">Thu</div>
+    <div class="calendar-week-head">Fri</div>
+    <div class="calendar-week-head">Sat</div>
+  `;
+
+  for (let i = 0; i < startOffset; i++) {
+    html += `<div class="calendar-day empty"></div>`;
+  }
+
+  for (let day = 1; day <= lastDay.getDate(); day++) {
+    const dateValue = toDateInputValue(new Date(year, month, day));
+    const dayBookings = activeBookings.filter(b => bookingCoversDate(b, dateValue));
+
+    html += `
+      <div class="calendar-day ${dayBookings.length ? "has-booking" : ""}">
+        <strong>${day}</strong>
+        ${dayBookings.slice(0, 3).map(b => `
+          <span title="${escapeHtml(b.itemName || "")}">${escapeHtml(b.itemName || "Booking")}</span>
+        `).join("")}
+        ${dayBookings.length > 3 ? `<small>+${dayBookings.length - 3} more</small>` : ""}
+      </div>
+    `;
+  }
+
+  box.innerHTML = html;
+}
+
+function bookingCoversDate(booking, dateValue) {
+  if (!booking.dateFrom || !booking.dateTo) return false;
+  const date = new Date(dateValue);
+  const start = new Date(booking.dateFrom);
+  const end = new Date(booking.dateTo);
+  return date >= start && date < end;
+}
+
+function toDateInputValue(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+async function cancelBooking(id) {
+  if (!confirm("Cancel this booking? The dates will become available on the main website.")) return;
+
+  const res = await fetch(`${API_BASE}/api/admin/bookings/${id}/status`, {
+    method: "PUT",
+    headers: authHeaders(),
+    body: JSON.stringify({ status: "Cancelled" })
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    alert(result.error || "Booking cancel failed");
+    return;
+  }
+
+  alert("Booking cancelled");
+  loadBookings();
+  loadInquiries();
+}
+
+async function createManualBooking(e) {
+  e.preventDefault();
+
+  const reference = `MAN-${Date.now()}`;
+  const itemName = document.getElementById("manualItemName").value.trim();
+  const serviceType = document.getElementById("manualServiceType").value;
+  const guestName = document.getElementById("manualGuestName").value.trim();
+  const guestEmail = document.getElementById("manualGuestEmail").value.trim();
+  const guestMobile = document.getElementById("manualGuestMobile").value.trim();
+  const dateFrom = document.getElementById("manualDateFrom").value;
+  const dateTo = document.getElementById("manualDateTo").value;
+  const guests = document.getElementById("manualGuests").value.trim();
+
+  if (!itemName || !serviceType || !guestName || !dateFrom || !dateTo) {
+    alert("Please fill property/tour, type, guest name, check-in and check-out dates.");
+    return;
+  }
+
+  if (new Date(dateFrom) >= new Date(dateTo)) {
+    alert("Check-out date must be after check-in date.");
+    return;
+  }
+
+  const res = await fetch(`${API_BASE}/api/admin/bookings`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify({
+      inquiryId: reference,
+      reference,
+      itemName,
+      serviceType,
+      guestName,
+      guestEmail,
+      guestMobile,
+      dateFrom,
+      dateTo,
+      guests
+    })
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    alert(result.error || "Manual booking failed");
+    return;
+  }
+
+  alert("Manual booking saved");
+  e.target.reset();
+  loadBookings();
+}
+
 let currentInquiry = null;
 
 function openInquiryModal(id){

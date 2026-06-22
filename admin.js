@@ -1899,17 +1899,15 @@ async function confirmBooking() {
     const result = await res.json();
     console.log("BOOKING RESULT", result);
 
-    if (!res.ok) {
-      alert(result.error || "Booking failed");
-      return;
-    }
+if (!res.ok) {
+  alert(result.error || "Booking failed");
+  return;
+}
 
-    await updateInquiryStatus(
-      currentInquiry.id,
-      "Booked"
-    );
+currentInquiry.status = "Booked";
 
-    alert("Booking Confirmed");
+alert("Booking Confirmed");
+loadInquiries();
 
   } catch (err) {
     alert(err.message);

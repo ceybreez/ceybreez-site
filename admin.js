@@ -1275,6 +1275,11 @@ async function loadInquiries() {
 }
 
 async function updateInquiryStatus(id, status) {
+
+  const inquiry = allInquiries.find(
+    x => String(x.id) === String(id)
+  );
+
   const res = await fetch(`${API_BASE}/api/admin/inquiries/${id}/status`, {
     method: "PUT",
     headers: authHeaders(),
@@ -1285,6 +1290,15 @@ async function updateInquiryStatus(id, status) {
 
   if (!res.ok) {
     alert(result.error || "Status update failed");
+    return;
+  }
+
+  if (
+    String(status).toLowerCase() === "booked" &&
+    inquiry
+  ) {
+    currentInquiry = inquiry;
+    await confirmBooking();
     return;
   }
 

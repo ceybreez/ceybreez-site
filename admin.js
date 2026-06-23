@@ -2023,12 +2023,19 @@ function openBookingDetails(id){
       <p><b>Status:</b> ${escapeHtml(booking.status || "-")}</p>
 
       <div class="booking-detail-actions">
-        ${
-          normalizeStatus(booking.status) === "booked"
-          ? `<button class="delete-btn" onclick="cancelBooking('${booking.id}')">Cancel Booking</button>`
-          : ""
-        }
-      </div>
+  ${
+    normalizeStatus(booking.status) === "booked"
+    ? `<button class="delete-btn" onclick="cancelBooking('${booking.id}')">
+         Cancel Booking
+       </button>`
+    : ""
+  }
+
+  <button class="delete-btn"
+          onclick="deleteBooking('${booking.id}')">
+    Delete Booking
+  </button>
+</div>
     </div>
   `;
 
@@ -2489,4 +2496,31 @@ function checkManualBookingAvailability() {
   msg.classList.add("good");
   msg.textContent = "✅ Available for selected dates.";
   return true;
+}
+async function deleteBooking(id){
+
+  if(!confirm("Delete this booking permanently?")) return;
+
+  const res = await fetch(
+    `${API_BASE}/api/admin/bookings/${id}`,
+    {
+      method: "DELETE",
+      headers: authHeaders()
+    }
+  );
+
+  const result = await res.json();
+
+  if(!res.ok){
+    alert(result.error || "Delete failed");
+    return;
+  }
+
+  alert("Booking deleted");
+
+  await loadBookings();
+  await loadInquiries();
+
+  const box = document.getElementById("bookingDetailsBox");
+  if(box) box.innerHTML = "";
 }

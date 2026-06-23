@@ -1201,3 +1201,20 @@ input[readonly]{
   font-weight:700;
   color:#dc2626;
 }
+.booked-day{
+  background:#fee2e2 !important;
+  border:2px solid #ef4444 !important;
+  cursor:pointer;
+}
+
+.booked-indicator{
+  margin-top:6px;
+  margin-bottom:6px;
+  font-size:11px;
+  font-weight:800;
+  color:#dc2626;
+  background:#fff;
+  border-radius:999px;
+  padding:4px 8px;
+  display:inline-block;
+}

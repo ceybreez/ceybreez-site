@@ -2275,6 +2275,15 @@ async function confirmBooking() {
 
   if (!confirm("Confirm this booking?")) return;
 
+  const existingBooking = allBookings.find(b =>
+    String(b.inquiryId || "") === String(currentInquiry.id)
+  );
+
+  if (existingBooking) {
+    alert("This inquiry is already booked.");
+    return;
+  }
+
   try {
 
     const res = await fetch(
@@ -2283,38 +2292,38 @@ async function confirmBooking() {
         method: "POST",
         headers: authHeaders(),
         body: JSON.stringify({
-  inquiryId: currentInquiry.id,
-  reference: currentInquiry.reference,
-  itemName: currentInquiry.itemName || (currentInquiry.serviceType || "")
-  .replace("Villa Inquiry - ", "")
-  .replace("Apartment Inquiry - ", "")
-  .replace("Homestay Inquiry - ", ""),
-  serviceType: currentInquiry.serviceType,
-  guestName: currentInquiry.guestName,
-  guestEmail: currentInquiry.guestEmail,
-  guestMobile: currentInquiry.guestMobile,
-  dateFrom: currentInquiry.dateFrom,
-  dateTo: currentInquiry.dateTo,
-  guests: currentInquiry.guests
-})
+          inquiryId: currentInquiry.id,
+          reference: currentInquiry.reference,
+          itemName: currentInquiry.itemName || (currentInquiry.serviceType || "")
+            .replace("Villa Inquiry - ", "")
+            .replace("Apartment Inquiry - ", "")
+            .replace("Homestay Inquiry - ", ""),
+          serviceType: currentInquiry.serviceType,
+          guestName: currentInquiry.guestName,
+          guestEmail: currentInquiry.guestEmail,
+          guestMobile: currentInquiry.guestMobile,
+          dateFrom: currentInquiry.dateFrom,
+          dateTo: currentInquiry.dateTo,
+          guests: currentInquiry.guests
+        })
       }
     );
 
     const result = await res.json();
     console.log("BOOKING RESULT", result);
 
-if (!res.ok) {
-  alert(result.error || "Booking failed");
-  return;
-}
+    if (!res.ok) {
+      alert(result.error || "Booking failed");
+      return;
+    }
 
-currentInquiry.status = "Booked";
+    currentInquiry.status = "Booked";
 
-await loadBookings();
-await loadInquiries();
+    await loadBookings();
+    await loadInquiries();
 
-alert("Booking Confirmed");
-closeInquiryModal();
+    alert("Booking Confirmed");
+    closeInquiryModal();
 
   } catch (err) {
     alert(err.message);

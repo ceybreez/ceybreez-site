@@ -526,6 +526,7 @@ async function loadProperties() {
 
     window.allProperties = data || [];
     renderManualPropertyDropdown(window.allProperties);
+    filterManualProperties();
 
     const box = document.getElementById("propertiesList");
     if (!box) return;
@@ -2525,29 +2526,33 @@ async function deleteBooking(id){
   if(box) box.innerHTML = "";
 }
 function filterManualProperties() {
+  const typeText =
+    (document.getElementById("manualServiceType")?.value || "").toLowerCase();
 
-  const type =
-    document.getElementById("manualServiceType")?.value || "";
-
-  const select =
-    document.getElementById("manualItemName");
-
+  const select = document.getElementById("manualItemName");
   if (!select || !window.allProperties) return;
 
-  let filtered = window.allProperties;
+  let wantedType = "";
 
-  if (type) {
-    filtered = window.allProperties.filter(
-      p => String(p.type || "").toLowerCase() === type.toLowerCase()
-    );
-  }
+  if (typeText.includes("villa")) wantedType = "villa";
+  if (typeText.includes("homestay")) wantedType = "homestay";
+  if (typeText.includes("apartment")) wantedType = "apartment";
+  if (typeText.includes("tour")) wantedType = "tour";
+
+  const filtered = wantedType
+    ? window.allProperties.filter(p =>
+        String(p.type || "").toLowerCase() === wantedType
+      )
+    : window.allProperties;
 
   select.innerHTML = `
     <option value="">Select Property / Tour</option>
     ${filtered.map(p => `
       <option value="${escapeHtml(p.name)}">
-        ${escapeHtml(p.name)}
+        ${escapeHtml(p.name)} (${escapeHtml(p.type || "property")})
       </option>
     `).join("")}
   `;
+
+  checkManualBookingAvailability();
 }

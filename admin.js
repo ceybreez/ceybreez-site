@@ -1807,6 +1807,8 @@ function changeBookingMonth(offset) {
 function renderBookingsCalendar(data) {
   const box = document.getElementById("bookingCalendar");
   const title = document.getElementById("bookingCalendarTitle");
+  const detailsBox = document.getElementById("bookingDetailsBox");
+if (detailsBox) detailsBox.innerHTML = "";
   if (!box || !title) return;
 
   const year = bookingCalendarDate.getFullYear();
@@ -1909,6 +1911,22 @@ async function createManualBooking(e) {
     alert("Check-out date must be after check-in date.");
     return;
   }
+  const conflict = allBookings.find(b => {
+  return normalizeStatus(b.status) === "booked" &&
+    String(b.itemName || "").trim().toLowerCase() === itemName.trim().toLowerCase() &&
+    new Date(dateFrom) < new Date(b.dateTo) &&
+    new Date(dateTo) > new Date(b.dateFrom);
+});
+
+if (conflict) {
+  alert(
+    `This property is already booked for selected dates.\n\n` +
+    `Existing Booking:\n` +
+    `${conflict.itemName}\n` +
+    `${conflict.dateFrom} to ${conflict.dateTo}`
+  );
+  return;
+}
 
   const res = await fetch(`${API_BASE}/api/admin/bookings`, {
     method: "POST",
@@ -1935,8 +1953,17 @@ async function createManualBooking(e) {
   }
 
   alert("Manual booking saved");
-  e.target.reset();
-  loadBookings();
+
+e.target.reset();
+
+await loadBookings();
+
+const savedBooking = allBookings.find(b =>
+  String(b.reference || "").startsWith("MAN-")
+);
+
+if (savedBooking) {
+  openBookingDetails(savedBooking.id);
 }
 
 

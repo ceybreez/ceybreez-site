@@ -1965,7 +1965,7 @@ const savedBooking = allBookings.find(b =>
 if (savedBooking) {
   openBookingDetails(savedBooking.id);
 }
-
+}
 
 function escapeJs(value) {
   return String(value || "")

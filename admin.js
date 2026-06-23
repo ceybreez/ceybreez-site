@@ -37,11 +37,18 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("bookingStatusFilter")?.addEventListener("change", applyBookingFilters);
   document.getElementById("bookingTypeFilter")?.addEventListener("change", applyBookingFilters);
 
-  const manualBookingForm = document.getElementById("manualBookingForm");
-  if (manualBookingForm) manualBookingForm.addEventListener("submit", createManualBooking);
-  document.getElementById("manualItemName")?.addEventListener("change", checkManualBookingAvailability);
+ const manualBookingForm = document.getElementById("manualBookingForm");
+if (manualBookingForm) manualBookingForm.addEventListener("submit", createManualBooking);
+
+document.getElementById("manualServiceType")?.addEventListener("change", () => {
+  renderManualPropertyDropdown(window.allProperties || []);
+  checkManualBookingAvailability();
+});
+
+document.getElementById("manualItemName")?.addEventListener("change", checkManualBookingAvailability);
 document.getElementById("manualDateFrom")?.addEventListener("change", checkManualBookingAvailability);
 document.getElementById("manualDateTo")?.addEventListener("change", checkManualBookingAvailability);
+
 });
 
 function authHeaders() {
@@ -1843,6 +1850,7 @@ if (detailsBox) detailsBox.innerHTML = "";
   for (let day = 1; day <= lastDay.getDate(); day++) {
     const dateValue = toDateInputValue(new Date(year, month, day));
     const dayBookings = activeBookings.filter(b => bookingCoversDate(b, dateValue));
+    const bookedCount = dayBookings.length;
 
     html += `
       <div class="calendar-day ${dayBookings.length ? "has-booking clickable-row" : ""}"
@@ -2376,10 +2384,23 @@ function renderManualPropertyDropdown(properties){
   const box = document.getElementById("manualItemName");
   if(!box) return;
 
+  const selectedType =
+    (document.getElementById("manualServiceType")?.value || "").toLowerCase();
+
+  const filtered = (properties || []).filter(p => {
+    const propType = String(p.type || "").toLowerCase();
+
+    if(selectedType.includes("villa")) return propType === "villa";
+    if(selectedType.includes("homestay")) return propType === "homestay";
+    if(selectedType.includes("apartment")) return propType === "apartment";
+
+    return true;
+  });
+
   if(box.tagName.toLowerCase() === "select"){
     box.innerHTML = `
       <option value="">Select Property / Tour</option>
-      ${(properties || []).map(p => `
+      ${filtered.map(p => `
         <option value="${escapeHtml(p.name)}">
           ${escapeHtml(p.name)} (${escapeHtml(p.type || "property")})
         </option>
@@ -2396,7 +2417,7 @@ function renderManualPropertyDropdown(properties){
 
   select.innerHTML = `
     <option value="">Select Property / Tour</option>
-    ${(properties || []).map(p => `
+    ${filtered.map(p => `
       <option value="${escapeHtml(p.name)}">
         ${escapeHtml(p.name)} (${escapeHtml(p.type || "property")})
       </option>

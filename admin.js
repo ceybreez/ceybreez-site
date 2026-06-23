@@ -1818,7 +1818,8 @@ function renderBookingsCalendar(data) {
   const box = document.getElementById("bookingCalendar");
   const title = document.getElementById("bookingCalendarTitle");
   const detailsBox = document.getElementById("bookingDetailsBox");
-if (detailsBox) detailsBox.innerHTML = "";
+
+  if (detailsBox) detailsBox.innerHTML = "";
   if (!box || !title) return;
 
   const year = bookingCalendarDate.getFullYear();
@@ -1833,6 +1834,7 @@ if (detailsBox) detailsBox.innerHTML = "";
   });
 
   const activeBookings = data.filter(x => normalizeStatus(x.status) === "booked");
+
   let html = `
     <div class="calendar-week-head">Sun</div>
     <div class="calendar-week-head">Mon</div>
@@ -1853,13 +1855,24 @@ if (detailsBox) detailsBox.innerHTML = "";
     const bookedCount = dayBookings.length;
 
     html += `
-      <div class="calendar-day ${dayBookings.length ? "has-booking clickable-row" : ""}"
-           ${dayBookings.length ? `onclick="openBookingDateDetails('${dateValue}')"` : ""}>
+      <div class="calendar-day ${bookedCount ? "booked-day clickable-row" : ""}"
+           ${bookedCount ? `onclick="openBookingDateDetails('${dateValue}')"` : ""}>
         <strong>${day}</strong>
-        ${dayBookings.slice(0, 3).map(b => `
-          <span title="${escapeHtml(b.itemName || "")}" onclick="event.stopPropagation(); openBookingDetails('${escapeJs(b.id)}')">${escapeHtml(b.itemName || "Booking")}</span>
+
+        ${
+          bookedCount
+            ? `<div class="booked-indicator">${bookedCount} Booked</div>`
+            : ""
+        }
+
+        ${dayBookings.slice(0, 2).map(b => `
+          <span title="${escapeHtml(b.itemName || "")}"
+                onclick="event.stopPropagation(); openBookingDetails('${escapeJs(b.id)}')">
+            ${escapeHtml(b.itemName || "Booking")}
+          </span>
         `).join("")}
-        ${dayBookings.length > 3 ? `<small>+${dayBookings.length - 3} more</small>` : ""}
+
+        ${dayBookings.length > 2 ? `<small>+${dayBookings.length - 2} more</small>` : ""}
       </div>
     `;
   }

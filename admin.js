@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 if (manualBookingForm) manualBookingForm.addEventListener("submit", createManualBooking);
 
 document.getElementById("manualServiceType")?.addEventListener("change", () => {
-  renderManualPropertyDropdown(window.allProperties || []);
+  filterManualProperties();
   checkManualBookingAvailability();
 });
 
@@ -2523,4 +2523,31 @@ async function deleteBooking(id){
 
   const box = document.getElementById("bookingDetailsBox");
   if(box) box.innerHTML = "";
+}
+function filterManualProperties() {
+
+  const type =
+    document.getElementById("manualServiceType")?.value || "";
+
+  const select =
+    document.getElementById("manualItemName");
+
+  if (!select || !window.allProperties) return;
+
+  let filtered = window.allProperties;
+
+  if (type) {
+    filtered = window.allProperties.filter(
+      p => String(p.type || "").toLowerCase() === type.toLowerCase()
+    );
+  }
+
+  select.innerHTML = `
+    <option value="">Select Property / Tour</option>
+    ${filtered.map(p => `
+      <option value="${escapeHtml(p.name)}">
+        ${escapeHtml(p.name)}
+      </option>
+    `).join("")}
+  `;
 }

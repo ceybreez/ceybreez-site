@@ -39,6 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const manualBookingForm = document.getElementById("manualBookingForm");
   if (manualBookingForm) manualBookingForm.addEventListener("submit", createManualBooking);
+  document.getElementById("manualItemName")?.addEventListener("change", checkManualBookingAvailability);
+document.getElementById("manualDateFrom")?.addEventListener("change", checkManualBookingAvailability);
+document.getElementById("manualDateTo")?.addEventListener("change", checkManualBookingAvailability);
 });
 
 function authHeaders() {
@@ -1858,14 +1861,14 @@ if (detailsBox) detailsBox.innerHTML = "";
 
 function bookingCoversDate(booking, dateValue) {
   if (!booking.dateFrom || !booking.dateTo) return false;
-  const date = new Date(dateValue);
-  const start = new Date(booking.dateFrom);
-  const end = new Date(booking.dateTo);
-  return date >= start && date < end;
+  return dateValue >= booking.dateFrom && dateValue < booking.dateTo;
 }
 
 function toDateInputValue(date) {
-  return date.toISOString().slice(0, 10);
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
 async function cancelBooking(id) {
@@ -2405,4 +2408,42 @@ function renderManualPropertyDropdown(properties){
   if(currentValue){
     select.value = currentValue;
   }
+}
+function checkManualBookingAvailability() {
+  const msg = document.getElementById("manualAvailabilityMsg");
+  if (!msg) return true;
+
+  const itemName = document.getElementById("manualItemName")?.value || "";
+  const dateFrom = document.getElementById("manualDateFrom")?.value || "";
+  const dateTo = document.getElementById("manualDateTo")?.value || "";
+
+  msg.className = "manual-availability-msg";
+  msg.textContent = "";
+
+  if (!itemName || !dateFrom || !dateTo) {
+    return true;
+  }
+
+  if (dateFrom >= dateTo) {
+    msg.classList.add("bad");
+    msg.textContent = "❌ Check-out date must be after check-in date.";
+    return false;
+  }
+
+  const conflict = allBookings.find(b =>
+    normalizeStatus(b.status) === "booked" &&
+    String(b.itemName || "").trim().toLowerCase() === String(itemName).trim().toLowerCase() &&
+    dateFrom < b.dateTo &&
+    dateTo > b.dateFrom
+  );
+
+  if (conflict) {
+    msg.classList.add("bad");
+    msg.textContent = `❌ Already booked: ${conflict.itemName} (${conflict.dateFrom} to ${conflict.dateTo})`;
+    return false;
+  }
+
+  msg.classList.add("good");
+  msg.textContent = "✅ Available for selected dates.";
+  return true;
 }

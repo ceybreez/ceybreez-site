@@ -24,6 +24,7 @@
       <button onclick="showTab('services')">Cafes & Services</button>
       <button onclick="showTab('inquiriesTab')">Inquiries</button>
       <button onclick="showTab('bookingsTab')">Bookings</button>
+      <button onclick="showTab('reportsTab')">Reports</button>
       <button onclick="showTab('pageControl')">Page Control</button>
       <button onclick="logoutAdmin()">Logout</button>
     </div>
@@ -588,6 +589,40 @@
     <div id="bookingDetailsBox" class="booking-details-container"></div>
   </section>
 
+
+  <section class="admin-section availability-matrix-section">
+    <div class="section-head">
+      <div>
+        <h2>Availability Matrix</h2>
+        <p>Property-wise availability for selected date range.</p>
+      </div>
+
+      <div class="matrix-tools">
+        <select id="matrixTypeFilter">
+          <option value="all">All Types</option>
+          <option value="villa">Villas</option>
+          <option value="homestay">Homestays</option>
+          <option value="apartment">Apartments</option>
+          <option value="tour">Tours</option>
+        </select>
+
+        <select id="matrixDaysFilter">
+          <option value="14">Next 14 Days</option>
+          <option value="30" selected>Next 30 Days</option>
+          <option value="45">Next 45 Days</option>
+          <option value="60">Next 60 Days</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="matrix-legend">
+      <span><b class="legend-free"></b> Available</span>
+      <span><b class="legend-booked"></b> Booked</span>
+    </div>
+
+    <div id="availabilityMatrix" class="availability-matrix"></div>
+  </section>
+
   <section class="admin-section manual-booking-section">
     <div class="section-head">
       <div>
@@ -618,6 +653,61 @@
 
 <button type="submit">Save Manual Booking</button>
     </form>
+  </section>
+</section>
+
+
+
+<section id="reportsTab" class="hidden">
+  <h2>Reports</h2>
+
+  <section class="admin-section">
+    <div class="section-head">
+      <div>
+        <h2>Business Reports</h2>
+        <p>Inquiry, booking, occupancy and property performance summary.</p>
+      </div>
+
+      <div class="report-tools">
+        <select id="reportTypeFilter">
+          <option value="all">All Types</option>
+          <option value="villa">Villas</option>
+          <option value="homestay">Homestays</option>
+          <option value="apartment">Apartments</option>
+          <option value="tour">Tours</option>
+        </select>
+
+        <input id="reportDateFrom" type="date" />
+        <input id="reportDateTo" type="date" />
+
+        <button type="button" onclick="renderReports()">Run Report</button>
+        <button type="button" onclick="exportReportCSV()">Export Report CSV</button>
+      </div>
+    </div>
+
+    <div id="reportSummaryCards" class="dashboard-cards"></div>
+
+    <div class="report-grid">
+      <div class="report-card">
+        <h3>Property Performance</h3>
+        <div id="propertyPerformanceReport"></div>
+      </div>
+
+      <div class="report-card">
+        <h3>Status Summary</h3>
+        <div id="statusSummaryReport"></div>
+      </div>
+
+      <div class="report-card">
+        <h3>Monthly Booking Trend</h3>
+        <div id="monthlyBookingReport"></div>
+      </div>
+
+      <div class="report-card">
+        <h3>Latest Guest Activity</h3>
+        <div id="latestGuestActivityReport"></div>
+      </div>
+    </div>
   </section>
 </section>
 

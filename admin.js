@@ -36,12 +36,18 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("bookingSearch")?.addEventListener("input", applyBookingFilters);
   document.getElementById("bookingStatusFilter")?.addEventListener("change", applyBookingFilters);
   document.getElementById("bookingTypeFilter")?.addEventListener("change", applyBookingFilters);
+  document.getElementById("matrixTypeFilter")?.addEventListener("change", renderAvailabilityMatrix);
+  document.getElementById("matrixDaysFilter")?.addEventListener("change", renderAvailabilityMatrix);
+  document.getElementById("reportTypeFilter")?.addEventListener("change", renderReports);
+  document.getElementById("reportDateFrom")?.addEventListener("change", renderReports);
+  document.getElementById("reportDateTo")?.addEventListener("change", renderReports);
 
  const manualBookingForm = document.getElementById("manualBookingForm");
 if (manualBookingForm) manualBookingForm.addEventListener("submit", createManualBooking);
 
 document.getElementById("manualServiceType")?.addEventListener("change", () => {
   filterManualProperties();
+    renderAvailabilityMatrix();
   checkManualBookingAvailability();
 });
 
@@ -109,6 +115,13 @@ function showTab(tab) {
   if (tab === "pageControl") {
     loadSiteContent();
     loadPageSections();
+  }
+
+  const reportsTab = document.getElementById("reportsTab");
+  if (reportsTab) reportsTab.classList.toggle("hidden", tab !== "reportsTab");
+
+  if (tab === "reportsTab") {
+    renderReports();
   }
 }
 
@@ -1309,22 +1322,32 @@ async function loadInquiries() {
     renderInquiryTypeCards(allInquiries);
     renderMonthlyInquiryChart(allInquiries);
     applyInquiryFilters();
+    renderReports();
 
   } catch (err) {
     alert(err.message);
   }
 }
 
-async function updateInquiryStatus(id, status) {
+async function updateInquiryStatus(id, status, sendEmail = false) {
 
   const inquiry = allInquiries.find(
     x => String(x.id) === String(id)
   );
 
+  if (
+    String(status).toLowerCase() === "booked" &&
+    inquiry
+  ) {
+    currentInquiry = inquiry;
+    await confirmBooking(sendEmail);
+    return;
+  }
+
   const res = await fetch(`${API_BASE}/api/admin/inquiries/${id}/status`, {
     method: "PUT",
     headers: authHeaders(),
-    body: JSON.stringify({ status })
+    body: JSON.stringify({ status, sendEmail })
   });
 
   const result = await res.json();
@@ -1334,17 +1357,14 @@ async function updateInquiryStatus(id, status) {
     return;
   }
 
-  if (
-    String(status).toLowerCase() === "booked" &&
-    inquiry
-  ) {
-    currentInquiry = inquiry;
-    await confirmBooking();
-    return;
-  }
+  alert(sendEmail ? "Inquiry updated and email sent" : "Inquiry updated");
 
-  alert("Inquiry updated");
-  loadInquiries();
+  await loadInquiries();
+  await loadBookings();
+
+  if (currentInquiry && String(currentInquiry.id) === String(id)) {
+    closeInquiryModal();
+  }
 }
 
 async function deleteInquiry(id) {
@@ -1711,6 +1731,444 @@ function escapeHtml(value) {
    BOOKINGS MANAGEMENT
 ========================= */
 
+
+function isManualBooking(item){
+  return String(item.reference || "").startsWith("MAN-") ||
+         String(item.inquiryId || "").startsWith("MAN-") ||
+         String(item.serviceType || "").toLowerCase().includes("manual booking");
+}
+
+function bookingInquiryId(item){
+  return item?.inquiryId || item?.reference || "";
+}
+
+function bookingRemarkText(booking){
+  const ref = booking.reference || booking.id || "";
+  const property = booking.itemName || "-";
+  const guest = booking.guestName || "-";
+
+  return `Booking Remark
+Reference: ${ref}
+Property / Tour: ${property}
+Guest: ${guest}`;
+}
+
+async function saveBookingRemark(bookingId){
+  const booking = allBookings.find(x => String(x.id) === String(bookingId));
+  if(!booking) return alert("Booking not found");
+
+  const input = document.getElementById(`bookingRemark-${bookingId}`);
+  const noteText = (input?.value || "").trim();
+
+  if(!noteText){
+    alert("Please type a remark first.");
+    return;
+  }
+
+  const inquiryId = bookingInquiryId(booking);
+
+  if(!inquiryId){
+    alert("No related inquiry found for this booking.");
+    return;
+  }
+
+  const nowText = new Date().toLocaleString("en-GB");
+
+  const note = `${bookingRemarkText(booking)}
+
+Remark added from Booking Page
+Date/Time: ${nowText}
+
+${noteText}`;
+
+  const res = await fetch(`${API_BASE}/api/admin/inquiries/${inquiryId}/notes`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify({ note })
+  });
+
+  const result = await res.json();
+
+  if(!res.ok){
+    alert(result.error || "Remark save failed");
+    return;
+  }
+
+  alert("Remark saved to Inquiry Admin Notes");
+
+  if(input) input.value = "";
+
+  await loadInquiries();
+}
+
+async function openInquiryFromBooking(bookingId){
+  const booking = allBookings.find(x => String(x.id) === String(bookingId));
+  if(!booking) return alert("Booking not found");
+
+  const inquiryId = bookingInquiryId(booking);
+
+  await loadInquiries();
+
+  const inquiry = allInquiries.find(x =>
+    String(x.id) === String(inquiryId) ||
+    String(x.reference) === String(booking.reference)
+  );
+
+  if(!inquiry){
+    alert("Related inquiry not found. It may have been deleted.");
+    return;
+  }
+
+  showTab("inquiriesTab");
+
+  setTimeout(() => {
+    openInquiryModal(inquiry.id);
+  }, 200);
+}
+
+function getMatrixDates(daysCount){
+  const dates = [];
+  const today = new Date();
+
+  for(let i = 0; i < daysCount; i++){
+    const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+    dates.push(toDateInputValue(d));
+  }
+
+  return dates;
+}
+
+function formatMatrixDay(dateValue){
+  const d = new Date(dateValue + "T00:00:00");
+  return d.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short"
+  });
+}
+
+function getBookingForPropertyDate(propertyName, dateValue){
+  return allBookings.find(b =>
+    normalizeStatus(b.status) === "booked" &&
+    String(b.itemName || "").trim().toLowerCase() === String(propertyName || "").trim().toLowerCase() &&
+    bookingCoversDate(b, dateValue)
+  );
+}
+
+function renderAvailabilityMatrix(){
+  const box = document.getElementById("availabilityMatrix");
+  if(!box) return;
+
+  const daysCount = Number(document.getElementById("matrixDaysFilter")?.value || 30);
+  const selectedType = (document.getElementById("matrixTypeFilter")?.value || "all").toLowerCase();
+
+  const properties = (window.allProperties || []).filter(p => {
+    const type = String(p.type || "").toLowerCase();
+    return selectedType === "all" || type === selectedType;
+  });
+
+  const dates = getMatrixDates(daysCount);
+
+  if(!properties.length){
+    box.innerHTML = `<div class="empty-row">No properties found for selected type.</div>`;
+    return;
+  }
+
+  box.innerHTML = `
+    <div class="matrix-scroll">
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th class="matrix-property-head">Property / Tour</th>
+            ${dates.map(d => `<th>${formatMatrixDay(d)}</th>`).join("")}
+            <th>Occupied</th>
+            <th>Available</th>
+            <th>Occupancy</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${properties.map(p => {
+            let bookedDays = 0;
+
+            const cells = dates.map(d => {
+              const booking = getBookingForPropertyDate(p.name, d);
+
+              if(booking) {
+                bookedDays++;
+                return `
+                  <td class="matrix-cell booked"
+                      title="${escapeHtml(booking.reference || "")} - ${escapeHtml(booking.guestName || "")}"
+                      onclick="openBookingDetails('${escapeJs(booking.id)}')">
+                    B
+                  </td>
+                `;
+              }
+
+              return `<td class="matrix-cell free">A</td>`;
+            }).join("");
+
+            const availableDays = dates.length - bookedDays;
+            const occupancy = dates.length ? Math.round((bookedDays / dates.length) * 100) : 0;
+
+            return `
+              <tr>
+                <td class="matrix-property">
+                  <strong>${escapeHtml(p.name || "-")}</strong>
+                  <small>${escapeHtml(p.type || "")}</small>
+                </td>
+                ${cells}
+                <td><strong>${bookedDays}</strong></td>
+                <td><strong>${availableDays}</strong></td>
+                <td><strong>${occupancy}%</strong></td>
+              </tr>
+            `;
+          }).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function reportDateInRange(value, from, to){
+  const d = String(value || "").slice(0,10);
+  if(!d) return true;
+  if(from && d < from) return false;
+  if(to && d > to) return false;
+  return true;
+}
+
+function getFilteredReportBookings(){
+  const type = (document.getElementById("reportTypeFilter")?.value || "all").toLowerCase();
+  const from = document.getElementById("reportDateFrom")?.value || "";
+  const to = document.getElementById("reportDateTo")?.value || "";
+
+  return allBookings.filter(b => {
+    const typeText = `${b.serviceType || ""} ${b.itemName || ""}`.toLowerCase();
+    const typeMatch = type === "all" || typeText.includes(type);
+    const dateValue = b.createdAt || b.created_at || b.dateFrom || "";
+    return typeMatch && reportDateInRange(dateValue, from, to);
+  });
+}
+
+function getFilteredReportInquiries(){
+  const type = (document.getElementById("reportTypeFilter")?.value || "all").toLowerCase();
+  const from = document.getElementById("reportDateFrom")?.value || "";
+  const to = document.getElementById("reportDateTo")?.value || "";
+
+  return allInquiries.filter(i => {
+    const typeText = `${i.serviceType || ""} ${i.itemName || ""}`.toLowerCase();
+    const typeMatch = type === "all" || typeText.includes(type);
+    const dateValue = i.createdAt || i.created_at || i.dateFrom || "";
+    return typeMatch && reportDateInRange(dateValue, from, to);
+  });
+}
+
+function renderReports(){
+  const summary = document.getElementById("reportSummaryCards");
+  if(!summary) return;
+
+  const bookings = getFilteredReportBookings();
+  const inquiries = getFilteredReportInquiries();
+
+  const booked = bookings.filter(b => normalizeStatus(b.status) === "booked").length;
+  const cancelled = bookings.filter(b => normalizeStatus(b.status) === "cancelled").length;
+  const closed = bookings.filter(b => normalizeStatus(b.status) === "closed").length;
+
+  summary.innerHTML = `
+    <div class="dashboard-card"><h3>Total Inquiries</h3><div class="value">${inquiries.length}</div></div>
+    <div class="dashboard-card card-booked"><h3>Total Bookings</h3><div class="value">${bookings.length}</div></div>
+    <div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${booked}</div></div>
+    <div class="dashboard-card card-closed"><h3>Cancelled</h3><div class="value">${cancelled}</div></div>
+    <div class="dashboard-card"><h3>Closed</h3><div class="value">${closed}</div></div>
+  `;
+
+  renderPropertyPerformanceReport(bookings);
+  renderStatusSummaryReport(inquiries, bookings);
+  renderMonthlyBookingReport(bookings);
+  renderLatestGuestActivityReport(inquiries, bookings);
+}
+
+function renderPropertyPerformanceReport(bookings){
+  const box = document.getElementById("propertyPerformanceReport");
+  if(!box) return;
+
+  const map = {};
+
+  bookings.forEach(b => {
+    const key = b.itemName || "Unknown";
+    if(!map[key]) map[key] = { total:0, booked:0, cancelled:0, closed:0 };
+    map[key].total++;
+    const s = normalizeStatus(b.status);
+    if(s === "booked") map[key].booked++;
+    if(s === "cancelled") map[key].cancelled++;
+    if(s === "closed") map[key].closed++;
+  });
+
+  const rows = Object.entries(map).sort((a,b) => b[1].total - a[1].total);
+
+  if(!rows.length){
+    box.innerHTML = `<p>No booking data.</p>`;
+    return;
+  }
+
+  box.innerHTML = `
+    <table class="report-table">
+      <thead><tr><th>Property</th><th>Total</th><th>Booked</th><th>Cancelled</th><th>Closed</th></tr></thead>
+      <tbody>
+        ${rows.map(([name, x]) => `
+          <tr>
+            <td>${escapeHtml(name)}</td>
+            <td>${x.total}</td>
+            <td>${x.booked}</td>
+            <td>${x.cancelled}</td>
+            <td>${x.closed}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderStatusSummaryReport(inquiries, bookings){
+  const box = document.getElementById("statusSummaryReport");
+  if(!box) return;
+
+  const statuses = ["new","contacted","quoted","booked","cancelled","closed"];
+
+  box.innerHTML = `
+    <table class="report-table">
+      <thead><tr><th>Status</th><th>Inquiries</th><th>Bookings</th></tr></thead>
+      <tbody>
+        ${statuses.map(s => `
+          <tr>
+            <td>${s.charAt(0).toUpperCase() + s.slice(1)}</td>
+            <td>${inquiries.filter(x => normalizeStatus(x.status) === s).length}</td>
+            <td>${bookings.filter(x => normalizeStatus(x.status) === s).length}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderMonthlyBookingReport(bookings){
+  const box = document.getElementById("monthlyBookingReport");
+  if(!box) return;
+
+  const map = {};
+  bookings.forEach(b => {
+    const d = String(b.createdAt || b.created_at || b.dateFrom || "").slice(0,7);
+    if(!d) return;
+    map[d] = (map[d] || 0) + 1;
+  });
+
+  const rows = Object.entries(map).sort();
+
+  if(!rows.length){
+    box.innerHTML = `<p>No monthly booking data.</p>`;
+    return;
+  }
+
+  const max = Math.max(...rows.map(x => x[1]));
+
+  box.innerHTML = `
+    <div class="chart-bars">
+      ${rows.map(([month, count]) => `
+        <div class="chart-row">
+          <span>${month}</span>
+          <div class="bar-wrap">
+            <div class="bar" style="width:${max ? (count / max) * 100 : 0}%"></div>
+          </div>
+          <strong>${count}</strong>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderLatestGuestActivityReport(inquiries, bookings){
+  const box = document.getElementById("latestGuestActivityReport");
+  if(!box) return;
+
+  const activity = [
+    ...inquiries.map(i => ({
+      type:"Inquiry",
+      reference:i.reference,
+      guest:i.guestName,
+      item:i.itemName,
+      status:i.status,
+      date:i.createdAt || i.created_at || i.dateFrom || ""
+    })),
+    ...bookings.map(b => ({
+      type:"Booking",
+      reference:b.reference,
+      guest:b.guestName,
+      item:b.itemName,
+      status:b.status,
+      date:b.createdAt || b.created_at || b.dateFrom || ""
+    }))
+  ].sort((a,b) => String(b.date).localeCompare(String(a.date))).slice(0,10);
+
+  if(!activity.length){
+    box.innerHTML = `<p>No activity found.</p>`;
+    return;
+  }
+
+  box.innerHTML = `
+    <table class="report-table">
+      <thead><tr><th>Type</th><th>Reference</th><th>Guest</th><th>Item</th><th>Status</th></tr></thead>
+      <tbody>
+        ${activity.map(x => `
+          <tr>
+            <td>${escapeHtml(x.type)}</td>
+            <td>${escapeHtml(x.reference || "-")}</td>
+            <td>${escapeHtml(x.guest || "-")}</td>
+            <td>${escapeHtml(x.item || "-")}</td>
+            <td>${escapeHtml(x.status || "-")}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function exportReportCSV(){
+  const bookings = getFilteredReportBookings();
+
+  if(!bookings.length){
+    alert("No report data to export");
+    return;
+  }
+
+  const rows = bookings.map(b => ({
+    Reference: b.reference || "",
+    Type: b.serviceType || "",
+    Property: b.itemName || "",
+    Guest: b.guestName || "",
+    Email: b.guestEmail || "",
+    Mobile: b.guestMobile || "",
+    CheckIn: b.dateFrom || "",
+    CheckOut: b.dateTo || "",
+    Guests: b.guests || "",
+    Status: b.status || "",
+    CreatedAt: b.createdAt || b.created_at || ""
+  }));
+
+  const headers = Object.keys(rows[0]);
+  const csv = [
+    headers.join(","),
+    ...rows.map(row =>
+      headers.map(h => `"${String(row[h]).replaceAll('"', '""')}"`).join(",")
+    )
+  ].join("\n");
+
+  const blob = new Blob([csv], { type:"text/csv;charset=utf-8;" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "ceybreez-booking-report.csv";
+  a.click();
+}
+
+
 async function loadBookings() {
   const tableBody = document.getElementById("bookingTableBody");
   if (tableBody) {
@@ -1729,6 +2187,7 @@ async function loadBookings() {
     allBookings = data || [];
     renderBookingStats(allBookings);
     applyBookingFilters();
+    renderReports();
   } catch (err) {
     if (tableBody) {
       tableBody.innerHTML = `<tr><td colspan="9" class="empty-row">${escapeHtml(err.message)}</td></tr>`;
@@ -1760,6 +2219,7 @@ function applyBookingFilters() {
 
   renderBookingsTable(filtered);
   renderBookingsCalendar(filtered);
+  renderAvailabilityMatrix();
 }
 
 function renderBookingStats(data) {
@@ -2011,102 +2471,6 @@ function escapeJs(value) {
     .replaceAll("\r", "");
 }
 
-
-function isManualBooking(item){
-  return String(item.reference || "").startsWith("MAN-") ||
-         String(item.inquiryId || "").startsWith("MAN-") ||
-         String(item.serviceType || "").toLowerCase().includes("manual booking");
-}
-
-function bookingInquiryId(item){
-  return item?.inquiryId || item?.reference || "";
-}
-
-function bookingRemarkText(booking){
-  const ref = booking.reference || booking.id || "";
-  const property = booking.itemName || "-";
-  const guest = booking.guestName || "-";
-
-  return `Booking Remark
-Reference: ${ref}
-Property / Tour: ${property}
-Guest: ${guest}`;
-}
-
-async function saveBookingRemark(bookingId){
-  const booking = allBookings.find(x => String(x.id) === String(bookingId));
-  if(!booking) return alert("Booking not found");
-
-  const input = document.getElementById(`bookingRemark-${bookingId}`);
-  const noteText = (input?.value || "").trim();
-
-  if(!noteText){
-    alert("Please type a remark first.");
-    return;
-  }
-
-  const inquiryId = bookingInquiryId(booking);
-
-  if(!inquiryId){
-    alert("No related inquiry found for this booking.");
-    return;
-  }
-
-  const nowText = new Date().toLocaleString("en-GB");
-
-  const note = `${bookingRemarkText(booking)}
-
-Remark added from Booking Page
-Date/Time: ${nowText}
-
-${noteText}`;
-
-  const res = await fetch(`${API_BASE}/api/admin/inquiries/${inquiryId}/notes`, {
-    method: "POST",
-    headers: authHeaders(),
-    body: JSON.stringify({ note })
-  });
-
-  const result = await res.json();
-
-  if(!res.ok){
-    alert(result.error || "Remark save failed");
-    return;
-  }
-
-  alert("Remark saved to Inquiry Admin Notes");
-
-  if(input) input.value = "";
-
-  await loadInquiries();
-}
-
-async function openInquiryFromBooking(bookingId){
-  const booking = allBookings.find(x => String(x.id) === String(bookingId));
-  if(!booking) return alert("Booking not found");
-
-  const inquiryId = bookingInquiryId(booking);
-
-  await loadInquiries();
-
-  const inquiry = allInquiries.find(x =>
-    String(x.id) === String(inquiryId) ||
-    String(x.reference) === String(booking.reference)
-  );
-
-  if(!inquiry){
-    alert("Related inquiry not found. It may have been deleted.");
-    return;
-  }
-
-  showTab("inquiriesTab");
-
-  setTimeout(() => {
-    openInquiryModal(inquiry.id);
-  }, 200);
-}
-
-
 function openBookingDetails(id){
 
   const booking = allBookings.find(x => String(x.id) === String(id));
@@ -2245,7 +2609,7 @@ function openInquiryModal(id){
   <button onclick="openGuestWhatsApp()">WhatsApp</button>
   <button onclick="emailGuest()">Email</button>
   <button onclick="copyInquiryDetails()">Copy</button>
-  <button onclick="confirmBooking()">Confirm Booking</button>
+  <button onclick="confirmBooking(document.getElementById('sendStatusEmail')?.checked ?? true)">Confirm Booking</button>
   <button class="delete-btn" onclick="deleteCurrentInquiry()">Delete Inquiry</button>
 </div>
       <div class="status-action-row">
@@ -2258,7 +2622,12 @@ function openInquiryModal(id){
           <option value="Cancelled">Cancelled</option>
         </select>
 
-        <button onclick="updateInquiryStatus(currentInquiry.id, document.getElementById('modalInquiryStatus').value)">
+        <label class="send-email-check">
+          <input type="checkbox" id="sendStatusEmail" checked>
+          Send email to guest
+        </label>
+
+        <button onclick="updateInquiryStatus(currentInquiry.id, document.getElementById('modalInquiryStatus').value, document.getElementById('sendStatusEmail').checked)">
           Update Status
         </button>
       </div>
@@ -2377,7 +2746,7 @@ async function saveInquiryNote() {
   }
 }
 
-async function confirmBooking() {
+async function confirmBooking(sendEmail = true) {
 
   console.log("CONFIRM BOOKING CLICKED", currentInquiry);
 
@@ -2417,7 +2786,8 @@ async function confirmBooking() {
           guestMobile: currentInquiry.guestMobile,
           dateFrom: currentInquiry.dateFrom,
           dateTo: currentInquiry.dateTo,
-          guests: currentInquiry.guests
+          guests: currentInquiry.guests,
+          sendEmail
         })
       }
     );

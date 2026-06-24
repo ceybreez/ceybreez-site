@@ -2846,14 +2846,15 @@ async function confirmBooking(sendEmail = true) {
 
   if (!confirm("Confirm this booking?")) return;
 
-  const existingBooking = allBookings.find(b =>
-    String(b.inquiryId || "") === String(currentInquiry.id)
-  );
+ const activeExistingBooking = allBookings.find(b =>
+  String(b.inquiryId || "") === String(currentInquiry.id) &&
+  normalizeStatus(b.status) === "booked"
+);
 
-  if (existingBooking) {
-    alert("This inquiry is already booked.");
-    return;
-  }
+if (activeExistingBooking) {
+  alert("This inquiry is already booked.");
+  return;
+}
 
   try {
 

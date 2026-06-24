@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CeyBreez Admin</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+<div class="admin-wrap">
+  <h1>CeyBreez Admin Panel V2</h1>
+
+  <section class="login-box" id="loginBox">
+    <h2>Admin Login</h2>
+    <input type="password" id="adminToken" placeholder="Enter ADMIN_TOKEN" />
+    <button onclick="loginAdmin()">Login</button>
+  </section>
+
+  <section class="admin-panel hidden" id="adminPanel">
+    <div class="topbar">
+      <button onclick="showTab('destinations')">Tours Destinations</button>
+      <button onclick="showTab('properties')">Villas / Homestays / Apartments</button>
+      <button onclick="showTab('services')">Cafes & Services</button>
+      <button onclick="showTab('inquiriesTab')">Inquiries</button>
+      <button onclick="showTab('bookingsTab')">Bookings</button>
+      <button onclick="showTab('pageControl')">Page Control</button>
+      <button onclick="logoutAdmin()">Logout</button>
+    </div>
+
+    <section id="destinationsTab">
+      <h2>Tours Destinations</h2>
+
+      <form id="destinationForm">
+        <input type="hidden" id="destEditId" />
+
+        <input id="destName" placeholder="Location Name" required />
+        <input id="destProvince" placeholder="Province" required />
+        <input id="destLat" placeholder="Latitude" required />
+        <input id="destLng" placeholder="Longitude" required />
+        <input id="destMapUrl" placeholder="Google Map Link" />
+        <input id="destBestFor" placeholder="Best For" />
+        <input id="destTime" placeholder="Time Needed" />
+        <input id="destNearby" placeholder="Nearby Places" />
+        <textarea id="destDescription" placeholder="Description"></textarea>
+
+        <div class="upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'dest')">
+          <h3>Upload Destination Photos</h3>
+          <p>Drag & drop photos here, or browse from your computer.</p>
+          <input type="file" id="destPhotoUploader" multiple accept="image/*" onchange="uploadPhotos('dest')" />
+          <button type="button" onclick="document.getElementById('destPhotoUploader').click()">Browse Photos</button>
+          <p id="destUploadStatus" class="upload-status"></p>
+        </div>
+
+        <textarea id="destPhotos" placeholder="Photo URLs will appear here automatically, one per line"></textarea>
+        <div id="destPhotoPreview" class="photo-preview"></div>
+
+        <label><input type="checkbox" id="destActive" checked /> Active / Show on website</label>
+        <label><input type="checkbox" id="destFeatured" /> Featured / Show on Home Page</label>
+
+        <button type="submit">Save Destination</button>
+        <button type="button" onclick="resetDestinationForm()">Clear</button>
+      </form>
+
+      <div id="destinationsList" class="list"></div>
+    </section>
+
+    <section id="propertiesTab" class="hidden">
+      <h2>Properties</h2>
+
+      <form id="propertyForm">
+        <input type="hidden" id="propEditId" />
+
+        <select id="propType">
+          <option value="villa">Villa</option>
+          <option value="homestay">Homestay</option>
+          <option value="apartment">Apartment</option>
+        </select>
+
+        <input id="propName" placeholder="Property Name" required />
+        <input id="propLocation" placeholder="Location" />
+        <input id="propLat" placeholder="Latitude" />
+        <input id="propLng" placeholder="Longitude" />
+        <input id="propMapUrl" placeholder="Google Map Link / Directions URL" />
+        <input id="propPrice" placeholder="Price / Starting From" />
+        <input id="propGuests" placeholder="Guests" />
+        <input id="propBedrooms" placeholder="Bedrooms" />
+        <input id="propBathrooms" placeholder="Bathrooms" />
+        <textarea id="propFacilities" placeholder="Facilities, one per line"></textarea>
+        <textarea id="propDescription" placeholder="Description"></textarea>
+
+        <div class="upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'prop')">
+          <h3>Upload Property Photos</h3>
+          <p>Drag & drop photos here, or browse from your computer.</p>
+          <input type="file" id="propPhotoUploader" multiple accept="image/*" onchange="uploadPhotos('prop')" />
+          <button type="button" onclick="document.getElementById('propPhotoUploader').click()">Browse Photos</button>
+          <p id="propUploadStatus" class="upload-status"></p>
+        </div>
+
+        <textarea id="propPhotos" placeholder="Photo URLs will appear here automatically, one per line"></textarea>
+        <div id="propPhotoPreview" class="photo-preview"></div>
+
+        <label><input type="checkbox" id="propActive" checked /> Active / Show on website</label>
+        <label><input type="checkbox" id="propFeatured" /> Featured / Show on Home Page</label>
+
+        <button type="submit">Save Property</button>
+        <button type="button" onclick="resetPropertyForm()">Clear</button>
+      </form>
+
+      <div id="propertiesList" class="list"></div>
+    </section>
+<section id="servicesTab" class="hidden">
+  <h2>Cafes & Services</h2>
+
+  <form id="serviceForm">
+    <input type="hidden" id="serviceEditId" />
+
+    <label>Business / Service Name</label>
+    <input id="serviceName" placeholder="Demo Cafe" required />
+
+    <label>Category</label>
+    <select id="serviceCategory">
+      <option value="Cafe">Cafe</option>
+      <option value="Coffee Shop">Coffee Shop</option>
+      <option value="Tea Spot">Tea Spot</option>
+      <option value="Restaurant">Restaurant</option>
+      <option value="Grocery">Grocery</option>
+      <option value="Super Market">Super Market</option>
+      <option value="Bike Rental">Bike Rental</option>
+      <option value="Vehicle Rental">Vehicle Rental</option>
+      <option value="Laundry">Laundry</option>
+      <option value="Salon">Salon</option>
+      <option value="Clothing Shop">Clothing Shop</option>
+      <option value="Taxi Service">Taxi Service</option>
+      <option value="Pharmacy">Pharmacy</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <label>Location</label>
+    <input id="serviceLocation" placeholder="Hikkaduwa / Galle / Colombo" required />
+
+    <label>Short Description</label>
+    <input id="serviceShortDescription" placeholder="Short summary for card" />
+
+    <label>Full Description</label>
+    <textarea id="serviceFullDescription" placeholder="Full details shown in popup"></textarea>
+
+    <label>Phone</label>
+    <input id="servicePhone" placeholder="+94700000000" />
+
+    <label>WhatsApp</label>
+    <input id="serviceWhatsapp" placeholder="94700000000" />
+
+    <label>Website</label>
+    <input id="serviceWebsite" placeholder="https://..." />
+
+    <label>Google Map URL</label>
+    <input id="serviceMapUrl" placeholder="https://maps.google.com/..." />
+
+    <label>Opening Hours</label>
+    <input id="serviceOpeningHours" placeholder="8.00 AM - 10.00 PM" />
+
+    <label>Main Image</label>
+    <div class="upload-box"
+         ondragover="handleDragOver(event)"
+         ondragleave="handleDragLeave(event)"
+         ondrop="handleServiceImageDrop(event)">
+      <h3>Upload Service Main Image</h3>
+      <p>Drag & drop image here, or browse from your computer.</p>
+      <input type="file" id="serviceImageUploader" accept="image/*" onchange="uploadServiceImage()" />
+      <button type="button" onclick="document.getElementById('serviceImageUploader').click()">Browse Image</button>
+      <p id="serviceImageUploadStatus" class="upload-status"></p>
+    </div>
+    <input id="serviceImage" readonly placeholder="Uploaded image URL will appear here" />
+
+    <label>Gallery Photos</label>
+    <div class="upload-box"
+         ondragover="handleDragOver(event)"
+         ondragleave="handleDragLeave(event)"
+         ondrop="handleServicePhotosDrop(event)">
+      <h3>Upload Service Gallery Photos</h3>
+      <p>Drag & drop photos here, or browse from your computer.</p>
+      <input type="file" id="servicePhotosUploader" multiple accept="image/*" onchange="uploadServicePhotos()" />
+      <button type="button" onclick="document.getElementById('servicePhotosUploader').click()">Browse Photos</button>
+      <p id="servicePhotosUploadStatus" class="upload-status"></p>
+    </div>
+
+    <textarea id="servicePhotos" placeholder="Uploaded photo URLs will appear here, one per line"></textarea>
+    <div id="servicePhotosPreview" class="photo-preview"></div>
+
+    <label><input type="checkbox" id="serviceActive" checked /> Active / Show on website</label>
+    <label><input type="checkbox" id="serviceFeatured" /> Featured / Show on Home Page</label>
+
+    <button type="submit">Save Service</button>
+    <button type="button" onclick="resetServiceForm()">Clear</button>
+  </form>
+
+  <div id="servicesList" class="list"></div>
+</section>
+    <section id="pageControlTab" class="hidden">
+      <h2>Page Control</h2>
+
+      <div class="settings-toggle-row">
+  <button type="button" class="settings-toggle-btn" onclick="toggleGlobalSettings()">
+    ⚙ Global Settings
+  </button>
+</div>
+
+<form id="siteContentForm" class="hidden global-settings-box">
+  <h3>Global Settings</h3>
+
+          <label>Logo URL</label>
+          <input id="site_logo" placeholder="logo.png or uploaded image URL" />
+
+          <label>Favicon URL</label>
+          <input id="site_favicon" placeholder="logo.png or uploaded image URL" />
+
+          <label>Primary Color</label>
+          <input id="site_primary_color" type="color" />
+
+          <label>Secondary Color</label>
+          <input id="site_secondary_color" type="color" />
+
+          <label>Website Background Color</label>
+          <input id="site_background_color" type="color" />
+
+          <label>Website Text Color</label>
+          <input id="site_text_color" type="color" />
+
+          <label>Contact Email</label>
+          <input id="contact_email" placeholder="ceybreez@gmail.com" />
+
+          <label>WhatsApp Number</label>
+          <input id="contact_whatsapp" placeholder="94704620017" />
+
+          <label>Facebook URL</label>
+          <input id="facebook_url" />
+
+          <label>Instagram URL</label>
+          <input id="instagram_url" />
+
+          <h3>Home Hero Section</h3>
+
+          <label>Hero Title</label>
+          <input id="home_hero_title" />
+
+          <label>Hero Subtitle</label>
+          <textarea id="home_hero_subtitle"></textarea>
+
+          <label>Hero Background Image / Video URL</label>
+          <input id="home_hero_media" placeholder="Upload or paste media URL" />
+
+          <label>Hero Text Color</label>
+          <input id="home_hero_text_color" type="color" value="#ffffff" />
+
+          <label>Hero Button Color</label>
+          <input id="home_hero_button_color" type="color" value="#0f766e" />
+
+          <div class="upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handlePageMediaDrop(event)">
+            <h3>Upload Logo / Hero Image / Video</h3>
+            <p>Upload media, then copy the URL into the field you want.</p>
+            <input type="file" id="pageMediaUploader" multiple accept="image/*,video/*" onchange="uploadPageMedia()" />
+            <button type="button" onclick="document.getElementById('pageMediaUploader').click()">Browse Media</button>
+            <p id="pageMediaUploadStatus" class="upload-status"></p>
+          </div>
+
+          <textarea id="pageUploadedUrls" placeholder="Uploaded URLs will appear here"></textarea>
+
+         <button type="submit">Save Page Control Settings</button>
+</form>
+
+<div class="settings-toggle-row">
+  <button type="button"
+          class="settings-toggle-btn"
+          onclick="toggleSectionBuilder()">
+    📄 Add / Edit Page Section
+  </button>
+</div>
+
+<div id="sectionBuilderBox" class="hidden">
+
+<form id="sectionForm">
+          <h3>Add / Edit Page Section</h3>
+
+          <input type="hidden" id="sectionEditId" />
+
+          <label>Page</label>
+          <select id="sectionPage">
+            <option value="home">Home</option>
+            <option value="villas">Villas</option>
+            <option value="homestays">Homestays</option>
+            <option value="apartments">Apartments</option>
+            <option value="tours">Tours</option>
+            <option value="services">Services</option>
+            <option value="contact">Contact</option>
+          </select>
+<label>Section Key</label>
+<select id="sectionKey">
+  <option value="hero">Hero</option>
+  <option value="about">About Section</option>
+  <option value="things">Things To Do</option>
+  <option value="experiences">Experiences</option>
+  <option value="contact">Contact Section</option>
+  <option value="footer">Footer</option>
+  <option value="custom">Custom Section</option>
+</select>
+          <label>Section Type</label>
+          <select id="sectionType">
+            <option value="hero">Hero</option>
+            <option value="text">Text Section</option>
+            <option value="cards">Cards Section</option>
+            <option value="gallery">Gallery</option>
+            <option value="video">Video</option>
+            <option value="cta">CTA</option>
+            <option value="custom">Custom</option>
+          </select>
+
+          <label>Title</label>
+          <input id="sectionTitle" />
+
+          <label>Subtitle</label>
+          <input id="sectionSubtitle" />
+
+          <label>Content</label>
+<textarea id="sectionContent"></textarea>
+
+<h3>Cards Builder</h3>
+
+<div id="cardsBuilder"></div>
+
+<button type="button" onclick="addCardItem()">
+  + Add Card
+</button>
+
+          <label>Section Image</label>
+          <div class="upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleSectionImageDrop(event)">
+            <h3>Upload Section Image</h3>
+            <p>Drag & drop image here, or browse from your computer.</p>
+            <input type="file" id="sectionImageUploader" accept="image/*" onchange="uploadSectionImage()" />
+            <button type="button" onclick="document.getElementById('sectionImageUploader').click()">Browse Image</button>
+            <p id="sectionImageUploadStatus" class="upload-status"></p>
+          </div>
+          <input id="sectionImage" readonly placeholder="Uploaded image URL will appear here" />
+
+          <label>Section Video</label>
+          <div class="upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleSectionVideoDrop(event)">
+            <h3>Upload Section Video</h3>
+            <p>Drag & drop video here, or browse from your computer.</p>
+            <input type="file" id="sectionVideoUploader" accept="video/*" onchange="uploadSectionVideo()" />
+            <button type="button" onclick="document.getElementById('sectionVideoUploader').click()">Browse Video</button>
+            <p id="sectionVideoUploadStatus" class="upload-status"></p>
+          </div>
+          <input id="sectionVideo" readonly placeholder="Uploaded video URL will appear here" />
+
+          <label>Background Color</label>
+          <input id="sectionBgColor" type="color" value="#ffffff" />
+          <label>Background Image</label>
+          <div class="upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleSectionBackgroundDrop(event)">
+            <h3>Upload Background Image</h3>
+            <p>Drag & drop background image here, or browse from your computer.</p>
+            <input type="file" id="sectionBackgroundUploader" accept="image/*" onchange="uploadSectionBackground()" />
+            <button type="button" onclick="document.getElementById('sectionBackgroundUploader').click()">Browse Background</button>
+            <p id="sectionBackgroundUploadStatus" class="upload-status"></p>
+          </div>
+          <input id="sectionBackgroundImage" readonly placeholder="Uploaded background image URL will appear here" />
+
+<label>Gradient Start Color</label>
+<input id="sectionGradientStart" type="color" value="#ffffff" />
+
+<label>Gradient End Color</label>
+<input id="sectionGradientEnd" type="color" value="#f8f3eb" />
+
+<label>Padding Top (px)</label>
+<input id="sectionPaddingTop" type="number" min="0" placeholder="80" />
+
+<label>Padding Bottom (px)</label>
+<input id="sectionPaddingBottom" type="number" min="0" placeholder="80" />
+
+<label>Border Radius (px)</label>
+<input id="sectionBorderRadius" type="number" min="0" placeholder="28" />
+
+<label>Shadow</label>
+<select id="sectionShadow">
+  <option value="">Default</option>
+  <option value="none">None</option>
+  <option value="soft">Soft</option>
+  <option value="medium">Medium</option>
+  <option value="strong">Strong</option>
+</select>
+
+<label>Animation</label>
+<select id="sectionAnimation">
+  <option value="">None</option>
+  <option value="fade-up">Fade Up</option>
+  <option value="zoom-in">Zoom In</option>
+  <option value="slide-left">Slide Left</option>
+</select>
+          <label>Text Color</label>
+          <input id="sectionTextColor" type="color" value="#222222" />
+
+          <label>Button Color</label>
+          <input id="sectionButtonColor" type="color" value="#0f766e" />
+
+          <label>Font Family</label>
+          <select id="sectionFontFamily">
+            <option value="">Default</option>
+            <option value="Poppins">Poppins</option>
+            <option value="Cormorant Garamond">Cormorant Garamond</option>
+            <option value="Arial">Arial</option>
+            <option value="Georgia">Georgia</option>
+          </select>
+
+          <label>Sort Order</label>
+          <input id="sectionSortOrder" type="number" value="0" />
+
+          <label><input type="checkbox" id="sectionActive" checked /> Active / Show on website</label>
+
+          <button type="submit">Save Section</button>
+<button type="button" onclick="resetSectionForm()">Clear</button>
+</form>
+
+</div>
+      <h3>Page Sections</h3>
+      <div class="filter-row">
+        <select id="sectionFilterPage" onchange="loadPageSections()">
+          <option value="home">Home</option>
+          <option value="villas">Villas</option>
+          <option value="homestays">Homestays</option>
+          <option value="apartments">Apartments</option>
+          <option value="tours">Tours</option>
+          <option value="services">Services</option>
+          <option value="contact">Contact</option>
+        </select>
+      </div>
+
+      <div id="sectionsList" class="list"></div>
+    </section>
+  </section>
+</div>
+
+<div id="imagePreviewModal" class="image-preview-modal">
+  <span class="image-preview-close" onclick="closeImagePreview()">×</span>
+  <img id="previewFullImage" src="" alt="Preview">
+</div>
+<section id="inquiriesTab" class="hidden">
+  <h2>Customer Inquiries</h2>
+<div class="inquiry-toolbar">
+
+  <input
+    type="text"
+    id="inquirySearch"
+    placeholder="Search reference, name, email..."
+  >
+
+  <select id="inquiryFilter">
+    <option value="">All Status</option>
+    <option value="New">New</option>
+    <option value="Contacted">Contacted</option>
+    <option value="Quoted">Quoted</option>
+    <option value="Booked">Booked</option>
+    <option value="Closed">Closed</option>
+    <option value="Cancelled">Cancelled</option>
+  </select>
+
+  <button onclick="exportInquiriesCSV()">Export CSV</button>
+
+</div>
+
+<div id="inquiryCards" class="dashboard-cards"></div>
+
+<div id="inquiryTypeCards" class="dashboard-cards"></div>
+
+<div id="monthlyInquiryChart" class="monthly-chart"></div>
+ <section class="admin-section">
+  <div class="section-head">
+    <div>
+      <h2>Latest Inquiries</h2>
+      <p>Manage customer inquiries from one place</p>
+    </div>
+
+    <div class="inquiry-tools">
+      <input type="text" id="inquirySearch" placeholder="Search name, email, property..." />
+
+      <select id="inquiryStatusFilter">
+        <option value="all">All Status</option>
+        <option value="new">New</option>
+        <option value="contacted">Contacted</option>
+        <option value="booked">Booked</option>
+        <option value="quoted">Quoted</option>
+        <option value="cancelled">Cancelled</option>
+        <option value="closed">Closed</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Guest</th>
+          <th>Type</th>
+          <th>Property / Tour</th>
+          <th>Check-in</th>
+          <th>Guests</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="inquiryTableBody">
+        <!-- JS render -->
+      </tbody>
+    </table>
+  </div>
+</section> 
+
+<div id="inquiryStats" class="inquiry-stats"></div>
+  <div id="inquiriesList" class="list"></div>
+</section>
+
+<section id="bookingsTab" class="hidden">
+  <h2>Confirmed Bookings</h2>
+
+  <div id="bookingStats" class="dashboard-cards"></div>
+
+  <section class="admin-section">
+    <div class="section-head">
+      <div>
+        <h2>Bookings List</h2>
+        <p>Confirmed bookings and cancelled booking records.</p>
+      </div>
+
+      <div class="inquiry-tools booking-tools">
+        <input type="text" id="bookingSearch" placeholder="Search booking, guest, property..." />
+
+        <select id="bookingTypeFilter">
+          <option value="all">All Types</option>
+          <option value="villa">Villas</option>
+          <option value="apartment">Apartments</option>
+          <option value="homestay">Homestays</option>
+          <option value="tour">Tours</option>
+        </select>
+
+        <select id="bookingStatusFilter">
+          <option value="all">All Status</option>
+          <option value="booked">Booked</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="admin-table bookings-table">
+        <thead>
+          <tr>
+            <th>Reference No</th>
+            <th>Created Date</th>
+            <th>Type</th>
+            <th>Property / Tour</th>
+            <th>Guest Details</th>
+            <th>Check In</th>
+            <th>Check Out</th>
+            <th>Status</th>
+            <th>Remark</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="bookingTableBody">
+          <tr><td colspan="10" class="empty-row">No bookings loaded</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="admin-section booking-calendar-section">
+    <div class="section-head">
+      <div>
+        <h2>Booking Calendar</h2>
+        <p>Monthly view of confirmed bookings.</p>
+      </div>
+      <div class="calendar-actions">
+        <button type="button" onclick="changeBookingMonth(-1)">‹ Previous</button>
+        <strong id="bookingCalendarTitle"></strong>
+        <button type="button" onclick="changeBookingMonth(1)">Next ›</button>
+      </div>
+    </div>
+    <div id="bookingCalendar" class="booking-calendar"></div>
+    <div id="bookingDetailsBox" class="booking-details-container"></div>
+  </section>
+
+  <section class="admin-section manual-booking-section">
+    <div class="section-head">
+      <div>
+        <h2>Manual Booking</h2>
+        <p>Add direct phone / WhatsApp bookings without an inquiry.</p>
+      </div>
+    </div>
+
+    <form id="manualBookingForm" class="manual-booking-form">
+      <select id="manualServiceType" required>
+        <option value="">Select Type</option>
+        <option value="Villa Manual Booking">Villa</option>
+        <option value="Apartment Manual Booking">Apartment</option>
+        <option value="Homestay Manual Booking">Homestay</option>
+        <option value="Tour Manual Booking">Tour</option>
+      </select>
+
+      <input id="manualItemName" placeholder="Property / Tour Name" required />
+      <input id="manualGuestName" placeholder="Guest Name" required />
+      <input id="manualGuestEmail" placeholder="Guest Email" />
+      <input id="manualGuestMobile" placeholder="Guest Mobile / WhatsApp" />
+      <input id="manualDateFrom" type="date" required />
+<input id="manualDateTo" type="date" required />
+
+<div id="manualAvailabilityMsg" class="manual-availability-msg"></div>
+
+<input id="manualGuests" placeholder="Guests" />
+
+<button type="submit">Save Manual Booking</button>
+    </form>
+  </section>
+</section>
+
+
+<!-- Inquiry Modal -->
+<div id="inquiryModal" class="modal hidden">
+  <div class="modal-content inquiry-modal">
+
+    <div class="modal-header">
+      <h2>Inquiry Details</h2>
+      <button onclick="closeInquiryModal()">✕</button>
+    </div>
+
+    <div id="inquiryModalBody"></div>
+
+    <hr>
+
+    <h3>Admin Notes</h3>
+
+    <textarea
+      id="adminNoteText"
+      placeholder="Add internal note..."
+      rows="4"></textarea>
+
+    <button onclick="saveInquiryNote()">
+      Save Note
+    </button>
+
+    <div id="inquiryNotesList"></div>
+
+  </div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>

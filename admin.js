@@ -1347,7 +1347,11 @@ async function updateInquiryStatus(id, status, sendEmail = false) {
   const res = await fetch(`${API_BASE}/api/admin/inquiries/${id}/status`, {
     method: "PUT",
     headers: authHeaders(),
-    body: JSON.stringify({ status, sendEmail })
+    body: JSON.stringify({
+      status,
+      sendEmail,
+      adminMessage: document.getElementById("bookingConfirmAdminMessage")?.value || ""
+    })
   });
 
   const result = await res.json();
@@ -2846,15 +2850,15 @@ async function confirmBooking(sendEmail = true) {
 
   if (!confirm("Confirm this booking?")) return;
 
- const activeExistingBooking = allBookings.find(b =>
-  String(b.inquiryId || "") === String(currentInquiry.id) &&
-  normalizeStatus(b.status) === "booked"
-);
+  const activeExistingBooking = allBookings.find(b =>
+    String(b.inquiryId || "") === String(currentInquiry.id) &&
+    normalizeStatus(b.status) === "booked"
+  );
 
-if (activeExistingBooking) {
-  alert("This inquiry is already booked.");
-  return;
-}
+  if (activeExistingBooking) {
+    alert("This inquiry is already booked.");
+    return;
+  }
 
   try {
 

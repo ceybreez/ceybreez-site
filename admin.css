@@ -1923,3 +1923,148 @@ input[readonly]{
     grid-template-columns:1fr !important;
   }
 }
+
+
+/* =========================
+   V6.2 CMS MODAL ALIGNMENT FIX
+========================= */
+
+.cms-form-box.v6-cms-modal-open{
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  height:100vh !important;
+  z-index:999999 !important;
+  background:rgba(0,0,0,.62) !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:24px !important;
+  margin:0 !important;
+  border:none !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  overflow:hidden !important;
+}
+
+.cms-form-box.v6-cms-modal-open .v6-cms-modal-head{
+  width:min(980px,96vw) !important;
+  min-height:58px !important;
+  background:#0f766e !important;
+  color:#fff !important;
+  padding:14px 18px !important;
+  border-radius:22px 22px 0 0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  margin:0 !important;
+  box-shadow:0 18px 45px rgba(0,0,0,.18) !important;
+  position:relative !important;
+  top:auto !important;
+  left:auto !important;
+  right:auto !important;
+  z-index:1000001 !important;
+}
+
+.cms-form-box.v6-cms-modal-open .v6-cms-modal-head h3{
+  margin:0 !important;
+  color:#fff !important;
+  font-size:18px !important;
+  font-weight:800 !important;
+}
+
+.cms-form-box.v6-cms-modal-open .v6-cms-modal-head button{
+  width:38px !important;
+  height:38px !important;
+  min-width:38px !important;
+  border-radius:50% !important;
+  padding:0 !important;
+  margin:0 !important;
+  background:#fff !important;
+  color:#0f766e !important;
+  font-size:22px !important;
+  line-height:38px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+.cms-form-box.v6-cms-modal-open > form{
+  width:min(980px,96vw) !important;
+  max-height:calc(90vh - 58px) !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  background:#fff !important;
+  border-radius:0 0 22px 22px !important;
+  padding:20px !important;
+  margin:0 !important;
+  border:none !important;
+  box-shadow:0 18px 45px rgba(0,0,0,.18) !important;
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:14px !important;
+  align-items:start !important;
+}
+
+.cms-form-box.v6-cms-modal-open > form > h3,
+.cms-form-box.v6-cms-modal-open > form > .upload-box,
+.cms-form-box.v6-cms-modal-open > form > textarea,
+.cms-form-box.v6-cms-modal-open > form > .photo-preview,
+.cms-form-box.v6-cms-modal-open > form > label,
+.cms-form-box.v6-cms-modal-open > form > button,
+.cms-form-box.v6-cms-modal-open > form > .facility-groups,
+.cms-form-box.v6-cms-modal-open > form > .facilities-box,
+.cms-form-box.v6-cms-modal-open > form > .property-facilities-box{
+  grid-column:1 / -1 !important;
+}
+
+.cms-form-box.v6-cms-modal-open .v6-field-wrap{
+  min-width:0 !important;
+  width:100% !important;
+}
+
+.cms-form-box.v6-cms-modal-open input,
+.cms-form-box.v6-cms-modal-open select,
+.cms-form-box.v6-cms-modal-open textarea{
+  width:100% !important;
+  max-width:100% !important;
+}
+
+.cms-form-box.v6-cms-modal-open .photo-preview{
+  display:grid !important;
+  grid-template-columns:repeat(auto-fill,minmax(110px,1fr)) !important;
+  gap:12px !important;
+}
+
+.cms-form-box.v6-cms-modal-open label:has(input[type="checkbox"]){
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+}
+
+.cms-form-box.v6-cms-modal-open label:has(input[type="checkbox"]) input{
+  width:auto !important;
+}
+
+.cms-form-box.v6-cms-modal-open button[type="submit"],
+.cms-form-box.v6-cms-modal-open form > button[type="button"]{
+  width:100% !important;
+  border-radius:12px !important;
+}
+
+@media(max-width:850px){
+  .cms-form-box.v6-cms-modal-open{
+    padding:10px !important;
+  }
+
+  .cms-form-box.v6-cms-modal-open .v6-cms-modal-head,
+  .cms-form-box.v6-cms-modal-open > form{
+    width:96vw !important;
+  }
+
+  .cms-form-box.v6-cms-modal-open > form{
+    grid-template-columns:1fr !important;
+    max-height:calc(94vh - 58px) !important;
+  }
+}

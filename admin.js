@@ -1033,24 +1033,38 @@ async function uploadCardImageFile(file, input) {
   }
 }
 
-/* SERVICES */
-
 async function loadServices() {
   try {
-    if (!data.name || !data.category || !data.location || !data.nearestCity) {
-    alert("Please fill service name, category, location and nearest city / area.");
-    return;
-  }
+    const res = await fetch(`${API_BASE}/api/admin/services`, {
+      headers: authHeaders()
+    });
 
-  const res = await fetch(`${API_BASE}/api/admin/services`, { headers: authHeaders() });
     const data = await res.json();
+
     if (!res.ok) throw new Error(data.error || "Failed to load services");
+
     allServices = data || [];
-    setFilterOptions("serviceCategoryFilter", allServices.map(x=>x.category), "All Categories");
-    setFilterOptions("serviceLocationFilter", allServices.map(x=>x.location), "All Locations");
+
+    setFilterOptions(
+      "serviceCategoryFilter",
+      allServices.map(x => x.category),
+      "All Categories"
+    );
+
+    setFilterOptions(
+      "serviceLocationFilter",
+      allServices.map(x => x.location),
+      "All Locations"
+    );
+
     renderServicesTable();
-    const box = document.getElementById("servicesList"); if (box) box.innerHTML = "";
-  } catch (err) { alert(err.message); }
+
+    const box = document.getElementById("servicesList");
+    if (box) box.innerHTML = "";
+
+  } catch (err) {
+    alert(err.message);
+  }
 }
 function renderServicesTable(){
   const tbody=document.getElementById("servicesTableBody"); if(!tbody) return;

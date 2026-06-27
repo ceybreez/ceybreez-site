@@ -3930,3 +3930,702 @@ function v6CloseCmsModal(formBoxId){
   // Clear only overlay inline display. Keep form inside shell; it will reopen correctly.
   box.style.display = "none";
 }
+
+
+/* =========================
+   V6.4 STABILITY FIX
+========================= */
+
+let v64OriginalFormParent = null;
+let v64OriginalFormNext = null;
+
+function v64TextOf(item){
+  return `${item?.category || ""} ${item?.serviceType || ""} ${item?.itemName || ""} ${item?.experiences || ""} ${item?.message || ""} ${item?.reference || ""}`.toLowerCase();
+}
+
+function classifyInquiryItem(item){
+  const text = v64TextOf(item);
+  if (text.includes("tour") || text.includes("trip") || text.includes("excursion") || text.includes("safari")) return "tour";
+  if (text.includes("cafe") || text.includes("service") || text.includes("restaurant") || text.includes("contact")) return "service";
+  return "property";
+}
+
+function classifyBookingItem(item){
+  const text = v64TextOf(item);
+  if (text.includes("tour") || text.includes("trip") || text.includes("excursion") || text.includes("safari")) return "tour";
+  if (String(item?.reference || "").startsWith("MAN-") || String(item?.inquiryId || "").startsWith("MAN-")) return "manual";
+  return "property";
+}
+
+function isTourInquiry(inquiry){ return classifyInquiryItem(inquiry) === "tour"; }
+function isPropertyInquiry(inquiry){ return classifyInquiryItem(inquiry) === "property"; }
+
+function setInquiryMode(mode, btn){
+  v6InquiryMode = mode || "all";
+  const hidden = document.getElementById("v6InquiryMode");
+  if(hidden) hidden.value = v6InquiryMode;
+  document.querySelectorAll("[data-inquiry-mode]").forEach(x => x.classList.remove("active"));
+  btn?.classList.add("active");
+  applyInquiryFilters();
+}
+
+function setBookingMode(mode, btn){
+  v6BookingMode = mode || "all";
+  const hidden = document.getElementById("v6BookingMode");
+  if(hidden) hidden.value = v6BookingMode;
+  document.querySelectorAll("[data-booking-mode]").forEach(x => x.classList.remove("active"));
+  btn?.classList.add("active");
+  applyBookingFilters();
+}
+
+function renderDashboardCards(data) {
+  const box = document.getElementById("inquiryCards");
+  if (!box) return;
+
+  const count = status => data.filter(x => normalizeStatus(x.status) === status.toLowerCase()).length;
+  const propertyCount = data.filter(x => classifyInquiryItem(x) === "property").length;
+  const tourCount = data.filter(x => classifyInquiryItem(x) === "tour").length;
+  const serviceCount = data.filter(x => classifyInquiryItem(x) === "service").length;
+
+  box.innerHTML = `
+    <div class="dashboard-card"><h3>Total Inquiries</h3><div class="value">${data.length}</div></div>
+    <div class="dashboard-card"><h3>Property Inquiries</h3><div class="value">${propertyCount}</div></div>
+    <div class="dashboard-card"><h3>Tour Inquiries</h3><div class="value">${tourCount}</div></div>
+    <div class="dashboard-card"><h3>Service / Contact</h3><div class="value">${serviceCount}</div></div>
+    <div class="dashboard-card card-new"><h3>New</h3><div class="value">${count("New")}</div></div>
+    <div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${count("Booked")}</div></div>
+    <div class="dashboard-card card-closed"><h3>Cancelled / Closed</h3><div class="value">${count("Cancelled") + count("Closed")}</div></div>
+  `;
+}
+
+function renderInquiryTypeCards(data) {
+  const box = document.getElementById("inquiryTypeCards");
+  if (!box) return;
+
+  const propertyCount = data.filter(x => classifyInquiryItem(x) === "property").length;
+  const tourCount = data.filter(x => classifyInquiryItem(x) === "tour").length;
+  const serviceCount = data.filter(x => classifyInquiryItem(x) === "service").length;
+
+  const countType = keyword =>
+    data.filter(x =>
+      (x.serviceType || "").toLowerCase().includes(keyword) ||
+      (x.itemName || "").toLowerCase().includes(keyword)
+    ).length;
+
+  box.innerHTML = `
+    <div class="dashboard-card"><h3>🏡 Properties</h3><div class="value">${propertyCount}</div></div>
+    <div class="dashboard-card"><h3>🧭 Tours</h3><div class="value">${tourCount}</div></div>
+    <div class="dashboard-card"><h3>☕ Services / Contact</h3><div class="value">${serviceCount}</div></div>
+    <div class="dashboard-card"><h3>🏡 Villas</h3><div class="value">${countType("villa")}</div></div>
+    <div class="dashboard-card"><h3>🏢 Apartments</h3><div class="value">${countType("apartment")}</div></div>
+    <div class="dashboard-card"><h3>🏠 Homestays</h3><div class="value">${countType("homestay")}</div></div>
+  `;
+}
+
+function renderBookingStats(data) {
+  const box = document.getElementById("bookingStats");
+  if (!box) return;
+
+  const count = status => data.filter(x => normalizeStatus(x.status) === status).length;
+  const propertyCount = data.filter(x => classifyBookingItem(x) === "property").length;
+  const tourCount = data.filter(x => classifyBookingItem(x) === "tour").length;
+  const manualCount = data.filter(x => classifyBookingItem(x) === "manual").length;
+
+  box.innerHTML = `
+    <div class="dashboard-card"><h3>Total Bookings</h3><div class="value">${data.length}</div></div>
+    <div class="dashboard-card"><h3>Property Bookings</h3><div class="value">${propertyCount}</div></div>
+    <div class="dashboard-card"><h3>Tour Bookings</h3><div class="value">${tourCount}</div></div>
+    <div class="dashboard-card"><h3>Manual Bookings</h3><div class="value">${manualCount}</div></div>
+    <div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${count("booked")}</div></div>
+    <div class="dashboard-card card-closed"><h3>Cancelled</h3><div class="value">${count("cancelled")}</div></div>
+  `;
+}
+
+function datePlusOne(dateValue) {
+  if (!dateValue) return "";
+  const d = new Date(dateValue + "T00:00:00");
+  if (isNaN(d.getTime())) return "";
+  d.setDate(d.getDate() + 1);
+  return toDateInputValue(d);
+}
+
+function safeBookingDateTo(inquiry) {
+  const from = inquiry?.dateFrom || "";
+  const to = inquiry?.dateTo || "";
+  if (to && from && to > from) return to;
+  if (classifyInquiryItem(inquiry) === "tour" && from) return datePlusOne(from);
+  return to || from;
+}
+
+function getItemNameForBooking(inquiry){
+  let item = inquiry?.itemName || "";
+  if(!item){
+    item = String(inquiry?.serviceType || "")
+      .replace("Villa Inquiry - ", "")
+      .replace("Apartment Inquiry - ", "")
+      .replace("Homestay Inquiry - ", "")
+      .replace("Tour Inquiry - ", "")
+      .replace("Tours Inquiry - ", "")
+      .trim();
+  }
+  if(!item && classifyInquiryItem(inquiry) === "tour") item = inquiry?.serviceType || "Tour Booking";
+  return item || "CeyBreez Booking";
+}
+
+function applyInquiryFilters() {
+  const searchInputs = document.querySelectorAll("#inquirySearch");
+  let search = "";
+  searchInputs.forEach(input => { if (input.value.trim()) search = input.value.toLowerCase(); });
+
+  const oldStatus = document.getElementById("inquiryFilter")?.value || "";
+  const newStatus = document.getElementById("inquiryStatusFilter")?.value || "all";
+  const mode = v6InquiryMode || document.getElementById("v6InquiryMode")?.value || "all";
+
+  let status = "";
+  if (newStatus && newStatus !== "all") status = newStatus.toLowerCase();
+  if (oldStatus) status = oldStatus.toLowerCase();
+
+  const filtered = allInquiries.filter(item => {
+    const text = `${item.reference || ""} ${item.guestName || ""} ${item.guestEmail || ""} ${item.guestMobile || ""} ${item.serviceType || ""} ${item.itemName || ""} ${item.message || ""}`.toLowerCase();
+    const itemStatus = normalizeStatus(item.status);
+    const modeMatch = mode === "all" || classifyInquiryItem(item) === mode;
+    return modeMatch && (!status || itemStatus === status) && (!search || text.includes(search));
+  });
+
+  renderDashboardCards(allInquiries);
+  renderInquiryTypeCards(allInquiries);
+  renderInquiryTable(filtered);
+
+  const inquiryCardsBox = document.getElementById("inquiriesList");
+  if (inquiryCardsBox) inquiryCardsBox.innerHTML = "";
+}
+
+function applyBookingFilters() {
+  const search = (document.getElementById("bookingSearch")?.value || "").toLowerCase();
+  const status = (document.getElementById("bookingStatusFilter")?.value || "all").toLowerCase();
+  const type = (document.getElementById("bookingTypeFilter")?.value || "all").toLowerCase();
+  const mode = v6BookingMode || document.getElementById("v6BookingMode")?.value || "all";
+
+  const filtered = allBookings.filter(item => {
+    const classType = classifyBookingItem(item);
+    const statusMatch = status === "all" || normalizeStatus(item.status) === status;
+    const modeMatch = mode === "all" || classType === mode;
+    const typeText = `${item.serviceType || ""} ${item.itemName || ""}`.toLowerCase();
+    const typeMatch = type === "all" || typeText.includes(type) || classType === type;
+    const searchText = `${item.id || ""} ${item.reference || ""} ${item.itemName || ""} ${item.serviceType || ""} ${item.guestName || ""} ${item.guestEmail || ""} ${item.guestMobile || ""}`.toLowerCase();
+    return modeMatch && statusMatch && typeMatch && (!search || searchText.includes(search));
+  });
+
+  renderBookingStats(allBookings);
+  renderBookingsTable(filtered);
+  renderBookingsCalendar(filtered);
+  renderAvailabilityMatrix();
+}
+
+function v6WrapFormFields(formSelector){
+  const form = document.querySelector(formSelector);
+  if(!form || form.dataset.v64Wrapped === "1") return;
+
+  const labelMap = {
+    propType:"Property Type", propName:"Property Name", propLocation:"Location / Area", propLat:"Latitude", propLng:"Longitude",
+    propMapUrl:"Google Map / Directions URL", propPrice:"Price / Starting From", propGuests:"Maximum Guests", propBedrooms:"Bedrooms",
+    propBathrooms:"Bathrooms", propFacilities:"Facilities", propDescription:"Description", propMainImage:"Main Cover Image URL",
+    propLogo:"Logo / Badge Image URL", propPhotos:"Gallery Photo URLs",
+    destName:"Tour Location Name", destProvince:"Province", destArea:"Nearest City / Area", destLat:"Latitude", destLng:"Longitude",
+    destMapUrl:"Google Map / Directions URL", destBestFor:"Best For", destTime:"Time Needed", destNearby:"Nearby Places",
+    destDescription:"Description", destLogo:"Logo / Badge Image URL", destPhotos:"Gallery Photo URLs",
+    serviceName:"Business / Service Name", serviceCategory:"Category", serviceLocation:"Location", serviceNearestCity:"Nearest City / Area",
+    serviceLat:"Latitude", serviceLng:"Longitude", serviceShortDescription:"Short Description", serviceFullDescription:"Full Description",
+    servicePhone:"Phone", serviceWhatsapp:"WhatsApp", serviceWebsite:"Website", serviceMapUrl:"Google Map URL", serviceOpeningHours:"Opening Hours",
+    serviceLogo:"Logo / Brand Image URL", serviceImage:"Main Image URL", servicePhotos:"Gallery Photo URLs"
+  };
+
+  [...form.querySelectorAll("input,select,textarea")].forEach(el => {
+    if(el.type === "hidden" || el.closest(".v64-field")) return;
+    const oldLabel = el.previousElementSibling;
+    if(oldLabel && oldLabel.tagName === "LABEL") oldLabel.remove();
+    const text = labelMap[el.id] || el.getAttribute("placeholder") || "";
+    if(!text) return;
+    const wrap = document.createElement("div");
+    wrap.className = "v64-field";
+    const label = document.createElement("label");
+    label.textContent = text;
+    el.parentNode.insertBefore(wrap, el);
+    wrap.appendChild(label);
+    wrap.appendChild(el);
+  });
+
+  form.dataset.v64Wrapped = "1";
+}
+
+function v64OpenCmsDrawer(formBoxId, title){
+  const sourceBox = document.getElementById(formBoxId);
+  const drawer = document.getElementById("v64CmsDrawer");
+  const body = document.getElementById("v64CmsDrawerBody");
+  const titleBox = document.getElementById("v64CmsDrawerTitle");
+  if(!sourceBox || !drawer || !body || !titleBox) return;
+
+  const form = sourceBox.querySelector("form");
+  if(!form) return;
+
+  sourceBox.querySelectorAll(".v6-cms-modal-head,.v6-cms-modal-shell").forEach(x => x.remove());
+
+  v64OriginalFormParent = form.parentNode;
+  v64OriginalFormNext = form.nextSibling;
+
+  titleBox.textContent = title || "Edit Details";
+  body.innerHTML = "";
+  body.appendChild(form);
+
+  v6WrapFormFields(`#${form.id}`);
+
+  sourceBox.classList.add("hidden");
+  sourceBox.classList.remove("v6-cms-modal-open");
+  sourceBox.style.display = "";
+
+  drawer.classList.remove("hidden");
+}
+
+function v64CloseCmsDrawer(){
+  const drawer = document.getElementById("v64CmsDrawer");
+  const body = document.getElementById("v64CmsDrawerBody");
+  const form = body?.querySelector("form");
+  if(form && v64OriginalFormParent){
+    if(v64OriginalFormNext) v64OriginalFormParent.insertBefore(form, v64OriginalFormNext);
+    else v64OriginalFormParent.appendChild(form);
+  }
+  if(drawer) drawer.classList.add("hidden");
+  if(body) body.innerHTML = "";
+  v64OriginalFormParent = null;
+  v64OriginalFormNext = null;
+}
+
+function v6OpenCmsModal(formBoxId, title){ v64OpenCmsDrawer(formBoxId, title); }
+function v6CloseCmsModal(formBoxId){ v64CloseCmsDrawer(); }
+
+function showCmsForm(id){
+  const titleMap = { destinationFormBox:"Tour Location Details", propertyFormBox:"Property Details", serviceFormBox:"Cafe / Service Details" };
+  if(["destinationFormBox","propertyFormBox","serviceFormBox"].includes(id)){
+    v64OpenCmsDrawer(id, titleMap[id] || "Edit Details");
+    return;
+  }
+  document.getElementById(id)?.classList.remove("hidden");
+}
+
+
+/* =========================
+   V6.5 GUEST CONFIRMATION + QUOTE SYSTEM
+========================= */
+
+function v65Bool(value){
+  return value === 1 || value === true || String(value || "").toLowerCase() === "true" || String(value || "") === "1";
+}
+
+function v65Money(value){
+  if(value === null || value === undefined || value === "") return "-";
+  return String(value);
+}
+
+function v65GuestBadge(item){
+  if(v65Bool(item.guestConfirmed)){
+    return `<span class="status-badge status-booked">Guest Confirmed</span>`;
+  }
+  return `<span class="status-badge status-quoted">Guest Pending</span>`;
+}
+
+function v65AdminBadge(item){
+  if(v65Bool(item.adminConfirmed) || normalizeStatus(item.status) === "booked"){
+    return `<span class="status-badge status-booked">Admin Confirmed</span>`;
+  }
+  return `<span class="status-badge status-contacted">Admin Pending</span>`;
+}
+
+function v65PaymentBadge(item){
+  const s = String(item.paymentStatus || "Pending");
+  const cls = s.toLowerCase().includes("paid") ? "status-booked" : "status-contacted";
+  return `<span class="status-badge ${cls}">${escapeHtml(s)}</span>`;
+}
+
+function v65QuotePayloadFromModal(){
+  return {
+    currency: document.getElementById("bookingConfirmCurrency")?.value || document.getElementById("quoteCurrency")?.value || "USD",
+    unitRate: document.getElementById("bookingConfirmDayRate")?.value || document.getElementById("quoteUnitRate")?.value || "",
+    discountPercent: document.getElementById("quoteDiscountPercent")?.value || document.getElementById("bookingConfirmDiscountPercent")?.value || "0",
+    discountAmount: document.getElementById("quoteDiscountAmount")?.value || document.getElementById("bookingConfirmDiscountAmount")?.value || "0",
+    totalAmount: document.getElementById("bookingConfirmTotalAmount")?.value || document.getElementById("quoteTotalAmount")?.value || "",
+    validUntil: document.getElementById("quoteValidUntil")?.value || "",
+    paymentStatus: document.getElementById("quotePaymentStatus")?.value || "Pending",
+    advanceAmount: document.getElementById("quoteAdvanceAmount")?.value || "",
+    balanceAmount: document.getElementById("quoteBalanceAmount")?.value || "",
+    adminMessage: document.getElementById("bookingConfirmAdminMessage")?.value || document.getElementById("quoteAdminMessage")?.value || "",
+    sendEmail: true
+  };
+}
+
+async function sendQuoteToGuest(id){
+  const inquiry = allInquiries.find(x => String(x.id) === String(id));
+  if(!inquiry) return alert("Inquiry not found");
+
+  if(!inquiry.guestEmail){
+    if(!confirm("Guest email is empty. Save quote without sending email?")) return;
+  }else{
+    if(!confirm("Send quote / invoice email to guest with confirmation button?")) return;
+  }
+
+  const res = await fetch(`${API_BASE}/api/admin/inquiries/${id}/quote`, {
+    method:"POST",
+    headers: authHeaders(),
+    body: JSON.stringify(v65QuotePayloadFromModal())
+  });
+
+  const result = await res.json();
+
+  if(!res.ok){
+    alert(result.error || "Quote send failed");
+    return;
+  }
+
+  alert(inquiry.guestEmail ? "Quote sent to guest" : "Quote saved");
+  await loadInquiries();
+
+  const refreshed = allInquiries.find(x => String(x.id) === String(id));
+  if(refreshed){
+    currentInquiry = refreshed;
+    openInquiryModal(id);
+  }
+}
+
+async function markGuestConfirmedManually(id){
+  if(!confirm("Mark this inquiry as Guest Confirmed manually?")) return;
+
+  const res = await fetch(`${API_BASE}/api/admin/inquiries/${id}/guest-confirm`, {
+    method:"POST",
+    headers: authHeaders(),
+    body: JSON.stringify({ manual:true })
+  });
+
+  const result = await res.json();
+
+  if(!res.ok){
+    alert(result.error || "Guest confirm failed");
+    return;
+  }
+
+  alert("Guest confirmation marked");
+  await loadInquiries();
+
+  const refreshed = allInquiries.find(x => String(x.id) === String(id));
+  if(refreshed){
+    currentInquiry = refreshed;
+    openInquiryModal(id);
+  }
+}
+
+async function adminConfirmFinalBooking(id){
+  const inquiry = allInquiries.find(x => String(x.id) === String(id)) || currentInquiry;
+  if(!inquiry) return alert("Inquiry not found");
+
+  if(!v65Bool(inquiry.guestConfirmed)){
+    if(!confirm("Guest has not confirmed yet. Do you still want to admin-confirm and book?")) return;
+  }else{
+    if(!confirm("Admin confirm this booking now?")) return;
+  }
+
+  currentInquiry = inquiry;
+  await confirmBooking(true);
+}
+
+function v65QuotePanelHtml(item){
+  const isTour = classifyInquiryItem(item) === "tour";
+  const defaultCurrency = item.quoteCurrency || item.currency || "USD";
+  const defaultRate = item.quoteUnitRate || item.dayRate || "";
+  const defaultDiscountPercent = item.quoteDiscountPercent || item.discountPercent || "0";
+  const defaultDiscountAmount = item.quoteDiscountAmount || item.discountAmount || "0";
+  const defaultTotal = item.quoteTotalAmount || item.totalAmount || "";
+  const defaultValid = item.quoteValidUntil || "";
+  const paymentStatus = item.paymentStatus || "Pending";
+
+  return `
+    <div class="modal-section booking-confirm-panel v65-quote-panel">
+      <h4>${isTour ? "Tour Quote / Invoice" : "Property Quote / Invoice"}</h4>
+
+      <div class="v65-confirm-row">
+        ${v65GuestBadge(item)}
+        ${v65AdminBadge(item)}
+        ${v65PaymentBadge(item)}
+      </div>
+
+      <div class="booking-confirm-grid v65-quote-grid">
+        <label>Currency
+          <select id="bookingConfirmCurrency">
+            ${["USD","LKR","EUR","OMR"].map(c => `<option value="${c}" ${defaultCurrency === c ? "selected" : ""}>${c}</option>`).join("")}
+          </select>
+        </label>
+
+        <label>${isTour ? "Adult / Unit Rate" : "Night / Unit Rate"}
+          <input id="bookingConfirmDayRate" type="number" step="0.01" value="${escapeHtml(defaultRate)}" oninput="v65RecalcQuote()" />
+        </label>
+
+        <label>${isTour ? "Qty / Guests" : "Nights"}
+          <input id="bookingConfirmNights" type="number" step="1" value="${escapeHtml(item.totalDays || item.guests || calcBookingNights?.(item.dateFrom, item.dateTo) || 1)}" oninput="v65RecalcQuote()" />
+        </label>
+
+        <label>Discount %
+          <input id="quoteDiscountPercent" type="number" step="0.01" value="${escapeHtml(defaultDiscountPercent)}" oninput="v65RecalcQuote()" />
+        </label>
+
+        <label>Discount Amount
+          <input id="quoteDiscountAmount" type="number" step="0.01" value="${escapeHtml(defaultDiscountAmount)}" oninput="v65RecalcQuote()" />
+        </label>
+
+        <label>Total Amount
+          <input id="bookingConfirmTotalAmount" type="number" step="0.01" value="${escapeHtml(defaultTotal)}" />
+        </label>
+
+        <label>Advance Paid
+          <input id="quoteAdvanceAmount" type="number" step="0.01" value="${escapeHtml(item.advanceAmount || "")}" oninput="v65RecalcBalance()" />
+        </label>
+
+        <label>Balance
+          <input id="quoteBalanceAmount" type="number" step="0.01" value="${escapeHtml(item.balanceAmount || "")}" />
+        </label>
+
+        <label>Payment Status
+          <select id="quotePaymentStatus">
+            ${["Pending","Advance Paid","Paid","Refunded"].map(s => `<option value="${s}" ${paymentStatus === s ? "selected" : ""}>${s}</option>`).join("")}
+          </select>
+        </label>
+
+        <label>Quote Valid Until
+          <input id="quoteValidUntil" type="date" value="${escapeHtml(defaultValid)}" />
+        </label>
+      </div>
+
+      ${isTour ? `
+        <div class="booking-confirm-grid v65-quote-grid">
+          <label>Pickup Time <input id="tourPickupTime" type="time" value="${escapeHtml(item.pickupTime || "")}" /></label>
+          <label>Pickup Location <input id="tourPickupLocation" value="${escapeHtml(item.pickupLocation || "")}" /></label>
+          <label>Child Rate <input id="tourChildRate" type="number" step="0.01" value="${escapeHtml(item.childRate || "")}" /></label>
+        </div>
+      ` : `
+        <div class="booking-confirm-grid v65-quote-grid">
+          <label>Check-in Time <input id="bookingConfirmCheckInTime" type="time" value="${escapeHtml(item.checkInTime || "14:00")}" /></label>
+          <label>Check-out Time <input id="bookingConfirmCheckOutTime" type="time" value="${escapeHtml(item.checkOutTime || "11:00")}" /></label>
+        </div>
+      `}
+
+      <label class="v65-full-label">Admin Message to Guest
+        <textarea id="bookingConfirmAdminMessage" placeholder="Example: Please arrive after 2.00 PM. Contact us before check-in.">${escapeHtml(item.adminMessage || item.quoteAdminMessage || "")}</textarea>
+      </label>
+
+      <div class="v65-action-row">
+        <button type="button" onclick="sendQuoteToGuest('${escapeJs(item.id)}')">Send Quote / Invoice</button>
+        <button type="button" onclick="markGuestConfirmedManually('${escapeJs(item.id)}')">Mark Guest Confirmed</button>
+        <button type="button" onclick="adminConfirmFinalBooking('${escapeJs(item.id)}')">Admin Confirm Booking</button>
+      </div>
+    </div>
+  `;
+}
+
+function v65RecalcQuote(){
+  const rate = Number(document.getElementById("bookingConfirmDayRate")?.value || 0);
+  const qty = Number(document.getElementById("bookingConfirmNights")?.value || 1);
+  const percent = Number(document.getElementById("quoteDiscountPercent")?.value || 0);
+  const discountAmount = Number(document.getElementById("quoteDiscountAmount")?.value || 0);
+  const gross = rate * qty;
+  const percentDiscount = gross * percent / 100;
+  const total = Math.max(gross - percentDiscount - discountAmount, 0);
+  const totalBox = document.getElementById("bookingConfirmTotalAmount");
+  if(totalBox) totalBox.value = total ? total.toFixed(2) : "";
+  v65RecalcBalance();
+}
+
+function v65RecalcBalance(){
+  const total = Number(document.getElementById("bookingConfirmTotalAmount")?.value || 0);
+  const advance = Number(document.getElementById("quoteAdvanceAmount")?.value || 0);
+  const balance = Math.max(total - advance, 0);
+  const box = document.getElementById("quoteBalanceAmount");
+  if(box) box.value = total ? balance.toFixed(2) : "";
+}
+
+/* Override inquiry table with confirmation columns */
+function renderInquiryTable(data) {
+  const tbody = document.getElementById("inquiryTableBody");
+  if (!tbody) return;
+
+  const thead = tbody.closest("table")?.querySelector("thead tr");
+  if(thead && !thead.dataset.v65){
+    thead.innerHTML = `
+      <th>Reference</th>
+      <th>Date</th>
+      <th>Type</th>
+      <th>Property / Tour</th>
+      <th>Guest</th>
+      <th>Dates</th>
+      <th>Guest Confirm</th>
+      <th>Admin Confirm</th>
+      <th>Status</th>
+    `;
+    thead.dataset.v65 = "1";
+  }
+
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="9" class="empty-row">No inquiries found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = data.map(item => {
+    const statusClass = normalizeStatus(item.status);
+    const displayStatus = item.status || "New";
+
+    return `
+      <tr onclick="openInquiryModal('${escapeJs(item.id)}')" class="clickable-row">
+        <td>${escapeHtml(item.reference || item.id || "-")}</td>
+        <td>${formatDate(item.createdAt || item.created_at)}</td>
+        <td>${escapeHtml(classifyInquiryItem(item).toUpperCase())}<br><small>${escapeHtml(item.serviceType || "-")}</small></td>
+        <td>${escapeHtml(item.itemName || getItemNameForBooking(item) || "-")}</td>
+        <td><strong>${escapeHtml(item.guestName || "-")}</strong><br><small>${escapeHtml(item.guestEmail || "")}</small></td>
+        <td>${escapeHtml(item.dateFrom || "-")} → ${escapeHtml(item.dateTo || (classifyInquiryItem(item)==="tour" ? item.dateFrom : "-"))}</td>
+        <td>${v65GuestBadge(item)}</td>
+        <td>${v65AdminBadge(item)}</td>
+        <td><span class="status-badge status-${statusClass}">${escapeHtml(displayStatus)}</span></td>
+      </tr>
+    `;
+  }).join("");
+}
+
+/* Override booking table with confirmation/payment columns */
+function renderBookingsTable(data) {
+  const tbody = document.getElementById("bookingTableBody");
+  if (!tbody) return;
+
+  const thead = tbody.closest("table")?.querySelector("thead tr");
+  if(thead && !thead.dataset.v65){
+    thead.innerHTML = `
+      <th>Reference</th>
+      <th>Created</th>
+      <th>Type</th>
+      <th>Property / Tour</th>
+      <th>Guest</th>
+      <th>Dates</th>
+      <th>Amount</th>
+      <th>Guest</th>
+      <th>Payment</th>
+      <th>Status</th>
+      <th>Action</th>
+    `;
+    thead.dataset.v65 = "1";
+  }
+
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="11" class="empty-row">No bookings found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = data.map(item => {
+    const status = item.status || "Booked";
+    const statusClass = normalizeStatus(status);
+
+    return `
+      <tr onclick="openBookingDetails('${escapeJs(item.id)}')" class="clickable-row">
+        <td>${escapeHtml(item.reference || item.id || "-")}</td>
+        <td>${formatDate(item.createdAt || item.created_at)}</td>
+        <td>${escapeHtml(classifyBookingItem(item).toUpperCase())}<br><small>${escapeHtml(item.serviceType || "-")}</small></td>
+        <td>${escapeHtml(item.itemName || "-")}</td>
+        <td><strong>${escapeHtml(item.guestName || "-")}</strong><br><small>${escapeHtml(item.guestEmail || "")}</small><br><small>${escapeHtml(item.guestMobile || "")}</small></td>
+        <td>${escapeHtml(item.dateFrom || "-")} → ${escapeHtml(item.dateTo || "-")}</td>
+        <td>${escapeHtml(item.currency || item.quoteCurrency || "")} ${escapeHtml(item.totalAmount || item.quoteTotalAmount || "-")}</td>
+        <td>${v65GuestBadge(item)}</td>
+        <td>${v65PaymentBadge(item)}</td>
+        <td><span class="status-badge status-${statusClass}">${escapeHtml(status)}</span></td>
+        <td onclick="event.stopPropagation();">
+          <button class="mini-btn" onclick="openInquiryFromBooking('${escapeJs(item.id)}')">Manage</button>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+/* Add quote panel into inquiry modal after original modal opens */
+const v65OriginalOpenInquiryModal = typeof openInquiryModal === "function" ? openInquiryModal : null;
+if(v65OriginalOpenInquiryModal){
+  openInquiryModal = function(id){
+    v65OriginalOpenInquiryModal(id);
+
+    setTimeout(() => {
+      const item = allInquiries.find(x => String(x.id) === String(id));
+      const body = document.getElementById("inquiryModalBody");
+      if(!item || !body || body.querySelector(".v65-quote-panel")) return;
+
+      body.insertAdjacentHTML("afterbegin", v65QuotePanelHtml(item));
+    }, 80);
+  };
+}
+
+/* Override confirm booking so guest/admin confirmation data syncs to booking */
+async function confirmBooking(sendEmail = true) {
+  if (!currentInquiry) {
+    alert("No inquiry selected");
+    return;
+  }
+
+  if (!confirm("Confirm this booking?")) return;
+
+  try {
+    const quote = v65QuotePayloadFromModal();
+
+    const res = await fetch(`${API_BASE}/api/admin/bookings`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: JSON.stringify({
+        inquiryId: currentInquiry.id,
+        reference: currentInquiry.reference,
+        itemName: getItemNameForBooking(currentInquiry),
+        serviceType: currentInquiry.serviceType || (classifyInquiryItem(currentInquiry) === "tour" ? "Tour Inquiry" : "Property Inquiry"),
+        guestName: currentInquiry.guestName,
+        guestEmail: currentInquiry.guestEmail,
+        guestMobile: currentInquiry.guestMobile,
+        dateFrom: currentInquiry.dateFrom,
+        dateTo: safeBookingDateTo(currentInquiry),
+        guests: currentInquiry.guests,
+        checkInTime: document.getElementById("bookingConfirmCheckInTime")?.value || currentInquiry.checkInTime || "14:00",
+        checkOutTime: document.getElementById("bookingConfirmCheckOutTime")?.value || currentInquiry.checkOutTime || "11:00",
+        pickupTime: document.getElementById("tourPickupTime")?.value || currentInquiry.pickupTime || "",
+        pickupLocation: document.getElementById("tourPickupLocation")?.value || currentInquiry.pickupLocation || "",
+        childRate: document.getElementById("tourChildRate")?.value || currentInquiry.childRate || "",
+        currency: quote.currency,
+        dayRate: quote.unitRate,
+        totalDays: document.getElementById("bookingConfirmNights")?.value || currentInquiry.totalDays || "1",
+        discountPercent: quote.discountPercent,
+        discountAmount: quote.discountAmount,
+        totalAmount: quote.totalAmount,
+        paymentStatus: quote.paymentStatus,
+        advanceAmount: quote.advanceAmount,
+        balanceAmount: quote.balanceAmount,
+        guestConfirmed: v65Bool(currentInquiry.guestConfirmed),
+        adminConfirmed: true,
+        sendEmail,
+        adminMessage: quote.adminMessage
+      })
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      alert(result.error || "Booking failed");
+      return;
+    }
+
+    currentInquiry.status = "Booked";
+    currentInquiry.adminConfirmed = true;
+
+    await loadBookings();
+    await loadInquiries();
+
+    alert("Booking Confirmed");
+    closeInquiryModal?.();
+
+  } catch (err) {
+    alert(err.message);
+  }
+}

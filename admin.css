@@ -2418,3 +2418,7 @@ input[readonly]{
 
 /* V6.6 cleanup button */
 #cleanupOrphansBtn{background:#7c2d12!important;}
+
+/* V7 Professional Stable */
+#cleanupOrphansBtn{background:#7c2d12!important;}
+#syncBookingsBtn{background:#1d4ed8!important;}

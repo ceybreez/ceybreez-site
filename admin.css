@@ -2415,3 +2415,6 @@ input[readonly]{
     grid-template-columns:1fr !important;
   }
 }
+
+/* V6.6 cleanup button */
+#cleanupOrphansBtn{background:#7c2d12!important;}

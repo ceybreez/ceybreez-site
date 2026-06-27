@@ -2225,3 +2225,193 @@ input[readonly]{
     max-height:calc(94vh - 58px) !important;
   }
 }
+
+
+
+/* =========================
+   V6.4 CLEAN CMS DRAWER
+========================= */
+
+.cms-form-box.v6-cms-modal-open{ display:none !important; }
+
+.v64-cms-drawer{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:2147483640 !important;
+  background:rgba(0,0,0,.58) !important;
+  display:flex !important;
+  justify-content:flex-end !important;
+  align-items:stretch !important;
+}
+
+.v64-cms-drawer.hidden{ display:none !important; }
+
+.v64-cms-drawer-card{
+  width:min(760px,96vw) !important;
+  height:100vh !important;
+  background:#fff !important;
+  box-shadow:-18px 0 48px rgba(0,0,0,.24) !important;
+  display:flex !important;
+  flex-direction:column !important;
+}
+
+.v64-cms-drawer-head{
+  flex:0 0 auto !important;
+  min-height:64px !important;
+  background:#0f766e !important;
+  color:#fff !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  padding:0 18px !important;
+}
+
+.v64-cms-drawer-head h3{
+  margin:0 !important;
+  color:#fff !important;
+  font-size:18px !important;
+  font-weight:900 !important;
+}
+
+.v64-cms-drawer-head button{
+  width:38px !important;
+  height:38px !important;
+  min-width:38px !important;
+  border-radius:50% !important;
+  padding:0 !important;
+  margin:0 !important;
+  background:#fff !important;
+  color:#0f766e !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  font-size:22px !important;
+  line-height:1 !important;
+}
+
+.v64-cms-drawer-body{
+  flex:1 1 auto !important;
+  overflow:auto !important;
+  padding:18px !important;
+  background:#f8f3eb !important;
+}
+
+.v64-cms-drawer-body form{
+  box-shadow:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  background:transparent !important;
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:12px !important;
+}
+
+.v64-cms-drawer-body .v64-field{
+  background:#fff !important;
+  border:1px solid #eadfce !important;
+  border-radius:14px !important;
+  padding:10px !important;
+}
+
+.v64-cms-drawer-body .v64-field label{
+  display:block !important;
+  color:#0f766e !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  margin:0 0 6px !important;
+}
+
+.v64-cms-drawer-body input,
+.v64-cms-drawer-body select,
+.v64-cms-drawer-body textarea{
+  margin:0 !important;
+  width:100% !important;
+  max-width:100% !important;
+}
+
+.v64-cms-drawer-body textarea,
+.v64-cms-drawer-body .upload-box,
+.v64-cms-drawer-body .photo-preview,
+.v64-cms-drawer-body label,
+.v64-cms-drawer-body button,
+.v64-cms-drawer-body h3,
+.v64-cms-drawer-body .property-facilities-box,
+.v64-cms-drawer-body .facilities-box,
+.v64-cms-drawer-body .facility-groups{
+  grid-column:1 / -1 !important;
+}
+
+.v64-cms-drawer-body label:has(input[type="checkbox"]){
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  background:#fff !important;
+  padding:10px !important;
+  border-radius:12px !important;
+}
+
+.v64-cms-drawer-body label:has(input[type="checkbox"]) input{ width:auto !important; }
+
+.v64-cms-drawer-body button[type="submit"],
+.v64-cms-drawer-body form > button[type="button"]{
+  width:100% !important;
+  border-radius:12px !important;
+}
+
+.v64-cms-drawer-body .upload-box{ background:#fff !important; }
+
+@media(max-width:850px){
+  .v64-cms-drawer-card{ width:100vw !important; }
+  .v64-cms-drawer-body form{ grid-template-columns:1fr !important; }
+}
+
+
+
+/* =========================
+   V6.5 GUEST CONFIRMATION + QUOTE SYSTEM
+========================= */
+
+.v65-confirm-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:8px 0 14px;
+}
+
+.v65-quote-panel{
+  border:2px solid #a7f3d0 !important;
+  background:#f0fdfa !important;
+}
+
+.v65-quote-grid{
+  grid-template-columns:repeat(5, minmax(130px,1fr)) !important;
+}
+
+.v65-quote-grid label,
+.v65-full-label{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  font-size:12px;
+  font-weight:900;
+  color:#0f766e;
+}
+
+.v65-action-row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:12px;
+}
+
+.v65-action-row button{
+  border-radius:12px;
+  margin:0;
+}
+
+@media(max-width:900px){
+  .v65-quote-grid,
+  .v65-action-row{
+    grid-template-columns:1fr !important;
+  }
+}

@@ -1,4 +1,10 @@
+import Dashboard from "./modules/dashboard.js";
+
 const TOKEN_KEY = "adminToken";
+
+const modules = {
+  dashboard: Dashboard
+};
 
 const moduleTitles = {
   dashboard: ["Dashboard", "CeyBreez professional management overview"],
@@ -85,9 +91,7 @@ function showAdmin() {
 }
 
 function setupNavigation() {
-  const navItems = document.querySelectorAll(".nav-item");
-
-  navItems.forEach((btn) => {
+  document.querySelectorAll(".nav-item").forEach((btn) => {
     btn.addEventListener("click", () => {
       const moduleName = btn.dataset.module;
       if (!moduleName) return;
@@ -101,7 +105,7 @@ function setupNavigation() {
   });
 }
 
-function switchModule(moduleName) {
+async function switchModule(moduleName) {
   document.querySelectorAll(".nav-item").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.module === moduleName);
   });
@@ -116,6 +120,17 @@ function switchModule(moduleName) {
   const titleData = moduleTitles[moduleName] || ["CeyBreez", "Admin module"];
   pageTitle.textContent = titleData[0];
   pageSubtitle.textContent = titleData[1];
+
+  const moduleController = modules[moduleName];
+
+  if (moduleController && typeof moduleController.init === "function") {
+    try {
+      await moduleController.init();
+    } catch (error) {
+      console.error(error);
+      showToast(`${titleData[0]} load failed`, "error");
+    }
+  }
 }
 
 function setupMobileMenu() {

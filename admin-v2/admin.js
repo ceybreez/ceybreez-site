@@ -1,6 +1,6 @@
 import Dashboard from "./modules/dashboard.js";
 
-const TOKEN_KEY = "adminToken";
+const TOKEN_KEY = "CEYBREEZ_ADMIN_TOKEN";
 
 const modules = {
   dashboard: Dashboard

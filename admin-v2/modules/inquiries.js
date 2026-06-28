@@ -4,6 +4,7 @@ const Inquiries = {
   items: [],
   filtered: [],
   selectedId: null,
+  notes: [],
 
   async init() {
     await this.load();
@@ -19,8 +20,10 @@ const Inquiries = {
 
     if (!this.selectedId && this.filtered.length) {
       this.selectedId = this.filtered[0].id;
-      this.renderList();
-      this.renderDetails(this.selectedId);
+    }
+
+    if (this.selectedId) {
+      await this.renderDetails(this.selectedId);
     }
   },
 
@@ -121,10 +124,10 @@ const Inquiries = {
     `;
 
     box.querySelectorAll("[data-inquiry-id]").forEach(btn => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", async () => {
         this.selectedId = btn.dataset.inquiryId;
         this.renderList();
-        this.renderDetails(this.selectedId);
+        await this.renderDetails(this.selectedId);
       });
     });
   },
@@ -150,10 +153,12 @@ const Inquiries = {
     `;
   },
 
-  renderDetails(id) {
+  async renderDetails(id) {
     const item = this.items.find(x => String(x.id) === String(id));
     const box = document.getElementById("inquiryDetailPanel");
     if (!item || !box) return;
+
+    this.notes = await this.safeLoad(`/api/admin/inquiries/${id}/notes`);
 
     box.innerHTML = `
       <div class="detail-head">
@@ -206,6 +211,19 @@ const Inquiries = {
           <h4>Timeline</h4>
           ${this.timelineHtml(item)}
         </div>
+
+        <div class="detail-section full">
+          <h4>Internal Notes</h4>
+
+          <div class="note-compose">
+            <textarea id="newInquiryNote" placeholder="Add internal note for this inquiry..."></textarea>
+            <button class="primary-btn" id="saveInquiryNoteBtn">Save Note</button>
+          </div>
+
+          <div class="notes-list">
+            ${this.notesHtml()}
+          </div>
+        </div>
       </div>
 
       <div class="detail-actions">
@@ -222,6 +240,7 @@ const Inquiries = {
       this.updateStatus(item.id, status);
     });
 
+    document.getElementById("saveInquiryNoteBtn")?.addEventListener("click", () => this.saveNote(item.id));
     document.getElementById("detailWhatsappBtn")?.addEventListener("click", () => this.openWhatsApp(item));
     document.getElementById("detailEmailBtn")?.addEventListener("click", () => this.emailGuest(item));
     document.getElementById("detailCopyBtn")?.addEventListener("click", () => this.copyItem(item));
@@ -232,6 +251,17 @@ const Inquiries = {
   timelineHtml(item) {
     const created = item.createdAt || item.created_at || item.dateFrom || "";
     const status = item.status || "New";
+
+    const noteTimeline = this.notes.map(note => `
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <strong>Internal Note Added</strong>
+          <small>${this.formatDate(note.createdAt || note.created_at)}</small>
+          <p>${this.escape(note.note || "")}</p>
+        </div>
+      </div>
+    `).join("");
 
     return `
       <div class="timeline">
@@ -253,6 +283,8 @@ const Inquiries = {
           </div>
         ` : ""}
 
+        ${noteTimeline}
+
         ${this.status(item) === "booked" ? `
           <div class="timeline-item">
             <div class="timeline-dot"></div>
@@ -264,6 +296,37 @@ const Inquiries = {
         ` : ""}
       </div>
     `;
+  },
+
+  notesHtml() {
+    if (!this.notes.length) {
+      return `<div class="empty-state small-empty">No internal notes yet.</div>`;
+    }
+
+    return this.notes.map(note => `
+      <div class="note-item">
+        <strong>${this.formatDate(note.createdAt || note.created_at)}</strong>
+        <p>${this.escape(note.note || "")}</p>
+      </div>
+    `).join("");
+  },
+
+  async saveNote(id) {
+    const box = document.getElementById("newInquiryNote");
+    const note = (box?.value || "").trim();
+
+    if (!note) {
+      alert("Please type a note first.");
+      return;
+    }
+
+    try {
+      await apiPost(`/api/admin/inquiries/${id}/notes`, { note });
+      await this.renderDetails(id);
+      alert("Note saved");
+    } catch (error) {
+      alert(error.message);
+    }
   },
 
   async updateStatus(id, status) {

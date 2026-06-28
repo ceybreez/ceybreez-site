@@ -4952,3 +4952,118 @@ if(v71OldShowTab){
   };
 }
 document.addEventListener("DOMContentLoaded", () => setTimeout(v71InjectUnifiedFilters, 500));
+
+
+/* =========================
+   V7.2 PAYMENT + INVOICE SYNC
+========================= */
+
+function v72PaymentPayloadFromModal(){
+  return {
+    currency: document.getElementById("bookingConfirmCurrency")?.value || "USD",
+    unitRate: document.getElementById("bookingConfirmDayRate")?.value || "",
+    discountPercent: document.getElementById("quoteDiscountPercent")?.value || "0",
+    discountAmount: document.getElementById("quoteDiscountAmount")?.value || "0",
+    totalAmount: document.getElementById("bookingConfirmTotalAmount")?.value || "",
+    validUntil: document.getElementById("quoteValidUntil")?.value || "",
+    paymentStatus: document.getElementById("quotePaymentStatus")?.value || "Pending",
+    advanceAmount: document.getElementById("quoteAdvanceAmount")?.value || "",
+    balanceAmount: document.getElementById("quoteBalanceAmount")?.value || "",
+    adminMessage: document.getElementById("bookingConfirmAdminMessage")?.value || ""
+  };
+}
+
+async function savePaymentStatus(sendEmail = false){
+  const inquiry = currentInquiry || {};
+  const id = inquiry.id;
+
+  if(!id){
+    alert("Inquiry not selected");
+    return;
+  }
+
+  const payload = v72PaymentPayloadFromModal();
+  payload.sendEmail = !!sendEmail;
+
+  const msg = sendEmail
+    ? "Save payment status and send invoice/payment email to guest?"
+    : "Save payment status and sync with booking?";
+
+  if(!confirm(msg)) return;
+
+  const res = await fetch(`${API_BASE}/api/admin/inquiries/${id}/payment-sync`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify(payload)
+  });
+
+  const result = await res.json();
+
+  if(!res.ok){
+    alert(result.error || "Payment sync failed");
+    return;
+  }
+
+  alert(sendEmail ? (result.emailSent ? "Payment saved and email sent" : "Payment saved, but email was not sent") : "Payment status saved");
+
+  await loadInquiries();
+  await loadBookings();
+
+  const refreshed = allInquiries.find(x => String(x.id) === String(id));
+  if(refreshed){
+    currentInquiry = refreshed;
+    openInquiryModal(id);
+  }
+}
+
+function v72InjectPaymentButtons(){
+  const panel = document.querySelector(".v65-quote-panel, .booking-confirm-panel");
+  if(!panel || document.getElementById("v72SavePaymentBtn")) return;
+
+  const row = panel.querySelector(".v65-action-row") || panel.querySelector(".booking-actions") || panel;
+
+  const saveBtn = document.createElement("button");
+  saveBtn.type = "button";
+  saveBtn.id = "v72SavePaymentBtn";
+  saveBtn.textContent = "Save Payment Status";
+  saveBtn.onclick = () => savePaymentStatus(false);
+
+  const emailBtn = document.createElement("button");
+  emailBtn.type = "button";
+  emailBtn.id = "v72SendPaymentInvoiceBtn";
+  emailBtn.textContent = "Send Payment / Invoice Email";
+  emailBtn.onclick = () => savePaymentStatus(true);
+
+  row.appendChild(saveBtn);
+  row.appendChild(emailBtn);
+}
+
+const v72OldOpenInquiryModal = typeof openInquiryModal === "function" ? openInquiryModal : null;
+if(v72OldOpenInquiryModal){
+  openInquiryModal = function(id){
+    v72OldOpenInquiryModal(id);
+    setTimeout(v72InjectPaymentButtons, 150);
+  };
+}
+
+
+/* V8 FINAL STABLE ADMIN LOGIC */
+let v8FinalInquiryFilter="all",v8FinalBookingFilter="all";
+function v8FinalText(i){return `${i?.bookingCategory||""} ${i?.category||""} ${i?.serviceType||""} ${i?.itemName||""} ${i?.reference||""} ${i?.message||""}`.toLowerCase();}
+function classifyInquiryItem(i){const t=v8FinalText(i);if(t.includes("tour")||t.includes("trip")||t.includes("safari")||t.includes("excursion")||t.includes("pickup")||t.includes("guide"))return"tour";if(t.includes("cafe")||t.includes("service")||t.includes("restaurant")||t.includes("contact")||t.includes("taxi")||t.includes("rental"))return"service";return"property";}
+function classifyBookingItem(i){const t=v8FinalText(i);if(t.includes("tour")||t.includes("trip")||t.includes("safari")||t.includes("excursion")||t.includes("pickup")||t.includes("guide"))return"tour";if(String(i?.reference||"").startsWith("MAN-")||String(i?.inquiryId||"").startsWith("MAN-"))return"manual";return"property";}
+function v8FinalBool(v){return v===1||v===true||String(v||"").toLowerCase()==="true"||String(v||"")==="1";}
+function v8FinalGuestBadge(i){return v8FinalBool(i?.guestConfirmed)?`<span class="status-badge status-booked">Guest Confirmed</span>`:`<span class="status-badge status-quoted">Guest Pending</span>`;}
+function v8FinalAdminBadge(i){return v8FinalBool(i?.adminConfirmed)||normalizeStatus(i?.status)==="booked"?`<span class="status-badge status-booked">Admin Confirmed</span>`:`<span class="status-badge status-contacted">Admin Pending</span>`;}
+function v8FinalPaymentBadge(i){const s=String(i?.paymentStatus||"Pending");return `<span class="status-badge ${s.toLowerCase().includes("paid")?"status-booked":"status-contacted"}">${escapeHtml(s)}</span>`;}
+function getItemNameForBooking(i){return i?.itemName||String(i?.serviceType||"").replace("Villa Inquiry - ","").replace("Apartment Inquiry - ","").replace("Homestay Inquiry - ","").replace("Tour Inquiry - ","").replace("Tours Inquiry - ","").trim()||"CeyBreez Booking";}
+function v8FinalInjectFilters(){const it=document.querySelector("#inquiriesTab .inquiry-tools");if(it&&!document.getElementById("v8FinalInquiryFilter")){const s=document.createElement("select");s.id="v8FinalInquiryFilter";s.innerHTML=`<option value="all">All Inquiry Types</option><option value="property">Property Only</option><option value="tour">Tour Only</option><option value="service">Cafe / Service Only</option>`;s.onchange=()=>{v8FinalInquiryFilter=s.value||"all";applyInquiryFilters();};it.prepend(s);}const bt=document.querySelector(".booking-tools");if(bt&&!document.getElementById("v8FinalBookingFilter")){const s=document.createElement("select");s.id="v8FinalBookingFilter";s.innerHTML=`<option value="all">All Booking Types</option><option value="property">Property Only</option><option value="tour">Tour Only</option><option value="manual">Manual Only</option>`;s.onchange=()=>{v8FinalBookingFilter=s.value||"all";applyBookingFilters();};bt.prepend(s);const c=document.createElement("button");c.id="v8FinalCleanBtn";c.type="button";c.textContent="Clean Orphans";c.onclick=cleanupOrphanBookings;bt.appendChild(c);const y=document.createElement("button");y.id="v8FinalSyncBtn";y.type="button";y.textContent="Sync Bookings";y.onclick=syncBookingsFromInquiries;bt.appendChild(y);}document.querySelectorAll(".v6-mode-tabs").forEach(x=>x.style.display="none");}
+function setInquiryMode(m,b){v8FinalInquiryFilter=m||"all";const s=document.getElementById("v8FinalInquiryFilter");if(s)s.value=v8FinalInquiryFilter;applyInquiryFilters();}
+function setBookingMode(m,b){v8FinalBookingFilter=m||"all";const s=document.getElementById("v8FinalBookingFilter");if(s)s.value=v8FinalBookingFilter;applyBookingFilters();}
+function renderDashboardCards(d){const b=document.getElementById("inquiryCards");if(!b)return;const c=s=>d.filter(x=>normalizeStatus(x.status)===s.toLowerCase()).length;b.innerHTML=`<div class="dashboard-card"><h3>Total Inquiries</h3><div class="value">${d.length}</div></div><div class="dashboard-card"><h3>Property</h3><div class="value">${d.filter(x=>classifyInquiryItem(x)==="property").length}</div></div><div class="dashboard-card"><h3>Tour</h3><div class="value">${d.filter(x=>classifyInquiryItem(x)==="tour").length}</div></div><div class="dashboard-card"><h3>Service</h3><div class="value">${d.filter(x=>classifyInquiryItem(x)==="service").length}</div></div><div class="dashboard-card card-new"><h3>New</h3><div class="value">${c("New")}</div></div><div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${c("Booked")}</div></div><div class="dashboard-card card-closed"><h3>Cancelled / Closed</h3><div class="value">${c("Cancelled")+c("Closed")}</div></div>`;}
+function renderBookingStats(d){const b=document.getElementById("bookingStats");if(!b)return;const c=s=>d.filter(x=>normalizeStatus(x.status)===s).length;b.innerHTML=`<div class="dashboard-card"><h3>Total Bookings</h3><div class="value">${d.length}</div></div><div class="dashboard-card"><h3>Property</h3><div class="value">${d.filter(x=>classifyBookingItem(x)==="property").length}</div></div><div class="dashboard-card"><h3>Tour</h3><div class="value">${d.filter(x=>classifyBookingItem(x)==="tour").length}</div></div><div class="dashboard-card"><h3>Manual</h3><div class="value">${d.filter(x=>classifyBookingItem(x)==="manual").length}</div></div><div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${c("booked")}</div></div><div class="dashboard-card card-closed"><h3>Cancelled</h3><div class="value">${c("cancelled")}</div></div>`;}
+function applyInquiryFilters(){v8FinalInjectFilters();let search="";document.querySelectorAll("#inquirySearch").forEach(i=>{if(i.value.trim())search=i.value.toLowerCase();});const ns=document.getElementById("inquiryStatusFilter")?.value||"all",cat=document.getElementById("v8FinalInquiryFilter")?.value||v8FinalInquiryFilter||"all";let st=ns&&ns!=="all"?ns.toLowerCase():"";const f=allInquiries.filter(i=>{const txt=`${i.reference||""} ${i.guestName||""} ${i.guestEmail||""} ${i.guestMobile||""} ${i.serviceType||""} ${i.itemName||""} ${i.message||""}`.toLowerCase();return(cat==="all"||classifyInquiryItem(i)===cat)&&(!st||normalizeStatus(i.status)===st)&&(!search||txt.includes(search));});renderDashboardCards(allInquiries);if(typeof renderInquiryTypeCards==="function")renderInquiryTypeCards(allInquiries);renderInquiryTable(f);const box=document.getElementById("inquiriesList");if(box)box.innerHTML="";}
+function applyBookingFilters(){v8FinalInjectFilters();const search=(document.getElementById("bookingSearch")?.value||"").toLowerCase(),st=(document.getElementById("bookingStatusFilter")?.value||"all").toLowerCase(),type=(document.getElementById("bookingTypeFilter")?.value||"all").toLowerCase(),cat=document.getElementById("v8FinalBookingFilter")?.value||v8FinalBookingFilter||"all";const f=allBookings.filter(i=>{const c=classifyBookingItem(i),tt=`${i.serviceType||""} ${i.itemName||""} ${i.bookingCategory||""}`.toLowerCase(),ss=`${i.id||""} ${i.reference||""} ${i.itemName||""} ${i.serviceType||""} ${i.guestName||""} ${i.guestEmail||""} ${i.guestMobile||""}`.toLowerCase();return(cat==="all"||c===cat)&&(st==="all"||normalizeStatus(i.status)===st)&&(type==="all"||tt.includes(type)||c===type)&&(!search||ss.includes(search));});renderBookingStats(allBookings);renderBookingsTable(f);renderBookingsCalendar(f);renderAvailabilityMatrix();}
+async function cleanupOrphanBookings(){if(!confirm("Clean orphan bookings?"))return;const r=await fetch(`${API_BASE}/api/admin/bookings/cleanup-orphans`,{method:"POST",headers:authHeaders()});const j=await r.json();if(!r.ok)return alert(j.error||"Cleanup failed");alert(`Removed ${j.deleted||0} orphan booking(s).`);await loadBookings();await loadInquiries();}
+async function syncBookingsFromInquiries(){const r=await fetch(`${API_BASE}/api/admin/bookings/sync-from-inquiries`,{method:"POST",headers:authHeaders()});const j=await r.json();if(!r.ok)return alert(j.error||"Sync failed");alert("Booking sync completed");await loadBookings();await loadInquiries();}
+const v8FinalOldShowTab=typeof showTab==="function"?showTab:null;if(v8FinalOldShowTab){showTab=function(tab){v8FinalOldShowTab(tab);setTimeout(v8FinalInjectFilters,80);};}document.addEventListener("DOMContentLoaded",()=>setTimeout(v8FinalInjectFilters,600));

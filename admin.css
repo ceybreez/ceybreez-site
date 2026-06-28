@@ -2422,3 +2422,16 @@ input[readonly]{
 /* V7 Professional Stable */
 #cleanupOrphansBtn{background:#7c2d12!important;}
 #syncBookingsBtn{background:#1d4ed8!important;}
+
+
+/* =========================
+   V7.1 Unified Filters
+========================= */
+#v71InquiryCategoryFilter,
+#v71BookingCategoryFilter{
+  border:2px solid #0f766e !important;
+  font-weight:800 !important;
+  background:#ecfdf5 !important;
+  color:#064e3b !important;
+}
+.v6-mode-tabs{display:none !important;}

@@ -2443,3 +2443,15 @@ input[readonly]{
 
 /* V8 Final Stable UI */
 #v8FinalInquiryFilter,#v8FinalBookingFilter{border:2px solid #0f766e!important;font-weight:800!important;background:#ecfdf5!important;color:#064e3b!important;}#v8FinalCleanBtn{background:#7c2d12!important;}#v8FinalSyncBtn{background:#1d4ed8!important;}.v6-mode-tabs{display:none!important;}
+
+
+/* =========================
+   V9 Professional Complete UI
+========================= */
+#v9InquiryFilter,#v9BookingFilter{border:2px solid #0f766e!important;font-weight:800!important;background:#ecfdf5!important;color:#064e3b!important;}
+#v9CleanBtn,#v9SavePaymentBtn{background:#1d4ed8!important;}
+#v9SyncBtn,#v9SendPaymentBtn{background:#7c2d12!important;}
+.v6-mode-tabs{display:none!important;}
+button[onclick*="setBookingMode"],button[onclick*="setBookingModeV51"],button[onclick*="setInquiryMode"]{display:none!important;}
+.booking-tools{gap:10px!important;flex-wrap:wrap!important;}
+.booking-tools select,.inquiry-tools select{min-width:150px!important;}

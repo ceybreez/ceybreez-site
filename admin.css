@@ -2435,3 +2435,11 @@ input[readonly]{
   color:#064e3b !important;
 }
 .v6-mode-tabs{display:none !important;}
+
+
+/* V7.2 Payment Buttons */
+#v72SavePaymentBtn{background:#1d4ed8!important;}
+#v72SendPaymentInvoiceBtn{background:#7c2d12!important;}
+
+/* V8 Final Stable UI */
+#v8FinalInquiryFilter,#v8FinalBookingFilter{border:2px solid #0f766e!important;font-weight:800!important;background:#ecfdf5!important;color:#064e3b!important;}#v8FinalCleanBtn{background:#7c2d12!important;}#v8FinalSyncBtn{background:#1d4ed8!important;}.v6-mode-tabs{display:none!important;}

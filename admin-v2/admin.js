@@ -137,12 +137,11 @@ function setupButtons() {
   bindButton("addServiceBtn", () => showToast("Service form will be connected in Services module.", "info"));
 
   document.querySelectorAll(".tab-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab-btn").forEach((tab) => tab.classList.remove("active"));
-      btn.classList.add("active");
-      showToast(`${capitalize(btn.dataset.bookingTab || "booking")} tab selected`, "info");
-    });
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach((tab) => tab.classList.remove("active"));
+    btn.classList.add("active");
   });
+});
 }
 
 function bindButton(id, callback) {

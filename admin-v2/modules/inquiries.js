@@ -16,6 +16,12 @@ const Inquiries = {
 
     this.renderStats();
     this.applyFilters();
+
+    if (!this.selectedId && this.filtered.length) {
+      this.selectedId = this.filtered[0].id;
+      this.renderList();
+      this.renderDetails(this.selectedId);
+    }
   },
 
   async safeLoad(path) {
@@ -70,6 +76,7 @@ const Inquiries = {
         ${item.guestName || ""}
         ${item.guestEmail || ""}
         ${item.guestMobile || ""}
+        ${item.guestCountry || ""}
         ${item.serviceType || ""}
         ${item.itemName || ""}
         ${item.message || ""}
@@ -81,7 +88,15 @@ const Inquiries = {
       return statusOk && typeOk && (!search || text.includes(search));
     });
 
+    if (this.selectedId && !this.filtered.some(x => String(x.id) === String(this.selectedId))) {
+      this.selectedId = this.filtered[0]?.id || null;
+    }
+
     this.renderList();
+
+    if (this.selectedId) {
+      this.renderDetails(this.selectedId);
+    }
   },
 
   renderList() {
@@ -108,18 +123,17 @@ const Inquiries = {
     box.querySelectorAll("[data-inquiry-id]").forEach(btn => {
       btn.addEventListener("click", () => {
         this.selectedId = btn.dataset.inquiryId;
+        this.renderList();
         this.renderDetails(this.selectedId);
       });
     });
-
-    if (this.selectedId) {
-      this.renderDetails(this.selectedId);
-    }
   },
 
   listItemHtml(item) {
+    const active = String(this.selectedId) === String(item.id) ? "active" : "";
+
     return `
-      <button class="inquiry-list-item" data-inquiry-id="${this.escape(item.id)}">
+      <button class="inquiry-list-item ${active}" data-inquiry-id="${this.escape(item.id)}">
         <div>
           <strong>${this.escape(item.reference || item.id || "-")}</strong>
           <span>${this.escape(item.guestName || "Guest")}</span>
@@ -152,43 +166,53 @@ const Inquiries = {
         </span>
       </div>
 
-      <div class="detail-section">
-        <h4>Guest Details</h4>
-        <p><b>Name:</b> ${this.escape(item.guestName || "-")}</p>
-        <p><b>Email:</b> ${this.escape(item.guestEmail || "-")}</p>
-        <p><b>Mobile:</b> ${this.escape(item.guestMobile || "-")}</p>
-        <p><b>Country:</b> ${this.escape(item.guestCountry || "-")}</p>
-      </div>
+      <div class="detail-grid">
+        <div class="detail-section">
+          <h4>Guest Card</h4>
+          <p><b>Name:</b> ${this.escape(item.guestName || "-")}</p>
+          <p><b>Email:</b> ${this.escape(item.guestEmail || "-")}</p>
+          <p><b>Mobile:</b> ${this.escape(item.guestMobile || "-")}</p>
+          <p><b>Country:</b> ${this.escape(item.guestCountry || "-")}</p>
+        </div>
 
-      <div class="detail-section">
-        <h4>Inquiry Details</h4>
-        <p><b>Service:</b> ${this.escape(item.serviceType || "-")}</p>
-        <p><b>Selected:</b> ${this.escape(item.itemName || "-")}</p>
-        <p><b>Guests:</b> ${this.escape(item.guests || "-")}</p>
-        <p><b>Dates:</b> ${this.escape(item.dateFrom || "-")} → ${this.escape(item.dateTo || "-")}</p>
-      </div>
+        <div class="detail-section">
+          <h4>Booking / Inquiry Card</h4>
+          <p><b>Service:</b> ${this.escape(item.serviceType || "-")}</p>
+          <p><b>Selected:</b> ${this.escape(item.itemName || "-")}</p>
+          <p><b>Guests:</b> ${this.escape(item.guests || "-")}</p>
+          <p><b>Dates:</b> ${this.escape(item.dateFrom || "-")} → ${this.escape(item.dateTo || "-")}</p>
+        </div>
 
-      <div class="detail-section">
-        <h4>Message</h4>
-        <div class="message-box">${this.escape(item.message || "No message")}</div>
-      </div>
+        <div class="detail-section full">
+          <h4>Guest Message</h4>
+          <div class="message-box">${this.escape(item.message || "No message")}</div>
+        </div>
 
-      <div class="detail-section">
-        <h4>Status</h4>
-        <select id="detailStatusSelect">
-          ${["New", "Contacted", "Quoted", "Guest Confirmed", "Admin Confirmed", "Booked", "Cancelled", "Closed"]
-            .map(s => `<option value="${s}" ${String(item.status || "New") === s ? "selected" : ""}>${s}</option>`)
-            .join("")}
-        </select>
+        <div class="detail-section">
+          <h4>Status Control</h4>
 
-        <button class="primary-btn mt-2" id="updateDetailStatusBtn">Update Status</button>
+          <div class="detail-status-row">
+            <select id="detailStatusSelect">
+              ${["New", "Contacted", "Quoted", "Guest Confirmed", "Admin Confirmed", "Booked", "Cancelled", "Closed"]
+                .map(s => `<option value="${s}" ${String(item.status || "New") === s ? "selected" : ""}>${s}</option>`)
+                .join("")}
+            </select>
+
+            <button class="primary-btn" id="updateDetailStatusBtn">Update</button>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h4>Timeline</h4>
+          ${this.timelineHtml(item)}
+        </div>
       </div>
 
       <div class="detail-actions">
         <button class="secondary-btn" id="detailWhatsappBtn">WhatsApp</button>
         <button class="secondary-btn" id="detailEmailBtn">Email</button>
-        <button class="primary-btn" id="detailConfirmBookingBtn">Confirm Booking</button>
         <button class="secondary-btn" id="detailCopyBtn">Copy</button>
+        <button class="primary-btn" id="detailConfirmBookingBtn">Confirm Booking</button>
         <button class="small-btn danger" id="detailDeleteBtn">Delete</button>
       </div>
     `;
@@ -205,6 +229,43 @@ const Inquiries = {
     document.getElementById("detailConfirmBookingBtn")?.addEventListener("click", () => this.confirmBooking(item));
   },
 
+  timelineHtml(item) {
+    const created = item.createdAt || item.created_at || item.dateFrom || "";
+    const status = item.status || "New";
+
+    return `
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <strong>Inquiry Received</strong>
+            <small>${this.formatDate(created)}</small>
+          </div>
+        </div>
+
+        ${status !== "New" ? `
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <strong>Status Updated: ${this.escape(status)}</strong>
+              <small>${this.formatDate(item.updatedAt || item.updated_at || created)}</small>
+            </div>
+          </div>
+        ` : ""}
+
+        ${this.status(item) === "booked" ? `
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <strong>Booking Confirmed</strong>
+              <small>${this.formatDate(item.updatedAt || item.updated_at || created)}</small>
+            </div>
+          </div>
+        ` : ""}
+      </div>
+    `;
+  },
+
   async updateStatus(id, status) {
     try {
       await apiPut(`/api/admin/inquiries/${id}/status`, {
@@ -212,9 +273,8 @@ const Inquiries = {
         sendEmail: false
       });
 
-      await this.load();
       this.selectedId = id;
-      this.renderDetails(id);
+      await this.load();
       alert("Inquiry status updated");
     } catch (error) {
       alert(error.message);
@@ -225,6 +285,10 @@ const Inquiries = {
     if (!confirm("Confirm this inquiry as booking?")) return;
 
     try {
+      const dateTo = item.dateTo && item.dateTo > item.dateFrom
+        ? item.dateTo
+        : this.datePlusOne(item.dateFrom);
+
       await apiPost("/api/admin/bookings", {
         inquiryId: item.id,
         reference: item.reference || item.id,
@@ -234,11 +298,14 @@ const Inquiries = {
         guestEmail: item.guestEmail || "",
         guestMobile: item.guestMobile || "",
         dateFrom: item.dateFrom || "",
-        dateTo: item.dateTo || item.dateFrom || "",
+        dateTo,
         guests: item.guests || "",
+        checkInTime: "14:00",
+        checkOutTime: "11:00",
         sendEmail: true
       });
 
+      this.selectedId = item.id;
       await this.load();
       alert("Booking confirmed");
     } catch (error) {
@@ -261,6 +328,12 @@ const Inquiries = {
 
   openWhatsApp(item) {
     const phone = String(item.guestMobile || "").replace(/[^\d]/g, "");
+
+    if (!phone) {
+      alert("Guest mobile number not available");
+      return;
+    }
+
     const text = encodeURIComponent(
 `Hello ${item.guestName || ""},
 
@@ -360,6 +433,14 @@ CeyBreez`
       month: "short",
       year: "numeric"
     });
+  },
+
+  datePlusOne(value) {
+    if (!value) return "";
+    const date = new Date(`${value}T00:00:00`);
+    if (isNaN(date.getTime())) return value;
+    date.setDate(date.getDate() + 1);
+    return date.toISOString().slice(0, 10);
   },
 
   escape(value) {

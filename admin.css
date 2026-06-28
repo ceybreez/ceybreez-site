@@ -2458,3 +2458,16 @@ button[onclick*="setBookingMode"],button[onclick*="setBookingModeV51"],button[on
 
 /* V9.1 UI Clean */
 .v6-mode-tabs{display:none!important;} button[onclick*='setBookingMode'],button[onclick*='setInquiryMode']{display:none!important;}
+
+
+/* V10 Professional Stable UI */
+.v10-panel{border:2px solid #7dd3fc!important;background:#f0fdfa!important;border-radius:18px!important;padding:16px!important;margin:14px 0!important;}
+.v10-panel h4{margin:0 0 12px!important;color:#0f766e!important;font-size:18px!important;}
+.v10-grid{display:grid!important;grid-template-columns:repeat(5,minmax(140px,1fr))!important;gap:12px!important;}
+.v10-grid label,.v10-full{display:flex!important;flex-direction:column!important;gap:6px!important;font-size:12px!important;font-weight:900!important;color:#0f766e!important;}
+.v10-full textarea{min-height:78px!important;}
+.v10-actions{display:grid!important;grid-template-columns:repeat(5,1fr)!important;gap:10px!important;margin-top:12px!important;}
+.v10-actions button{border-radius:12px!important;}
+.v10-actions button:nth-child(4){background:#1d4ed8!important;}.v10-actions button:nth-child(5){background:#7c2d12!important;}
+.v10-badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+@media(max-width:1000px){.v10-grid,.v10-actions{grid-template-columns:1fr!important;}}

@@ -1419,3 +1419,35 @@ button {
     width: 100%;
   }
 }
+/* Dashboard revenue chart bars */
+
+.chart-bars {
+  display: grid;
+  gap: 14px;
+  width: 100%;
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: 85px 1fr 110px;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.bar-wrap {
+  height: 13px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 999px;
+}
+
+.chart-row strong {
+  text-align: right;
+}

@@ -1,11 +1,13 @@
 import Dashboard from "./modules/dashboard.js";
 import Inquiries from "./modules/inquiries/index.js";
+import Bookings from "./modules/bookings/index.js";
 
 const TOKEN_KEY = "CEYBREEZ_ADMIN_TOKEN";
 
 const modules = {
   dashboard: Dashboard,
-  inquiries: Inquiries
+  inquiries: Inquiries,
+  bookings: Bookings
 };
 
 const moduleTitles = {

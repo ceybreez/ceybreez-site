@@ -1662,3 +1662,55 @@ button {
     flex-direction: column;
   }
 }
+/* Inquiry Notes + Timeline */
+
+.note-compose {
+  display: grid;
+  gap: 10px;
+}
+
+.note-compose textarea {
+  width: 100%;
+  min-height: 95px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  resize: vertical;
+  outline: none;
+}
+
+.note-compose textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.1);
+}
+
+.notes-list {
+  margin-top: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.note-item {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 13px 14px;
+}
+
+.note-item strong {
+  display: block;
+  font-size: 12px;
+  color: var(--primary-dark);
+  margin-bottom: 6px;
+}
+
+.note-item p {
+  margin: 0;
+  color: #334155;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.small-empty {
+  padding: 18px;
+}

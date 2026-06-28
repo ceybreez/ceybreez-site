@@ -2455,3 +2455,6 @@ input[readonly]{
 button[onclick*="setBookingMode"],button[onclick*="setBookingModeV51"],button[onclick*="setInquiryMode"]{display:none!important;}
 .booking-tools{gap:10px!important;flex-wrap:wrap!important;}
 .booking-tools select,.inquiry-tools select{min-width:150px!important;}
+
+/* V9.1 UI Clean */
+.v6-mode-tabs{display:none!important;} button[onclick*='setBookingMode'],button[onclick*='setInquiryMode']{display:none!important;}

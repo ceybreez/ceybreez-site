@@ -1,17 +1,14 @@
-const API_BASE = "";
-
-const TOKEN_KEY = "adminToken";
+const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
+const TOKEN_KEY = "CEYBREEZ_ADMIN_TOKEN";
 
 export function getToken() {
   return localStorage.getItem(TOKEN_KEY) || "";
 }
 
 export function authHeaders() {
-  const token = getToken();
-
   return {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`
+    Authorization: `Bearer ${getToken()}`
   };
 }
 

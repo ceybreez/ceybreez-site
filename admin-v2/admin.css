@@ -1468,3 +1468,95 @@ min-width:170px;
     border-radius: 18px;
   }
 }
+/* =====================================================
+   13 - AVAILABILITY ENGINE COLORS
+===================================================== */
+
+.calendar-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.legend {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.legend.green {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.legend.red {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.legend.blue {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.legend.grey {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.legend.orange {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.legend.purple {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.availability-cell.available {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.availability-cell.booked {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.availability-cell.owner {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.availability-cell.maintenance {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.availability-cell.hold {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.availability-cell.private {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+@media (max-width: 620px) {
+  .calendar-head {
+    flex-direction: column;
+  }
+}

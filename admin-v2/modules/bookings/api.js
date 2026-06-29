@@ -64,3 +64,6 @@ export async function syncBookingsFromInquiries() {
 export async function cleanupOrphanBookings() {
   return await apiPost("/api/admin/bookings/cleanup-orphans", {});
 }
+export async function syncBookingsToAvailability() {
+  return await apiPost("/api/admin/v2/availability/sync-bookings", {});
+}

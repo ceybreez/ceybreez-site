@@ -1356,3 +1356,115 @@ min-width:170px;
     min-width: 1320px;
   }
 }
+/* =====================================================
+   12 - MODAL / MANUAL BOOKING / BLOCK DATES
+===================================================== */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.62);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  z-index: 10000;
+}
+
+.modal {
+  width: min(100%, 780px);
+  max-height: 90vh;
+  overflow: auto;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.35);
+}
+
+.modal-header,
+.modal-footer {
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.modal-footer {
+  border-bottom: 0;
+  border-top: 1px solid var(--border);
+  justify-content: flex-end;
+}
+
+.modal-body {
+  padding: 22px;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 22px;
+}
+
+.close-btn {
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 12px;
+  background: #f1f5f9;
+  font-size: 20px;
+}
+
+.close-btn:hover {
+  background: #e2e8f0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.form-group {
+  display: grid;
+  gap: 7px;
+}
+
+.form-group.full {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 800;
+  color: #374151;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 12px 14px;
+  outline: none;
+  font-size: 14px;
+  background: #ffffff;
+}
+
+.form-group textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+@media (max-width: 620px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group.full {
+    grid-column: auto;
+  }
+
+  .modal {
+    border-radius: 18px;
+  }
+}

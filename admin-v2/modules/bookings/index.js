@@ -1,6 +1,7 @@
 import { loadBookings } from "./api.js";
 import { renderBookingList } from "./list.js";
 import { renderBookingDetails } from "./details.js";
+import { renderBookingCalendar } from "./calendar.js";
 import { cancelBooking } from "./actions.js";
 import { bookingType } from "./utils.js";
 
@@ -8,6 +9,7 @@ const Bookings = {
   items: [],
   filtered: [],
   selectedId: null,
+  activeTab: "property",
 
   async init() {
     await this.load();
@@ -36,7 +38,21 @@ const Bookings = {
       this.setValue("bookingSearch", "");
       this.setValue("bookingStatusFilter", "");
       this.setValue("bookingTypeFilter", "");
+      this.activeTab = "property";
+      this.setActiveTabButton("property");
       this.applyFilters();
+    });
+
+    document.querySelectorAll("[data-booking-tab]").forEach((btn) => {
+      if (btn.dataset.bookingBound === "1") return;
+
+      btn.dataset.bookingBound = "1";
+
+      btn.addEventListener("click", () => {
+        this.activeTab = btn.dataset.bookingTab || "property";
+        this.setActiveTabButton(this.activeTab);
+        this.applyFilters();
+      });
     });
   },
 
@@ -51,7 +67,12 @@ const Bookings = {
   applyFilters() {
     const search = this.getValue("bookingSearch").toLowerCase();
     const status = this.getValue("bookingStatusFilter").toLowerCase();
-    const type = this.getValue("bookingTypeFilter");
+    const typeFilter = this.getValue("bookingTypeFilter");
+
+    const effectiveType =
+      this.activeTab === "calendar"
+        ? typeFilter
+        : typeFilter || this.activeTab;
 
     this.filtered = this.items.filter(item => {
       const text = `
@@ -67,16 +88,22 @@ const Bookings = {
       `.toLowerCase();
 
       const searchOk = !search || text.includes(search);
+
       const statusOk =
         !status ||
         String(item.status || "Booked").toLowerCase() === status;
 
       const typeOk =
-        !type ||
-        bookingType(item) === type;
+        !effectiveType ||
+        bookingType(item) === effectiveType;
 
       return searchOk && statusOk && typeOk;
     });
+
+    if (this.activeTab === "calendar") {
+      renderBookingCalendar(this);
+      return;
+    }
 
     if (
       this.selectedId &&
@@ -99,6 +126,12 @@ const Bookings = {
   renderDetails(id) {
     this.selectedId = id;
     renderBookingDetails(this, id);
+  },
+
+  setActiveTabButton(tabName) {
+    document.querySelectorAll("[data-booking-tab]").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.bookingTab === tabName);
+    });
   },
 
   async refresh() {

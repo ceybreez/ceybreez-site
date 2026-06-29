@@ -1215,3 +1215,46 @@ textarea:focus {
     width: 100%;
   }
 }
+.booking-toolbar{
+
+display:flex;
+
+gap:12px;
+
+margin-bottom:18px;
+
+flex-wrap:wrap;
+
+}
+
+.booking-toolbar input{
+
+flex:1;
+
+min-width:260px;
+
+height:44px;
+
+padding:0 15px;
+
+border:1px solid var(--border);
+
+border-radius:12px;
+
+}
+
+.booking-toolbar select{
+
+height:44px;
+
+padding:0 14px;
+
+border:1px solid var(--border);
+
+border-radius:12px;
+
+background:white;
+
+min-width:170px;
+
+}

@@ -5,6 +5,11 @@ export async function loadBookings() {
   return Array.isArray(data) ? data : [];
 }
 
+export async function loadProperties() {
+  const data = await apiGet("/api/admin/properties");
+  return Array.isArray(data) ? data : [];
+}
+
 export async function createBooking(payload) {
   return await apiPost("/api/admin/bookings", payload);
 }

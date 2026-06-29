@@ -2724,3 +2724,34 @@ body.v14-shell-ready .inquiry-stats,
 body.v14-shell-ready #bookingStats{
   margin-top: 10px !important;
 }
+/* ===========================
+   V14 SIDEBAR TOP FIX
+=========================== */
+
+body.v14-shell-ready .v14-sidebar{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    bottom:0 !important;
+    width:260px !important;
+    height:100vh !important;
+    margin:0 !important;
+    padding:12px !important;
+    border-radius:0 !important;
+    overflow-y:auto !important;
+}
+
+body.v14-shell-ready .v14-main{
+    margin-left:260px !important;
+    width:calc(100% - 260px) !important;
+    padding:16px 20px !important;
+}
+
+body.v14-shell-ready .v14-brand{
+    margin-top:0 !important;
+    padding-top:0 !important;
+}
+
+body.v14-shell-ready .v14-nav{
+    margin-top:10px !important;
+}

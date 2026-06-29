@@ -2678,3 +2678,49 @@ body.v14-shell-ready .table-wrap{
   .v14-topbar-actions input{display:none;}
   .v14-dashboard-grid{grid-template-columns:1fr;}
 }
+/* =====================================================
+   V14 GAP FIX - REMOVE LARGE SPACE BETWEEN HEADER & CONTENT
+===================================================== */
+
+body.v14-shell-ready .v14-main{
+  padding-top: 0 !important;
+}
+
+body.v14-shell-ready .v14-topbar{
+  margin-bottom: 10px !important;
+}
+
+body.v14-shell-ready .v14-main > section{
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+body.v14-shell-ready #inquiriesTab,
+body.v14-shell-ready #bookingsTab,
+body.v14-shell-ready #destinationsTab,
+body.v14-shell-ready #propertiesTab,
+body.v14-shell-ready #servicesTab,
+body.v14-shell-ready #reviewsTab,
+body.v14-shell-ready #reportsTab,
+body.v14-shell-ready #pageControlTab,
+body.v14-shell-ready #settingsTab,
+body.v14-shell-ready #dashboardTab{
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  transform: none !important;
+}
+
+body.v14-shell-ready .v14-section-head{
+  margin-top: 0 !important;
+  margin-bottom: 12px !important;
+}
+
+body.v14-shell-ready .admin-section{
+  margin-top: 10px !important;
+}
+
+body.v14-shell-ready .dashboard-cards,
+body.v14-shell-ready .inquiry-stats,
+body.v14-shell-ready #bookingStats{
+  margin-top: 10px !important;
+}

@@ -1,8 +1,14 @@
-import { createManualBooking, createAvailabilityBlock } from "./api.js";
+import {
+  createManualBooking,
+  createAvailabilityBlock,
+  loadProperties
+} from "./api.js";
 
-export function openManualBookingModal(ctx) {
+export async function openManualBookingModal(ctx) {
   const root = document.getElementById("modalRoot");
   if (!root) return;
+
+  const properties = await safeLoadProperties();
 
   root.innerHTML = `
     <div class="modal-backdrop">
@@ -30,8 +36,11 @@ export function openManualBookingModal(ctx) {
             </div>
 
             <div class="form-group">
-              <label>Property / Tour Name</label>
-              <input id="manualPropertyName" type="text" placeholder="Villa / Apartment / Tour name">
+              <label>Property</label>
+              <select id="manualPropertySelect">
+                <option value="">Select property</option>
+                ${propertyOptions(properties)}
+              </select>
             </div>
 
             <div class="form-group">
@@ -80,12 +89,14 @@ export function openManualBookingModal(ctx) {
   `;
 
   bindClose(root);
-  document.getElementById("saveManualBookingBtn")?.addEventListener("click", () => saveManualBooking(ctx));
+  document.getElementById("saveManualBookingBtn")?.addEventListener("click", () => saveManualBooking(ctx, properties));
 }
 
-export function openBlockDatesModal(ctx) {
+export async function openBlockDatesModal(ctx) {
   const root = document.getElementById("modalRoot");
   if (!root) return;
+
+  const properties = await safeLoadProperties();
 
   root.innerHTML = `
     <div class="modal-backdrop">
@@ -98,8 +109,11 @@ export function openBlockDatesModal(ctx) {
         <div class="modal-body">
           <div class="form-grid">
             <div class="form-group">
-              <label>Property / Tour Name</label>
-              <input id="blockPropertyName" type="text" placeholder="Villa / Apartment / Tour name">
+              <label>Property</label>
+              <select id="blockPropertySelect">
+                <option value="">Select property</option>
+                ${propertyOptions(properties)}
+              </select>
             </div>
 
             <div class="form-group">
@@ -139,7 +153,51 @@ export function openBlockDatesModal(ctx) {
   `;
 
   bindClose(root);
-  document.getElementById("saveBlockDatesBtn")?.addEventListener("click", () => saveBlockDates(ctx));
+  document.getElementById("saveBlockDatesBtn")?.addEventListener("click", () => saveBlockDates(ctx, properties));
+}
+
+async function safeLoadProperties() {
+  try {
+    const data = await loadProperties();
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    alert("Failed to load properties. Please check admin token/API.");
+    return [];
+  }
+}
+
+function propertyOptions(properties) {
+  return properties
+    .filter(p => p.active !== false)
+    .map(p => `
+      <option value="${escapeHtml(p.id)}">
+        ${escapeHtml(labelProperty(p))}
+      </option>
+    `)
+    .join("");
+}
+
+function labelProperty(p) {
+  const type = p.type ? String(p.type).toUpperCase() : "PROPERTY";
+  const location = p.location ? ` · ${p.location}` : "";
+  return `${type} - ${p.name || p.id}${location}`;
+}
+
+function selectedProperty(selectId, properties) {
+  const id = value(selectId);
+  const property = properties.find(p => String(p.id) === String(id));
+
+  if (!property) {
+    return null;
+  }
+
+  return {
+    propertyId: property.id || "",
+    propertyName: property.name || property.id || "",
+    itemName: property.name || property.id || "",
+    propertyType: property.type || "",
+    location: property.location || ""
+  };
 }
 
 function bindClose(root) {
@@ -156,13 +214,19 @@ function closeModal() {
   if (root) root.innerHTML = "";
 }
 
-async function saveManualBooking(ctx) {
+async function saveManualBooking(ctx, properties) {
+  const property = selectedProperty("manualPropertySelect", properties);
+
+  if (!property) {
+    alert("Please select a property.");
+    return;
+  }
+
   const payload = {
+    ...property,
     guestName: value("manualGuestName"),
     guestMobile: value("manualGuestMobile"),
     guestEmail: value("manualGuestEmail"),
-    propertyName: value("manualPropertyName"),
-    itemName: value("manualPropertyName"),
     dateFrom: value("manualDateFrom"),
     dateTo: value("manualDateTo"),
     guests: value("manualGuests"),
@@ -170,8 +234,8 @@ async function saveManualBooking(ctx) {
     reason: value("manualReason")
   };
 
-  if (!payload.guestName || !payload.propertyName || !payload.dateFrom || !payload.dateTo) {
-    alert("Guest name, property and dates are required.");
+  if (!payload.guestName || !payload.dateFrom || !payload.dateTo) {
+    alert("Guest name and dates are required.");
     return;
   }
 
@@ -185,10 +249,16 @@ async function saveManualBooking(ctx) {
   }
 }
 
-async function saveBlockDates(ctx) {
+async function saveBlockDates(ctx, properties) {
+  const property = selectedProperty("blockPropertySelect", properties);
+
+  if (!property) {
+    alert("Please select a property.");
+    return;
+  }
+
   const payload = {
-    propertyName: value("blockPropertyName"),
-    itemName: value("blockPropertyName"),
+    ...property,
     type: value("blockType"),
     dateFrom: value("blockDateFrom"),
     dateTo: value("blockDateTo"),
@@ -196,8 +266,8 @@ async function saveBlockDates(ctx) {
     source: "Admin"
   };
 
-  if (!payload.propertyName || !payload.dateFrom || !payload.dateTo) {
-    alert("Property name and dates are required.");
+  if (!payload.dateFrom || !payload.dateTo) {
+    alert("Dates are required.");
     return;
   }
 
@@ -213,4 +283,13 @@ async function saveBlockDates(ctx) {
 
 function value(id) {
   return document.getElementById(id)?.value?.trim() || "";
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }

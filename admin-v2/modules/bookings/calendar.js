@@ -1,94 +1,285 @@
-import {
-  bookingCoversDate,
-  escapeHtml,
-  formatDate
-} from "./utils.js";
+import { loadAvailability } from "./api.js";
+import { escapeHtml, formatDate } from "./utils.js";
 
-export function renderBookingCalendar(ctx) {
+let availabilityCache = [];
+
+export async function renderBookingCalendar(ctx) {
   const container = document.getElementById("bookingsList");
   if (!container) return;
 
-  const days = nextDays(14);
-  const items = uniqueItems(ctx.items);
-
-  if (!items.length) {
-    container.innerHTML = `<div class="empty-state">No booking items found for calendar.</div>`;
-    return;
+  try {
+    availabilityCache = await loadAvailability();
+  } catch (e) {
+    console.error(e);
+    availabilityCache = [];
   }
+
+  const properties = uniqueProperties(ctx.items, availabilityCache);
+  const days = nextDays(14);
 
   container.innerHTML = `
     <div class="calendar-pro-panel">
+
       <div class="calendar-head">
-        <h3>Availability Calendar</h3>
-        <p>Next 14 days booking availability overview.</p>
+
+        <div>
+          <h3>Availability Calendar</h3>
+          <p>Live availability from Availability Engine</p>
+        </div>
+
+        <div class="calendar-legend">
+
+          <span class="legend green">Available</span>
+
+          <span class="legend red">Booked</span>
+
+          <span class="legend blue">Owner</span>
+
+          <span class="legend grey">Maintenance</span>
+
+          <span class="legend orange">Hold</span>
+
+          <span class="legend purple">Private</span>
+
+        </div>
+
       </div>
 
       <div class="availability-table">
+
         <div class="availability-row availability-header">
-          <div class="availability-item">Property / Tour</div>
-          ${days.map(day => `
+
+          <div class="availability-item">
+
+            Property
+
+          </div>
+
+          ${days.map(day=>`
+
             <div class="availability-day">
-              <strong>${day.label}</strong>
-              <small>${day.date.slice(5)}</small>
+
+                <strong>${day.label}</strong>
+
+                <small>${day.display}</small>
+
             </div>
+
           `).join("")}
+
         </div>
 
-        ${items.map(itemName => rowHtml(ctx, itemName, days)).join("")}
+        ${properties.map(property=>propertyRow(property,days)).join("")}
+
       </div>
+
     </div>
   `;
 }
 
-function rowHtml(ctx, itemName, days) {
-  return `
-    <div class="availability-row">
-      <div class="availability-item">
-        <strong>${escapeHtml(itemName)}</strong>
-      </div>
+function propertyRow(property,days){
 
-      ${days.map(day => {
-        const booking = ctx.items.find(b =>
-          String(b.itemName || "").trim() === itemName &&
-          bookingCoversDate(b, day.date) &&
-          String(b.status || "").toLowerCase() !== "cancelled"
-        );
+return`
 
-        return `
-          <div
-            class="availability-cell ${booking ? "booked" : "available"}"
-            title="${booking ? escapeHtml(booking.guestName || "Booked") : "Available"}"
-          >
-            ${booking ? "Booked" : "Free"}
-          </div>
-        `;
-      }).join("")}
-    </div>
-  `;
+<div class="availability-row">
+
+<div class="availability-item">
+
+<strong>${escapeHtml(property)}</strong>
+
+</div>
+
+${days.map(day=>{
+
+const state=getAvailability(property,day.date);
+
+return`
+
+<div
+class="availability-cell ${state.className}"
+title="${escapeHtml(state.title)}"
+>
+
+${state.short}
+
+</div>
+
+`;
+
+}).join("")}
+
+</div>
+
+`;
+
 }
 
-function uniqueItems(bookings) {
-  return [...new Set(
-    bookings
-      .map(b => String(b.itemName || b.serviceType || "").trim())
-      .filter(Boolean)
-  )].sort();
+function getAvailability(property,date){
+
+const row=availabilityCache.find(a=>{
+
+return (
+
+String(a.propertyName).trim().toLowerCase()===
+
+String(property).trim().toLowerCase()
+
+&&
+
+a.date===date
+
+);
+
+});
+
+if(!row){
+
+return{
+
+className:"available",
+
+short:"✓",
+
+title:"Available"
+
+};
+
 }
 
-function nextDays(count) {
-  const today = new Date();
-  const days = [];
+switch(String(row.type)){
 
-  for (let i = 0; i < count; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
+case"Owner Stay":
 
-    days.push({
-      date: date.toISOString().slice(0, 10),
-      label: date.toLocaleDateString("en-GB", { weekday: "short" }),
-      display: formatDate(date.toISOString().slice(0, 10))
-    });
-  }
+return{
 
-  return days;
+className:"owner",
+
+short:"O",
+
+title:"Owner Stay"
+
+};
+
+case"Maintenance":
+
+return{
+
+className:"maintenance",
+
+short:"M",
+
+title:"Maintenance"
+
+};
+
+case"Private":
+
+return{
+
+className:"private",
+
+short:"P",
+
+title:"Private"
+
+};
+
+case"Hold":
+
+return{
+
+className:"hold",
+
+short:"H",
+
+title:"Hold"
+
+};
+
+default:
+
+return{
+
+className:"booked",
+
+short:"B",
+
+title:row.guestName || "Booked"
+
+};
+
+}
+
+}
+
+function uniqueProperties(bookings,availability){
+
+const names=new Set();
+
+bookings.forEach(x=>{
+
+if(x.itemName){
+
+names.add(
+
+String(x.itemName).trim()
+
+);
+
+}
+
+});
+
+availability.forEach(x=>{
+
+if(x.propertyName){
+
+names.add(
+
+String(x.propertyName).trim()
+
+);
+
+}
+
+});
+
+return [...names].sort();
+
+}
+
+function nextDays(total){
+
+const list=[];
+
+const today=new Date();
+
+for(let i=0;i<total;i++){
+
+const d=new Date(today);
+
+d.setDate(today.getDate()+i);
+
+const iso=d.toISOString().slice(0,10);
+
+list.push({
+
+date:iso,
+
+label:d.toLocaleDateString(
+
+"en-GB",
+
+{weekday:"short"}
+
+),
+
+display:formatDate(iso)
+
+});
+
+}
+
+return list;
+
 }

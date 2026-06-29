@@ -1560,3 +1560,29 @@ min-width:170px;
     flex-direction: column;
   }
 }
+.availability-cell.clickable {
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.08);
+}
+
+.availability-cell.clickable:hover {
+  filter: brightness(0.96);
+  transform: scale(1.02);
+}
+
+.small-modal {
+  width: min(100%, 520px);
+}
+
+.availability-detail-card {
+  display: grid;
+  gap: 10px;
+}
+
+.availability-detail-card p {
+  margin: 0;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}

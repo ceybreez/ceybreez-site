@@ -1258,3 +1258,101 @@ background:white;
 min-width:170px;
 
 }
+/* =====================================================
+   11 - BOOKING CALENDAR / AVAILABILITY MATRIX
+===================================================== */
+
+.calendar-pro-panel {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.calendar-head {
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.calendar-head h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.calendar-head p {
+  margin: 6px 0 0;
+  color: var(--text-soft);
+}
+
+.availability-table {
+  overflow-x: auto;
+}
+
+.availability-row {
+  display: grid;
+  grid-template-columns: 220px repeat(14, 92px);
+  min-width: 1500px;
+  border-bottom: 1px solid var(--border);
+}
+
+.availability-row:last-child {
+  border-bottom: 0;
+}
+
+.availability-header {
+  background: #f8fafc;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.availability-item {
+  padding: 14px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+}
+
+.availability-day {
+  padding: 12px 8px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+
+.availability-day strong {
+  display: block;
+  font-size: 13px;
+}
+
+.availability-day small {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-soft);
+  font-size: 11px;
+}
+
+.availability-cell {
+  padding: 12px 8px;
+  border-right: 1px solid var(--border);
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.availability-cell.available {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.availability-cell.booked {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+@media (max-width: 620px) {
+  .availability-row {
+    grid-template-columns: 180px repeat(14, 82px);
+    min-width: 1320px;
+  }
+}

@@ -27,6 +27,7 @@
       <button onclick="showTab('destinations')">Tours CMS</button>
       <button onclick="showTab('services')">Cafe & Services CMS</button>
       <button onclick="showTab('reviewsTab')">Reviews</button>
+      <button onclick="showTab('financeTab')">Finance</button>
       <button onclick="showTab('reportsTab')">Reports</button>
       <button onclick="showTab('pageControl')">Page Builder</button>
       <button onclick="showTab('settingsTab')">Settings</button>
@@ -967,6 +968,78 @@
 <script src="admin.js"></script>
 
 
+<section id="financeTab" class="hidden">
+  <h2>Finance</h2>
+
+  <div id="financeStats" class="dashboard-cards"></div>
+
+  <section class="admin-section">
+    <div class="section-head">
+      <div>
+        <h2>Booking Finance</h2>
+        <p>Payment records connected to confirmed booking records.</p>
+      </div>
+
+      <div class="inquiry-tools booking-tools">
+        <input type="text" id="financeSearch" placeholder="Search booking, guest, reference..." />
+
+        <select id="financeStatusFilter">
+          <option value="all">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Advance Paid">Advance Paid</option>
+          <option value="Paid">Paid</option>
+          <option value="Refunded">Refunded</option>
+        </select>
+
+        <select id="financeMethodFilter">
+          <option value="all">All Methods</option>
+          <option value="Cash">Cash</option>
+          <option value="Bank Transfer">Bank Transfer</option>
+          <option value="Card">Card</option>
+          <option value="Online Payment">Online Payment</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <button type="button" id="financeRefreshBtn">Refresh</button>
+        <button type="button" id="financeExportBtn">Export CSV</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="admin-table bookings-table">
+        <thead>
+          <tr>
+            <th>Reference No</th>
+            <th>Booking Date</th>
+            <th>Property / Tour</th>
+            <th>Guest</th>
+            <th>Total Amount</th>
+            <th>Advance</th>
+            <th>Balance</th>
+            <th>Refund</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="financeTableBody">
+          <tr><td colspan="10" class="empty-row">No finance records loaded</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="admin-section">
+    <div class="section-head">
+      <div>
+        <h2>Payment Details</h2>
+        <p>Select a booking from the finance table to update payment details.</p>
+      </div>
+    </div>
+
+    <div id="financeDetailsBox" class="booking-details-container"></div>
+  </section>
+</section>
+
 <section id="settingsTab" class="hidden">
   <h2>Settings</h2>
   <section class="admin-section">
@@ -1034,6 +1107,7 @@
   import { initAvailabilityModule } from "./js/modules/availability/index.js";
   initAvailabilityModule();
 </script>
+<script type="module" src="js/modules/finance/index.js"></script>
 <script src="v14-shell.js"></script>
 <script type="module">
   import { initDashboardModule } from "./js/modules/dashboard/index.js";

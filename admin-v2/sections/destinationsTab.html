@@ -1,0 +1,62 @@
+<section id="destinationsTab">
+      <h2>Tours Destinations</h2>
+
+      <div class="cms-toolbar">
+        <input id="destinationSearch" placeholder="Search tour location..." />
+        <select id="destinationProvinceFilter"><option value="all">All Provinces</option></select>
+        <select id="destinationStatusFilter">
+          <option value="all">All Status</option><option value="active">Active</option><option value="hidden">Hidden</option><option value="featured">Featured</option>
+        </select>
+        <button type="button" onclick="openAddDestinationForm()">+ Add New Tour Location</button>
+      </div>
+      <div class="table-wrap cms-table-wrap"><table class="admin-table cms-table"><thead><tr>
+        <th onclick="sortCmsTable('destinations','name')">Location</th><th onclick="sortCmsTable('destinations','province')">Province</th><th>Area / Nearby</th><th>Best For</th><th>Status</th><th>Featured</th><th>Action</th>
+      </tr></thead><tbody id="destinationsTableBody"><tr><td colspan="7" class="empty-row">No destinations loaded</td></tr></tbody></table></div>
+      <button type="button" class="form-toggle-btn" onclick="toggleCmsForm('destinationFormBox')">Show / Hide Tour Location Form</button>
+      <div id="destinationFormBox" class="cms-form-box hidden">
+        <div class="cms-modal-head" id="destinationFormBoxHeader">
+          <h3 id="destinationFormBoxTitle">Add / Edit Tour Location</h3>
+          <button type="button" onclick="closeCmsForm('destinationFormBox')">×</button>
+        </div>
+      <form id="destinationForm">
+        <input type="hidden" id="destEditId" />
+
+        <input id="destName" placeholder="Location Name" required />
+        <input id="destProvince" placeholder="Province" required />
+        <input id="destArea" placeholder="Nearest City / Area" required />
+        <input id="destLat" placeholder="Latitude" required />
+        <input id="destLng" placeholder="Longitude" required />
+        <input id="destMapUrl" placeholder="Google Map Link" />
+        <input id="destBestFor" placeholder="Best For" />
+        <input id="destTime" placeholder="Time Needed" />
+        <input id="destNearby" placeholder="Nearby Places" />
+        <textarea id="destDescription" placeholder="Description"></textarea>
+        <label>Logo / Badge Image URL</label>
+        <input id="destLogo" placeholder="Optional logo / badge image URL" />
+        <div class="upload-box mini-upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleSingleUploadDrop(event, 'destLogo', 'destination-logos')">
+          <h3>Upload Destination Logo / Badge</h3><p>Optional logo, icon, or badge image.</p>
+          <input type="file" id="destLogoUploader" accept="image/*" onchange="uploadSingleFileFromInput('destLogoUploader', 'destLogo', 'destination-logos')" />
+          <button type="button" onclick="document.getElementById('destLogoUploader').click()">Browse Logo</button>
+        </div>
+
+        <div class="upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'dest')">
+          <h3>Upload Destination Photos</h3>
+          <p>Drag & drop photos here, or browse from your computer.</p>
+          <input type="file" id="destPhotoUploader" multiple accept="image/*" onchange="uploadPhotos('dest')" />
+          <button type="button" onclick="document.getElementById('destPhotoUploader').click()">Browse Photos</button>
+          <p id="destUploadStatus" class="upload-status"></p>
+        </div>
+
+        <textarea id="destPhotos" placeholder="Photo URLs will appear here automatically, one per line"></textarea>
+        <div id="destPhotoPreview" class="photo-preview"></div>
+
+        <label><input type="checkbox" id="destActive" checked /> Active / Show on website</label>
+        <label><input type="checkbox" id="destFeatured" /> Featured / Show on Home Page</label>
+
+        <button type="submit">Save Destination</button>
+        <button type="button" onclick="resetDestinationForm()">Clear</button>
+      </form>
+
+      </div>
+      <div id="destinationsList" class="list legacy-card-list hidden"></div>
+    </section>

@@ -5357,3 +5357,124 @@ function v10PaymentPayload(){return{currency:document.getElementById('bookingCon
 async function savePaymentStatus(sendEmail=false){const id=currentInquiry?.id;if(!id)return alert('Inquiry not selected');const payload=v10PaymentPayload();payload.sendEmail=!!sendEmail;if(!confirm(sendEmail?'Save payment and send invoice/payment email to guest?':'Save payment status and sync with booking?'))return;const res=await fetch(`${API_BASE}/api/admin/inquiries/${id}/payment-sync`,{method:'POST',headers:authHeaders(),body:JSON.stringify(payload)});const result=await res.json();if(!res.ok)return alert(result.error||'Payment sync failed');alert(sendEmail?(result.emailSent?'Payment saved and email sent':'Payment saved, but email was not sent'):'Payment status saved');await loadInquiries();await loadBookings();const r=allInquiries.find(x=>String(x.id)===String(id));if(r){currentInquiry=r;openInquiryModal(id);}}
 async function confirmBooking(sendEmail=true){if(!currentInquiry)return alert('No inquiry selected');const tour=v10IsTour(currentInquiry);const itemName=v10Name(currentInquiry);let dateFrom,dateTo;if(tour){dateFrom=document.getElementById('v10TourDate')?.value||currentInquiry.dateFrom||'';dateTo=dateFrom?v10DatePlusOne(dateFrom):'';if(!dateFrom)return alert('Please enter Tour Date before confirming.');}else{dateFrom=document.getElementById('v10DateFrom')?.value||currentInquiry.dateFrom||'';dateTo=document.getElementById('v10DateTo')?.value||currentInquiry.dateTo||'';if(!dateFrom||!dateTo)return alert('Please enter Check-in and Check-out dates before confirming.');}if(!confirm('Confirm this booking?'))return;const payload={inquiryId:currentInquiry.id,reference:currentInquiry.reference,itemName,serviceType:currentInquiry.serviceType||(tour?'Tour Inquiry':'Property Inquiry'),guestName:currentInquiry.guestName,guestEmail:currentInquiry.guestEmail,guestMobile:currentInquiry.guestMobile,dateFrom,dateTo,guests:document.getElementById('bookingConfirmNights')?.value||currentInquiry.guests||'1',checkInTime:document.getElementById('bookingConfirmCheckInTime')?.value||'14:00',checkOutTime:document.getElementById('bookingConfirmCheckOutTime')?.value||'11:00',pickupTime:document.getElementById('tourPickupTime')?.value||'',pickupLocation:document.getElementById('tourPickupLocation')?.value||'',childRate:document.getElementById('tourChildRate')?.value||'',adultRate:document.getElementById('bookingConfirmDayRate')?.value||'',currency:document.getElementById('bookingConfirmCurrency')?.value||'USD',dayRate:document.getElementById('bookingConfirmDayRate')?.value||'',totalDays:tour?'1':(document.getElementById('bookingConfirmNights')?.value||'1'),discountPercent:document.getElementById('quoteDiscountPercent')?.value||'0',discountAmount:document.getElementById('quoteDiscountAmount')?.value||'0',totalAmount:document.getElementById('bookingConfirmTotalAmount')?.value||'',paymentStatus:document.getElementById('quotePaymentStatus')?.value||'Pending',advanceAmount:document.getElementById('quoteAdvanceAmount')?.value||'',balanceAmount:document.getElementById('quoteBalanceAmount')?.value||'',bookingCategory:tour?'tour':'property',guestConfirmed:currentInquiry.guestConfirmed?1:0,adminConfirmed:1,sendEmail,adminMessage:document.getElementById('bookingConfirmAdminMessage')?.value||''};const res=await fetch(`${API_BASE}/api/admin/bookings`,{method:'POST',headers:authHeaders(),body:JSON.stringify(payload)});const result=await res.json();if(!res.ok)return alert(result.error||'Booking failed');alert('Booking Confirmed');await loadBookings();await loadInquiries();closeInquiryModal?.();}
 document.addEventListener('DOMContentLoaded',()=>{setInterval(()=>{const m=document.getElementById('inquiryModal');if(m&&!m.classList.contains('hidden'))v10RenderModal();},1500);});
+/* =====================================================
+   BOOKING DATE GUARD - OVERLAP PROTECTION
+===================================================== */
+
+async function ceybreezLoadBookedDatesForProperty(propertyName) {
+  if (!propertyName) return [];
+
+  const res = await fetch(`${API_BASE}/api/admin/bookings`, {
+    headers: authHeaders()
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to load bookings");
+  }
+
+  const booked = [];
+
+  (data || []).forEach(item => {
+    const status = String(item.status || "Booked").toLowerCase();
+    const itemName = String(item.itemName || "").trim().toLowerCase();
+    const selected = String(propertyName || "").trim().toLowerCase();
+
+    if (status !== "booked") return;
+    if (itemName !== selected) return;
+
+    const start = String(item.dateFrom || "").slice(0, 10);
+    const end = String(item.dateTo || "").slice(0, 10);
+
+    if (!start || !end) return;
+
+    const s = new Date(`${start}T00:00:00`);
+    const e = new Date(`${end}T00:00:00`);
+
+    for (let d = new Date(s); d < e; d.setDate(d.getDate() + 1)) {
+      booked.push({
+        date: d.toISOString().slice(0, 10),
+        reference: item.reference || item.id || "",
+        guestName: item.guestName || "",
+        type: item.serviceType || "Booking"
+      });
+    }
+  });
+
+  return booked;
+}
+
+async function ceybreezCheckManualBookingDateConflict() {
+  const propertyName = document.getElementById("manualItemName")?.value || "";
+  const dateFrom = document.getElementById("manualDateFrom")?.value || "";
+  const dateTo = document.getElementById("manualDateTo")?.value || "";
+  const msg = document.getElementById("manualAvailabilityMsg");
+
+  if (msg) {
+    msg.className = "manual-availability-msg";
+    msg.textContent = "";
+  }
+
+  if (!propertyName || !dateFrom || !dateTo) {
+    return true;
+  }
+
+  const booked = await ceybreezLoadBookedDatesForProperty(propertyName);
+
+  const s = new Date(`${dateFrom}T00:00:00`);
+  const e = new Date(`${dateTo}T00:00:00`);
+
+  for (let d = new Date(s); d < e; d.setDate(d.getDate() + 1)) {
+    const iso = d.toISOString().slice(0, 10);
+    const conflict = booked.find(x => x.date === iso);
+
+    if (conflict) {
+      if (msg) {
+        msg.className = "manual-availability-msg bad";
+        msg.textContent =
+          `Not available: ${iso} already booked (${conflict.reference || "Booking"}).`;
+      }
+
+      return false;
+    }
+  }
+
+  if (msg) {
+    msg.className = "manual-availability-msg good";
+    msg.textContent = "Available for selected dates.";
+  }
+
+  return true;
+}
+
+function ceybreezAttachManualBookingDateGuard() {
+  const form = document.getElementById("manualBookingForm");
+  if (!form || form.dataset.dateGuard === "1") return;
+
+  form.dataset.dateGuard = "1";
+
+  ["manualItemName", "manualDateFrom", "manualDateTo"].forEach(id => {
+    document.getElementById(id)?.addEventListener("change", () => {
+      ceybreezCheckManualBookingDateConflict().catch(console.error);
+    });
+  });
+
+  form.addEventListener(
+    "submit",
+    async event => {
+      const ok = await ceybreezCheckManualBookingDateConflict();
+
+      if (!ok) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        alert("This property is not available for the selected dates.");
+      }
+    },
+    true
+  );
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(ceybreezAttachManualBookingDateGuard, 500);
+});

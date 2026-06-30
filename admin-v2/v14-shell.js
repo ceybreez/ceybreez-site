@@ -11,6 +11,7 @@
     tours: "destinationsTab",
     services: "servicesTab",
     reviews: "reviewsTab",
+    finance: "financeTab",
     reports: "reportsTab",
     pageBuilder: "pageControlTab",
     settings: "settingsTab"
@@ -25,6 +26,7 @@
     tours: "destinations",
     services: "services",
     reviews: "reviewsTab",
+    finance: "financeTab",
     reports: "reportsTab",
     pageBuilder: "pageControl",
     settings: "settingsTab"
@@ -39,6 +41,7 @@
     tours:["Tours CMS","Tour destinations and locations management"],
     services:["Cafe & Services CMS","Cafes, restaurants and service partners"],
     reviews:["Reviews","Guest reviews and approval"],
+    finance:["Finance","Booking payments, advances, balances and refunds"],
     reports:["Reports","Revenue, occupancy and performance reports"],
     pageBuilder:["Page Builder","Global website content and page sections"],
     settings:["Settings","Business settings and future integrations"]
@@ -513,6 +516,7 @@ function initV18BlockDatePickers(bookings){
         <button data-v14-tab="tours">🚌 Tours CMS</button>
         <button data-v14-tab="services">☕ Cafe & Services CMS</button>
         <button data-v14-tab="reviews">⭐ Reviews</button>
+        <button data-v14-tab="finance">💰 Finance</button>
         <button data-v14-tab="reports">📈 Reports</button>
         <button data-v14-tab="pageBuilder">📄 Page Builder</button>
         <button data-v14-tab="settings">⚙ Settings</button>

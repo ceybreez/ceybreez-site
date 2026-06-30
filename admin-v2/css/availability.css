@@ -1,0 +1,26 @@
+/* =====================================================
+   AVAILABILITY MODULE CSS
+   This file is reserved for Availability Engine styling.
+===================================================== */
+
+.availability-matrix,
+#availabilityMatrix{
+  width:100%;
+  overflow:auto;
+}
+
+.matrix-scroll{
+  width:100%;
+  overflow:auto;
+}
+
+.matrix-property-head,
+.matrix-property{
+  position:sticky;
+  left:0;
+  z-index:4;
+}
+
+.matrix-property{
+  background:#fff;
+}

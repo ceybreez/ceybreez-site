@@ -24,3 +24,21 @@
 .matrix-property{
   background:#fff;
 }
+/* =====================================
+   Flatpickr Booked Dates
+===================================== */
+
+.flatpickr-day.cey-booked-date{
+    background:#ef4444 !important;
+    color:#fff !important;
+    border-color:#ef4444 !important;
+}
+
+.flatpickr-day.cey-booked-date:hover{
+    background:#dc2626 !important;
+}
+
+.flatpickr-day.flatpickr-disabled.cey-booked-date{
+    opacity:1 !important;
+    cursor:not-allowed !important;
+}

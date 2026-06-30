@@ -1,61 +1,13 @@
 /* =====================================================
    CeyBreez Booking Date Guard
-   Prevent manual booking overlap without touching admin.js
+   Uses shared core api/utils
 ===================================================== */
 
-const API_BASE =
-  window.CEYBREEZ_API_BASE ||
-  "https://ceybreez-contact-api.ceybreez.workers.dev";
-
-function getAdminToken() {
-  return localStorage.getItem("CEYBREEZ_ADMIN_TOKEN") || "";
-}
-
-function authHeaders() {
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${getAdminToken()}`
-  };
-}
-
-function clean(value) {
-  return String(value || "").trim().toLowerCase();
-}
-
-function dateOnly(value) {
-  return String(value || "").slice(0, 10);
-}
-
-function getDatesBetween(dateFrom, dateTo) {
-  const dates = [];
-
-  if (!dateFrom || !dateTo) return dates;
-
-  const start = new Date(`${dateFrom}T00:00:00`);
-  const end = new Date(`${dateTo}T00:00:00`);
-
-  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
-    return dates;
-  }
-
-  for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
-    dates.push(d.toISOString().slice(0, 10));
-  }
-
-  return dates;
-}
+import { apiGet } from "../../core/api.js";
+import { clean, dateOnly, getDatesBetween } from "../../core/utils.js";
 
 async function loadBookings() {
-  const res = await fetch(`${API_BASE}/api/admin/bookings`, {
-    headers: authHeaders()
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || "Failed to load bookings");
-  }
-
+  const data = await apiGet("/api/admin/bookings");
   return Array.isArray(data) ? data : [];
 }
 
@@ -68,12 +20,10 @@ async function getBookedDatesForProperty(propertyName) {
     if (clean(item.status || "Booked") !== "booked") return;
     if (clean(item.itemName) !== property) return;
 
-    const dates = getDatesBetween(
+    getDatesBetween(
       dateOnly(item.dateFrom),
       dateOnly(item.dateTo)
-    );
-
-    dates.forEach(date => {
+    ).forEach(date => {
       booked.push({
         date,
         reference: item.reference || item.id || "",

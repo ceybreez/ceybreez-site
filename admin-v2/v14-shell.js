@@ -246,6 +246,87 @@
     if(t.includes("hold")) return "H";
     return "X";
   }
+  function getBookedDatesForProperty(propertyName, bookings){
+  const disabled = [];
+
+  bookings.forEach(b=>{
+    const sameProperty =
+      String(b.itemName || "").trim().toLowerCase() ===
+      String(propertyName || "").trim().toLowerCase();
+
+    const bookedStatus =
+      String(b.status || "Booked").toLowerCase() === "booked";
+
+    if(!sameProperty || !bookedStatus) return;
+
+    const from = String(b.dateFrom || "").slice(0,10);
+    const to = String(b.dateTo || "").slice(0,10);
+
+    dateRange(from, to).forEach(d=>{
+      disabled.push(d);
+    });
+  });
+
+  return disabled;
+}
+
+function initV18BlockDatePickers(bookings){
+  const propertyInput = document.getElementById("v18BlockProperty");
+  const fromInput = document.getElementById("v18BlockFrom");
+  const toInput = document.getElementById("v18BlockTo");
+
+  if(!propertyInput || !fromInput || !toInput || typeof flatpickr === "undefined") return;
+
+  let disabledDates = [];
+
+  const refreshDisabledDates = () => {
+    disabledDates = getBookedDatesForProperty(propertyInput.value, bookings);
+
+    if(fromPicker){
+      fromPicker.set("disable", disabledDates);
+      fromPicker.redraw();
+    }
+
+    if(toPicker){
+      toPicker.set("disable", disabledDates);
+      toPicker.redraw();
+    }
+  };
+
+  const fromPicker = flatpickr(fromInput, {
+    dateFormat: "Y-m-d",
+    disable: disabledDates,
+    onChange: function(selectedDates, dateStr){
+      if(toPicker){
+        toPicker.set("minDate", dateStr);
+      }
+    },
+    onDayCreate: function(dObj, dStr, fp, dayElem){
+      const date = dayElem.dateObj.toISOString().slice(0,10);
+      if(disabledDates.includes(date)){
+        dayElem.classList.add("cey-booked-date");
+        dayElem.title = "Not Available";
+      }
+    }
+  });
+
+  const toPicker = flatpickr(toInput, {
+    dateFormat: "Y-m-d",
+    disable: disabledDates,
+    onDayCreate: function(dObj, dStr, fp, dayElem){
+      const date = dayElem.dateObj.toISOString().slice(0,10);
+      if(disabledDates.includes(date)){
+        dayElem.classList.add("cey-booked-date");
+        dayElem.title = "Not Available";
+      }
+    }
+  });
+
+  propertyInput.addEventListener("change", refreshDisabledDates);
+  propertyInput.addEventListener("input", refreshDisabledDates);
+
+  refreshDisabledDates();
+}
   async function renderAvailabilityManager(){
     const box=document.getElementById("availabilityTab");
     if(!box) return;
@@ -350,8 +431,10 @@
             <div class="table-wrap"><table class="admin-table"><thead><tr><th>Property</th><th>Type</th><th>Dates</th><th>Reason</th><th>Action</th></tr></thead><tbody>${blockRows}</tbody></table></div>
           </section>
         </div>`;
+      
       document.getElementById("v18AvailType").value=selectedType;
       document.getElementById("v18AvailDays").value=String(daysCount);
+      setTimeout(()=>initV18BlockDatePickers(bookings), 100);
       document.getElementById("v18BlockForm")?.addEventListener("submit", (e)=>{
         e.preventDefault();
         const propertyName=document.getElementById("v18BlockProperty").value;
@@ -362,7 +445,10 @@
         const dates=dateRange(dateFrom,dateTo);
         if(!propertyName||!type||!dates.length) return alert("Please select property and valid date range. Check-out/end date must be after start date.");
         const conflictBooking=bookings.find(b=>String(b.itemName||"").trim().toLowerCase()===String(propertyName).trim().toLowerCase() && dates.some(d=>bookingCovers(b,propertyName,d)));
-        if(conflictBooking && !confirm("There is already a booking in this range. Save block anyway for internal note?")) return;
+       if(conflictBooking){
+  alert("This property is already booked in the selected date range.");
+  return;
+}
         const rows=availabilityBlocks();
         rows.push({id:"BLK-"+Date.now()+"-"+Math.floor(Math.random()*10000), propertyName,type,dateFrom,dateTo,reason,dates,createdAt:new Date().toISOString()});
         saveAvailabilityBlocks(rows);

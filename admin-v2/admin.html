@@ -1029,7 +1029,11 @@
   </div>
 </div>
 
-  <script type="module" src="js/modules/bookings/date-guard.js"></script>
+<script type="module" src="js/modules/bookings/date-guard.js"></script>
+<script type="module">
+  import { initAvailabilityModule } from "./js/modules/availability/index.js";
+  initAvailabilityModule();
+</script>
 <script src="v14-shell.js"></script>
   
 </body>

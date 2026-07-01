@@ -123,3 +123,18 @@
     grid-template-columns: 1fr;
   }
 }
+#financeTab .v14-dashboard-grid {
+  margin-top: 26px !important;
+  padding-top: 0 !important;
+}
+
+#financeTab .v14-stat-card {
+  overflow: visible !important;
+  min-height: 96px !important;
+}
+
+#financeTab .v14-stat-card strong {
+  font-size: 24px !important;
+  line-height: 1.25 !important;
+  margin-top: 4px !important;
+}

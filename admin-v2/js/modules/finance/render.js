@@ -84,12 +84,8 @@ export function renderFinance(root, state) {
   const totals = state.totals || {};
 
   root.innerHTML = `
-    <div class="section-head">
-      <div>
-        <h2>Finance</h2>
-        <p>Booking payments, advances, outstanding balances and refunds.</p>
-      </div>
-      <button class="v14-refresh" type="button" onclick="window.renderFinanceModule()">Refresh Finance</button>
+    
+<button class="v14-refresh" type="button" onclick="window.renderFinanceModule()">Refresh Finance</button>
     </div>
 
     <div class="v14-dashboard-grid">

@@ -1,73 +1,55 @@
 /* =====================================================
-   CEYBREEZ ENTERPRISE PMS
-   Finance Module - Stable Layout Fix
+   CEYBREEZ ENTERPRISE PMS - FINANCE COMPLETE
 ===================================================== */
 
 #financeTab {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  padding: 24px !important;
-
+  padding: 18px !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 22px !important;
+  gap: 18px !important;
 }
 
-/* Header card */
-
-#financeTab > .section-head {
-  width: 100%;
-  box-sizing: border-box;
-
+#financeTab .finance-toolbar {
   display: flex !important;
-  justify-content: space-between !important;
+  flex-wrap: wrap !important;
   align-items: center !important;
-  gap: 16px !important;
-
-  margin: 0 !important;
-  padding: 20px 22px !important;
-
-  background: #fff !important;
-  border-radius: 16px !important;
-  box-shadow: 0 3px 12px rgba(0,0,0,.04) !important;
-
-  position: relative !important;
-  z-index: 1 !important;
-  transform: none !important;
-}
-
-#financeTab > .section-head h2 {
-  margin: 0 0 4px !important;
-  font-size: 24px !important;
-  line-height: 1.2 !important;
-}
-
-#financeTab > .section-head p {
+  gap: 12px !important;
   margin: 0 !important;
 }
 
-/* Stat cards */
+#financeTab .finance-toolbar input,
+#financeTab .finance-toolbar select {
+  height: 46px !important;
+  min-height: 46px !important;
+  line-height: 46px !important;
+  padding: 0 16px !important;
+  font-size: 14px !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+}
 
-#financeTab > .v14-dashboard-grid {
-  width: 100%;
+#financeTab .finance-toolbar input { flex: 1 1 360px !important; }
+#financeTab .finance-toolbar select { flex: 0 0 220px !important; }
+#financeTab .finance-toolbar button { min-height: 42px !important; }
+
+#financeTab > .v14-dashboard-grid,
+#financeTab .finance-stats-grid {
+  width: 100% !important;
   display: grid !important;
-  grid-template-columns: repeat(4, minmax(180px, 1fr)) !important;
-  gap: 20px !important;
-
+  grid-template-columns: repeat(4, minmax(170px, 1fr)) !important;
+  gap: 16px !important;
   margin: 0 !important;
   padding: 0 !important;
-
-  position: relative !important;
-  z-index: 0 !important;
-  transform: none !important;
 }
 
 #financeTab .v14-stat-card {
   background: #fff !important;
   border-radius: 14px !important;
-  padding: 18px 20px !important;
-  min-height: 100px !important;
+  padding: 16px 18px !important;
+  min-height: 96px !important;
   box-sizing: border-box !important;
   overflow: visible !important;
   box-shadow: 0 3px 12px rgba(0,0,0,.05) !important;
@@ -77,12 +59,12 @@
   display: block !important;
   font-size: 12px !important;
   color: #667085 !important;
-  margin-bottom: 8px !important;
+  margin-bottom: 6px !important;
 }
 
 #financeTab .v14-stat-card strong {
   display: block !important;
-  font-size: 24px !important;
+  font-size: 22px !important;
   line-height: 1.25 !important;
   color: #0f766e !important;
   white-space: nowrap !important;
@@ -90,34 +72,9 @@
 
 #financeTab .v14-stat-card small {
   display: block !important;
-  margin-top: 8px !important;
+  margin-top: 7px !important;
   color: #475467 !important;
 }
-
-/* Filters */
-
-#financeTab .filter-row {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 18px !important;
-  margin: 0 !important;
-}
-
-#financeTab .filter-row input {
-  flex: 1 1 420px !important;
-}
-
-#financeTab .filter-row select {
-  flex: 0 0 260px !important;
-}
-
-#financeTab .filter-row input,
-#financeTab .filter-row select {
-  height: 42px !important;
-  box-sizing: border-box !important;
-}
-
-/* Table */
 
 #financeTab .table-wrap {
   width: 100% !important;
@@ -129,7 +86,7 @@
 
 #financeTab .admin-table {
   width: 100% !important;
-  min-width: 1150px !important;
+  min-width: 1180px !important;
   border-collapse: collapse !important;
   table-layout: auto !important;
 }
@@ -147,93 +104,114 @@
   line-height: 1.35 !important;
 }
 
-/* Finance entry */
+#financeTab .finance-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  min-width: 160px !important;
+}
+
+#financeTab .small-btn.ghost {
+  background: #f3f4f6 !important;
+  color: #111827 !important;
+}
 
 #financeEntryBox {
   margin-top: 0 !important;
+  padding: 18px !important;
 }
 
-#financeEntryForm{
-    display:grid;
-    grid-template-columns:220px minmax(300px,1fr);
-    column-gap:24px;
-    row-gap:14px;
-    align-items:center;
+#financeEntryBox > .section-head,
+#financeTab .finance-global-history > .section-head,
+#financeTab .finance-history-box .section-head {
+  margin: 0 0 16px !important;
 }
 
-#financeEntryForm label{
-    margin:0;
-    font-weight:600;
-    color:#0f766e;
+#financeTab .section-head.compact {
+  padding: 0 !important;
+}
+
+#financeTab .finance-selected-card {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(180px, 1fr)) !important;
+  gap: 12px !important;
+  background: #f8fafc !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 14px !important;
+  padding: 14px !important;
+  margin: 0 0 18px !important;
+}
+
+#financeTab .finance-selected-card div {
+  background: #fff !important;
+  border-radius: 12px !important;
+  padding: 10px 12px !important;
+}
+
+#financeTab .finance-selected-card span {
+  display: block !important;
+  font-size: 12px !important;
+  color: #667085 !important;
+  margin-bottom: 4px !important;
+}
+
+#financeTab .finance-selected-card strong {
+  color: #111827 !important;
+}
+
+#financeEntryForm {
+  display: grid !important;
+  grid-template-columns: 190px minmax(280px, 1fr) !important;
+  column-gap: 22px !important;
+  row-gap: 12px !important;
+  align-items: center !important;
+  margin-bottom: 20px !important;
+}
+
+#financeEntryForm label {
+  margin: 0 !important;
+  font-weight: 600 !important;
+  color: #0f766e !important;
 }
 
 #financeEntryForm input,
 #financeEntryForm select,
-#financeEntryForm textarea{
-    width:100%;
-    box-sizing:border-box;
+#financeEntryForm textarea {
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 #financeEntryForm textarea,
-#financeEntryForm button[type="submit"]{
-    grid-column:2;
+#financeEntryForm button[type="submit"] {
+  grid-column: 2 !important;
 }
-/* Responsive */
+
+#financeTab .finance-history-box {
+  margin-top: 18px !important;
+}
+
+#financeTab .finance-global-history {
+  margin-top: 0 !important;
+}
 
 @media (max-width: 1200px) {
-  #financeTab > .v14-dashboard-grid {
+  #financeTab > .v14-dashboard-grid,
+  #financeTab .finance-stats-grid,
+  #financeTab .finance-selected-card {
     grid-template-columns: repeat(2, minmax(180px, 1fr)) !important;
   }
 }
 
 @media (max-width: 768px) {
-  #financeTab {
-    padding: 14px !important;
-  }
-
-  #financeTab > .section-head {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-  }
-
-  #financeTab > .v14-dashboard-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  #financeTab .filter-row {
-    flex-direction: column !important;
-  }
-
-  #financeTab .filter-row input,
-  #financeTab .filter-row select {
-    width: 100% !important;
-    flex: 1 1 auto !important;
-  }
-
-  #financeEntryForm {
-    grid-template-columns: 1fr !important;
-  }
-}
-/* Finance filter text cut fix */
-#financeTab .filter-row input,
-#financeTab .filter-row select {
-  height: 46px !important;
-  min-height: 46px !important;
-  line-height: 46px !important;
-  padding: 0 16px !important;
-  font-size: 14px !important;
-  border-radius: 10px !important;
-  box-sizing: border-box !important;
-  display: block !important;
-}
-
-#financeTab .filter-row select {
-  appearance: auto !important;
-  -webkit-appearance: menulist !important;
-  background-position: right 12px center !important;
-  vertical-align: middle !important;
-}
-
-#financeTab .filter-row {
-  align-items: center !important;
+  #financeTab { padding: 12px !important; }
+  #financeTab .finance-toolbar { flex-direction: column !important; align-items: stretch !important; }
+  #financeTab .finance-toolbar input,
+  #financeTab .finance-toolbar select,
+  #financeTab .finance-toolbar button { width: 100% !important; flex: 1 1 auto !important; }
+  #financeTab > .v14-dashboard-grid,
+  #financeTab .finance-stats-grid,
+  #financeTab .finance-selected-card { grid-template-columns: 1fr !important; }
+  #financeEntryForm { grid-template-columns: 1fr !important; }
+  #financeEntryForm textarea,
+  #financeEntryForm button[type="submit"] { grid-column: 1 !important; }
 }

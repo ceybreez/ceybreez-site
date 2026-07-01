@@ -609,12 +609,12 @@ function initV18BlockDatePickers(bookings){
       if(logical==="inquiries" && typeof loadInquiries==="function") loadInquiries();
       if(logical==="bookings" && typeof loadBookings==="function") loadBookings();
       if(logical==="availability") renderAvailabilityManager();
+    if(logical==="finance" && typeof window.renderFinanceModule==="function") window.renderFinanceModule();
       if(logical==="properties" && typeof loadProperties==="function") loadProperties();
       if(logical==="tours" && typeof loadDestinations==="function") loadDestinations();
       if(logical==="services" && typeof loadServices==="function") loadServices();
       if(logical==="reviews" && typeof loadReviews==="function") loadReviews();
-      if(logical==="finance" && typeof window.renderFinanceModule==="function")
-    window.renderFinanceModule();
+      if(logical==="finance" && typeof window.renderFinanceModule==="function") window.renderFinanceModule();
       if(logical==="reports" && typeof renderReports==="function") renderReports();
       if(logical==="pageBuilder"){
         if(typeof loadSiteContent==="function") loadSiteContent();
@@ -638,6 +638,7 @@ function initV18BlockDatePickers(bookings){
     else refreshLegacy(logical);
 
     if(logical==="availability") renderAvailabilityManager();
+    if(logical==="finance" && typeof window.renderFinanceModule==="function") window.renderFinanceModule();
   };
 
   const originalLogin=window.loginAdmin;

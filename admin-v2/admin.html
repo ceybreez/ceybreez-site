@@ -1107,12 +1107,15 @@
   import { initAvailabilityModule } from "./js/modules/availability/index.js";
   initAvailabilityModule();
 </script>
-<script type="module" src="js/modules/finance/index.js"></script>
-<script src="v14-shell.js"></script>
+<script type="module">
+  import { initFinanceModule } from "./js/modules/finance/index.js";
+  initFinanceModule();
+</script>
 <script type="module">
   import { initDashboardModule } from "./js/modules/dashboard/index.js";
   initDashboardModule();
 </script>
+  <script src="v14-shell.js"></script>
   
 </body>
 </html>

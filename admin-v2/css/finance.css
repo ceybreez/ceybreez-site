@@ -200,3 +200,26 @@
     grid-template-columns: 1fr !important;
   }
 }
+/* Finance filter text cut fix */
+#financeTab .filter-row input,
+#financeTab .filter-row select {
+  height: 46px !important;
+  min-height: 46px !important;
+  line-height: 46px !important;
+  padding: 0 16px !important;
+  font-size: 14px !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+  display: block !important;
+}
+
+#financeTab .filter-row select {
+  appearance: auto !important;
+  -webkit-appearance: menulist !important;
+  background-position: right 12px center !important;
+  vertical-align: middle !important;
+}
+
+#financeTab .filter-row {
+  align-items: center !important;
+}

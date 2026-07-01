@@ -153,17 +153,31 @@
   margin-top: 0 !important;
 }
 
-#financeEntryForm {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(260px, 1fr)) !important;
-  gap: 14px !important;
+#financeEntryForm{
+    display:grid;
+    grid-template-columns:220px minmax(300px,1fr);
+    column-gap:24px;
+    row-gap:14px;
+    align-items:center;
+}
+
+#financeEntryForm label{
+    margin:0;
+    font-weight:600;
+    color:#0f766e;
+}
+
+#financeEntryForm input,
+#financeEntryForm select,
+#financeEntryForm textarea{
+    width:100%;
+    box-sizing:border-box;
 }
 
 #financeEntryForm textarea,
-#financeEntryForm button[type="submit"] {
-  grid-column: 1 / -1 !important;
+#financeEntryForm button[type="submit"]{
+    grid-column:2;
 }
-
 /* Responsive */
 
 @media (max-width: 1200px) {

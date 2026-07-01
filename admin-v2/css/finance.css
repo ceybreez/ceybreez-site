@@ -1,0 +1,169 @@
+/* =====================================================
+   CEYBREEZ ENTERPRISE PMS
+   Finance Module
+===================================================== */
+
+#financeTab{
+    width:100%;
+    max-width:100%;
+    box-sizing:border-box;
+    padding:20px;
+}
+
+#financeTab .section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+    margin-bottom:20px;
+}
+
+#financeTab .section-head h2{
+    margin:0;
+}
+
+#financeTab .section-head p{
+    margin:4px 0 0;
+}
+
+/* Dashboard Cards */
+
+#financeTab .v14-dashboard-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(220px,1fr));
+    gap:18px;
+    margin-bottom:24px;
+}
+
+#financeTab .v14-stat-card{
+    background:#fff;
+    border-radius:14px;
+    padding:18px;
+    box-shadow:0 3px 10px rgba(0,0,0,.05);
+}
+
+#financeTab .v14-stat-card span{
+    display:block;
+    font-size:12px;
+    color:#777;
+    margin-bottom:8px;
+}
+
+#financeTab .v14-stat-card strong{
+    display:block;
+    font-size:34px;
+    font-weight:700;
+    color:#0f766e;
+    line-height:1.2;
+}
+
+#financeTab .v14-stat-card small{
+    display:block;
+    margin-top:6px;
+    color:#666;
+}
+
+/* Filters */
+
+#financeTab .filter-row{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+}
+
+#financeTab .filter-row input,
+#financeTab .filter-row select{
+    height:40px;
+}
+
+/* Table */
+
+#financeTab .table-wrap{
+    width:100%;
+    overflow-x:auto;
+    border-radius:12px;
+    background:#fff;
+}
+
+#financeTab .admin-table{
+    width:100%;
+    min-width:1200px;
+    border-collapse:collapse;
+}
+
+#financeTab .admin-table th{
+    white-space:nowrap;
+    background:#f5f7fa;
+    padding:12px;
+    text-align:left;
+}
+
+#financeTab .admin-table td{
+    padding:12px;
+    vertical-align:top;
+}
+
+#financeTab .status-badge{
+    white-space:nowrap;
+}
+
+/* Finance Entry */
+
+#financeEntryBox{
+    margin-top:22px;
+}
+
+#financeEntryForm{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(280px,1fr));
+    gap:14px;
+}
+
+#financeEntryForm textarea{
+    min-height:100px;
+}
+
+#financeEntryForm button[type=submit]{
+    grid-column:1/-1;
+}
+
+/* History */
+
+#financeTab .admin-section{
+    margin-top:24px;
+}
+
+/* Responsive */
+
+@media (max-width:1200px){
+
+    #financeTab .v14-dashboard-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    #financeEntryForm{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media (max-width:768px){
+
+    #financeTab{
+        padding:14px;
+    }
+
+    #financeTab .section-head{
+        flex-direction:column;
+    }
+
+    #financeTab .v14-dashboard-grid{
+        grid-template-columns:1fr;
+    }
+
+    #financeTab .filter-row{
+        flex-direction:column;
+    }
+
+}

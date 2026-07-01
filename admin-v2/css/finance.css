@@ -138,3 +138,29 @@
   line-height: 1.25 !important;
   margin-top: 4px !important;
 }
+#financeTab .section-head {
+  position: relative !important;
+  z-index: 5 !important;
+  background: #fff !important;
+  padding-bottom: 14px !important;
+  margin-bottom: 28px !important;
+}
+
+#financeTab .v14-dashboard-grid {
+  clear: both !important;
+  position: relative !important;
+  z-index: 1 !important;
+  margin-top: 36px !important;
+}
+
+#financeTab .v14-stat-card {
+  height: auto !important;
+  min-height: 120px !important;
+  padding: 18px !important;
+}
+
+#financeTab .v14-stat-card strong {
+  display: block !important;
+  padding-top: 8px !important;
+  font-size: 22px !important;
+}

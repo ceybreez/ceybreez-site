@@ -164,3 +164,28 @@
   padding-top: 8px !important;
   font-size: 22px !important;
 }
+/* Finance top spacing final fix */
+#financeTab {
+  padding-top: 12px !important;
+}
+
+#financeTab .section-head {
+  margin-top: 0 !important;
+  margin-bottom: 18px !important;
+  padding-bottom: 10px !important;
+}
+
+#financeTab .v14-dashboard-grid {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+#financeTab .v14-stat-card {
+  min-height: 88px !important;
+  padding: 16px 18px !important;
+}
+
+#financeTab .v14-stat-card strong {
+  font-size: 20px !important;
+  padding-top: 0 !important;
+}

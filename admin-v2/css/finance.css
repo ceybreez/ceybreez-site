@@ -53,7 +53,7 @@
   width: 100%;
   display: grid !important;
   grid-template-columns: repeat(4, minmax(180px, 1fr)) !important;
-  gap: 18px !important;
+  gap: 20px !important;
 
   margin: 0 !important;
   padding: 0 !important;
@@ -99,7 +99,7 @@
 #financeTab .filter-row {
   display: flex !important;
   flex-wrap: wrap !important;
-  gap: 12px !important;
+  gap: 18px !important;
   margin: 0 !important;
 }
 

@@ -21,3 +21,10 @@
   position: relative;
   z-index: 1;
 }
+.v14-main .admin-section {
+  overflow: visible;
+}
+
+.v15-content {
+  padding-top: 18px;
+}

@@ -7,15 +7,15 @@
     width:100%;
     max-width:100%;
     box-sizing:border-box;
-    padding:20px;
+    padding:10px;
 }
 
 #financeTab .section-head{
     display:flex;
     justify-content:space-between;
     align-items:flex-start;
-    gap:16px;
-    margin-bottom:20px;
+    gap:35px;
+    margin-bottom:35px;
 }
 
 #financeTab .section-head h2{

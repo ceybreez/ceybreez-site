@@ -39,7 +39,7 @@ function financeStatus(b) {
   const total = money(b.totalAmount);
   const paid = money(b.paidAmount);
   const refunded = money(b.refundAmount);
-  const outstanding = Math.max(total - paid + refunded, 0);
+  const outstanding = Math.max(total - Math.max(paid - refunded, 0));
   if (refunded > 0 && outstanding > 0) return "Refunded / Partial";
   if (refunded > 0 && outstanding <= 0) return "Refunded";
   if (total > 0 && outstanding <= 0) return "Paid";
@@ -54,7 +54,7 @@ function bookingRows(bookings) {
     const total = money(b.totalAmount);
     const paid = money(b.paidAmount);
     const refunded = money(b.refundAmount);
-    const outstanding = Math.max(total - paid + refunded, 0);
+    const outstanding = Math.max(total - Math.max(paid - refunded, 0));
     const status = financeStatus(b);
     return `<tr>
       <td><strong>${escapeHtml(b.reference || b.id || "-")}</strong><br><small>${escapeHtml(b.serviceType || "")}</small></td>
@@ -107,7 +107,7 @@ function compactBookingSummary(b, historySummary) {
   const total = money(b.totalAmount);
   const paid = money(historySummary?.paidAmount ?? b.paidAmount);
   const refunded = money(historySummary?.refundAmount ?? b.refundAmount);
-  const outstanding = Math.max(total - paid + refunded, 0);
+  const outstanding = Math.max(total - Math.max(paid - refunded, 0));
   const status = outstanding <= 0 && total > 0 ? "Paid" : paid > 0 ? "Partial" : "Pending";
   return `<div class="finance-selected-card">
     <div><span>Reference</span><strong>${escapeHtml(b.reference || b.id || "-")}</strong></div>

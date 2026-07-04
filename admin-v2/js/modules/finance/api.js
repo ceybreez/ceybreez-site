@@ -86,3 +86,16 @@ export function emailFinanceInvoice(bookingId) {
     body: JSON.stringify({ bookingId })
   });
 }
+export function saveAdjustment(payload) {
+  return requestJson("/api/admin/finance/adjustments", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function saveCommission(payload) {
+  return requestJson("/api/admin/finance/commissions", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}

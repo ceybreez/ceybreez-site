@@ -24,7 +24,7 @@
       <button onclick="showTab('inquiriesTab')">Inquiry Management</button>
       <button onclick="showTab('bookingsTab')">Booking Management</button>
       <button onclick="showTab('properties')">Properties CMS</button>
-      <button onclick="showTourPackagesTab()">Tour Packages</button>
+      <button onclick="showTab('destinations')">Tours CMS</button>
       <button onclick="showTab('services')">Cafe & Services CMS</button>
       <button onclick="showTab('reviewsTab')">Reviews</button>
       <button onclick="showTab('financeTab')">Finance</button>
@@ -177,85 +177,7 @@
       </div>
       <div id="propertiesList" class="list legacy-card-list hidden"></div>
     </section>
-    <section id="tourPackagesTab" class="hidden">
-  <h2>Tour Packages CMS</h2>
-
-  <div class="cms-toolbar">
-    <input id="tourPackageSearch" placeholder="Search tour..." />
-    <select id="tourPackageStatusFilter">
-      <option value="all">All Status</option>
-      <option value="active">Active</option>
-      <option value="hidden">Hidden</option>
-      <option value="featured">Featured</option>
-    </select>
-    <button type="button" onclick="openAddTourPackageForm()">+ Add Tour Package</button>
-  </div>
-
-  <div class="table-wrap cms-table-wrap">
-    <table class="admin-table cms-table">
-      <thead>
-        <tr>
-          <th>Tour</th>
-          <th>Category</th>
-          <th>Location</th>
-          <th>Duration</th>
-          <th>Price</th>
-          <th>Status</th>
-          <th>Featured</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="tourPackagesTableBody">
-        <tr><td colspan="8" class="empty-row">No tours loaded</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div id="tourPackageFormBox" class="cms-form-box hidden">
-    <div class="cms-modal-head">
-      <h3 id="tourPackageFormTitle">Add / Edit Tour Package</h3>
-      <button type="button" onclick="closeCmsForm('tourPackageFormBox')">×</button>
-    </div>
-
-    <form id="tourPackageForm">
-      <input type="hidden" id="tourEditId" />
-
-      <input id="tourTitle" placeholder="Tour Title" required />
-      <input id="tourSlug" placeholder="Slug e.g. sigiriya-day-tour" />
-      <input id="tourCategory" placeholder="Category e.g. Day Tour / Safari" />
-      <input id="tourLocation" placeholder="Location" />
-      <input id="tourDuration" placeholder="Duration e.g. Full Day / 3 Hours" />
-
-      <select id="tourCurrency">
-        <option value="USD">USD</option>
-        <option value="LKR">LKR</option>
-        <option value="OMR">OMR</option>
-        <option value="EUR">EUR</option>
-      </select>
-
-      <input id="tourBasePrice" placeholder="Adult / Base Price" />
-      <input id="tourChildPrice" placeholder="Child Price" />
-
-      <textarea id="tourShortDescription" placeholder="Short Description"></textarea>
-      <textarea id="tourFullDescription" placeholder="Full Description"></textarea>
-      <textarea id="tourItinerary" placeholder="Itinerary - one line per stop"></textarea>
-      <textarea id="tourInclusions" placeholder="Inclusions - one per line"></textarea>
-      <textarea id="tourExclusions" placeholder="Exclusions - one per line"></textarea>
-
-      <input id="tourMainImage" placeholder="Main Image URL" />
-      <textarea id="tourPhotos" placeholder="Gallery photo URLs - one per line"></textarea>
-
-      <label><input type="checkbox" id="tourPickupAvailable" checked /> Pickup Available</label>
-      <label><input type="checkbox" id="tourActive" checked /> Active</label>
-      <label><input type="checkbox" id="tourFeatured" /> Featured</label>
-
-      <input id="tourSortOrder" type="number" value="0" placeholder="Sort Order" />
-
-      <button type="submit">Save Tour Package</button>
-      <button type="button" onclick="resetTourPackageForm()">Clear</button>
-    </form>
-  </div>
-</section>
+  
 <section id="servicesTab" class="hidden">
   <h2>Cafes & Services</h2>
 

@@ -111,3 +111,6 @@ export function escapeHtml(value) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
+export function dateOnly(value) {
+  return String(value || "").slice(0, 10);
+}

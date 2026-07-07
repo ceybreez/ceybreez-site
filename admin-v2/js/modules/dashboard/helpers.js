@@ -15,6 +15,3 @@ export function latest(items, count=8) { return [...safeArray(items)].sort((a,b)
 export function percent(value,total) { return total ? Math.round((value/total)*100) : 0; }
 export function propertyTypeCounts(properties) { const map={villa:0,homestay:0,apartment:0,active:0,featured:0}; safeArray(properties).forEach(p=>{ const type=clean(p.type); if(map[type]!==undefined) map[type]++; if(p.active!==false && Number(p.active)!==0) map.active++; if(p.featured===true || Number(p.featured)===1) map.featured++; }); return map; }
 export function escapeHtml(value) { return String(value||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;"); }
-export function dateOnly(value) {
-  return String(value || "").slice(0, 10);
-}

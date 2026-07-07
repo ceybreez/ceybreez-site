@@ -1644,3 +1644,143 @@ nav a:active{
     grid-template-columns:1fr !important;
   }
 }
+/* =========================
+   TOUR PACKAGE FINAL POLISH
+========================= */
+
+.dynamic-tours,
+.featured-tour-section,
+.tour-packages-section{
+  padding:55px 40px 75px !important;
+}
+
+.dynamic-tours-head,
+.tour-packages-head{
+  max-width:1100px !important;
+  margin:0 auto 28px !important;
+  text-align:left !important;
+}
+
+.dynamic-tours-head h2,
+.tour-packages-head h2{
+  font-size:42px !important;
+  line-height:1.1 !important;
+  color:#1f2933 !important;
+}
+
+.dynamic-tours-head p,
+.tour-packages-head p{
+  font-size:15px !important;
+  line-height:1.6 !important;
+}
+
+.tour-filter-bar{
+  max-width:1100px !important;
+  margin:0 auto 26px !important;
+  align-items:center !important;
+}
+
+.dynamic-tour-grid,
+.tour-packages-grid,
+.featured-tour-grid,
+#tourPackagesGrid,
+#featuredToursGrid{
+  max-width:1100px !important;
+  justify-content:start !important;
+}
+
+.dynamic-tour-card,
+.tour-package-card,
+.tour-card,
+.featured-tour-card{
+  width:100% !important;
+  max-width:360px !important;
+  border-radius:24px !important;
+}
+
+.dynamic-tour-card img,
+.tour-package-card img,
+.tour-card img,
+.featured-tour-card img{
+  height:210px !important;
+}
+
+.dynamic-tour-body,
+.tour-package-content,
+.tour-card-content,
+.featured-tour-content{
+  padding:20px !important;
+}
+
+.dynamic-tour-body h3,
+.tour-package-content h3,
+.tour-card-content h3,
+.featured-tour-content h3{
+  font-size:26px !important;
+  line-height:1.12 !important;
+  margin:8px 0 8px !important;
+  word-break:normal !important;
+}
+
+.dynamic-tour-body p,
+.tour-package-content p,
+.tour-card-content p,
+.featured-tour-content p{
+  font-size:14px !important;
+  line-height:1.55 !important;
+  margin-bottom:12px !important;
+}
+
+.tour-meta,
+.package-meta,
+.tour-card-meta{
+  gap:7px !important;
+  font-size:12px !important;
+  line-height:1.4 !important;
+  align-items:center !important;
+}
+
+.tour-price,
+.package-price{
+  font-size:14px !important;
+  margin:10px 0 14px !important;
+}
+
+.view-tour-btn,
+.tour-card-btn{
+  font-size:13px !important;
+  padding:11px 20px !important;
+}
+
+.tour-featured-badge,
+.featured-badge,
+.tour-badge{
+  top:12px !important;
+  right:12px !important;
+  font-size:11px !important;
+  padding:6px 11px !important;
+}
+
+.tour-types{
+  padding-top:75px !important;
+}
+
+@media(max-width:768px){
+  .dynamic-tours,
+  .featured-tour-section,
+  .tour-packages-section{
+    padding:38px 14px 55px !important;
+  }
+
+  .dynamic-tours-head,
+  .tour-packages-head{
+    text-align:center !important;
+  }
+
+  .dynamic-tour-card,
+  .tour-package-card,
+  .tour-card,
+  .featured-tour-card{
+    max-width:100% !important;
+  }
+}

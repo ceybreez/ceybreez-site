@@ -1784,3 +1784,193 @@ nav a:active{
     max-width:100% !important;
   }
 }
+/* TOUR PACKAGES - MATCH CEYBREEZ PAGE STYLE */
+.tour-packages{
+  padding:70px 20px 80px !important;
+  background:#f8f3eb !important;
+  text-align:center !important;
+}
+
+.packages-head{
+  max-width:900px !important;
+  margin:0 auto 28px !important;
+}
+
+.packages-head .eyebrow{
+  color:#0f766e !important;
+  font-size:13px !important;
+  font-weight:700 !important;
+  letter-spacing:.08em !important;
+  text-transform:uppercase !important;
+}
+
+.packages-head h2{
+  font-size:48px !important;
+  margin:8px 0 12px !important;
+  color:#222 !important;
+}
+
+.packages-head p{
+  max-width:780px !important;
+  margin:0 auto !important;
+  color:#444 !important;
+  font-size:17px !important;
+  line-height:1.7 !important;
+}
+
+.tour-filter-bar{
+  max-width:1000px !important;
+  margin:0 auto 34px !important;
+  display:grid !important;
+  grid-template-columns:2fr 1fr 1fr !important;
+  gap:14px !important;
+}
+
+.tour-filter-bar input,
+.tour-filter-bar select{
+  height:48px !important;
+  padding:0 16px !important;
+  border-radius:14px !important;
+  border:1px solid rgba(15,118,110,.18) !important;
+  background:#fff !important;
+  color:#222 !important;
+  font-family:'Poppins', sans-serif !important;
+  font-size:14px !important;
+}
+
+.tour-package-status{
+  max-width:1000px !important;
+  margin:0 auto 20px !important;
+  text-align:left !important;
+  color:#0f766e !important;
+  font-size:14px !important;
+  font-weight:600 !important;
+}
+
+.tour-packages-grid{
+  max-width:1200px !important;
+  margin:0 auto !important;
+  display:grid !important;
+  grid-template-columns:repeat(3,1fr) !important;
+  gap:28px !important;
+  justify-items:center !important;
+}
+
+.tour-card{
+  width:100% !important;
+  max-width:360px !important;
+  background:#fff !important;
+  border-radius:28px !important;
+  overflow:hidden !important;
+  box-shadow:0 14px 38px rgba(0,0,0,.10) !important;
+  text-align:left !important;
+  position:relative !important;
+  transition:.3s ease !important;
+}
+
+.tour-card:hover{
+  transform:translateY(-7px) !important;
+  box-shadow:0 22px 55px rgba(0,0,0,.16) !important;
+}
+
+.tour-card-image{
+  width:100% !important;
+  height:235px !important;
+  object-fit:cover !important;
+  display:block !important;
+}
+
+.tour-card-content{
+  padding:22px !important;
+}
+
+.tour-card-meta{
+  display:flex !important;
+  flex-wrap:wrap !important;
+  gap:8px !important;
+  margin-bottom:12px !important;
+  color:#0f766e !important;
+  font-size:13px !important;
+  font-weight:700 !important;
+}
+
+.tour-card-content h3{
+  font-size:30px !important;
+  line-height:1.08 !important;
+  color:#0f3d3e !important;
+  margin-bottom:10px !important;
+}
+
+.tour-card-content p{
+  color:#444 !important;
+  font-size:14px !important;
+  line-height:1.65 !important;
+  margin-bottom:14px !important;
+}
+
+.tour-price{
+  color:#0f766e !important;
+  font-weight:800 !important;
+  margin-bottom:16px !important;
+}
+
+.tour-price small{
+  color:#666 !important;
+  font-weight:500 !important;
+}
+
+.tour-card-btn{
+  display:inline-block !important;
+  background:#0f766e !important;
+  color:#fff !important;
+  text-decoration:none !important;
+  padding:12px 22px !important;
+  border-radius:50px !important;
+  font-size:14px !important;
+  font-weight:700 !important;
+}
+
+.featured-badge{
+  position:absolute !important;
+  top:14px !important;
+  right:14px !important;
+  background:#facc15 !important;
+  color:#111 !important;
+  padding:7px 13px !important;
+  border-radius:50px !important;
+  font-size:12px !important;
+  font-weight:800 !important;
+  z-index:5 !important;
+}
+
+@media(max-width:1100px){
+  .tour-packages-grid{
+    grid-template-columns:repeat(2,1fr) !important;
+  }
+}
+
+@media(max-width:768px){
+  .tour-packages{
+    padding:45px 14px 60px !important;
+  }
+
+  .packages-head h2{
+    font-size:32px !important;
+  }
+
+  .packages-head p{
+    font-size:15px !important;
+  }
+
+  .tour-filter-bar{
+    grid-template-columns:1fr !important;
+  }
+
+  .tour-packages-grid{
+    grid-template-columns:1fr !important;
+  }
+
+  .tour-card{
+    max-width:100% !important;
+  }
+}

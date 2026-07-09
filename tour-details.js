@@ -125,3 +125,43 @@
     document.getElementById("tourInquiryForm")?.addEventListener("submit", submitInquiry);
   });
 })();
+function backToTours(){
+
+    if(document.referrer.includes("tours")){
+
+        history.back();
+
+    }else{
+
+        window.location.href="tours.html";
+
+    }
+
+}
+
+function shareTour(){
+
+    if(navigator.share){
+
+        navigator.share({
+
+            title:document.title,
+
+            url:window.location.href
+
+        });
+
+    }else{
+
+        navigator.clipboard.writeText(window.location.href);
+
+        alert("Tour link copied.");
+    }
+
+}
+
+function saveTour(){
+
+    alert("Wishlist feature coming soon.");
+
+}

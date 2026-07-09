@@ -26,9 +26,21 @@
   </nav>
 </header>
   
-<div class="details-top-actions">
-  <button onclick="history.back()">← Back</button>
- <button onclick="window.location.href='tours.html'">× Close</button>
+<div class="details-toolbar">
+<button class="back-btn" onclick="backToTours()">
+        <i class="fas fa-arrow-left"></i>
+        Back to Tours
+    </button>
+<div class="details-actions">
+<button class="share-btn" onclick="shareTour()">
+            <i class="fas fa-share-alt"></i>
+            Share
+        </button>
+<button class="wishlist-btn" onclick="saveTour()">
+            <i class="far fa-heart"></i>
+            Save
+        </button>
+</div>
 </div>
   
 <section class="tour-detail-hero" id="detailHero">

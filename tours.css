@@ -17,7 +17,9 @@ body{
 
 h1,h2,h3{
   font-family:'Cormorant Garamond', serif;
-}HEADER */
+}
+
+/* HEADER */
 
 header{
   position:fixed;
@@ -58,7 +60,9 @@ nav a:hover{
   border-color:rgba(255,255,255,0.20);
   box-shadow:0 6px 18px rgba(0,0,0,0.20);
   transform:translateY(-2px);
-}HERO */
+}
+
+/* HERO */
 
 .tour-hero{
   min-height:88vh;
@@ -110,7 +114,9 @@ nav a:hover{
 .hero-btn:hover{
   background:#115e59;
   transform:translateY(-3px);
-}COMMON */
+}
+
+/* COMMON */
 
 .intro,
 .tour-types,
@@ -154,7 +160,9 @@ nav a:hover{
   font-size:19px;
   line-height:1.75;
   color:#444;
-}TOUR EXPERIENCE CARDS */
+}
+
+/* TOUR EXPERIENCE CARDS */
 
 .type-grid{
   max-width:1300px;
@@ -202,7 +210,9 @@ nav a:hover{
   object-fit:contain;
   display:block;
   margin:0 auto 12px;
-}PROVINCE FEATURED DESTINATIONS */
+}
+
+/* PROVINCE FEATURED DESTINATIONS */
 
 .destination-intro{
   max-width:850px;
@@ -261,7 +271,9 @@ nav a:hover{
   background:#0f766e;
   color:#ffffff;
   transform:translateY(-2px);
-}WHY */
+}
+
+/* WHY */
 
 .why-grid{
   max-width:1100px;
@@ -287,7 +299,9 @@ nav a:hover{
 .why-grid p{
   color:#444;
   line-height:1.65;
-}TRIP PLANNER */
+}
+
+/* TRIP PLANNER */
 
 .planner-box{
   max-width:1300px;
@@ -361,7 +375,9 @@ nav a:hover{
   color:#111111 !important;
   border:1px solid #0f766e !important;
   box-shadow:0 0 0 2px rgba(15,118,110,0.18) !important;
-}TRUST BADGES */
+}
+
+/* TRUST BADGES */
 
 .trust-badges{
   max-width:1000px;
@@ -380,7 +396,9 @@ nav a:hover{
   font-size:14px;
   font-weight:700;
   box-shadow:0 8px 22px rgba(0,0,0,0.08);
-}STEP INDICATOR */
+}
+
+/* STEP INDICATOR */
 
 .planner-steps{
   display:flex;
@@ -422,7 +440,9 @@ nav a:hover{
   height:2px;
   background:#0f766e;
   opacity:.3;
-}SERVICE TYPE */
+}
+
+/* SERVICE TYPE */
 
 .service-grid{
   display:grid;
@@ -461,7 +481,9 @@ nav a:hover{
 .service-card strong{
   color:#0f766e;
   font-size:15px;
-}AIRPORT / PICKUP DROP */
+}
+
+/* AIRPORT / PICKUP DROP */
 
 .airport-grid{
   display:grid;
@@ -482,7 +504,9 @@ nav a:hover{
 
 .hidden-fields{
   display:none;
-}SELECTED PLACES */
+}
+
+/* SELECTED PLACES */
 
 .selected-destination-list{
   background:rgba(255,255,255,0.72);
@@ -506,7 +530,9 @@ nav a:hover{
 .selected-destination-list li{
   margin-bottom:8px;
   line-height:1.5;
-}GOOGLE PLACE AUTOCOMPLETE */
+}
+
+/* GOOGLE PLACE AUTOCOMPLETE */
 
 .google-place-box{
   width:100%;
@@ -546,7 +572,9 @@ nav a:hover{
   padding-left:20px;
   color:#2f3d35;
   font-weight:500;
-}MAP */
+}
+
+/* MAP */
 
 .map-layout{
   display:grid;
@@ -651,7 +679,9 @@ nav a:hover{
 .summary-row ul{
   padding-left:18px;
   margin:0;
-}FORM GRID */
+}
+
+/* FORM GRID */
 
 .form-grid{
   display:grid;
@@ -677,7 +707,9 @@ nav a:hover{
 .send-plan-btn:hover{
   background:#115e59;
   transform:translateY(-3px);
-}DESTINATION MODAL */
+}
+
+/* DESTINATION MODAL */
 
 .destination-modal{
   display:none;
@@ -770,7 +802,9 @@ nav a:hover{
   overflow:hidden;
   margin:20px 0;
   box-shadow:0 12px 30px rgba(0,0,0,0.18);
-}THANK YOU MODAL */
+}
+
+/* THANK YOU MODAL */
 
 .thankyou-modal{
   display:none;
@@ -838,7 +872,9 @@ nav a:hover{
   font-size:14px;
 }
 
-AUTO ITINERARY PREVIEW */
+
+
+/* AUTO ITINERARY PREVIEW */
 
 .itinerary-section{
   background:rgba(255,255,255,0.44);
@@ -906,7 +942,9 @@ AUTO ITINERARY PREVIEW */
 
 .itinerary-main-day{
   background:rgba(242,232,220,0.90);
-}CTA */
+}
+
+/* CTA */
 
 .cta{
   background:#E3F7CB;
@@ -926,14 +964,18 @@ AUTO ITINERARY PREVIEW */
 
 .cta a:hover{
   transform:translateY(-3px);
-}FOOTER */
+}
+
+/* FOOTER */
 
 footer{
   text-align:center;
   padding:10px;
   background:black;
   color:white;
-}FLOATING WHATSAPP */
+}
+
+/* FLOATING WHATSAPP */
 
 .floating-whatsapp{
   position:fixed;
@@ -957,7 +999,9 @@ footer{
 .floating-whatsapp:hover{
   transform:translateY(-5px) scale(1.08);
   box-shadow:0 18px 40px rgba(0,0,0,0.35);
-}TAP FIX */
+}
+
+/* TAP FIX */
 
 a,
 button,
@@ -971,7 +1015,9 @@ nav a:focus,
 nav a:active{
   outline:none;
   background:rgba(255,255,255,0.08);
-}TABLET */
+}
+
+/* TABLET */
 
 @media(max-width:1100px){
 
@@ -997,7 +1043,9 @@ nav a:active{
   .itinerary-output{
     grid-template-columns:repeat(2,1fr);
   }
-}MOBILE */
+}
+
+/* MOBILE */
 
 @media(max-width:768px){
 
@@ -1285,167 +1333,4 @@ nav a:active{
 .footer-links a:hover{
   opacity:1;
   text-decoration:underline;
-}
-/* ============================
-   CEYBREEZ TOUR PACKAGE STYLE
-============================ */
-
-.tour-packages{
-    padding:70px 20px;
-    background:#f8f3eb;
-}
-
-.packages-head{
-    max-width:900px;
-    margin:0 auto 30px;
-    text-align:center;
-}
-
-.packages-head .eyebrow{
-    display:inline-block;
-    color:#0f766e;
-    font-weight:700;
-    font-size:13px;
-    text-transform:uppercase;
-    letter-spacing:.08em;
-    margin-bottom:10px;
-}
-
-.packages-head h2{
-    font-family:'Cormorant Garamond',serif;
-    font-size:48px;
-    color:#222;
-    margin-bottom:12px;
-}
-
-.packages-head p{
-    max-width:760px;
-    margin:auto;
-    color:#555;
-    line-height:1.7;
-}
-
-.tour-filter-bar{
-    max-width:1100px;
-    margin:35px auto;
-    display:grid;
-    grid-template-columns:2fr 1fr 1fr;
-    gap:15px;
-}
-
-.tour-filter-bar input,
-.tour-filter-bar select{
-    width:100%;
-    height:48px;
-    border:1px solid #d8d8d8;
-    border-radius:14px;
-    padding:0 16px;
-    font-family:Poppins,sans-serif;
-    background:#fff;
-}
-
-.tour-package-status{
-    max-width:1100px;
-    margin:0 auto 20px;
-    color:#666;
-    font-size:14px;
-}
-
-#tourPackagesGrid{
-    max-width:1200px;
-    margin:auto;
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(330px,1fr));
-    gap:28px;
-}
-
-.tour-card{
-    background:#fff;
-    border-radius:24px;
-    overflow:hidden;
-    box-shadow:0 10px 30px rgba(0,0,0,.08);
-    transition:.3s;
-}
-
-.tour-card:hover{
-    transform:translateY(-6px);
-    box-shadow:0 20px 40px rgba(0,0,0,.15);
-}
-
-.tour-card-image{
-    width:100%;
-    height:230px;
-    object-fit:cover;
-    display:block;
-}
-
-.tour-card-content{
-    padding:22px;
-}
-
-.tour-card-meta{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    margin-bottom:12px;
-    font-size:13px;
-    color:#0f766e;
-    font-weight:600;
-}
-
-.tour-card-content h3{
-    font-family:'Cormorant Garamond',serif;
-    font-size:30px;
-    color:#222;
-    margin-bottom:10px;
-}
-
-.tour-card-content p{
-    color:#666;
-    line-height:1.7;
-    margin-bottom:15px;
-}
-
-.tour-price{
-    color:#0f766e;
-    font-weight:700;
-    margin-bottom:18px;
-}
-
-.tour-card-btn{
-    display:inline-block;
-    background:#0f766e;
-    color:#fff;
-    text-decoration:none;
-    padding:12px 22px;
-    border-radius:30px;
-    transition:.3s;
-}
-
-.tour-card-btn:hover{
-    background:#0b5f58;
-}
-
-.featured-badge{
-    position:absolute;
-    top:14px;
-    right:14px;
-    background:#FFD54A;
-    color:#222;
-    padding:6px 12px;
-    border-radius:20px;
-    font-size:12px;
-    font-weight:700;
-}
-
-@media(max-width:900px){
-
-    .tour-filter-bar{
-        grid-template-columns:1fr;
-    }
-
-    .packages-head h2{
-        font-size:36px;
-    }
-
 }

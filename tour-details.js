@@ -33,9 +33,9 @@
     setText("tourDescription", tour.fullDescription || tour.shortDescription || "More details will be provided by the CeyBreez team.");
     document.getElementById("tourNameField").value = tour.title || "";
     document.getElementById("tourIdField").value = tour.id || tour.slug || "";
+    renderTourGallery(tour);
 
-    const photos = [firstImage(tour), ...array(tour.photos).filter(p => p !== firstImage(tour))].slice(0,6);
-    document.getElementById("tourGallery").innerHTML = photos.map(p => `<img src="${escapeHtml(p)}" alt="${escapeHtml(tour.title)}" loading="lazy">`).join("");
+   
     renderList("tourItinerary", tour.itinerary, "Itinerary will be customized for this package.");
     renderList("tourIncludes", tour.inclusions, "Includes will be confirmed with your quote.");
     renderList("tourExcludes", tour.exclusions, "Exclusions will be confirmed with your quote.");

@@ -5,15 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CeyBreez Tour Details</title>
   <meta name="description" content="View Sri Lanka tour package details and send an inquiry with CeyBreez.">
+
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="stylesheet" href="tour-details.css">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
   <script src="tour-details.js" defer></script>
 </head>
 <body>
+
 <header>
   <nav>
     <a href="index.html">Home</a>
@@ -25,108 +29,161 @@
     <a href="contact.html">Contact</a>
   </nav>
 </header>
-  
-<div class="details-toolbar">
-<button class="back-btn" onclick="backToTours()">
-        <i class="fas fa-arrow-left"></i>
-        Back to Tours
-    </button>
-<div class="details-actions">
-<button class="share-btn" onclick="shareTour()">
-            <i class="fas fa-share-alt"></i>
-            Share
+
+<main>
+  <section class="details-shell">
+    <div class="details-toolbar">
+      <button class="back-btn" type="button" onclick="backToTours()">
+        <i class="fas fa-arrow-left"></i> Back to Tours
+      </button>
+
+      <div class="details-actions">
+        <button class="share-btn" type="button" onclick="toggleShareBox()">
+          <i class="fas fa-share-alt"></i> Share
         </button>
-<button class="wishlist-btn" onclick="saveTour()">
-            <i class="far fa-heart"></i>
-            Save
+        <button class="wishlist-btn" type="button" onclick="saveTour()">
+          <i class="far fa-heart"></i> Save
         </button>
-</div>
-</div>
-  
-<section class="tour-detail-hero" id="detailHero">
-  <div class="hero-overlay">
-    <span id="tourCategory" class="hero-pill">Tour Package</span>
-    <h1 id="tourTitle">Loading tour...</h1>
-    <p id="tourSummary">Please wait while we load this CeyBreez experience.</p>
-    <div class="hero-meta">
-      <span id="tourLocation">📍 Sri Lanka</span>
-      <span id="tourDuration">🕒 Duration</span>
-      <span id="tourPrice">💰 Price</span>
+      </div>
     </div>
-  </div>
-</section>
 
-<main class="detail-wrap">
-  <section class="detail-main">
-    <div id="detailStatus" class="status-box">Loading tour details...</div>
+    <div id="shareBox" class="share-box">
+      <button type="button" onclick="shareWhatsApp()"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+      <button type="button" onclick="shareFacebook()"><i class="fa-brands fa-facebook"></i> Facebook</button>
+      <button type="button" onclick="copyTourLink()"><i class="fas fa-link"></i> Copy Link</button>
+    </div>
 
-    
-    <section class="tour-gallery">
-  <div class="gallery-main">
-    <img id="mainGalleryImage" src="" alt="Tour Image">
-  </div>
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span>/</span>
+      <a href="tours.html">Tours</a>
+      <span>/</span>
+      <strong id="breadcrumbTitle">Tour Package</strong>
+    </div>
 
-  <div id="galleryThumbs" class="gallery-thumbs"></div>
-</section>
-
-<div id="galleryLightbox" class="gallery-lightbox">
-  <button class="gallery-close" onclick="closeGallery()">×</button>
-  <button class="gallery-prev" onclick="prevGalleryImage()">‹</button>
-  <img id="lightboxImage" src="" alt="Tour Image">
-  <button class="gallery-next" onclick="nextGalleryImage()">›</button>
-</div>
-
-    <section class="content-card">
-      <h2>Overview</h2>
-      <p id="tourDescription"></p>
+    <section class="tour-title-block">
+      <div>
+        <span id="tourCategory" class="hero-pill">Tour Package</span>
+        <h1 id="tourTitle">Loading tour...</h1>
+        <p id="tourSummary">Please wait while we load this CeyBreez experience.</p>
+      </div>
+      <div class="title-price-box">
+        <span>From</span>
+        <strong id="tourPrice">Price on request</strong>
+      </div>
     </section>
 
-    <section class="content-card split-card">
-      <div>
-        <h2>Itinerary</h2>
-        <div id="tourItinerary" class="list-box"></div>
+    <div class="hero-meta">
+      <span id="tourLocation">📍 Sri Lanka</span>
+      <span id="tourDuration">🕒 Flexible</span>
+      <span id="tourPickup">🚐 Pickup available</span>
+    </div>
+
+    <div id="detailStatus" class="status-box">Loading tour details...</div>
+
+    <section class="tour-gallery" aria-label="Tour photo gallery">
+      <div class="gallery-main">
+        <img id="mainGalleryImage" src="images/cover.jpg" alt="Tour Image">
       </div>
-      <div>
-        <h2>Includes</h2>
-        <div id="tourIncludes" class="list-box"></div>
-        <h2 class="mt">Excludes</h2>
-        <div id="tourExcludes" class="list-box excludes"></div>
+      <div id="galleryThumbs" class="gallery-thumbs"></div>
+      <button id="viewAllPhotosBtn" class="view-all-photos" type="button" onclick="openGallery(0)">
+        <i class="fas fa-camera"></i> View all photos
+      </button>
+    </section>
+
+    <section class="detail-layout">
+      <div class="detail-main">
+        <section class="content-card">
+          <h2>Overview</h2>
+          <p id="tourDescription"></p>
+        </section>
+
+        <section class="content-card">
+          <h2>Itinerary</h2>
+          <div id="tourItinerary" class="list-box"></div>
+        </section>
+
+        <section class="content-card split-card">
+          <div>
+            <h2>Includes</h2>
+            <div id="tourIncludes" class="list-box"></div>
+          </div>
+          <div>
+            <h2>Excludes</h2>
+            <div id="tourExcludes" class="list-box excludes"></div>
+          </div>
+        </section>
       </div>
+
+      <aside class="booking-panel">
+        <div class="booking-card">
+          <div class="booking-price-line">
+            <span>Tour inquiry</span>
+            <strong id="bookingPrice">Price on request</strong>
+          </div>
+          <p class="small">Send an inquiry. Our team will confirm availability and pricing.</p>
+
+          <form id="tourInquiryForm">
+            <input type="hidden" id="tourNameField">
+            <input type="hidden" id="tourIdField">
+
+            <label>Your Name</label>
+            <input type="text" id="guestName" required>
+
+            <label>Email</label>
+            <input type="email" id="guestEmail" required>
+
+            <label>WhatsApp / Mobile</label>
+            <input type="tel" id="guestMobile" required>
+
+            <label>Country</label>
+            <input type="text" id="guestCountry" required>
+
+            <div class="two-col">
+              <div>
+                <label>Travel Date</label>
+                <input type="date" id="travelDate" required>
+              </div>
+              <div>
+                <label>Guests</label>
+                <input type="number" min="1" id="guestCount" required>
+              </div>
+            </div>
+
+            <label>Message</label>
+            <textarea id="guestMessage" rows="4" placeholder="Pickup location, hotel preference or special notes..."></textarea>
+
+            <button type="submit">Send Tour Inquiry</button>
+          </form>
+          <div id="inquiryResult" class="inquiry-result"></div>
+        </div>
+      </aside>
     </section>
   </section>
 
-  <aside class="booking-panel">
-    <div class="booking-card">
-      <h2>Book This Tour</h2>
-      <p class="small">Send an inquiry. Our team will confirm availability and pricing.</p>
-      <form id="tourInquiryForm">
-        <input type="hidden" id="tourNameField">
-        <input type="hidden" id="tourIdField">
-        <label>Your Name</label>
-        <input type="text" id="guestName" required>
-        <label>Email</label>
-        <input type="email" id="guestEmail" required>
-        <label>WhatsApp / Mobile</label>
-        <input type="tel" id="guestMobile" required>
-        <label>Country</label>
-        <input type="text" id="guestCountry" required>
-        <div class="two-col">
-          <div><label>Travel Date</label><input type="date" id="travelDate" required></div>
-          <div><label>Guests</label><input type="number" min="1" id="guestCount" required></div>
-        </div>
-        <label>Message</label>
-        <textarea id="guestMessage" rows="4" placeholder="Pickup location, hotel preference or special notes..."></textarea>
-        <button type="submit">Send Tour Inquiry</button>
-      </form>
-      <div id="inquiryResult" class="inquiry-result"></div>
-    </div>
-  </aside>
+  <section class="related-section">
+    <h2>More Tours</h2>
+    <div id="relatedTours" class="related-grid"></div>
+  </section>
 </main>
 
-<section class="related-section">
-  <h2>More Tours</h2>
-  <div id="relatedTours" class="related-grid"></div>
-</section>
+<div id="galleryLightbox" class="gallery-lightbox" aria-hidden="true">
+  <button class="gallery-close" type="button" onclick="closeGallery()">×</button>
+  <button class="gallery-prev" type="button" onclick="prevGalleryImage()">‹</button>
+  <div class="lightbox-stage">
+    <div id="galleryCounter" class="gallery-counter">1 / 1</div>
+    <img id="lightboxImage" src="" alt="Tour Image">
+  </div>
+  <button class="gallery-next" type="button" onclick="nextGalleryImage()">›</button>
+</div>
+
+<div class="mobile-book-bar">
+  <div>
+    <span>From</span>
+    <strong id="mobileBookPrice">Price on request</strong>
+  </div>
+  <a href="#tourInquiryForm">Book Now</a>
+</div>
 
 <footer>
   <p>© 2026 CeyBreez. All rights reserved.</p>
@@ -136,6 +193,9 @@
   </div>
 </footer>
 
-<a href="https://api.whatsapp.com/send?phone=94704620017" class="floating-whatsapp" target="_blank" aria-label="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+<a href="https://api.whatsapp.com/send?phone=94704620017" class="floating-whatsapp" target="_blank" aria-label="Chat on WhatsApp">
+  <i class="fa-brands fa-whatsapp"></i>
+</a>
+
 </body>
 </html>

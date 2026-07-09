@@ -60,7 +60,21 @@
   <section class="detail-main">
     <div id="detailStatus" class="status-box">Loading tour details...</div>
 
-    <div class="gallery-grid" id="tourGallery"></div>
+    
+    <section class="tour-gallery">
+  <div class="gallery-main">
+    <img id="mainGalleryImage" src="" alt="Tour Image">
+  </div>
+
+  <div id="galleryThumbs" class="gallery-thumbs"></div>
+</section>
+
+<div id="galleryLightbox" class="gallery-lightbox">
+  <button class="gallery-close" onclick="closeGallery()">×</button>
+  <button class="gallery-prev" onclick="prevGalleryImage()">‹</button>
+  <img id="lightboxImage" src="" alt="Tour Image">
+  <button class="gallery-next" onclick="nextGalleryImage()">›</button>
+</div>
 
     <section class="content-card">
       <h2>Overview</h2>

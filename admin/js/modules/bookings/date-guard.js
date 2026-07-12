@@ -103,19 +103,7 @@ function attachManualBookingGuard() {
     });
   });
 
-  form.addEventListener(
-    "submit",
-    async event => {
-      const available = await checkManualBookingAvailability();
 
-      if (!available) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        alert("This property is not available for the selected dates.");
-      }
-    },
-    true
-  );
 }
 
 document.addEventListener("DOMContentLoaded", () => {

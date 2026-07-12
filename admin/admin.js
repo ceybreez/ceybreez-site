@@ -2747,13 +2747,6 @@ e.target.reset();
 await loadBookings();
 await loadInquiries();
 
-const savedBooking = allBookings.find(b =>
-  String(b.reference || "") === reference
-);
-
-if (savedBooking) {
-  openBookingDetails(savedBooking.id);
-}
 }
 
 function escapeJs(value) {
@@ -4703,76 +4696,4 @@ async function ceybreezLoadBookedDatesForProperty(propertyName) {
   return booked;
 }
 
-async function ceybreezCheckManualBookingDateConflict() {
-  const propertyName = document.getElementById("manualItemName")?.value || "";
-  const dateFrom = document.getElementById("manualDateFrom")?.value || "";
-  const dateTo = document.getElementById("manualDateTo")?.value || "";
-  const msg = document.getElementById("manualAvailabilityMsg");
 
-  if (msg) {
-    msg.className = "manual-availability-msg";
-    msg.textContent = "";
-  }
-
-  if (!propertyName || !dateFrom || !dateTo) {
-    return true;
-  }
-
-  const booked = await ceybreezLoadBookedDatesForProperty(propertyName);
-
-  const s = new Date(`${dateFrom}T00:00:00`);
-  const e = new Date(`${dateTo}T00:00:00`);
-
-  for (let d = new Date(s); d < e; d.setDate(d.getDate() + 1)) {
-    const iso = d.toISOString().slice(0, 10);
-    const conflict = booked.find(x => x.date === iso);
-
-    if (conflict) {
-      if (msg) {
-        msg.className = "manual-availability-msg bad";
-        msg.textContent =
-          `Not available: ${iso} already booked (${conflict.reference || "Booking"}).`;
-      }
-
-      return false;
-    }
-  }
-
-  if (msg) {
-    msg.className = "manual-availability-msg good";
-    msg.textContent = "Available for selected dates.";
-  }
-
-  return true;
-}
-
-function ceybreezAttachManualBookingDateGuard() {
-  const form = document.getElementById("manualBookingForm");
-  if (!form || form.dataset.dateGuard === "1") return;
-
-  form.dataset.dateGuard = "1";
-
-  ["manualItemName", "manualDateFrom", "manualDateTo"].forEach(id => {
-    document.getElementById(id)?.addEventListener("change", () => {
-      ceybreezCheckManualBookingDateConflict().catch(console.error);
-    });
-  });
-
-  form.addEventListener(
-    "submit",
-    async event => {
-      const ok = await ceybreezCheckManualBookingDateConflict();
-
-      if (!ok) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        alert("This property is not available for the selected dates.");
-      }
-    },
-    true
-  );
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(ceybreezAttachManualBookingDateGuard, 500);
-});

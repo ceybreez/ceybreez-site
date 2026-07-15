@@ -588,10 +588,20 @@ function initV18BlockDatePickers(bookings){
     };
     window.v14CloseMobileMenu=closeMobileMenu;
 
-    sidebar.querySelectorAll("[data-v14-tab]").forEach(btn=>btn.addEventListener("click",()=>{
-      window.showTab(btn.dataset.v14Tab);
+    sidebar.querySelectorAll("[data-v14-tab]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const tab = btn.dataset.v14Tab;
+
+    if (tab === "pageBuilder") {
       closeMobileMenu();
-    }));
+      window.location.href = "./page-builder.html";
+      return;
+    }
+
+    window.showTab(tab);
+    closeMobileMenu();
+  });
+});
     const menuButton=top.querySelector(".v14-mobile-menu");
     menuButton?.setAttribute("aria-expanded","false");
     menuButton?.addEventListener("click",()=>sidebar.classList.contains("open") ? closeMobileMenu() : openMobileMenu());

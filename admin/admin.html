@@ -29,7 +29,7 @@
       <button onclick="showTab('reviewsTab')">Reviews</button>
       <button onclick="showTab('financeTab')">Finance</button>
       <button onclick="showTab('reportsTab')">Reports</button>
-      <button onclick="showTab('pageControl')">Page Builder</button>
+      <button onclick="window.location.href='page-builder.html'">Page Builder Pro</button>
       <button onclick="showTab('settingsTab')">Settings</button>
       <button onclick="logoutAdmin()">Logout</button>
     </div>
@@ -770,19 +770,6 @@
 
   <div id="reviewsSummary" class="dashboard-cards"></div>
 
-  <section class="admin-section" id="reviewsShowcaseSettings">
-    <div class="section-head"><div><h2>Website Reviews & Social Proof</h2><p>Manage customer counts, Google review button, and travel reels shown on the main website.</p></div><button type="button" onclick="saveReviewShowcaseSettings()">Save Website Showcase</button></div>
-    <div class="review-showcase-admin-grid">
-      <label>Happy Customer Count<input type="number" id="happyCustomerCount" min="0" placeholder="Example: 250"></label>
-      <label>Completed Stays / Trips<input type="number" id="completedTripCount" min="0" placeholder="Example: 180"></label>
-      <label>Displayed Guest Rating<input type="text" id="googleRating" placeholder="Example: 4.9"></label>
-      <label>Google Review / Google Business Link<input type="url" id="googleReviewUrl" placeholder="Paste your Google review link"></label>
-    </div>
-    <label>Travel Reel / Video URLs (one per line)</label>
-    <textarea id="reviewReels" rows="6" placeholder="YouTube link, Instagram reel link, or uploaded MP4 URL — one per line"></textarea>
-    <div class="upload-box mini-upload-box"><h3>Upload Travel Reel</h3><p>Upload MP4/WebM video to R2 and add it to the home page automatically.</p><input type="file" id="reviewReelUploader" accept="video/*" onchange="uploadReviewReel()"><button type="button" onclick="document.getElementById('reviewReelUploader').click()">Browse Video</button><p id="reviewReelUploadStatus" class="upload-status"></p></div>
-  </section>
-
   <section class="admin-section">
     <div class="section-head">
       <div>
@@ -793,9 +780,7 @@
         <input id="reviewSearch" placeholder="Search guest, item, country..." />
         <select id="reviewTypeFilter">
           <option value="all">All Types</option>
-          <option value="villa">Villa</option>
-          <option value="homestay">Homestay</option>
-          <option value="apartment">Apartment</option>
+          <option value="property">Property</option>
           <option value="tour">Tour</option>
           <option value="service">Service</option>
         </select>
@@ -843,9 +828,7 @@
 
       <label>Review Type</label>
       <select id="reviewType" required>
-        <option value="villa">Villa</option>
-        <option value="homestay">Homestay</option>
-        <option value="apartment">Apartment</option>
+        <option value="property">Property</option>
         <option value="tour">Tour</option>
         <option value="service">Service</option>
       </select>

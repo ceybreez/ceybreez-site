@@ -213,7 +213,7 @@ export function renderTourPackagesTable(tours = []) {
         <td><strong>${escapeHtml(t.currency || "USD")} ${escapeHtml(t.basePrice || "0")}</strong><br><small>Child: ${escapeHtml(t.childPrice || "0")}</small></td>
         <td>${active ? `<span class="status-badge status-booked">Active</span>` : `<span class="status-badge status-cancelled">Hidden</span>`}</td>
         <td>${featured ? `<span class="status-badge status-quoted">Featured</span>` : `<span class="status-badge">No</span>`}</td>
-        <td onclick="event.stopPropagation();">
+        <td>
           <button type="button" class="mini-btn" data-tour-edit="${escapeHtml(t.id)}">Edit</button>
           <button type="button" class="delete-btn mini-btn" data-tour-delete="${escapeHtml(t.id)}">Delete</button>
         </td>

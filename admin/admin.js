@@ -1429,23 +1429,7 @@ function removeServicePhoto(index) {
    V6 ENTERPRISE LAYOUT HELPERS
 ========================= */
 
-function classifyInquiryItem(item){
-  const text = `${item.category || ""} ${item.serviceType || ""} ${item.itemName || ""}`.toLowerCase();
 
-  if (text.includes("tour")) return "tour";
-  if (text.includes("cafe") || text.includes("service") || text.includes("restaurant") || text.includes("contact")) return "service";
-  if (text.includes("villa") || text.includes("homestay") || text.includes("apartment") || text.includes("property")) return "property";
-  return "property";
-}
-
-function classifyBookingItem(item){
-  const text = `${item.category || ""} ${item.serviceType || ""} ${item.itemName || ""}`.toLowerCase();
-
-  if (String(item.reference || "").startsWith("MAN-") || text.includes("manual")) return "manual";
-  if (text.includes("tour")) return "tour";
-  if (text.includes("villa") || text.includes("homestay") || text.includes("apartment") || text.includes("property")) return "property";
-  return "property";
-}
 
 function setInquiryMode(mode, btn){
   v6InquiryMode = mode || "all";
@@ -1798,48 +1782,6 @@ async function deleteInquiry(id) {
   loadInquiries();
 }
 
-function applyInquiryFilters() {
-  const searchInputs = document.querySelectorAll(".inquiry-search");
-  let search = "";
-
-  searchInputs.forEach(input => {
-    if (input.value.trim()) search = input.value.toLowerCase();
-  });
-
-  const oldStatus = document.getElementById("inquiryFilter")?.value || "";
-  const newStatus = document.getElementById("inquiryStatusFilter")?.value || "all";
-
-  let status = "";
-  if (newStatus && newStatus !== "all") status = newStatus.toLowerCase();
-  if (oldStatus) status = oldStatus.toLowerCase();
-
-  const filtered = allInquiries.filter(item => {
-    if (getInquiryCategory(item) !== currentInquiryView) return false;
-    const text = `
-      ${item.reference || ""}
-      ${item.guestName || ""}
-      ${item.guestEmail || ""}
-      ${item.guestMobile || ""}
-      ${item.serviceType || ""}
-      ${item.itemName || ""}
-      ${item.message || ""}
-    `.toLowerCase();
-
-    const itemStatus = normalizeStatus(item.status);
-
-    const mode = v6InquiryMode || document.getElementById("v6InquiryMode")?.value || "all";
-    const modeMatch = mode === "all" || classifyInquiryItem(item) === mode;
-
-    return modeMatch &&
-           (!status || itemStatus === status) &&
-           (!search || text.includes(search));
-  });
-
-  renderInquiryTable(filtered);
-
-  const inquiryCardsBox = document.getElementById("inquiriesList");
-  if (inquiryCardsBox) inquiryCardsBox.innerHTML = "";
-}
 
 function renderInquiryCards(data) {
   const box = document.getElementById("inquiriesList");
@@ -1959,40 +1901,6 @@ function renderInquiryStats(data) {
   `;
 }
 
-function renderDashboardCards(data) {
-  const box = document.getElementById("inquiryCards");
-  if (!box) return;
-
-  const total = data.length;
-  const count = status => data.filter(x => normalizeStatus(x.status) === status.toLowerCase()).length;
-
-  box.innerHTML = `
-    <div class="dashboard-card">
-      <h3>Total Inquiries</h3>
-      <div class="value">${total}</div>
-    </div>
-
-    <div class="dashboard-card card-new">
-      <h3>New</h3>
-      <div class="value">${count("New")}</div>
-    </div>
-
-    <div class="dashboard-card card-contacted">
-      <h3>Contacted</h3>
-      <div class="value">${count("Contacted")}</div>
-    </div>
-
-    <div class="dashboard-card card-booked">
-      <h3>Booked</h3>
-      <div class="value">${count("Booked")}</div>
-    </div>
-
-    <div class="dashboard-card card-closed">
-      <h3>Closed</h3>
-      <div class="value">${count("Closed")}</div>
-    </div>
-  `;
-}
 
 function renderInquiryTypeCards(data) {
   const box = document.getElementById("inquiryTypeCards");
@@ -2613,49 +2521,7 @@ async function loadBookings() {
   }
 }
 
-function applyBookingFilters() {
-  const search = (document.getElementById("bookingSearch")?.value || "").toLowerCase();
-  const status = (document.getElementById("bookingStatusFilter")?.value || "all").toLowerCase();
-  const type = (document.getElementById("bookingTypeFilter")?.value || "all").toLowerCase();
 
-  const filtered = allBookings.filter(item => {
-    if (getBookingCategory(item) !== currentBookingView) return false;
-    const statusMatch = status === "all" || normalizeStatus(item.status) === status;
-    const typeText = `${item.serviceType || ""} ${item.itemName || ""}`.toLowerCase();
-    const typeMatch = type === "all" || typeText.includes(type);
-    const searchText = `
-      ${item.id || ""}
-      ${item.reference || ""}
-      ${item.itemName || ""}
-      ${item.serviceType || ""}
-      ${item.guestName || ""}
-      ${item.guestEmail || ""}
-      ${item.guestMobile || ""}
-    `.toLowerCase();
-
-    const mode = v6BookingMode || document.getElementById("v6BookingMode")?.value || "all";
-    const modeMatch = mode === "all" || classifyBookingItem(item) === mode;
-
-    return modeMatch && statusMatch && typeMatch && (!search || searchText.includes(search));
-  });
-
-  renderBookingsTable(filtered);
-  renderBookingsCalendar(filtered);
-  renderAvailabilityMatrix();
-}
-
-function renderBookingStats(data) {
-  const box = document.getElementById("bookingStats");
-  if (!box) return;
-
-  const count = status => data.filter(x => normalizeStatus(x.status) === status).length;
-
-  box.innerHTML = `
-    <div class="dashboard-card"><h3>Total Bookings</h3><div class="value">${data.length}</div></div>
-    <div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${count("booked")}</div></div>
-    <div class="dashboard-card card-closed"><h3>Cancelled</h3><div class="value">${count("cancelled")}</div></div>
-  `;
-}
 
 function renderBookingsTable(data) {
   const tbody = document.getElementById("bookingTableBody");
@@ -2881,13 +2747,6 @@ e.target.reset();
 await loadBookings();
 await loadInquiries();
 
-const savedBooking = allBookings.find(b =>
-  String(b.reference || "") === reference
-);
-
-if (savedBooking) {
-  openBookingDetails(savedBooking.id);
-}
 }
 
 function escapeJs(value) {
@@ -3298,74 +3157,6 @@ ${baseMessage}`.trim()
   };
 }
 
-async function confirmBooking(sendEmail = true) {
-
-  console.log("CONFIRM BOOKING CLICKED", currentInquiry);
-
-  if (!currentInquiry) {
-    alert("No inquiry selected");
-    return;
-  }
-
-  if (!confirm("Confirm this booking?")) return;
-
-  const activeExistingBooking = allBookings.find(b =>
-    String(b.inquiryId || "") === String(currentInquiry.id) &&
-    normalizeStatus(b.status) === "booked"
-  );
-
-  if (activeExistingBooking) {
-    alert("This inquiry is already booked.");
-    return;
-  }
-
-  try {
-
-    const res = await fetch(
-      `${API_BASE}/api/admin/bookings`,
-      {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify({
-          inquiryId: currentInquiry.id,
-          reference: currentInquiry.reference,
-          itemName: currentInquiry.itemName || (currentInquiry.serviceType || "")
-            .replace("Villa Inquiry - ", "")
-            .replace("Apartment Inquiry - ", "")
-            .replace("Homestay Inquiry - ", ""),
-          serviceType: currentInquiry.serviceType,
-          guestName: currentInquiry.guestName,
-          guestEmail: currentInquiry.guestEmail,
-          guestMobile: currentInquiry.guestMobile,
-          dateFrom: currentInquiry.dateFrom,
-          dateTo: safeBookingDateTo(currentInquiry),
-          guests: currentInquiry.guests,
-          ...getBookingConfirmDetails(),
-          sendEmail
-        })
-      }
-    );
-
-    const result = await res.json();
-    console.log("BOOKING RESULT", result);
-
-    if (!res.ok) {
-      alert(result.error || "Booking failed");
-      return;
-    }
-
-    currentInquiry.status = "Booked";
-
-    await loadBookings();
-    await loadInquiries();
-
-    alert("Booking Confirmed");
-    closeInquiryModal();
-
-  } catch (err) {
-    alert(err.message);
-  }
-}
 
 function openGuestWhatsApp() {
 
@@ -3727,21 +3518,7 @@ function previewCurrentSectionV51(device){
    V6.1 HOTFIX OVERRIDES
 ========================= */
 
-function classifyInquiryItem(item){
-  const text = `${item.category || ""} ${item.serviceType || ""} ${item.itemName || ""} ${item.experiences || ""}`.toLowerCase();
-  if (text.includes("tour")) return "tour";
-  if (text.includes("cafe") || text.includes("service") || text.includes("restaurant") || text.includes("contact")) return "service";
-  if (text.includes("villa") || text.includes("homestay") || text.includes("apartment") || text.includes("property")) return "property";
-  return "property";
-}
 
-function classifyBookingItem(item){
-  const text = `${item.category || ""} ${item.serviceType || ""} ${item.itemName || ""}`.toLowerCase();
-  if (String(item.reference || "").startsWith("MAN-") || String(item.inquiryId || "").startsWith("MAN-")) return "manual";
-  if (text.includes("tour")) return "tour";
-  if (text.includes("villa") || text.includes("homestay") || text.includes("apartment") || text.includes("property")) return "property";
-  return "property";
-}
 
 function datePlusOne(dateValue) {
   if (!dateValue) return "";
@@ -3759,47 +3536,7 @@ function safeBookingDateTo(inquiry) {
   return to || from;
 }
 
-function renderDashboardCards(data) {
-  const box = document.getElementById("inquiryCards");
-  if (!box) return;
 
-  const count = status => data.filter(x => normalizeStatus(x.status) === status.toLowerCase()).length;
-  const propertyCount = data.filter(x => classifyInquiryItem(x) === "property").length;
-  const tourCount = data.filter(x => classifyInquiryItem(x) === "tour").length;
-  const serviceCount = data.filter(x => classifyInquiryItem(x) === "service").length;
-
-  box.innerHTML = `
-    <div class="dashboard-card"><h3>Total Inquiries</h3><div class="value">${data.length}</div></div>
-    <div class="dashboard-card"><h3>Property Inquiries</h3><div class="value">${propertyCount}</div></div>
-    <div class="dashboard-card"><h3>Tour Inquiries</h3><div class="value">${tourCount}</div></div>
-    <div class="dashboard-card"><h3>Service / Contact</h3><div class="value">${serviceCount}</div></div>
-    <div class="dashboard-card card-new"><h3>New</h3><div class="value">${count("New")}</div></div>
-    <div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${count("Booked")}</div></div>
-    <div class="dashboard-card card-closed"><h3>Cancelled / Closed</h3><div class="value">${count("Cancelled") + count("Closed")}</div></div>
-  `;
-}
-
-function renderBookingStats(data) {
-  const box = document.getElementById("bookingStats");
-  if (!box) return;
-
-  const count = status => data.filter(x => normalizeStatus(x.status) === status).length;
-  const propertyCount = data.filter(x => classifyBookingItem(x) === "property").length;
-  const tourCount = data.filter(x => classifyBookingItem(x) === "tour").length;
-  const manualCount = data.filter(x => classifyBookingItem(x) === "manual").length;
-  const today = toDateInputValue(new Date());
-  const todayBookings = data.filter(x => normalizeStatus(x.status) === "booked" && bookingCoversDate(x, today)).length;
-
-  box.innerHTML = `
-    <div class="dashboard-card"><h3>Total Bookings</h3><div class="value">${data.length}</div></div>
-    <div class="dashboard-card"><h3>Property Bookings</h3><div class="value">${propertyCount}</div></div>
-    <div class="dashboard-card"><h3>Tour Bookings</h3><div class="value">${tourCount}</div></div>
-    <div class="dashboard-card"><h3>Manual Bookings</h3><div class="value">${manualCount}</div></div>
-    <div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${count("booked")}</div></div>
-    <div class="dashboard-card"><h3>Today Active</h3><div class="value">${todayBookings}</div></div>
-    <div class="dashboard-card card-closed"><h3>Cancelled</h3><div class="value">${count("cancelled")}</div></div>
-  `;
-}
 
 async function saveV6Settings(){
   const payload = {
@@ -3943,19 +3680,7 @@ function v64TextOf(item){
   return `${item?.category || ""} ${item?.serviceType || ""} ${item?.itemName || ""} ${item?.experiences || ""} ${item?.message || ""} ${item?.reference || ""}`.toLowerCase();
 }
 
-function classifyInquiryItem(item){
-  const text = v64TextOf(item);
-  if (text.includes("tour") || text.includes("trip") || text.includes("excursion") || text.includes("safari")) return "tour";
-  if (text.includes("cafe") || text.includes("service") || text.includes("restaurant") || text.includes("contact")) return "service";
-  return "property";
-}
 
-function classifyBookingItem(item){
-  const text = v64TextOf(item);
-  if (text.includes("tour") || text.includes("trip") || text.includes("excursion") || text.includes("safari")) return "tour";
-  if (String(item?.reference || "").startsWith("MAN-") || String(item?.inquiryId || "").startsWith("MAN-")) return "manual";
-  return "property";
-}
 
 function isTourInquiry(inquiry){ return classifyInquiryItem(inquiry) === "tour"; }
 function isPropertyInquiry(inquiry){ return classifyInquiryItem(inquiry) === "property"; }
@@ -3978,25 +3703,6 @@ function setBookingMode(mode, btn){
   applyBookingFilters();
 }
 
-function renderDashboardCards(data) {
-  const box = document.getElementById("inquiryCards");
-  if (!box) return;
-
-  const count = status => data.filter(x => normalizeStatus(x.status) === status.toLowerCase()).length;
-  const propertyCount = data.filter(x => classifyInquiryItem(x) === "property").length;
-  const tourCount = data.filter(x => classifyInquiryItem(x) === "tour").length;
-  const serviceCount = data.filter(x => classifyInquiryItem(x) === "service").length;
-
-  box.innerHTML = `
-    <div class="dashboard-card"><h3>Total Inquiries</h3><div class="value">${data.length}</div></div>
-    <div class="dashboard-card"><h3>Property Inquiries</h3><div class="value">${propertyCount}</div></div>
-    <div class="dashboard-card"><h3>Tour Inquiries</h3><div class="value">${tourCount}</div></div>
-    <div class="dashboard-card"><h3>Service / Contact</h3><div class="value">${serviceCount}</div></div>
-    <div class="dashboard-card card-new"><h3>New</h3><div class="value">${count("New")}</div></div>
-    <div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${count("Booked")}</div></div>
-    <div class="dashboard-card card-closed"><h3>Cancelled / Closed</h3><div class="value">${count("Cancelled") + count("Closed")}</div></div>
-  `;
-}
 
 function renderInquiryTypeCards(data) {
   const box = document.getElementById("inquiryTypeCards");
@@ -4022,24 +3728,6 @@ function renderInquiryTypeCards(data) {
   `;
 }
 
-function renderBookingStats(data) {
-  const box = document.getElementById("bookingStats");
-  if (!box) return;
-
-  const count = status => data.filter(x => normalizeStatus(x.status) === status).length;
-  const propertyCount = data.filter(x => classifyBookingItem(x) === "property").length;
-  const tourCount = data.filter(x => classifyBookingItem(x) === "tour").length;
-  const manualCount = data.filter(x => classifyBookingItem(x) === "manual").length;
-
-  box.innerHTML = `
-    <div class="dashboard-card"><h3>Total Bookings</h3><div class="value">${data.length}</div></div>
-    <div class="dashboard-card"><h3>Property Bookings</h3><div class="value">${propertyCount}</div></div>
-    <div class="dashboard-card"><h3>Tour Bookings</h3><div class="value">${tourCount}</div></div>
-    <div class="dashboard-card"><h3>Manual Bookings</h3><div class="value">${manualCount}</div></div>
-    <div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${count("booked")}</div></div>
-    <div class="dashboard-card card-closed"><h3>Cancelled</h3><div class="value">${count("cancelled")}</div></div>
-  `;
-}
 
 function datePlusOne(dateValue) {
   if (!dateValue) return "";
@@ -4072,55 +3760,7 @@ function getItemNameForBooking(inquiry){
   return item || "CeyBreez Booking";
 }
 
-function applyInquiryFilters() {
-  const searchInputs = document.querySelectorAll(".inquiry-search");
-  let search = "";
-  searchInputs.forEach(input => { if (input.value.trim()) search = input.value.toLowerCase(); });
 
-  const oldStatus = document.getElementById("inquiryFilter")?.value || "";
-  const newStatus = document.getElementById("inquiryStatusFilter")?.value || "all";
-  const mode = v6InquiryMode || document.getElementById("v6InquiryMode")?.value || "all";
-
-  let status = "";
-  if (newStatus && newStatus !== "all") status = newStatus.toLowerCase();
-  if (oldStatus) status = oldStatus.toLowerCase();
-
-  const filtered = allInquiries.filter(item => {
-    const text = `${item.reference || ""} ${item.guestName || ""} ${item.guestEmail || ""} ${item.guestMobile || ""} ${item.serviceType || ""} ${item.itemName || ""} ${item.message || ""}`.toLowerCase();
-    const itemStatus = normalizeStatus(item.status);
-    const modeMatch = mode === "all" || classifyInquiryItem(item) === mode;
-    return modeMatch && (!status || itemStatus === status) && (!search || text.includes(search));
-  });
-
-  renderDashboardCards(allInquiries);
-  renderInquiryTypeCards(allInquiries);
-  renderInquiryTable(filtered);
-
-  const inquiryCardsBox = document.getElementById("inquiriesList");
-  if (inquiryCardsBox) inquiryCardsBox.innerHTML = "";
-}
-
-function applyBookingFilters() {
-  const search = (document.getElementById("bookingSearch")?.value || "").toLowerCase();
-  const status = (document.getElementById("bookingStatusFilter")?.value || "all").toLowerCase();
-  const type = (document.getElementById("bookingTypeFilter")?.value || "all").toLowerCase();
-  const mode = v6BookingMode || document.getElementById("v6BookingMode")?.value || "all";
-
-  const filtered = allBookings.filter(item => {
-    const classType = classifyBookingItem(item);
-    const statusMatch = status === "all" || normalizeStatus(item.status) === status;
-    const modeMatch = mode === "all" || classType === mode;
-    const typeText = `${item.serviceType || ""} ${item.itemName || ""}`.toLowerCase();
-    const typeMatch = type === "all" || typeText.includes(type) || classType === type;
-    const searchText = `${item.id || ""} ${item.reference || ""} ${item.itemName || ""} ${item.serviceType || ""} ${item.guestName || ""} ${item.guestEmail || ""} ${item.guestMobile || ""}`.toLowerCase();
-    return modeMatch && statusMatch && typeMatch && (!search || searchText.includes(search));
-  });
-
-  renderBookingStats(allBookings);
-  renderBookingsTable(filtered);
-  renderBookingsCalendar(filtered);
-  renderAvailabilityMatrix();
-}
 
 function v6WrapFormFields(formSelector){
   const form = document.querySelector(formSelector);
@@ -4563,72 +4203,6 @@ if(v65OriginalOpenInquiryModal){
 }
 
 /* Override confirm booking so guest/admin confirmation data syncs to booking */
-async function confirmBooking(sendEmail = true) {
-  if (!currentInquiry) {
-    alert("No inquiry selected");
-    return;
-  }
-
-  if (!confirm("Confirm this booking?")) return;
-
-  try {
-    const quote = v65QuotePayloadFromModal();
-
-    const res = await fetch(`${API_BASE}/api/admin/bookings`, {
-      method: "POST",
-      headers: authHeaders(),
-      body: JSON.stringify({
-        inquiryId: currentInquiry.id,
-        reference: currentInquiry.reference,
-        itemName: getItemNameForBooking(currentInquiry),
-        serviceType: currentInquiry.serviceType || (classifyInquiryItem(currentInquiry) === "tour" ? "Tour Inquiry" : "Property Inquiry"),
-        guestName: currentInquiry.guestName,
-        guestEmail: currentInquiry.guestEmail,
-        guestMobile: currentInquiry.guestMobile,
-        dateFrom: currentInquiry.dateFrom,
-        dateTo: safeBookingDateTo(currentInquiry),
-        guests: currentInquiry.guests,
-        checkInTime: document.getElementById("bookingConfirmCheckInTime")?.value || currentInquiry.checkInTime || "14:00",
-        checkOutTime: document.getElementById("bookingConfirmCheckOutTime")?.value || currentInquiry.checkOutTime || "11:00",
-        pickupTime: document.getElementById("tourPickupTime")?.value || currentInquiry.pickupTime || "",
-        pickupLocation: document.getElementById("tourPickupLocation")?.value || currentInquiry.pickupLocation || "",
-        childRate: document.getElementById("tourChildRate")?.value || currentInquiry.childRate || "",
-        currency: quote.currency,
-        dayRate: quote.unitRate,
-        totalDays: document.getElementById("bookingConfirmNights")?.value || currentInquiry.totalDays || "1",
-        discountPercent: quote.discountPercent,
-        discountAmount: quote.discountAmount,
-        totalAmount: quote.totalAmount,
-        paymentStatus: quote.paymentStatus,
-        advanceAmount: quote.advanceAmount,
-        balanceAmount: quote.balanceAmount,
-        guestConfirmed: v65Bool(currentInquiry.guestConfirmed),
-        adminConfirmed: true,
-        sendEmail,
-        adminMessage: quote.adminMessage
-      })
-    });
-
-    const result = await res.json();
-
-    if (!res.ok) {
-      alert(result.error || "Booking failed");
-      return;
-    }
-
-    currentInquiry.status = "Booked";
-    currentInquiry.adminConfirmed = true;
-
-    await loadBookings();
-    await loadInquiries();
-
-    alert("Booking Confirmed");
-    closeInquiryModal?.();
-
-  } catch (err) {
-    alert(err.message);
-  }
-}
 
 
 /* =========================
@@ -4639,19 +4213,7 @@ function v66Text(item){
   return `${item?.bookingCategory || ""} ${item?.category || ""} ${item?.serviceType || ""} ${item?.itemName || ""} ${item?.reference || ""} ${item?.message || ""}`.toLowerCase();
 }
 
-function classifyInquiryItem(item){
-  const text = v66Text(item);
-  if (text.includes("tour") || text.includes("trip") || text.includes("safari") || text.includes("excursion") || text.includes("pickup") || text.includes("guide")) return "tour";
-  if (text.includes("cafe") || text.includes("service") || text.includes("restaurant") || text.includes("contact") || text.includes("taxi") || text.includes("rental")) return "service";
-  return "property";
-}
 
-function classifyBookingItem(item){
-  const text = v66Text(item);
-  if (text.includes("tour") || text.includes("trip") || text.includes("safari") || text.includes("excursion") || text.includes("pickup") || text.includes("guide")) return "tour";
-  if (String(item?.reference || "").startsWith("MAN-") || String(item?.inquiryId || "").startsWith("MAN-")) return "manual";
-  return "property";
-}
 
 function setInquiryMode(mode, btn){
   v6InquiryMode = mode || "all";
@@ -4671,83 +4233,9 @@ function setBookingMode(mode, btn){
   applyBookingFilters();
 }
 
-function applyInquiryFilters() {
-  const searchInputs = document.querySelectorAll(".inquiry-search");
-  let search = "";
-  searchInputs.forEach(input => { if (input.value.trim()) search = input.value.toLowerCase(); });
 
-  const oldStatus = document.getElementById("inquiryFilter")?.value || "";
-  const newStatus = document.getElementById("inquiryStatusFilter")?.value || "all";
-  const mode = v6InquiryMode || document.getElementById("v6InquiryMode")?.value || "all";
 
-  let status = "";
-  if (newStatus && newStatus !== "all") status = newStatus.toLowerCase();
-  if (oldStatus) status = oldStatus.toLowerCase();
 
-  const filtered = allInquiries.filter(item => {
-    const text = `${item.reference || ""} ${item.guestName || ""} ${item.guestEmail || ""} ${item.guestMobile || ""} ${item.serviceType || ""} ${item.itemName || ""} ${item.message || ""}`.toLowerCase();
-    return (mode === "all" || classifyInquiryItem(item) === mode)
-      && (!status || normalizeStatus(item.status) === status)
-      && (!search || text.includes(search));
-  });
-
-  renderDashboardCards(allInquiries);
-  renderInquiryTypeCards(allInquiries);
-  renderInquiryTable(filtered);
-  const inquiryCardsBox = document.getElementById("inquiriesList");
-  if (inquiryCardsBox) inquiryCardsBox.innerHTML = "";
-}
-
-function applyBookingFilters() {
-  const search = (document.getElementById("bookingSearch")?.value || "").toLowerCase();
-  const status = (document.getElementById("bookingStatusFilter")?.value || "all").toLowerCase();
-  const type = (document.getElementById("bookingTypeFilter")?.value || "all").toLowerCase();
-  const mode = v6BookingMode || document.getElementById("v6BookingMode")?.value || "all";
-
-  const filtered = allBookings.filter(item => {
-    const category = classifyBookingItem(item);
-    const statusMatch = status === "all" || normalizeStatus(item.status) === status;
-    const modeMatch = mode === "all" || category === mode;
-    const typeText = `${item.serviceType || ""} ${item.itemName || ""} ${item.bookingCategory || ""}`.toLowerCase();
-    const typeMatch = type === "all" || typeText.includes(type) || category === type;
-    const searchText = `${item.id || ""} ${item.reference || ""} ${item.itemName || ""} ${item.serviceType || ""} ${item.guestName || ""} ${item.guestEmail || ""} ${item.guestMobile || ""}`.toLowerCase();
-    return modeMatch && statusMatch && typeMatch && (!search || searchText.includes(search));
-  });
-
-  renderBookingStats(allBookings);
-  renderBookingsTable(filtered);
-  renderBookingsCalendar(filtered);
-  renderAvailabilityMatrix();
-}
-
-function renderDashboardCards(data) {
-  const box = document.getElementById("inquiryCards");
-  if (!box) return;
-  const count = status => data.filter(x => normalizeStatus(x.status) === status.toLowerCase()).length;
-  box.innerHTML = `
-    <div class="dashboard-card"><h3>Total Inquiries</h3><div class="value">${data.length}</div></div>
-    <div class="dashboard-card"><h3>Property Inquiries</h3><div class="value">${data.filter(x => classifyInquiryItem(x) === "property").length}</div></div>
-    <div class="dashboard-card"><h3>Tour Inquiries</h3><div class="value">${data.filter(x => classifyInquiryItem(x) === "tour").length}</div></div>
-    <div class="dashboard-card"><h3>Service / Contact</h3><div class="value">${data.filter(x => classifyInquiryItem(x) === "service").length}</div></div>
-    <div class="dashboard-card card-new"><h3>New</h3><div class="value">${count("New")}</div></div>
-    <div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${count("Booked")}</div></div>
-    <div class="dashboard-card card-closed"><h3>Cancelled / Closed</h3><div class="value">${count("Cancelled") + count("Closed")}</div></div>
-  `;
-}
-
-function renderBookingStats(data) {
-  const box = document.getElementById("bookingStats");
-  if (!box) return;
-  const count = status => data.filter(x => normalizeStatus(x.status) === status).length;
-  box.innerHTML = `
-    <div class="dashboard-card"><h3>Total Bookings</h3><div class="value">${data.length}</div></div>
-    <div class="dashboard-card"><h3>Property Bookings</h3><div class="value">${data.filter(x => classifyBookingItem(x) === "property").length}</div></div>
-    <div class="dashboard-card"><h3>Tour Bookings</h3><div class="value">${data.filter(x => classifyBookingItem(x) === "tour").length}</div></div>
-    <div class="dashboard-card"><h3>Manual Bookings</h3><div class="value">${data.filter(x => classifyBookingItem(x) === "manual").length}</div></div>
-    <div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${count("booked")}</div></div>
-    <div class="dashboard-card card-closed"><h3>Cancelled</h3><div class="value">${count("cancelled")}</div></div>
-  `;
-}
 
 async function deleteInquiry(id) {
   if (!confirm("Delete this inquiry? Related booking and notes will also be removed.")) return;
@@ -4762,15 +4250,6 @@ async function deleteInquiry(id) {
   } catch (err) { alert(err.message); }
 }
 
-async function cleanupOrphanBookings() {
-  if (!confirm("Clean orphan bookings that no longer have matching inquiries?")) return;
-  const res = await fetch(`${API_BASE}/api/admin/bookings/cleanup-orphans`, { method:"POST", headers: authHeaders() });
-  const result = await res.json();
-  if (!res.ok) return alert(result.error || "Cleanup failed");
-  alert(`Cleanup completed. Removed ${result.deleted || 0} orphan booking(s).`);
-  await loadBookings();
-  await loadInquiries();
-}
 
 setTimeout(() => {
   const tools = document.querySelector(".booking-tools");
@@ -4789,23 +4268,16 @@ setTimeout(() => {
    V7 PROFESSIONAL STABLE CORE
 ========================= */
 function v7Text(item){return `${item?.bookingCategory||""} ${item?.category||""} ${item?.serviceType||""} ${item?.itemName||""} ${item?.reference||""} ${item?.message||""}`.toLowerCase();}
-function classifyInquiryItem(item){const t=v7Text(item); if(t.includes('tour')||t.includes('trip')||t.includes('safari')||t.includes('excursion')||t.includes('pickup')||t.includes('guide')||t.includes('round tour'))return 'tour'; if(t.includes('cafe')||t.includes('service')||t.includes('restaurant')||t.includes('contact')||t.includes('taxi')||t.includes('rental'))return 'service'; return 'property';}
-function classifyBookingItem(item){const t=v7Text(item); if(t.includes('tour')||t.includes('trip')||t.includes('safari')||t.includes('excursion')||t.includes('pickup')||t.includes('guide')||t.includes('round tour'))return 'tour'; if(String(item?.reference||'').startsWith('MAN-')||String(item?.inquiryId||'').startsWith('MAN-'))return 'manual'; return 'property';}
 function v7Bool(v){return v===1||v===true||String(v||'').toLowerCase()==='true'||String(v||'')==='1';}
 function v7GuestBadge(i){return v7Bool(i?.guestConfirmed)?`<span class="status-badge status-booked">Guest Confirmed</span>`:`<span class="status-badge status-quoted">Guest Pending</span>`;}
 function v7AdminBadge(i){return v7Bool(i?.adminConfirmed)||normalizeStatus(i?.status)==='booked'?`<span class="status-badge status-booked">Admin Confirmed</span>`:`<span class="status-badge status-contacted">Admin Pending</span>`;}
 function v7PaymentBadge(i){const s=String(i?.paymentStatus||'Pending'); const cls=s.toLowerCase().includes('paid')?'status-booked':'status-contacted'; return `<span class="status-badge ${cls}">${escapeHtml(s)}</span>`;}
 function setInquiryMode(mode,btn){v6InquiryMode=mode||'all'; const h=document.getElementById('v6InquiryMode'); if(h)h.value=v6InquiryMode; document.querySelectorAll('[data-inquiry-mode]').forEach(x=>x.classList.remove('active')); btn?.classList.add('active'); applyInquiryFilters();}
 function setBookingMode(mode,btn){v6BookingMode=mode||'all'; const h=document.getElementById('v6BookingMode'); if(h)h.value=v6BookingMode; document.querySelectorAll('[data-booking-mode]').forEach(x=>x.classList.remove('active')); btn?.classList.add('active'); applyBookingFilters();}
-function renderDashboardCards(data){const b=document.getElementById('inquiryCards'); if(!b)return; const c=s=>data.filter(x=>normalizeStatus(x.status)===s.toLowerCase()).length; b.innerHTML=`<div class="dashboard-card"><h3>Total Inquiries</h3><div class="value">${data.length}</div></div><div class="dashboard-card"><h3>Property Inquiries</h3><div class="value">${data.filter(x=>classifyInquiryItem(x)==='property').length}</div></div><div class="dashboard-card"><h3>Tour Inquiries</h3><div class="value">${data.filter(x=>classifyInquiryItem(x)==='tour').length}</div></div><div class="dashboard-card"><h3>Service / Contact</h3><div class="value">${data.filter(x=>classifyInquiryItem(x)==='service').length}</div></div><div class="dashboard-card card-new"><h3>New</h3><div class="value">${c('New')}</div></div><div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${c('Booked')}</div></div><div class="dashboard-card card-closed"><h3>Cancelled / Closed</h3><div class="value">${c('Cancelled')+c('Closed')}</div></div>`;}
 function renderInquiryTypeCards(data){const b=document.getElementById('inquiryTypeCards'); if(!b)return; b.innerHTML=`<div class="dashboard-card"><h3>🏡 Properties</h3><div class="value">${data.filter(x=>classifyInquiryItem(x)==='property').length}</div></div><div class="dashboard-card"><h3>🧭 Tours</h3><div class="value">${data.filter(x=>classifyInquiryItem(x)==='tour').length}</div></div><div class="dashboard-card"><h3>☕ Services / Contact</h3><div class="value">${data.filter(x=>classifyInquiryItem(x)==='service').length}</div></div><div class="dashboard-card"><h3>🏡 Villas</h3><div class="value">${data.filter(x=>v7Text(x).includes('villa')).length}</div></div><div class="dashboard-card"><h3>🏢 Apartments</h3><div class="value">${data.filter(x=>v7Text(x).includes('apartment')).length}</div></div><div class="dashboard-card"><h3>🏠 Homestays</h3><div class="value">${data.filter(x=>v7Text(x).includes('homestay')).length}</div></div>`;}
-function renderBookingStats(data){const b=document.getElementById('bookingStats'); if(!b)return; const c=s=>data.filter(x=>normalizeStatus(x.status)===s).length; b.innerHTML=`<div class="dashboard-card"><h3>Total Bookings</h3><div class="value">${data.length}</div></div><div class="dashboard-card"><h3>Property Bookings</h3><div class="value">${data.filter(x=>classifyBookingItem(x)==='property').length}</div></div><div class="dashboard-card"><h3>Tour Bookings</h3><div class="value">${data.filter(x=>classifyBookingItem(x)==='tour').length}</div></div><div class="dashboard-card"><h3>Manual Bookings</h3><div class="value">${data.filter(x=>classifyBookingItem(x)==='manual').length}</div></div><div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${c('booked')}</div></div><div class="dashboard-card card-closed"><h3>Cancelled</h3><div class="value">${c('cancelled')}</div></div>`;}
-function applyInquiryFilters(){const ins=document.querySelectorAll('.inquiry-search'); let search=''; ins.forEach(i=>{if(i.value.trim())search=i.value.toLowerCase();}); const old=document.getElementById('inquiryFilter')?.value||''; const ns=document.getElementById('inquiryStatusFilter')?.value||'all'; const mode=v6InquiryMode||document.getElementById('v6InquiryMode')?.value||'all'; let status=''; if(ns&&ns!=='all')status=ns.toLowerCase(); if(old)status=old.toLowerCase(); const filtered=allInquiries.filter(item=>{const txt=`${item.reference||''} ${item.guestName||''} ${item.guestEmail||''} ${item.guestMobile||''} ${item.serviceType||''} ${item.itemName||''} ${item.message||''}`.toLowerCase(); return (mode==='all'||classifyInquiryItem(item)===mode)&&(!status||normalizeStatus(item.status)===status)&&(!search||txt.includes(search));}); renderDashboardCards(allInquiries); renderInquiryTypeCards(allInquiries); renderInquiryTable(filtered); const box=document.getElementById('inquiriesList'); if(box)box.innerHTML='';}
-function applyBookingFilters(){const search=(document.getElementById('bookingSearch')?.value||'').toLowerCase(); const status=(document.getElementById('bookingStatusFilter')?.value||'all').toLowerCase(); const type=(document.getElementById('bookingTypeFilter')?.value||'all').toLowerCase(); const mode=v6BookingMode||document.getElementById('v6BookingMode')?.value||'all'; const filtered=allBookings.filter(item=>{const cat=classifyBookingItem(item); const sm=status==='all'||normalizeStatus(item.status)===status; const mm=mode==='all'||cat===mode; const tt=`${item.serviceType||''} ${item.itemName||''} ${item.bookingCategory||''}`.toLowerCase(); const tm=type==='all'||tt.includes(type)||cat===type; const st=`${item.id||''} ${item.reference||''} ${item.itemName||''} ${item.serviceType||''} ${item.guestName||''} ${item.guestEmail||''} ${item.guestMobile||''}`.toLowerCase(); return mm&&sm&&tm&&(!search||st.includes(search));}); renderBookingStats(allBookings); renderBookingsTable(filtered); renderBookingsCalendar(filtered); renderAvailabilityMatrix();}
 function renderInquiryTable(data){const tb=document.getElementById('inquiryTableBody'); if(!tb)return; const th=tb.closest('table')?.querySelector('thead tr'); if(th)th.innerHTML='<th>Reference</th><th>Date</th><th>Type</th><th>Property / Tour</th><th>Guest</th><th>Dates</th><th>Guest</th><th>Admin</th><th>Status</th>'; if(!data.length){tb.innerHTML='<tr><td colspan="9" class="empty-row">No inquiries found</td></tr>';return;} tb.innerHTML=data.map(item=>`<tr onclick="openInquiryModal('${escapeJs(item.id)}')" class="clickable-row"><td>${escapeHtml(item.reference||item.id||'-')}</td><td>${formatDate(item.createdAt||item.created_at)}</td><td>${escapeHtml(classifyInquiryItem(item).toUpperCase())}<br><small>${escapeHtml(item.serviceType||'-')}</small></td><td>${escapeHtml(item.itemName||'-')}</td><td><strong>${escapeHtml(item.guestName||'-')}</strong><br><small>${escapeHtml(item.guestEmail||'')}</small></td><td>${escapeHtml(item.dateFrom||'-')} → ${escapeHtml(item.dateTo||(classifyInquiryItem(item)==='tour'?item.dateFrom:'-'))}</td><td>${v7GuestBadge(item)}</td><td>${v7AdminBadge(item)}</td><td><span class="status-badge status-${normalizeStatus(item.status)}">${escapeHtml(item.status||'New')}</span></td></tr>`).join('');}
 function renderBookingsTable(data){const tb=document.getElementById('bookingTableBody'); if(!tb)return; const th=tb.closest('table')?.querySelector('thead tr'); if(th)th.innerHTML='<th>Reference</th><th>Created</th><th>Type</th><th>Property / Tour</th><th>Guest</th><th>Dates</th><th>Amount</th><th>Guest</th><th>Payment</th><th>Status</th><th>Action</th>'; if(!data.length){tb.innerHTML='<tr><td colspan="11" class="empty-row">No bookings found</td></tr>';return;} tb.innerHTML=data.map(item=>`<tr onclick="openBookingDetails('${escapeJs(item.id)}')" class="clickable-row"><td>${escapeHtml(item.reference||item.id||'-')}</td><td>${formatDate(item.createdAt||item.created_at)}</td><td>${escapeHtml(classifyBookingItem(item).toUpperCase())}<br><small>${escapeHtml(item.serviceType||'-')}</small></td><td>${escapeHtml(item.itemName||'-')}</td><td><strong>${escapeHtml(item.guestName||'-')}</strong><br><small>${escapeHtml(item.guestEmail||'')}</small><br><small>${escapeHtml(item.guestMobile||'')}</small></td><td>${escapeHtml(item.dateFrom||'-')} → ${escapeHtml(item.dateTo||'-')}</td><td>${escapeHtml(item.currency||item.quoteCurrency||'')} ${escapeHtml(item.totalAmount||item.quoteTotalAmount||'-')}</td><td>${v7GuestBadge(item)}</td><td>${v7PaymentBadge(item)}</td><td><span class="status-badge status-${normalizeStatus(item.status||'Booked')}">${escapeHtml(item.status||'Booked')}</span></td><td onclick="event.stopPropagation();"><button class="mini-btn" onclick="openBookingDetails('${escapeJs(item.id)}')">Manage</button></td></tr>`).join('');}
 async function deleteInquiry(id){if(!confirm('Delete this inquiry? Related booking and notes will also be removed.'))return; try{const res=await fetch(`${API_BASE}/api/admin/inquiries/${id}`,{method:'DELETE',headers:authHeaders()}); const result=await res.json(); if(!res.ok)return alert(result.error||'Delete failed'); alert('Inquiry and related records deleted'); closeInquiryModal?.(); await loadInquiries(); await loadBookings();}catch(err){alert(err.message);}}
-async function cleanupOrphanBookings(){if(!confirm('Clean orphan bookings that no longer have matching inquiries?'))return; const res=await fetch(`${API_BASE}/api/admin/bookings/cleanup-orphans`,{method:'POST',headers:authHeaders()}); const result=await res.json(); if(!res.ok)return alert(result.error||'Cleanup failed'); alert(`Cleanup completed. Removed ${result.deleted||0} orphan booking(s).`); await loadBookings(); await loadInquiries();}
 async function syncBookingsFromInquiries(){const res=await fetch(`${API_BASE}/api/admin/bookings/sync-from-inquiries`,{method:'POST',headers:authHeaders()}); const result=await res.json(); if(!res.ok)return alert(result.error||'Sync failed'); alert('Booking sync completed'); await loadBookings(); await loadInquiries();}
 setTimeout(()=>{const tools=document.querySelector('.booking-tools'); if(tools&&!document.getElementById('cleanupOrphansBtn')){const b=document.createElement('button'); b.id='cleanupOrphansBtn'; b.type='button'; b.textContent='Clean Orphans'; b.onclick=cleanupOrphanBookings; tools.appendChild(b);} if(tools&&!document.getElementById('syncBookingsBtn')){const b=document.createElement('button'); b.id='syncBookingsBtn'; b.type='button'; b.textContent='Sync Bookings'; b.onclick=syncBookingsFromInquiries; tools.appendChild(b);}},1200);
 
@@ -4821,19 +4293,7 @@ function v71Text(item){
   return `${item?.bookingCategory || ""} ${item?.category || ""} ${item?.serviceType || ""} ${item?.itemName || ""} ${item?.reference || ""} ${item?.message || ""}`.toLowerCase();
 }
 
-function classifyInquiryItem(item){
-  const t = v71Text(item);
-  if (t.includes("tour") || t.includes("trip") || t.includes("safari") || t.includes("excursion") || t.includes("pickup") || t.includes("guide")) return "tour";
-  if (t.includes("cafe") || t.includes("service") || t.includes("restaurant") || t.includes("contact") || t.includes("taxi") || t.includes("rental")) return "service";
-  return "property";
-}
 
-function classifyBookingItem(item){
-  const t = v71Text(item);
-  if (t.includes("tour") || t.includes("trip") || t.includes("safari") || t.includes("excursion") || t.includes("pickup") || t.includes("guide")) return "tour";
-  if (String(item?.reference || "").startsWith("MAN-") || String(item?.inquiryId || "").startsWith("MAN-")) return "manual";
-  return "property";
-}
 
 function v71InjectUnifiedFilters(){
   const inquiryTools = document.querySelector("#inquiriesTab .inquiry-tools");
@@ -4871,78 +4331,9 @@ function setBookingMode(mode, btn){
   applyBookingFilters();
 }
 
-function renderDashboardCards(data) {
-  const box = document.getElementById("inquiryCards");
-  if (!box) return;
-  const count = status => data.filter(x => normalizeStatus(x.status) === status.toLowerCase()).length;
-  box.innerHTML = `
-    <div class="dashboard-card"><h3>Total Inquiries</h3><div class="value">${data.length}</div></div>
-    <div class="dashboard-card"><h3>Property</h3><div class="value">${data.filter(x => classifyInquiryItem(x) === "property").length}</div></div>
-    <div class="dashboard-card"><h3>Tour</h3><div class="value">${data.filter(x => classifyInquiryItem(x) === "tour").length}</div></div>
-    <div class="dashboard-card"><h3>Service</h3><div class="value">${data.filter(x => classifyInquiryItem(x) === "service").length}</div></div>
-    <div class="dashboard-card card-new"><h3>New</h3><div class="value">${count("New")}</div></div>
-    <div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${count("Booked")}</div></div>
-    <div class="dashboard-card card-closed"><h3>Cancelled / Closed</h3><div class="value">${count("Cancelled") + count("Closed")}</div></div>`;
-}
 
-function renderBookingStats(data) {
-  const box = document.getElementById("bookingStats");
-  if (!box) return;
-  const count = status => data.filter(x => normalizeStatus(x.status) === status).length;
-  box.innerHTML = `
-    <div class="dashboard-card"><h3>Total Bookings</h3><div class="value">${data.length}</div></div>
-    <div class="dashboard-card"><h3>Property</h3><div class="value">${data.filter(x => classifyBookingItem(x) === "property").length}</div></div>
-    <div class="dashboard-card"><h3>Tour</h3><div class="value">${data.filter(x => classifyBookingItem(x) === "tour").length}</div></div>
-    <div class="dashboard-card"><h3>Manual</h3><div class="value">${data.filter(x => classifyBookingItem(x) === "manual").length}</div></div>
-    <div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${count("booked")}</div></div>
-    <div class="dashboard-card card-closed"><h3>Cancelled</h3><div class="value">${count("cancelled")}</div></div>`;
-}
 
-function applyInquiryFilters() {
-  v71InjectUnifiedFilters();
-  let search = "";
-  document.querySelectorAll(".inquiry-search").forEach(input => { if (input.value.trim()) search = input.value.toLowerCase(); });
-  const oldStatus = document.getElementById("inquiryFilter")?.value || "";
-  const newStatus = document.getElementById("inquiryStatusFilter")?.value || "all";
-  const categoryFilter = document.getElementById("v71InquiryCategoryFilter")?.value || v71InquiryCategoryFilter || "all";
-  let status = "";
-  if (newStatus && newStatus !== "all") status = newStatus.toLowerCase();
-  if (oldStatus) status = oldStatus.toLowerCase();
 
-  const filtered = allInquiries.filter(item => {
-    const text = `${item.reference || ""} ${item.guestName || ""} ${item.guestEmail || ""} ${item.guestMobile || ""} ${item.serviceType || ""} ${item.itemName || ""} ${item.message || ""}`.toLowerCase();
-    return (categoryFilter === "all" || classifyInquiryItem(item) === categoryFilter)
-      && (!status || normalizeStatus(item.status) === status)
-      && (!search || text.includes(search));
-  });
-  renderDashboardCards(allInquiries);
-  if(typeof renderInquiryTypeCards === "function") renderInquiryTypeCards(allInquiries);
-  renderInquiryTable(filtered);
-  const box = document.getElementById("inquiriesList");
-  if (box) box.innerHTML = "";
-}
-
-function applyBookingFilters() {
-  v71InjectUnifiedFilters();
-  const search = (document.getElementById("bookingSearch")?.value || "").toLowerCase();
-  const status = (document.getElementById("bookingStatusFilter")?.value || "all").toLowerCase();
-  const type = (document.getElementById("bookingTypeFilter")?.value || "all").toLowerCase();
-  const categoryFilter = document.getElementById("v71BookingCategoryFilter")?.value || v71BookingCategoryFilter || "all";
-
-  const filtered = allBookings.filter(item => {
-    const category = classifyBookingItem(item);
-    const typeText = `${item.serviceType || ""} ${item.itemName || ""} ${item.bookingCategory || ""}`.toLowerCase();
-    const searchText = `${item.id || ""} ${item.reference || ""} ${item.itemName || ""} ${item.serviceType || ""} ${item.guestName || ""} ${item.guestEmail || ""} ${item.guestMobile || ""}`.toLowerCase();
-    return (categoryFilter === "all" || category === categoryFilter)
-      && (status === "all" || normalizeStatus(item.status) === status)
-      && (type === "all" || typeText.includes(type) || category === type)
-      && (!search || searchText.includes(search));
-  });
-  renderBookingStats(allBookings);
-  renderBookingsTable(filtered);
-  renderBookingsCalendar(filtered);
-  renderAvailabilityMatrix();
-}
 
 const v71OldShowTab = typeof showTab === "function" ? showTab : null;
 if(v71OldShowTab){
@@ -5050,8 +4441,6 @@ if(v72OldOpenInquiryModal){
 /* V8 FINAL STABLE ADMIN LOGIC */
 let v8FinalInquiryFilter="all",v8FinalBookingFilter="all";
 function v8FinalText(i){return `${i?.bookingCategory||""} ${i?.category||""} ${i?.serviceType||""} ${i?.itemName||""} ${i?.reference||""} ${i?.message||""}`.toLowerCase();}
-function classifyInquiryItem(i){const t=v8FinalText(i);if(t.includes("tour")||t.includes("trip")||t.includes("safari")||t.includes("excursion")||t.includes("pickup")||t.includes("guide"))return"tour";if(t.includes("cafe")||t.includes("service")||t.includes("restaurant")||t.includes("contact")||t.includes("taxi")||t.includes("rental"))return"service";return"property";}
-function classifyBookingItem(i){const t=v8FinalText(i);if(t.includes("tour")||t.includes("trip")||t.includes("safari")||t.includes("excursion")||t.includes("pickup")||t.includes("guide"))return"tour";if(String(i?.reference||"").startsWith("MAN-")||String(i?.inquiryId||"").startsWith("MAN-"))return"manual";return"property";}
 function v8FinalBool(v){return v===1||v===true||String(v||"").toLowerCase()==="true"||String(v||"")==="1";}
 function v8FinalGuestBadge(i){return v8FinalBool(i?.guestConfirmed)?`<span class="status-badge status-booked">Guest Confirmed</span>`:`<span class="status-badge status-quoted">Guest Pending</span>`;}
 function v8FinalAdminBadge(i){return v8FinalBool(i?.adminConfirmed)||normalizeStatus(i?.status)==="booked"?`<span class="status-badge status-booked">Admin Confirmed</span>`:`<span class="status-badge status-contacted">Admin Pending</span>`;}
@@ -5060,11 +4449,6 @@ function getItemNameForBooking(i){return i?.itemName||String(i?.serviceType||"")
 function v8FinalInjectFilters(){const it=document.querySelector("#inquiriesTab .inquiry-tools");if(it&&!document.getElementById("v8FinalInquiryFilter")){const s=document.createElement("select");s.id="v8FinalInquiryFilter";s.innerHTML=`<option value="all">All Inquiry Types</option><option value="property">Property Only</option><option value="tour">Tour Only</option><option value="service">Cafe / Service Only</option>`;s.onchange=()=>{v8FinalInquiryFilter=s.value||"all";applyInquiryFilters();};it.prepend(s);}const bt=document.querySelector(".booking-tools");if(bt&&!document.getElementById("v8FinalBookingFilter")){const s=document.createElement("select");s.id="v8FinalBookingFilter";s.innerHTML=`<option value="all">All Booking Types</option><option value="property">Property Only</option><option value="tour">Tour Only</option><option value="manual">Manual Only</option>`;s.onchange=()=>{v8FinalBookingFilter=s.value||"all";applyBookingFilters();};bt.prepend(s);const c=document.createElement("button");c.id="v8FinalCleanBtn";c.type="button";c.textContent="Clean Orphans";c.onclick=cleanupOrphanBookings;bt.appendChild(c);const y=document.createElement("button");y.id="v8FinalSyncBtn";y.type="button";y.textContent="Sync Bookings";y.onclick=syncBookingsFromInquiries;bt.appendChild(y);}document.querySelectorAll(".v6-mode-tabs").forEach(x=>x.style.display="none");}
 function setInquiryMode(m,b){v8FinalInquiryFilter=m||"all";const s=document.getElementById("v8FinalInquiryFilter");if(s)s.value=v8FinalInquiryFilter;applyInquiryFilters();}
 function setBookingMode(m,b){v8FinalBookingFilter=m||"all";const s=document.getElementById("v8FinalBookingFilter");if(s)s.value=v8FinalBookingFilter;applyBookingFilters();}
-function renderDashboardCards(d){const b=document.getElementById("inquiryCards");if(!b)return;const c=s=>d.filter(x=>normalizeStatus(x.status)===s.toLowerCase()).length;b.innerHTML=`<div class="dashboard-card"><h3>Total Inquiries</h3><div class="value">${d.length}</div></div><div class="dashboard-card"><h3>Property</h3><div class="value">${d.filter(x=>classifyInquiryItem(x)==="property").length}</div></div><div class="dashboard-card"><h3>Tour</h3><div class="value">${d.filter(x=>classifyInquiryItem(x)==="tour").length}</div></div><div class="dashboard-card"><h3>Service</h3><div class="value">${d.filter(x=>classifyInquiryItem(x)==="service").length}</div></div><div class="dashboard-card card-new"><h3>New</h3><div class="value">${c("New")}</div></div><div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${c("Booked")}</div></div><div class="dashboard-card card-closed"><h3>Cancelled / Closed</h3><div class="value">${c("Cancelled")+c("Closed")}</div></div>`;}
-function renderBookingStats(d){const b=document.getElementById("bookingStats");if(!b)return;const c=s=>d.filter(x=>normalizeStatus(x.status)===s).length;b.innerHTML=`<div class="dashboard-card"><h3>Total Bookings</h3><div class="value">${d.length}</div></div><div class="dashboard-card"><h3>Property</h3><div class="value">${d.filter(x=>classifyBookingItem(x)==="property").length}</div></div><div class="dashboard-card"><h3>Tour</h3><div class="value">${d.filter(x=>classifyBookingItem(x)==="tour").length}</div></div><div class="dashboard-card"><h3>Manual</h3><div class="value">${d.filter(x=>classifyBookingItem(x)==="manual").length}</div></div><div class="dashboard-card card-booked"><h3>Booked</h3><div class="value">${c("booked")}</div></div><div class="dashboard-card card-closed"><h3>Cancelled</h3><div class="value">${c("cancelled")}</div></div>`;}
-function applyInquiryFilters(){v8FinalInjectFilters();let search="";document.querySelectorAll(".inquiry-search").forEach(i=>{if(i.value.trim())search=i.value.toLowerCase();});const ns=document.getElementById("inquiryStatusFilter")?.value||"all",cat=document.getElementById("v8FinalInquiryFilter")?.value||v8FinalInquiryFilter||"all";let st=ns&&ns!=="all"?ns.toLowerCase():"";const f=allInquiries.filter(i=>{const txt=`${i.reference||""} ${i.guestName||""} ${i.guestEmail||""} ${i.guestMobile||""} ${i.serviceType||""} ${i.itemName||""} ${i.message||""}`.toLowerCase();return(cat==="all"||classifyInquiryItem(i)===cat)&&(!st||normalizeStatus(i.status)===st)&&(!search||txt.includes(search));});renderDashboardCards(allInquiries);if(typeof renderInquiryTypeCards==="function")renderInquiryTypeCards(allInquiries);renderInquiryTable(f);const box=document.getElementById("inquiriesList");if(box)box.innerHTML="";}
-function applyBookingFilters(){v8FinalInjectFilters();const search=(document.getElementById("bookingSearch")?.value||"").toLowerCase(),st=(document.getElementById("bookingStatusFilter")?.value||"all").toLowerCase(),type=(document.getElementById("bookingTypeFilter")?.value||"all").toLowerCase(),cat=document.getElementById("v8FinalBookingFilter")?.value||v8FinalBookingFilter||"all";const f=allBookings.filter(i=>{const c=classifyBookingItem(i),tt=`${i.serviceType||""} ${i.itemName||""} ${i.bookingCategory||""}`.toLowerCase(),ss=`${i.id||""} ${i.reference||""} ${i.itemName||""} ${i.serviceType||""} ${i.guestName||""} ${i.guestEmail||""} ${i.guestMobile||""}`.toLowerCase();return(cat==="all"||c===cat)&&(st==="all"||normalizeStatus(i.status)===st)&&(type==="all"||tt.includes(type)||c===type)&&(!search||ss.includes(search));});renderBookingStats(allBookings);renderBookingsTable(f);renderBookingsCalendar(f);renderAvailabilityMatrix();}
-async function cleanupOrphanBookings(){if(!confirm("Clean orphan bookings?"))return;const r=await fetch(`${API_BASE}/api/admin/bookings/cleanup-orphans`,{method:"POST",headers:authHeaders()});const j=await r.json();if(!r.ok)return alert(j.error||"Cleanup failed");alert(`Removed ${j.deleted||0} orphan booking(s).`);await loadBookings();await loadInquiries();}
 async function syncBookingsFromInquiries(){const r=await fetch(`${API_BASE}/api/admin/bookings/sync-from-inquiries`,{method:"POST",headers:authHeaders()});const j=await r.json();if(!r.ok)return alert(j.error||"Sync failed");alert("Booking sync completed");await loadBookings();await loadInquiries();}
 const v8FinalOldShowTab=typeof showTab==="function"?showTab:null;if(v8FinalOldShowTab){showTab=function(tab){v8FinalOldShowTab(tab);setTimeout(v8FinalInjectFilters,80);};}document.addEventListener("DOMContentLoaded",()=>setTimeout(v8FinalInjectFilters,600));
 
@@ -5076,8 +4460,6 @@ const v8FinalOldShowTab=typeof showTab==="function"?showTab:null;if(v8FinalOldSh
 let v9InquiryFilter = "all";
 let v9BookingFilter = "all";
 function v9Text(item){return `${item?.bookingCategory||""} ${item?.category||""} ${item?.serviceType||""} ${item?.itemName||""} ${item?.reference||""} ${item?.message||""}`.toLowerCase();}
-function classifyInquiryItem(item){const t=v9Text(item); if(t.includes('tour')||t.includes('trip')||t.includes('safari')||t.includes('excursion')||t.includes('pickup')||t.includes('guide')||t.includes('round tour')) return 'tour'; if(t.includes('cafe')||t.includes('service')||t.includes('restaurant')||t.includes('contact')||t.includes('taxi')||t.includes('rental')) return 'service'; return 'property';}
-function classifyBookingItem(item){const t=v9Text(item); if(t.includes('tour')||t.includes('trip')||t.includes('safari')||t.includes('excursion')||t.includes('pickup')||t.includes('guide')||t.includes('round tour')) return 'tour'; if(String(item?.reference||'').startsWith('MAN-')||String(item?.inquiryId||'').startsWith('MAN-')) return 'manual'; return 'property';}
 function v9Bool(v){return v===1||v===true||String(v||'').toLowerCase()==='true'||String(v||'')==='1';}
 function v9GuestBadge(item){return v9Bool(item?.guestConfirmed)?`<span class="status-badge status-booked">Guest Confirmed</span>`:`<span class="status-badge status-quoted">Guest Pending</span>`;}
 function v9AdminBadge(item){return v9Bool(item?.adminConfirmed)||normalizeStatus(item?.status)==='booked'?`<span class="status-badge status-booked">Admin Confirmed</span>`:`<span class="status-badge status-contacted">Admin Pending</span>`;}
@@ -5230,97 +4612,6 @@ function v92GetItemName(inquiry){
     (v92IsTourInquiry(inquiry) ? "Tour Booking" : "Property Booking");
 }
 
-async function confirmBooking(sendEmail = true) {
-  if (!currentInquiry) {
-    alert("No inquiry selected");
-    return;
-  }
-
-  const isTour = v92IsTourInquiry(currentInquiry);
-  const dates = v92GetBookingDates(currentInquiry);
-  const itemName = v92GetItemName(currentInquiry);
-
-  if(!itemName || !dates.dateFrom){
-    alert(isTour ? "Please enter Tour Date before confirming." : "Missing property/tour or booking dates");
-    return;
-  }
-
-  if(!isTour && !dates.dateTo){
-    alert("Please enter check-out date before confirming.");
-    return;
-  }
-
-  if (!confirm("Confirm this booking?")) return;
-
-  try {
-    const currency = document.getElementById("bookingConfirmCurrency")?.value || "USD";
-    const rate = document.getElementById("bookingConfirmDayRate")?.value ||
-                 document.getElementById("tourAdultRate")?.value ||
-                 document.getElementById("adultRate")?.value || "";
-    const totalAmount = document.getElementById("bookingConfirmTotalAmount")?.value || "";
-    const discountPercent = document.getElementById("quoteDiscountPercent")?.value || "0";
-    const discountAmount = document.getElementById("quoteDiscountAmount")?.value || "0";
-    const paymentStatus = document.getElementById("quotePaymentStatus")?.value || "Pending";
-    const advanceAmount = document.getElementById("quoteAdvanceAmount")?.value || "";
-    const balanceAmount = document.getElementById("quoteBalanceAmount")?.value || "";
-    const adminMessage = document.getElementById("bookingConfirmAdminMessage")?.value || "";
-
-    const payload = {
-      inquiryId: currentInquiry.id,
-      reference: currentInquiry.reference,
-      itemName,
-      serviceType: currentInquiry.serviceType || (isTour ? "Tour Inquiry" : "Property Inquiry"),
-      guestName: currentInquiry.guestName,
-      guestEmail: currentInquiry.guestEmail,
-      guestMobile: currentInquiry.guestMobile,
-      dateFrom: dates.dateFrom,
-      dateTo: dates.dateTo,
-      guests: document.getElementById("bookingConfirmNights")?.value || currentInquiry.guests || "1",
-      checkInTime: document.getElementById("bookingConfirmCheckInTime")?.value || currentInquiry.checkInTime || "14:00",
-      checkOutTime: document.getElementById("bookingConfirmCheckOutTime")?.value || currentInquiry.checkOutTime || "11:00",
-      pickupTime: document.getElementById("tourPickupTime")?.value || currentInquiry.pickupTime || "",
-      pickupLocation: document.getElementById("tourPickupLocation")?.value || currentInquiry.pickupLocation || "",
-      childRate: document.getElementById("tourChildRate")?.value || currentInquiry.childRate || "",
-      currency,
-      dayRate: rate,
-      adultRate: rate,
-      totalDays: isTour ? "1" : (document.getElementById("bookingConfirmNights")?.value || "1"),
-      discountPercent,
-      discountAmount,
-      totalAmount,
-      paymentStatus,
-      advanceAmount,
-      balanceAmount,
-      guestConfirmed: currentInquiry.guestConfirmed ? 1 : 0,
-      adminConfirmed: 1,
-      bookingCategory: isTour ? "tour" : "property",
-      sendEmail,
-      adminMessage
-    };
-
-    const res = await fetch(`${API_BASE}/api/admin/bookings`, {
-      method: "POST",
-      headers: authHeaders(),
-      body: JSON.stringify(payload)
-    });
-
-    const result = await res.json();
-
-    if (!res.ok) {
-      alert(result.error || "Booking failed");
-      return;
-    }
-
-    await loadBookings();
-    await loadInquiries();
-
-    alert("Booking Confirmed");
-    closeInquiryModal?.();
-
-  } catch (err) {
-    alert(err.message);
-  }
-}
 
 
 /* =========================
@@ -5405,76 +4696,4 @@ async function ceybreezLoadBookedDatesForProperty(propertyName) {
   return booked;
 }
 
-async function ceybreezCheckManualBookingDateConflict() {
-  const propertyName = document.getElementById("manualItemName")?.value || "";
-  const dateFrom = document.getElementById("manualDateFrom")?.value || "";
-  const dateTo = document.getElementById("manualDateTo")?.value || "";
-  const msg = document.getElementById("manualAvailabilityMsg");
 
-  if (msg) {
-    msg.className = "manual-availability-msg";
-    msg.textContent = "";
-  }
-
-  if (!propertyName || !dateFrom || !dateTo) {
-    return true;
-  }
-
-  const booked = await ceybreezLoadBookedDatesForProperty(propertyName);
-
-  const s = new Date(`${dateFrom}T00:00:00`);
-  const e = new Date(`${dateTo}T00:00:00`);
-
-  for (let d = new Date(s); d < e; d.setDate(d.getDate() + 1)) {
-    const iso = d.toISOString().slice(0, 10);
-    const conflict = booked.find(x => x.date === iso);
-
-    if (conflict) {
-      if (msg) {
-        msg.className = "manual-availability-msg bad";
-        msg.textContent =
-          `Not available: ${iso} already booked (${conflict.reference || "Booking"}).`;
-      }
-
-      return false;
-    }
-  }
-
-  if (msg) {
-    msg.className = "manual-availability-msg good";
-    msg.textContent = "Available for selected dates.";
-  }
-
-  return true;
-}
-
-function ceybreezAttachManualBookingDateGuard() {
-  const form = document.getElementById("manualBookingForm");
-  if (!form || form.dataset.dateGuard === "1") return;
-
-  form.dataset.dateGuard = "1";
-
-  ["manualItemName", "manualDateFrom", "manualDateTo"].forEach(id => {
-    document.getElementById(id)?.addEventListener("change", () => {
-      ceybreezCheckManualBookingDateConflict().catch(console.error);
-    });
-  });
-
-  form.addEventListener(
-    "submit",
-    async event => {
-      const ok = await ceybreezCheckManualBookingDateConflict();
-
-      if (!ok) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        alert("This property is not available for the selected dates.");
-      }
-    },
-    true
-  );
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(ceybreezAttachManualBookingDateGuard, 500);
-});

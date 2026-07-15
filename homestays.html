@@ -27,6 +27,7 @@ content="Experience local hospitality through carefully selected homestays in Sr
   gtag('config', 'G-3QG71CWHW2');
 </script>
   <link rel="stylesheet" href="js/vendor/flatpickr.min.css">
+  <link rel="stylesheet" href="reviews-showcase.css">
 </head>
 
 <body>
@@ -177,6 +178,12 @@ content="Experience local hospitality through carefully selected homestays in Sr
   <a href="#propertyInquiry">Send Inquiry</a>
 </section>
 
+
+<section class="cb-social-proof" data-page-reviews="1" data-reviews-showcase data-review-type="homestay" data-limit="9">
+  <div class="cb-section-head"><span class="eyebrow">Guest Reviews</span><h2>What Our Guests Say</h2><p>Choose a property or tour to see its own selected reviews.</p></div>
+  <div class="cb-review-toolbar"><select data-review-item-filter><option value="">All reviews</option></select><a data-google-review-link href="#" target="_blank" rel="noopener">Leave a Google Review</a></div>
+  <div class="cb-review-grid" data-review-grid></div>
+</section>
 <footer data-section="footer">
   <p id="footerText" data-field="content">
     © 2026 CeyBreez. All rights reserved.
@@ -800,5 +807,6 @@ if(waBtn){
   });
 }
 </script>
+<script src="reviews-showcase.js"></script>
 </body>
 </html>

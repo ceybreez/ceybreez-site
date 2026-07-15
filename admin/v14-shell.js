@@ -560,14 +560,44 @@ function initV18BlockDatePickers(bookings){
       if(el) document.body.appendChild(el);
     });
 
+    const mobileOverlay=document.createElement("button");
+    mobileOverlay.type="button";
+    mobileOverlay.className="v14-mobile-overlay";
+    mobileOverlay.setAttribute("aria-label","Close navigation menu");
+
     panel.appendChild(sidebar);
+    panel.appendChild(mobileOverlay);
     panel.appendChild(main);
     panel.appendChild(legacyRoot);
     document.body.classList.add("v14-shell-ready","v15-router-ready");
     shellReady=true;
 
-    sidebar.querySelectorAll("[data-v14-tab]").forEach(btn=>btn.addEventListener("click",()=>window.showTab(btn.dataset.v14Tab)));
-    top.querySelector(".v14-mobile-menu")?.addEventListener("click",()=>sidebar.classList.toggle("open"));
+    const isMobile=()=>window.matchMedia("(max-width: 900px)").matches;
+    const openMobileMenu=()=>{
+      if(!isMobile()) return;
+      sidebar.classList.add("open");
+      mobileOverlay.classList.add("open");
+      document.body.classList.add("v14-menu-open");
+      top.querySelector(".v14-mobile-menu")?.setAttribute("aria-expanded","true");
+    };
+    const closeMobileMenu=()=>{
+      sidebar.classList.remove("open");
+      mobileOverlay.classList.remove("open");
+      document.body.classList.remove("v14-menu-open");
+      top.querySelector(".v14-mobile-menu")?.setAttribute("aria-expanded","false");
+    };
+    window.v14CloseMobileMenu=closeMobileMenu;
+
+    sidebar.querySelectorAll("[data-v14-tab]").forEach(btn=>btn.addEventListener("click",()=>{
+      window.showTab(btn.dataset.v14Tab);
+      closeMobileMenu();
+    }));
+    const menuButton=top.querySelector(".v14-mobile-menu");
+    menuButton?.setAttribute("aria-expanded","false");
+    menuButton?.addEventListener("click",()=>sidebar.classList.contains("open") ? closeMobileMenu() : openMobileMenu());
+    mobileOverlay.addEventListener("click",closeMobileMenu);
+    document.addEventListener("keydown",event=>{ if(event.key==="Escape") closeMobileMenu(); });
+    window.addEventListener("resize",()=>{ if(!isMobile()) closeMobileMenu(); });
     document.getElementById("v14RefreshBtn")?.addEventListener("click",()=>{
       const active=document.querySelector(".v14-nav button.active")?.dataset.v14Tab || "dashboard";
       if(active==="dashboard") callDashboard();
@@ -639,6 +669,7 @@ function initV18BlockDatePickers(bookings){
 
     if(logical==="availability") renderAvailabilityManager();
     if(logical==="finance" && typeof window.renderFinanceModule==="function") window.renderFinanceModule();
+    if(typeof window.v14CloseMobileMenu==="function") window.v14CloseMobileMenu();
   };
 
   const originalLogin=window.loginAdmin;

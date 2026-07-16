@@ -1,4 +1,0 @@
-.cb-v3-editing *{cursor:crosshair!important}.cb-v3-editing .cb-v3-selected{outline:3px solid #f59e0b!important;outline-offset:2px!important}.cb-v3-editing [contenteditable=true]{outline:3px solid #0f766e!important;background:#fffbe7!important;cursor:text!important}
-.cb-v3-editing .cb-v3-hover{outline:1px dashed #d4a24c!important;outline-offset:2px;cursor:pointer!important}
-.cb-v3-editing .cb-v3-selected{outline:3px solid #0f766e!important;outline-offset:3px;position:relative}
-.cb-v3-editing [contenteditable="true"]{outline:2px solid #2563eb!important;background:rgba(255,255,255,.92)!important;cursor:text!important}

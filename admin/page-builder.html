@@ -1,67 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CeyBreez Builder Pro V2</title>
-  <link rel="stylesheet" href="css/builder-pro.css">
-</head>
-<body>
-  <header class="cbp-toolbar">
-    <div class="cbp-brand"><a href="./">← Admin</a><strong>CeyBreez Builder Pro V2</strong></div>
-    <div class="cbp-toolbar-group">
-      <select id="cbpPage"><option value="home">Home</option><option value="villas">Villas</option><option value="apartments">Apartments</option><option value="homestays">Homestays</option><option value="tours">Tours</option><option value="services">Services</option><option value="contact">Contact</option></select>
-      <button id="cbpImport" class="import">Import Current Live Page</button>
-      <button id="cbpUndo">Undo</button><button id="cbpRedo">Redo</button>
-      <button data-device="desktop" class="active">Desktop</button><button data-device="tablet">Tablet</button><button data-device="mobile">Mobile</button>
-    </div>
-    <div class="cbp-toolbar-group">
-      <button id="cbpSave" class="secondary">Save Draft</button>
-      <button id="cbpPreview" class="secondary">Preview</button>
-      <button id="cbpPublish" class="primary">Publish Live</button>
-    </div>
-  </header>
-  <main class="cbp-shell">
-    <aside class="cbp-left">
-      <h3>Elements</h3><p class="cbp-help">Click or drag an element to the canvas.</p>
-      <div class="cbp-elements" id="cbpElements">
-        <button draggable="true" data-type="section">▭ Section</button><button draggable="true" data-type="heading">H Heading</button>
-        <button draggable="true" data-type="text">¶ Text</button><button draggable="true" data-type="button">▣ Button</button>
-        <button draggable="true" data-type="image">▧ Image</button><button draggable="true" data-type="video">▶ Video</button>
-        <button draggable="true" data-type="columns">▥ Columns</button><button draggable="true" data-type="divider">— Divider</button>
-        <button draggable="true" data-type="spacer">↕ Spacer</button><button draggable="true" data-type="counter">123 Counter</button>
-        <button draggable="true" data-type="reviews">★ Reviews</button><button draggable="true" data-type="cta">◎ CTA</button>
-        <button draggable="true" data-type="html">&lt;/&gt; HTML Block</button>
-      </div>
-      <hr><h3>Page Mode</h3>
-      <label><select id="cbpMode"><option value="append">Add builder sections before footer</option><option value="replace">Replace page body content</option></select></label>
-      <p class="cbp-warning">Imported live pages use Replace mode. Always Save Draft and Preview before Publish Live.</p>
-      <hr><h3>Theme</h3>
-      <label>Primary color<input id="themePrimary" type="color" value="#0f766e"></label>
-      <label>Secondary color<input id="themeSecondary" type="color" value="#d4a24c"></label>
-      <label>Body font<select id="themeFont"><option value="Poppins, sans-serif">Poppins</option><option value="Cormorant Garamond, serif">Cormorant Garamond</option><option value="Arial, sans-serif">Arial</option><option value="Georgia, serif">Georgia</option></select></label>
-      <label>Base radius<input id="themeRadius" type="range" min="0" max="32" value="14"><span id="themeRadiusVal">14px</span></label>
-      <div class="cbp-theme-actions"><button id="applyPageTheme">Apply to Current Page</button><button id="applyGlobalTheme">Apply to All Pages</button></div>
-      <button id="cbpVersions" class="wide">Version History</button>
-    </aside>
-    <section class="cbp-stage-wrap"><div id="cbpStage" class="cbp-stage desktop"><div id="cbpCanvas" class="cbp-canvas"><div class="cbp-empty">Loading current page...</div></div></div><div id="cbpStatus" class="cbp-status">Ready</div></section>
-    <aside class="cbp-right">
-      <h3>Selected Element</h3><div id="cbpInspectorEmpty" class="cbp-help">Select an element on the canvas.</div>
-      <form id="cbpInspector" class="hidden">
-        <label><span id="iContentLabel">Content</span><textarea id="iContent" rows="10"></textarea></label>
-        <label id="iUrlWrap">Link / Media URL<input id="iUrl" type="text"></label>
-        <div class="cbp-two"><label>Width %<input id="iWidth" type="number" min="10" max="100"></label><label>Min height px<input id="iHeight" type="number" min="0" max="1200"></label></div>
-        <div class="cbp-two"><label>Font size px<input id="iFontSize" type="number" min="8" max="160"></label><label>Font weight<select id="iWeight"><option>300</option><option>400</option><option>500</option><option>600</option><option>700</option><option>800</option></select></label></div>
-        <label>Alignment<select id="iAlign"><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option></select></label>
-        <div class="cbp-two"><label>Text color<input id="iColor" type="color"></label><label>Background<input id="iBg" type="color"></label></div>
-        <div class="cbp-two"><label>Padding px<input id="iPadding" type="number" min="0" max="200"></label><label>Margin px<input id="iMargin" type="number" min="0" max="200"></label></div>
-        <div class="cbp-two"><label>Radius px<input id="iRadius" type="number" min="0" max="100"></label><label id="iColumnsWrap">Columns<input id="iColumns" type="number" min="1" max="4"></label></div>
-        <label>Custom class<input id="iClass" type="text"></label>
-        <div class="cbp-inspector-actions"><button type="button" id="iDuplicate">Duplicate</button><button type="button" id="iDelete" class="danger">Delete</button></div>
-      </form>
-    </aside>
-  </main>
-  <dialog id="versionsDialog"><div class="dialog-head"><h3>Version History</h3><button onclick="this.closest('dialog').close()">×</button></div><div id="versionsList"></div></dialog>
-  <script src="js/builder-pro.js"></script>
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CeyBreez Visual Builder V3</title><link rel="stylesheet" href="css/builder-v3.css"></head><body>
+<header class="vb-top"><a href="./" class="vb-back">← Admin</a><strong>CeyBreez Visual Builder V3</strong><select id="vbPage"><option value="home">Home</option><option value="villas">Villas</option><option value="apartments">Apartments</option><option value="homestays">Homestays</option><option value="tours">Tours</option><option value="services">Services</option><option value="contact">Contact</option></select><button id="vbReload">Reload Live Page</button><button data-device="desktop" class="active">Desktop</button><button data-device="tablet">Tablet</button><button data-device="mobile">Mobile</button><span class="grow"></span><button id="vbUndo">Undo</button><button id="vbRedo">Redo</button><button id="vbDraft">Save Draft</button><button id="vbPreview">Preview</button><button id="vbPublish" class="primary">Publish Live</button></header>
+<main class="vb-shell"><aside class="vb-left">
+<h3>Elements</h3>
+<p class="hint">Click an element to add it before the footer. Then select and edit it on the live canvas.</p>
+<div class="vb-elements" id="vbElements">
+  <button data-add="section">▭ Section</button>
+  <button data-add="heading">H Heading</button>
+  <button data-add="text">¶ Text</button>
+  <button data-add="button">▣ Button</button>
+  <button data-add="image">▧ Image</button>
+  <button data-add="video">▶ Video</button>
+  <button data-add="columns">▥ Columns</button>
+  <button data-add="divider">— Divider</button>
+  <button data-add="spacer">↕ Spacer</button>
+  <button data-add="counter">123 Counter</button>
+  <button data-add="reviews">★ Reviews</button>
+  <button data-add="cta">◎ CTA</button>
+</div>
+<hr>
+<h3>Page & Theme</h3><p class="hint">The centre canvas is the real website. Click an item to select it. Double-click text to edit directly.</p><label>Primary colour<input id="themePrimary" type="color" value="#0f766e"></label><label>Secondary colour<input id="themeSecondary" type="color" value="#d4a24c"></label><label>Body font<select id="themeFont"><option value="Poppins, sans-serif">Poppins</option><option value="Cormorant Garamond, serif">Cormorant Garamond</option><option value="Arial, sans-serif">Arial</option><option value="Georgia, serif">Georgia</option></select></label><button id="themePage">Apply Theme to This Page</button><button id="themeAll">Apply Theme to All Pages</button><hr><h3>Instructions</h3><ol><li>Click an element.</li><li>Double-click text to type.</li><li>Use the right panel for style, image and background.</li><li>Save Draft, Preview, then Publish Live.</li></ol><button id="vbVersions">Version History</button><div id="vbStatus">Ready</div></aside>
+<section class="vb-stage"><div id="frameWrap" class="desktop"><iframe id="vbFrame" title="Live website editor"></iframe></div></section>
+<aside class="vb-right"><h3>Selected Element</h3><div id="emptyInspector" class="hint">Click any text, image, button, card or section in the website.</div><div id="inspector" class="hidden"><div class="tag" id="selTag"></div><label>Text / HTML<textarea id="iText" rows="5"></textarea></label><div class="two"><label>Font size<input id="iFontSize" type="number" min="8" max="180"></label><label>Font weight<select id="iWeight"><option>300</option><option>400</option><option>500</option><option>600</option><option>700</option><option>800</option></select></label></div><label>Alignment<select id="iAlign"><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option><option value="justify">Justify</option></select></label><div class="two"><label>Text colour<input id="iColor" type="color"></label><label>Background colour<input id="iBg" type="color"></label></div><div class="two"><label>Padding px<input id="iPadding" type="number" min="0" max="250"></label><label>Margin px<input id="iMargin" type="number" min="0" max="250"></label></div><div class="two"><label>Width %<input id="iWidth" type="number" min="5" max="100"></label><label>Min height px<input id="iHeight" type="number" min="0" max="1400"></label></div><div class="two"><label>Radius px<input id="iRadius" type="number" min="0" max="150"></label><label>Opacity %<input id="iOpacity" type="number" min="0" max="100"></label></div><label>Link URL<input id="iHref"></label><label>Image / Video URL<input id="iSrc"></label><input id="imageFile" type="file" accept="image/*,video/*"><button id="uploadMedia">Upload & Use Media</button><hr><h3>Background</h3><label>Background type<select id="bgType"><option value="color">Colour</option><option value="gradient">Gradient</option><option value="image">Image</option><option value="none">None</option></select></label><div class="two"><label>Colour 1<input id="bg1" type="color"></label><label>Colour 2<input id="bg2" type="color"></label></div><label>Background image URL<input id="bgImage"></label><label>Overlay opacity %<input id="bgOverlay" type="number" min="0" max="100"></label><button id="applyBackground">Apply Background</button><hr><button id="duplicate" disabled>Duplicate Element</button><button id="hideElement" class="danger">Hide Element</button><button id="resetElement">Reset Selected Changes</button></div></aside></main>
+<dialog id="versionsDialog"><header><h3>Version History</h3><button onclick="this.closest('dialog').close()">×</button></header><div id="versionsList"></div></dialog><script src="js/builder-v3.js"></script></body></html>

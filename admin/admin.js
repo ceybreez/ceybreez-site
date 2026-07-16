@@ -216,7 +216,6 @@ async function loadAll() {
 
   if (document.getElementById("reviewsTab")) {
     await loadReviews();
-    await loadReviewShowcaseSettings();
   }
 }
 
@@ -1588,9 +1587,8 @@ function renderReviewsTable(){
       <td>${r.active ? cmsStatusBadge(true) : cmsStatusBadge(false)}</td>
       <td>${cmsFeaturedBadge(r.featured)}</td>
       <td onclick="event.stopPropagation();">
-        <div class="review-quick-actions"><button class="mini-btn" onclick="toggleReviewFeatured('${escapeJs(r.id)}')">${r.featured ? "Unfeature" : "Feature"}</button><button class="mini-btn" onclick="toggleReviewPublished('${escapeJs(r.id)}')">${r.active ? "Hide" : "Publish"}</button>
         <button class="mini-btn" onclick="editReview('${escapeJs(r.id)}')">Edit</button>
-        <button class="delete-btn mini-btn" onclick="deleteReview('${escapeJs(r.id)}')">Delete</button></div>
+        <button class="delete-btn mini-btn" onclick="deleteReview('${escapeJs(r.id)}')">Delete</button>
       </td>
     </tr>
   `).join("");
@@ -1615,7 +1613,7 @@ function editReview(id){
 
   document.getElementById("reviewModalTitle").textContent = "Edit Review";
   document.getElementById("reviewEditId").value = r.id || "";
-  document.getElementById("reviewType").value = r.type || "villa";
+  document.getElementById("reviewType").value = r.type || "property";
   document.getElementById("reviewItemName").value = r.itemName || "";
   document.getElementById("reviewGuestName").value = r.guestName || "";
   document.getElementById("reviewCountry").value = r.country || "";
@@ -1692,43 +1690,6 @@ async function deleteReview(id){
 
   alert("Review deleted");
   await loadReviews();
-}
-
-
-async function saveReviewRecord(review){
-  const res=await fetch(`${API_BASE}/api/admin/reviews`,{method:"POST",headers:authHeaders(),body:JSON.stringify(review)});
-  const result=await res.json();
-  if(!res.ok) throw new Error(result.error||"Review update failed");
-  return result;
-}
-async function toggleReviewFeatured(id){
-  const r=allReviews.find(x=>String(x.id)===String(id)); if(!r)return;
-  try{await saveReviewRecord({...r,featured:!r.featured});await loadReviews();}catch(e){alert(e.message);}
-}
-async function toggleReviewPublished(id){
-  const r=allReviews.find(x=>String(x.id)===String(id)); if(!r)return;
-  try{await saveReviewRecord({...r,active:!r.active});await loadReviews();}catch(e){alert(e.message);}
-}
-async function loadReviewShowcaseSettings(){
-  try{
-    const res=await fetch(`${API_BASE}/api/admin/site-content`,{headers:authHeaders()});
-    const data=await res.json(); if(!res.ok)throw new Error(data.error||"Settings load failed");
-    document.getElementById('happyCustomerCount').value=data.happy_customer_count||'';
-    document.getElementById('completedTripCount').value=data.completed_trip_count||'';
-    document.getElementById('googleRating').value=data.google_rating||'';
-    document.getElementById('googleReviewUrl').value=data.google_review_url||'';
-    let reels=[];try{reels=JSON.parse(data.review_reels||'[]')}catch{reels=String(data.review_reels||'').split('\n').filter(Boolean)}
-    document.getElementById('reviewReels').value=(Array.isArray(reels)?reels:[]).join('\n');
-  }catch(e){console.warn(e);}
-}
-async function saveReviewShowcaseSettings(){
-  const payload={happy_customer_count:document.getElementById('happyCustomerCount').value.trim(),completed_trip_count:document.getElementById('completedTripCount').value.trim(),google_rating:document.getElementById('googleRating').value.trim(),google_review_url:document.getElementById('googleReviewUrl').value.trim(),review_reels:JSON.stringify(document.getElementById('reviewReels').value.split('\n').map(x=>x.trim()).filter(Boolean))};
-  const res=await fetch(`${API_BASE}/api/admin/site-content`,{method:'PUT',headers:authHeaders(),body:JSON.stringify(payload)});const data=await res.json();if(!res.ok){alert(data.error||'Save failed');return;}alert('Reviews showcase settings saved');
-}
-async function uploadReviewReel(){
-  const input=document.getElementById('reviewReelUploader');const file=input?.files?.[0];if(!file)return;
-  const status=document.getElementById('reviewReelUploadStatus');status.textContent='Uploading...';
-  try{const fd=new FormData();fd.append('file',file);fd.append('folder','review-reels');const res=await fetch(`${API_BASE}/api/admin/upload-image`,{method:'POST',headers:{Authorization:`Bearer ${getToken()}`},body:fd});const data=await res.json();if(!res.ok)throw new Error(data.error||'Upload failed');const ta=document.getElementById('reviewReels');ta.value=[ta.value.trim(),data.url].filter(Boolean).join('\n');status.textContent='Uploaded. Click Save Website Showcase.';}catch(e){status.textContent=e.message;}
 }
 
 /* =========================

@@ -3,3 +3,11 @@
 .vb-elements button{min-height:42px;text-align:left;border:1px solid #cbd5df;border-radius:8px;background:#fff;padding:8px;cursor:pointer;font-size:12px}
 .vb-elements button:hover{border-color:#0f766e;background:#eef9f6}
 .cb-v3-added{position:relative}
+
+.four{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.four label{font-size:10px}
+.select-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:8px 0 12px}
+.select-actions button{border:1px solid #cbd5df;background:#f8fafc;border-radius:8px;padding:8px;cursor:pointer}
+.vb-right h3{margin:16px 0 7px;font-size:13px;border-bottom:1px solid #e5e7eb;padding-bottom:6px}
+#selectionMode{max-width:170px}
+@media(max-width:650px){.four{grid-template-columns:1fr 1fr}}

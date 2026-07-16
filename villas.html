@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CeyBreez Villas | Luxury Villa Stays in Sri Lanka</title>
+  <meta name="description"
+content="Explore handpicked luxury villas in Sri Lanka. Beachfront villas, private retreats and peaceful escapes with CeyBreez.">
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="stylesheet" href="villas.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3QG71CWHW2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-3QG71CWHW2');
+</script>
+  <link rel="stylesheet" href="js/vendor/flatpickr.min.css">
+  <link rel="stylesheet" href="reviews-showcase.css">
+</head>
+<body>
+<header>
+  <nav>
+    <a href="/">Home</a>
+    <a href="villas.html">Villas</a>
+    <a href="apartments.html">Apartments</a>
+    <a href="homestays.html">HomeStays</a>
+    <a href="tours.html">Tours</a>
+    <a href="services.html">Services</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<section class="page-hero"><div class="hero-content"><img src="logo.png" alt="CeyBreez Logo" class="hero-logo" /><h1>Private Villas in Sri Lanka</h1><p>Handpicked villas for peaceful holidays, family escapes and luxury island stays.</p><a href="#properties" class="hero-btn">Explore Villas</a></div></section>
+
+<section class="intro"><h2>Stay With Comfort & Style</h2><p>Discover beautiful villas across Sri Lanka with CeyBreez. Each stay is selected for comfort, location and authentic island feeling.</p></section>
+
+<section class="properties-section" id="properties">
+  <h2>Featured Villas</h2><p class="section-intro">These villas are managed from the CeyBreez admin panel.</p>
+  <div class="property-filters">
+
+  <input
+    type="text"
+    id="propertySearch"
+    placeholder="Search villas..."
+  >
+
+  <input
+    type="text"
+    id="propertyLocationFilter"
+    placeholder="Location"
+  >
+
+  <select id="propertyGuestsFilter">
+    <option value="">Guests</option>
+    <option value="2">2+</option>
+    <option value="4">4+</option>
+    <option value="6">6+</option>
+    <option value="8">8+</option>
+  </select>
+
+  <select id="propertyBedroomsFilter">
+    <option value="">Bedrooms</option>
+    <option value="1">1+</option>
+    <option value="2">2+</option>
+    <option value="3">3+</option>
+    <option value="4">4+</option>
+  </select>
+
+</div>
+  <div id="propertyGrid" class="property-grid"><p class="loading-text">Loading villas...</p></div>
+</section>
+
+<section class="villa-inquiry-section" id="villaInquiry">
+  <h2>Send Villa Inquiry</h2>
+  <p class="section-intro">Select a villa, add your travel details, and send your inquiry to CeyBreez.</p>
+  <div class="villa-inquiry-box">
+    <div class="form-grid">
+      <div class="field-group"><label>🏡 Select Villa *</label><select id="inqVillaSelect" onchange="selectVillaFromDropdown()"><option value="">Select Villa</option></select></div>
+      <div class="field-group"><label>✅ Selected Villa</label><input id="inqVillaName" type="text" placeholder="Selected villa will appear here" readonly></div>
+      <div class="field-group"><label>👤 Full Name *</label><input id="inqName" type="text" placeholder="Enter your full name" required></div>
+      <div class="field-group"><label>📧 Email Address *</label><input id="inqEmail" type="email" placeholder="example@email.com" required></div>
+      <div class="field-group"><label>📱 WhatsApp / Mobile *</label><input id="inqMobile" type="tel" placeholder="+94 77 123 4567" required></div>
+      <div class="field-group"><label>🌍 Country *</label><input id="inqCountry" type="text" placeholder="Your country" required></div>
+      <div class="field-group"><label>👥 Number of Guests *</label><input id="inqGuests" type="number" min="1" placeholder="Number of guests" required></div>
+      <div class="field-group"><label>📅 Check-In Date *</label><input id="inqCheckIn" type="text" required></div>
+      <div class="field-group"><label>📅 Check-Out Date *</label><input id="inqCheckOut" type="text" required></div>
+      <div class="field-group full-width">
+        <div id="availabilityMsg" class="availability-msg"></div>
+      </div>
+      <div class="field-group full-width">
+        <div id="bookedDatesList" class="booked-dates-list"></div>
+      </div>
+      <div class="field-group"><label>🌙 Number of Nights</label><input id="inqDays" type="text" placeholder="Auto calculated" readonly></div>
+    </div>
+    <div class="field-group full-width"><label>📝 Special Notes / Requests</label><textarea id="inqNotes" rows="4" placeholder="Airport pickup, early check-in, room preferences, budget or special requests..."></textarea></div>
+    <button type="button" class="send-inquiry-btn" onclick="sendPropertyInquiry()">Send Inquiry</button>
+  </div>
+</section>
+
+<section class="cta"><h2>Need Help Choosing a Villa?</h2><p>Tell us your dates, guest count and preferred location. We’ll help you find a suitable stay.</p><a href="#villaInquiry">Send Inquiry</a></section>
+
+
+<section class="cb-social-proof" data-page-reviews="1" data-reviews-showcase data-review-type="villa" data-limit="9">
+  <div class="cb-section-head"><span class="eyebrow">Guest Reviews</span><h2>What Our Guests Say</h2><p>Choose a property or tour to see its own selected reviews.</p></div>
+  <div class="cb-review-toolbar"><select data-review-item-filter><option value="">All reviews</option></select><a data-google-review-link href="#" target="_blank" rel="noopener">Leave a Google Review</a></div>
+  <div class="cb-review-grid" data-review-grid></div>
+</section>
+<footer data-section="footer">
+  <p id="footerText" data-field="content">
+    © 2026 CeyBreez. All rights reserved.
+  </p>
+
+  <div class="footer-links">
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms & Conditions</a>
+  </div>
+</footer>
+
+<div id="propertyModal" class="property-modal"><div class="property-modal-card">
+  <button class="modal-close" onclick="closePropertyModal()">×</button>
+  <h2 id="modalTitle"></h2>
+  <div class="modal-main-image-wrap">
+  <img id="modalMainImage" class="modal-main-image" src="" alt="">
+</div>
+
+<div id="modalGallery" class="modal-gallery"></div>
+  <div class="modal-info-grid"><div><strong>Location</strong><span id="modalLocation"></span></div><div><strong>Guests</strong><span id="modalGuests"></span></div><div><strong>Bedrooms</strong><span id="modalBedrooms"></span></div><div><strong>Bathrooms</strong><span id="modalBathrooms"></span></div><div><strong>Price</strong><span id="modalPrice"></span></div></div>
+<p id="modalDescription"></p>
+<h3>Facilities</h3>
+<ul id="modalFacilities"></ul>
+
+<div class="modal-actions">
+  <button type="button" id="modalMapBtn">📍 Open Map</button>
+  <button type="button" id="modalDirectionsBtn">🧭 Get Directions</button>
+</div>
+
+<button type="button" class="select-villa-btn" onclick="selectVillaForInquiry()">Select This Villa</button>
+</div>
+</div>
+
+<div id="thankYouModal" class="thankyou-modal"><div class="thankyou-card"><button onclick="closeThankYouModal()" class="thankyou-close">×</button><div class="thankyou-icon">✅</div><h2>Inquiry Sent Successfully</h2><p>Thank you for choosing CeyBreez. We have received your villa inquiry.</p><div class="thankyou-ref">Reference No:<br><strong id="thankYouReference"></strong></div><p class="thankyou-small">Our team will contact you shortly.</p></div></div>
+
+<a href="https://api.whatsapp.com/send?phone=94704620017"
+   class="floating-whatsapp"
+   target="_blank"
+   id="floatingWhatsApp"
+   aria-label="Chat on WhatsApp">
+   <i class="fa-brands fa-whatsapp"></i>
+</a>
+  <script src="js/vendor/flatpickr.min.js"></script>
+<script>
+const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
+const PROPERTY_TYPE = "villa";
+const PROPERTY_LABEL = "Villa";
+const PROPERTY_PLURAL = "villas";
+const FORM_SECTION_ID = "villaInquiry";
+const SELECT_ID = "inqVillaSelect";
+const NAME_INPUT_ID = "inqVillaName";
+
+let properties = [];
+let allProperties = [];
+let selectedProperty = null;
+let bookedDates = [];
+let checkInPicker = null;
+let checkOutPicker = null;
+
+window.addEventListener("load", function(){
+  initDatePickers();
+  loadProperties();
+
+  document.addEventListener("change", function(e){
+    if(e.target.id === "propertyGuestsFilter" || e.target.id === "propertyBedroomsFilter"){
+      applyPropertyFilters();
+    }
+  });
+
+  document.addEventListener("input", function(e){
+    if(e.target.id === "propertySearch" || e.target.id === "propertyLocationFilter"){
+      applyPropertyFilters();
+    }
+  });
+});
+
+function initDatePickers(){
+  const commonOptions = {
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    disable: [],
+    onChange: function(){
+      calculateInquiryDays();
+      checkAvailabilityLive();
+    },
+    onDayCreate: function(dObj, dStr, fp, dayElem){
+      const dateValue = flatpickr.formatDate(dayElem.dateObj, "Y-m-d");
+      if(isSingleDateBooked(dateValue)){
+        dayElem.classList.add("booked-day");
+        dayElem.title = "Booked";
+      }
+    }
+  };
+
+  checkInPicker = flatpickr("#inqCheckIn", commonOptions);
+
+  checkOutPicker = flatpickr("#inqCheckOut", {
+    ...commonOptions,
+    onOpen: function(){
+      const checkIn = document.getElementById("inqCheckIn").value;
+      if(checkIn) checkOutPicker.set("minDate", addDays(checkIn, 1));
+    }
+  });
+}
+
+async function loadProperties(){
+  const grid = document.getElementById("propertyGrid");
+  const select = document.getElementById(SELECT_ID);
+
+  try{
+    const response = await fetch(API_BASE + "/api/properties?type=" + PROPERTY_TYPE);
+    const data = await response.json();
+
+    properties = data || [];
+    allProperties = [...properties];
+
+    select.innerHTML = '<option value="">Select ' + PROPERTY_LABEL + '</option>';
+
+    allProperties.forEach(item => {
+      const option = document.createElement("option");
+      option.value = item.id;
+      option.textContent = item.name;
+      select.appendChild(option);
+    });
+
+    renderPropertyCards();
+  }catch(error){
+    grid.innerHTML = '<p class="loading-text">Unable to load ' + PROPERTY_PLURAL + '. Please try again later.</p>';
+  }
+}
+
+function renderPropertyCards(){
+  const grid = document.getElementById("propertyGrid");
+  if(!grid) return;
+
+  grid.innerHTML = "";
+
+  if(properties.length === 0){
+    grid.innerHTML = '<p class="loading-text">No matching ' + PROPERTY_PLURAL + ' found.</p>';
+    return;
+  }
+
+  properties.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "property-card";
+
+    const photo = item.photos && item.photos.length ? item.photos[0] : "images/cover.jpg";
+
+    card.innerHTML = `
+      <img src="${photo}" alt="${escapeHtml(item.name)}" loading="lazy">
+
+      <div class="property-content">
+        <h3>${escapeHtml(item.name)}</h3>
+        <p class="location">📍 ${escapeHtml(item.location || "Sri Lanka")}</p>
+        <p>${escapeHtml(item.description || "")}</p>
+
+        <div class="property-meta">
+          <span>👥 ${escapeHtml(item.guests || "Guests")}</span>
+          <span>🛏 ${escapeHtml(item.bedrooms || "Bedrooms")}</span>
+          <span>🚿 ${escapeHtml(item.bathrooms || "Bathrooms")}</span>
+        </div>
+
+        <strong class="price">${escapeHtml(item.price || "Price on request")}</strong>
+
+        <button onclick="openPropertyModal('${item.id}')">View Details</button>
+        <button onclick="quickSelectProperty('${item.id}')" class="quick-inquiry-btn">Inquiry</button>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
+function applyPropertyFilters(){
+  const search = document.getElementById("propertySearch")?.value.toLowerCase() || "";
+  const location = document.getElementById("propertyLocationFilter")?.value.toLowerCase() || "";
+  const guests = Number(document.getElementById("propertyGuestsFilter")?.value || 0);
+  const bedrooms = Number(document.getElementById("propertyBedroomsFilter")?.value || 0);
+
+  properties = allProperties.filter(item => {
+    const searchMatch = !search || (item.name || "").toLowerCase().includes(search) || (item.description || "").toLowerCase().includes(search);
+    const locationMatch = !location || (item.location || "").toLowerCase().includes(location);
+    const guestMatch = !guests || Number(item.guests || 0) >= guests;
+    const bedroomMatch = !bedrooms || Number(item.bedrooms || 0) >= bedrooms;
+
+    return searchMatch && locationMatch && guestMatch && bedroomMatch;
+  });
+
+  renderPropertyCards();
+}
+
+function openPropertyModal(id){
+  const item = properties.find(p => String(p.id) === String(id));
+  if(!item) return;
+
+  selectedProperty = item;
+
+  const mapBtn = document.getElementById("modalMapBtn");
+  const dirBtn = document.getElementById("modalDirectionsBtn");
+
+  if(mapBtn) mapBtn.onclick = () => openMapUrl(item.mapUrl, item.lat, item.lng);
+  if(dirBtn) dirBtn.onclick = () => getDirectionsUrl(item.mapUrl, item.lat, item.lng);
+
+  document.getElementById("modalTitle").textContent = item.name;
+  document.getElementById("modalLocation").textContent = item.location || "Sri Lanka";
+  document.getElementById("modalGuests").textContent = item.guests || "Not specified";
+  document.getElementById("modalBedrooms").textContent = item.bedrooms || "Not specified";
+  document.getElementById("modalBathrooms").textContent = item.bathrooms || "Not specified";
+  document.getElementById("modalPrice").textContent = item.price || "Price on request";
+  document.getElementById("modalDescription").textContent = item.description || "";
+
+  const gallery = document.getElementById("modalGallery");
+  gallery.innerHTML = "";
+
+  const photos = item.photos && item.photos.length ? item.photos : ["images/cover.jpg"];
+  const mainImage = document.getElementById("modalMainImage");
+  mainImage.src = photos[0];
+
+  photos.forEach(photo => {
+    const img = document.createElement("img");
+    img.src = photo;
+    img.alt = item.name;
+    img.loading = "lazy";
+    img.onclick = () => { mainImage.src = photo; };
+    gallery.appendChild(img);
+  });
+
+  const facilities = document.getElementById("modalFacilities");
+  facilities.innerHTML = "";
+
+  if(item.facilities && item.facilities.length){
+    item.facilities.forEach(f => {
+      const li = document.createElement("li");
+      li.textContent = f;
+      facilities.appendChild(li);
+    });
+  }else{
+    facilities.innerHTML = "<li>Facilities will be confirmed on request.</li>";
+  }
+
+  document.getElementById("propertyModal").style.display = "flex";
+}
+
+function closePropertyModal(){
+  document.getElementById("propertyModal").style.display = "none";
+}
+
+function selectPropertyForInquiry(){
+  if(!selectedProperty) return;
+  fillSelectedProperty(selectedProperty.id);
+  closePropertyModal();
+  document.getElementById(FORM_SECTION_ID).scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function selectVillaForInquiry(){ selectPropertyForInquiry(); }
+
+function quickSelectProperty(id){
+  fillSelectedProperty(id);
+  document.getElementById(FORM_SECTION_ID).scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function quickSelectVilla(id){ quickSelectProperty(id); }
+
+function selectPropertyFromDropdown(){
+  const id = document.getElementById(SELECT_ID).value;
+  fillSelectedProperty(id);
+}
+
+function selectVillaFromDropdown(){ selectPropertyFromDropdown(); }
+
+function fillSelectedProperty(id){
+  const item = allProperties.find(p => String(p.id) === String(id));
+
+  if(!item){
+    selectedProperty = null;
+    document.getElementById(NAME_INPUT_ID).value = "";
+    bookedDates = [];
+    updateCalendarBookedDates();
+    renderBookedDatesList();
+    checkAvailabilityLive();
+    return;
+  }
+
+  selectedProperty = item;
+  document.getElementById(SELECT_ID).value = item.id;
+  document.getElementById(NAME_INPUT_ID).value = item.name;
+
+  loadBookedDates(item.name).then(() => {
+    updateCalendarBookedDates();
+    renderBookedDatesList();
+    checkAvailabilityLive();
+  });
+}
+
+function fillSelectedVilla(id){ fillSelectedProperty(id); }
+
+async function loadBookedDates(itemName){
+  try{
+    const res = await fetch(API_BASE + "/api/bookings?itemName=" + encodeURIComponent(itemName));
+    bookedDates = await res.json();
+  }catch(err){
+    bookedDates = [];
+  }
+}
+
+function updateCalendarBookedDates(){
+  const disabled = bookedDates.map(b => {
+    const from = b.dateFrom;
+    const to = addDays(b.dateTo, -1);
+    return { from, to: to || b.dateTo };
+  }).filter(x => x.from && x.to);
+
+  if(checkInPicker){
+    checkInPicker.set("disable", disabled);
+    checkInPicker.redraw();
+  }
+
+  if(checkOutPicker){
+    checkOutPicker.set("disable", disabled);
+    checkOutPicker.redraw();
+  }
+}
+
+function isSingleDateBooked(dateValue){
+  if(!dateValue) return false;
+  const date = new Date(dateValue);
+
+  return bookedDates.some(b => {
+    const start = new Date(b.dateFrom);
+    const end = new Date(b.dateTo);
+    return date >= start && date < end;
+  });
+}
+
+function isDateRangeBooked(checkIn, checkOut){
+  if(!checkIn || !checkOut) return false;
+
+  const start = new Date(checkIn);
+  const end = new Date(checkOut);
+
+  return bookedDates.some(b => {
+    const bookedStart = new Date(b.dateFrom);
+    const bookedEnd = new Date(b.dateTo);
+    return start < bookedEnd && end > bookedStart;
+  });
+}
+
+function checkAvailabilityLive(){
+  const box = document.getElementById("availabilityMsg");
+  if(!box) return;
+
+  const checkIn = document.getElementById("inqCheckIn").value;
+  const checkOut = document.getElementById("inqCheckOut").value;
+
+  box.className = "availability-msg";
+  box.textContent = "";
+
+  if(!selectedProperty){
+    box.textContent = "Please select a " + PROPERTY_LABEL.toLowerCase() + " first.";
+    box.classList.add("info");
+    return;
+  }
+
+  if(!checkIn || !checkOut){
+    box.textContent = "Select check-in and check-out dates to check availability.";
+    box.classList.add("info");
+    return;
+  }
+
+  if(isDateRangeBooked(checkIn, checkOut)){
+    box.textContent = "❌ This " + PROPERTY_LABEL.toLowerCase() + " is already booked for the selected dates. Please choose different dates.";
+    box.classList.add("booked");
+  }else{
+    box.textContent = "✅ Available for selected dates.";
+    box.classList.add("available");
+  }
+}
+
+function renderBookedDatesList(){
+  const box = document.getElementById("bookedDatesList");
+  if(!box) return;
+
+  if(!selectedProperty){
+    box.innerHTML = "";
+    return;
+  }
+
+  if(!bookedDates || bookedDates.length === 0){
+    box.innerHTML = `<div class="no-bookings">No confirmed bookings for this ${PROPERTY_LABEL.toLowerCase()} yet.</div>`;
+    return;
+  }
+
+  box.innerHTML = `
+    <h4>Booked Dates</h4>
+    ${bookedDates.map(b => `
+      <div class="booked-date-item">🔴 ${formatDisplayDate(b.dateFrom)} → ${formatDisplayDate(b.dateTo)}</div>
+    `).join("")}
+  `;
+}
+
+function calculateInquiryDays(){
+  const checkIn = document.getElementById("inqCheckIn").value;
+  const checkOut = document.getElementById("inqCheckOut").value;
+  const daysBox = document.getElementById("inqDays");
+
+  if(checkIn && checkOut){
+    const diff = Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24));
+    daysBox.value = diff > 0 ? diff + " Nights" : "Invalid date range";
+  }else{
+    daysBox.value = "";
+  }
+}
+
+async function sendPropertyInquiry(){
+  if(!selectedProperty){
+    alert("Please select a " + PROPERTY_LABEL.toLowerCase() + " first.");
+    return;
+  }
+
+  const name = document.getElementById("inqName").value.trim();
+  const email = document.getElementById("inqEmail").value.trim();
+  const mobile = document.getElementById("inqMobile").value.trim();
+  const country = document.getElementById("inqCountry").value.trim();
+  const guests = document.getElementById("inqGuests").value.trim();
+  const checkIn = document.getElementById("inqCheckIn").value;
+  const checkOut = document.getElementById("inqCheckOut").value;
+  const days = document.getElementById("inqDays").value;
+  const notes = document.getElementById("inqNotes").value.trim();
+
+  if(!name || !email || !mobile || !country || !guests || !checkIn || !checkOut){
+    alert("Please fill all required details.");
+    return;
+  }
+
+  if(isDateRangeBooked(checkIn, checkOut)){
+    alert("Sorry, this " + PROPERTY_LABEL.toLowerCase() + " is already booked for the selected dates.");
+    return;
+  }
+
+  const message =
+`New CeyBreez ${PROPERTY_LABEL} Inquiry
+
+Selected ${PROPERTY_LABEL}:
+${selectedProperty.name}
+
+Location:
+${selectedProperty.location || "Sri Lanka"}
+
+Price:
+${selectedProperty.price || "Price on request"}
+
+Stay Dates:
+Check-in: ${checkIn}
+Check-out: ${checkOut}
+Duration: ${days || "Not calculated"}
+
+Guest Details:
+Name: ${name}
+Email: ${email}
+Mobile: ${mobile}
+Country: ${country}
+Guests: ${guests}
+
+Special Notes:
+${notes || "None"}`;
+
+  window.open("https://api.whatsapp.com/send?phone=94704620017&text=" + encodeURIComponent(message), "_blank");
+
+  const inquiryData = {
+    name,
+    email,
+    mobile,
+    country,
+    countryCode: "",
+    experiences: PROPERTY_LABEL + " Inquiry - " + selectedProperty.name,
+    itemName: selectedProperty.name,
+    dateFrom: checkIn,
+    dateTo: checkOut,
+    guests,
+    message
+  };
+
+  try{
+    const response = await fetch(API_BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(inquiryData)
+    });
+
+    const result = await response.json();
+
+    if(response.ok){
+      showThankYouModal(result.reference || "CB-000000");
+      resetInquiryForm();
+    }else{
+      alert("WhatsApp opened, but email sending failed.");
+    }
+  }catch(error){
+    alert("WhatsApp opened, but email sending failed.");
+  }
+}
+
+function resetInquiryForm(){
+  ["inqName","inqEmail","inqMobile","inqCountry","inqGuests","inqNotes"].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = "";
+  });
+
+  if(checkInPicker) checkInPicker.clear();
+  if(checkOutPicker) checkOutPicker.clear();
+  document.getElementById("inqDays").value = "";
+  checkAvailabilityLive();
+}
+
+function showThankYouModal(reference){
+  if(typeof gtag !== "undefined"){
+    gtag("event", "generate_lead", {
+      inquiry_type: PROPERTY_TYPE,
+      reference: reference || ""
+    });
+  }
+
+  document.getElementById("thankYouReference").textContent = reference;
+  document.getElementById("thankYouModal").style.display = "flex";
+}
+
+function closeThankYouModal(){
+  document.getElementById("thankYouModal").style.display = "none";
+}
+
+function openMapUrl(mapUrl, lat, lng){
+  if(mapUrl && mapUrl.trim() !== ""){
+    window.open(mapUrl, "_blank");
+    return;
+  }
+
+  if(lat && lng && Number(lat) !== 0 && Number(lng) !== 0){
+    window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
+    return;
+  }
+
+  alert("Map location not available.");
+}
+
+function getDirectionsUrl(mapUrl, lat, lng){
+  if(mapUrl && mapUrl.trim() !== ""){
+    window.open(mapUrl, "_blank");
+    return;
+  }
+
+  if(lat && lng && Number(lat) !== 0 && Number(lng) !== 0){
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, "_blank");
+    return;
+  }
+
+  alert("Directions not available.");
+}
+
+function addDays(dateValue, days){
+  if(!dateValue) return "";
+  const date = new Date(dateValue);
+  if(isNaN(date.getTime())) return "";
+  date.setDate(date.getDate() + Number(days || 0));
+  return date.toISOString().slice(0, 10);
+}
+
+function formatDisplayDate(value){
+  if(!value) return "-";
+  const date = new Date(value);
+  if(isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
+}
+
+function escapeHtml(value){
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+const waBtn = document.getElementById("floatingWhatsApp");
+if(waBtn){
+  waBtn.addEventListener("click", () => {
+    if(typeof gtag !== "undefined"){
+      gtag("event", "whatsapp_click", {
+        page_location: window.location.pathname
+      });
+    }
+  });
+}
+</script>
+<script src="reviews-showcase.js"></script>
+</body>
+</html>

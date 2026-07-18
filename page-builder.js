@@ -1,196 +1,181 @@
 const CEYBREEZ_API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 
-document.addEventListener("DOMContentLoaded", () => {
+ document.addEventListener("DOMContentLoaded", () => {
   const page = document.body.dataset.page || "home";
   loadCeyBreezSections(page);
 });
 
-async function loadCeyBreezSections(page){
-  try{
-    const response = await fetch(`${CEYBREEZ_API_BASE}/api/page-sections?page=${page}`);
-    const sections = await response.json();
-
-    sections.forEach(section => {
-      applySection(section);
+async function loadCeyBreezSections(page) {
+  try {
+    const response = await fetch(`${CEYBREEZ_API_BASE}/api/page-sections?page=${encodeURIComponent(page)}`, {
+      headers: { Accept: "application/json" }
     });
-document.body.classList.add("cms-ready");
-  }catch(error){
-    console.error("Page Builder load failed", error);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const payload = await response.json();
+    const sections = Array.isArray(payload) ? payload : [];
+
+    sections
+      .filter(section => section && section.active !== false && section.active !== 0)
+      .sort((a, b) => Number(a.sortOrder || 0) - Number(b.sortOrder || 0))
+      .forEach(applySection);
+  } catch (error) {
+    // Keep the original static website visible when CMS/API is unavailable.
+    console.warn("CeyBreez Page Builder: using original page content.", error);
+  } finally {
+    document.body.classList.add("cms-ready");
   }
 }
 
-function applySection(section){
-  const key = section.sectionKey;
-  const target = document.querySelector(`[data-section="${key}"]`);
+function parseSettings(value) {
+  if (!value) return {};
+  if (typeof value === "object") return value;
+  try { return JSON.parse(value); } catch { return {}; }
+}
 
-  if(!target) return;
+function hasText(value) {
+  return typeof value === "string" && value.trim() !== "";
+}
 
-  let settings = {};
+function applySection(section) {
+  const key = String(section.sectionKey || "").trim();
+  if (!key) return;
 
-  try{
-    settings = typeof section.settings === "string"
-      ? JSON.parse(section.settings || "{}")
-      : section.settings || {};
-  }catch{
-    settings = {};
-  }
+  const target = document.querySelector(`[data-section="${CSS.escape(key)}"]`);
+  if (!target) return;
 
-  if(section.title){
-    const title = target.querySelector("[data-field='title']");
-    if(title) title.textContent = section.title;
-  }
+  const settings = parseSettings(section.settings);
 
-  if(section.subtitle){
-    const subtitle = target.querySelector("[data-field='subtitle']");
-    if(subtitle) subtitle.textContent = section.subtitle;
-  }
+  setText(target, "title", section.title);
+  setText(target, "subtitle", section.subtitle);
+  setText(target, "content", section.content);
 
-  if(section.content){
-    const content = target.querySelector("[data-field='content']");
-    if(content) content.textContent = section.content;
-  }
+  const button = target.querySelector("[data-field='button']");
+  if (button && hasText(section.buttonText)) button.textContent = section.buttonText.trim();
+  if (button && hasText(section.buttonUrl)) button.href = section.buttonUrl.trim();
 
-  if(section.buttonText){
-    const button = target.querySelector("[data-field='button']");
-    if(button) button.textContent = section.buttonText;
-  }
+  const image = target.querySelector("[data-field='image']");
+  if (image && hasText(section.mediaUrl)) image.src = section.mediaUrl.trim();
 
-  if(section.buttonUrl){
-    const button = target.querySelector("[data-field='button']");
-    if(button) button.href = section.buttonUrl;
-  }
-
-  if(section.mediaUrl){
-    const img = target.querySelector("[data-field='image']");
-    if(img) img.src = section.mediaUrl;
-  }
-
-  if(settings.videoUrl){
-    applyVideoBackground(target, settings.videoUrl);
-  }
-
-  if(settings.gallery && Array.isArray(settings.gallery)){
-    renderGallery(target, settings.gallery);
-  }
-
-  if(settings.cards && Array.isArray(settings.cards)){
-    renderCards(target, settings.cards);
-  }
+  if (hasText(settings.videoUrl)) applyVideoBackground(target, settings.videoUrl.trim());
+  if (Array.isArray(settings.gallery) && settings.gallery.length) renderGallery(target, settings.gallery);
+  if (Array.isArray(settings.cards) && settings.cards.length) renderCards(target, settings.cards);
 
   applySectionStyles(target, section, settings);
 }
 
-function applySectionStyles(target, section, passedSettings){
- let settings = passedSettings || {};
+function setText(target, field, value) {
+  if (!hasText(value)) return; // Never erase original website details with blank CMS data.
+  const element = target.querySelector(`[data-field='${field}']`);
+  if (element) element.textContent = value.trim();
+}
 
-  if(section.backgroundImage){
-    target.style.backgroundImage =
-      `linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)), url('${section.backgroundImage}')`;
-    target.style.backgroundSize = "cover";
-    target.style.backgroundPosition = "center";
-  }else if(settings.gradientStart && settings.gradientEnd){
-    target.style.background =
-      `linear-gradient(135deg, ${settings.gradientStart}, ${settings.gradientEnd})`;
-  }else if(section.backgroundColor){
+function applySectionStyles(target, section, settings = {}) {
+  if (hasText(section.backgroundImage)) {
+    const overlay = Number.isFinite(Number(settings.overlayOpacity))
+      ? Math.min(1, Math.max(0, Number(settings.overlayOpacity)))
+      : 0.35;
+    target.style.backgroundImage = `linear-gradient(rgba(0,0,0,${overlay}), rgba(0,0,0,${overlay})), url('${section.backgroundImage.trim()}')`;
+    target.style.backgroundSize = settings.backgroundSize || "cover";
+    target.style.backgroundPosition = settings.backgroundPosition || "center center";
+    target.style.backgroundRepeat = settings.backgroundRepeat || "no-repeat";
+  } else if (hasText(settings.gradientStart) && hasText(settings.gradientEnd)) {
+    target.style.background = `linear-gradient(135deg, ${settings.gradientStart}, ${settings.gradientEnd})`;
+  } else if (hasText(section.backgroundColor)) {
     target.style.background = section.backgroundColor;
   }
 
-  if(section.textColor){
-    target.style.color = section.textColor;
+  if (hasText(section.textColor)) target.style.color = section.textColor;
+  if (hasText(section.headingColor)) {
+    target.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.style.color = section.headingColor);
   }
 
-  if(section.headingColor){
-    target.querySelectorAll("h1,h2,h3").forEach(h => {
-      h.style.color = section.headingColor;
-    });
+  if (hasText(section.fontFamily)) target.style.fontFamily = section.fontFamily;
+  if (hasText(section.fontSize)) target.style.fontSize = normaliseCssSize(section.fontSize);
+  if (hasText(settings.headingFontFamily)) {
+    target.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.style.fontFamily = settings.headingFontFamily);
+  }
+  if (hasText(settings.headingFontSize)) {
+    target.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.style.fontSize = normaliseCssSize(settings.headingFontSize));
   }
 
-  if(section.fontFamily){
-    target.style.fontFamily = section.fontFamily;
-  }
+  if (hasText(settings.paddingTop)) target.style.paddingTop = normaliseCssSize(settings.paddingTop);
+  if (hasText(settings.paddingBottom)) target.style.paddingBottom = normaliseCssSize(settings.paddingBottom);
+  if (hasText(settings.borderRadius)) target.style.borderRadius = normaliseCssSize(settings.borderRadius);
 
-  if(section.fontSize){
-    target.style.fontSize = section.fontSize;
-  }
+  const shadows = {
+    none: "none",
+    soft: "0 10px 30px rgba(0,0,0,.08)",
+    medium: "0 18px 45px rgba(0,0,0,.15)",
+    strong: "0 28px 70px rgba(0,0,0,.25)"
+  };
+  if (shadows[settings.shadow]) target.style.boxShadow = shadows[settings.shadow];
 
-  if(settings.paddingTop){
-    target.style.paddingTop = settings.paddingTop;
+  if (hasText(section.buttonColor)) {
+    target.querySelectorAll("[data-field='button']").forEach(btn => btn.style.background = section.buttonColor);
   }
-
-  if(settings.paddingBottom){
-    target.style.paddingBottom = settings.paddingBottom;
-  }
-
-  if(settings.borderRadius){
-    target.style.borderRadius = settings.borderRadius;
-  }
-
-  if(settings.shadow){
-    if(settings.shadow === "none") target.style.boxShadow = "none";
-    if(settings.shadow === "soft") target.style.boxShadow = "0 10px 30px rgba(0,0,0,.08)";
-    if(settings.shadow === "medium") target.style.boxShadow = "0 18px 45px rgba(0,0,0,.15)";
-    if(settings.shadow === "strong") target.style.boxShadow = "0 28px 70px rgba(0,0,0,.25)";
-  }
-
-  if(section.buttonColor){
-    target.querySelectorAll("a, button").forEach(btn => {
-      btn.style.background = section.buttonColor;
-    });
-  }
-
-  if(settings.animation){
-    target.classList.add("cms-animate", settings.animation);
-  }
+  if (hasText(settings.animation)) target.classList.add("cms-animate", settings.animation);
 }
-function applyVideoBackground(target, videoUrl){
-  let video = target.querySelector(".cms-bg-video");
 
-  if(!video){
+function normaliseCssSize(value) {
+  const text = String(value).trim();
+  return /^-?\d+(\.\d+)?$/.test(text) ? `${text}px` : text;
+}
+
+function applyVideoBackground(target, videoUrl) {
+  let video = target.querySelector(":scope > .cms-bg-video");
+  if (!video) {
     video = document.createElement("video");
     video.className = "cms-bg-video";
-    video.autoplay = true;
-    video.muted = true;
-    video.loop = true;
-    video.playsInline = true;
-
+    Object.assign(video, { autoplay: true, muted: true, loop: true, playsInline: true });
     target.prepend(video);
   }
-
-  video.src = videoUrl;
+  if (video.src !== videoUrl) video.src = videoUrl;
 }
 
-function renderGallery(target, gallery){
+function renderGallery(target, gallery) {
   const galleryBox = target.querySelector("[data-field='gallery']");
-  if(!galleryBox) return;
-
-  galleryBox.innerHTML = "";
-
-  gallery.forEach(url => {
+  const urls = gallery.filter(hasText);
+  if (!galleryBox || !urls.length) return;
+  galleryBox.replaceChildren(...urls.map(url => {
     const img = document.createElement("img");
-    img.src = url;
+    img.src = url.trim();
     img.alt = "CeyBreez Gallery";
     img.loading = "lazy";
-    galleryBox.appendChild(img);
-  });
+    return img;
+  }));
 }
 
-function renderCards(target, cards){
+function renderCards(target, cards) {
   const cardsBox = target.querySelector("[data-field='cards']");
-  if(!cardsBox) return;
+  const validCards = cards.filter(card => card && (hasText(card.title) || hasText(card.description) || hasText(card.image)));
+  if (!cardsBox || !validCards.length) return; // Preserve existing cards when CMS cards are blank.
 
-  cardsBox.innerHTML = "";
-
-  cards.forEach(card => {
+  const fragment = document.createDocumentFragment();
+  validCards.forEach(card => {
     const item = document.createElement("div");
     item.className = "cms-card";
 
-    item.innerHTML = `
-      ${card.image ? `<img src="${card.image}" alt="${card.title || ''}">` : ""}
-      <h3>${card.title || ""}</h3>
-      <p>${card.description || ""}</p>
-      ${card.buttonText ? `<a href="${card.buttonUrl || "#"}">${card.buttonText}</a>` : ""}
-    `;
-
-    cardsBox.appendChild(item);
+    if (hasText(card.image)) {
+      const img = document.createElement("img");
+      img.src = card.image.trim();
+      img.alt = hasText(card.title) ? card.title.trim() : "CeyBreez";
+      img.loading = "lazy";
+      item.appendChild(img);
+    }
+    if (hasText(card.title)) {
+      const h3 = document.createElement("h3"); h3.textContent = card.title.trim(); item.appendChild(h3);
+    }
+    if (hasText(card.description)) {
+      const p = document.createElement("p"); p.textContent = card.description.trim(); item.appendChild(p);
+    }
+    if (hasText(card.buttonText)) {
+      const a = document.createElement("a");
+      a.href = hasText(card.buttonUrl) ? card.buttonUrl.trim() : "#";
+      a.textContent = card.buttonText.trim();
+      item.appendChild(a);
+    }
+    fragment.appendChild(item);
   });
+  cardsBox.replaceChildren(fragment);
 }

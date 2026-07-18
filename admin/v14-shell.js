@@ -493,6 +493,8 @@ function initV18BlockDatePickers(bookings){
   }
 
   function ensureShell(){
+    // Never construct the application shell while logged out.
+    if(!localStorage.getItem(TOKEN_KEY)) return;
     if(shellReady) return;
     const panel=document.getElementById("adminPanel");
     if(!panel) return;
@@ -570,6 +572,8 @@ function initV18BlockDatePickers(bookings){
     panel.appendChild(main);
     panel.appendChild(legacyRoot);
     document.body.classList.add("v14-shell-ready","v15-router-ready");
+    document.body.classList.remove("v15-booting");
+    document.getElementById("v15BootScreen")?.remove();
     shellReady=true;
 
     const isMobile=()=>window.matchMedia("(max-width: 900px)").matches;
@@ -676,14 +680,49 @@ function initV18BlockDatePickers(bookings){
   if(typeof originalLogin==="function"){
     window.loginAdmin=function(){
       originalLogin();
-      setTimeout(()=>{ ensureShell(); window.showTab("dashboard"); },500);
+      document.documentElement.classList.remove("v15-logged-out");
+      document.documentElement.classList.add("v15-authenticated");
+      document.body.classList.remove("v15-logged-out");
+      document.body.classList.add("v15-authenticated", "v15-booting");
+      setTimeout(()=>{ ensureShell(); window.showTab("dashboard"); },120);
     };
   }
 
   document.addEventListener("DOMContentLoaded",()=>{
-    setTimeout(()=>{
+    const hasToken = !!localStorage.getItem(TOKEN_KEY);
+    const panel = document.getElementById("adminPanel");
+
+    if(hasToken){
+      document.documentElement.classList.remove("v15-logged-out");
+      document.documentElement.classList.add("v15-authenticated");
+      document.body.classList.remove("v15-logged-out");
+      document.body.classList.add("v15-authenticated");
+      // admin.js has already restored the session during the same DOMContentLoaded cycle.
+      // Build the final shell immediately so the legacy V10 markup never flashes.
       ensureShell();
-      if(localStorage.getItem(TOKEN_KEY) && !document.getElementById("adminPanel")?.classList.contains("hidden")) window.showTab("dashboard");
-    },650);
+      window.showTab("dashboard");
+    } else {
+      // Logged-out users must see only the login form.
+      document.documentElement.classList.remove("v15-authenticated");
+      document.documentElement.classList.add("v15-logged-out");
+      document.body.classList.remove("v15-authenticated", "v15-booting");
+      document.body.classList.add("v15-logged-out");
+      const panel=document.getElementById("adminPanel");
+      if(panel){ panel.classList.add("hidden"); panel.style.display="none"; }
+      const login=document.getElementById("loginBox");
+      if(login){ login.classList.remove("hidden"); login.style.display="block"; }
+      document.getElementById("v15BootScreen")?.remove();
+    }
+
+    // Safety fallback for unusually slow script execution.
+    setTimeout(()=>{
+      if(hasToken && !shellReady){
+        ensureShell();
+        window.showTab("dashboard");
+      } else if(!hasToken){
+        document.body.classList.remove("v15-booting");
+        document.getElementById("v15BootScreen")?.remove();
+      }
+    },120);
   });
 })();

@@ -888,6 +888,11 @@ async function savePageSection(e) {
     borderRadius: pxValue("sectionBorderRadius"),
     shadow: document.getElementById("sectionShadow")?.value || "",
     animation: document.getElementById("sectionAnimation")?.value || "",
+    backgroundSize: document.getElementById("sectionBackgroundSize")?.value || "cover",
+    backgroundPosition: document.getElementById("sectionBackgroundPosition")?.value || "center center",
+    backgroundRepeat: document.getElementById("sectionBackgroundRepeat")?.value || "no-repeat",
+    headingFontFamily: document.getElementById("sectionHeadingFontFamily")?.value || "",
+    headingFontSize: pxValue("sectionHeadingFontSize"),
     cards: collectCards()
   };
 
@@ -908,6 +913,7 @@ async function savePageSection(e) {
     textColor: document.getElementById("sectionTextColor").value,
     buttonColor: document.getElementById("sectionButtonColor").value,
     fontFamily: document.getElementById("sectionFontFamily").value,
+    fontSize: pxValue("sectionFontSize"),
     sortOrder: document.getElementById("sectionSortOrder").value,
     active: document.getElementById("sectionActive").checked,
     settings
@@ -968,6 +974,7 @@ async function editPageSection(id) {
   document.getElementById("sectionTextColor").value = item.textColor || "#222222";
   document.getElementById("sectionButtonColor").value = item.buttonColor || "#0f766e";
   document.getElementById("sectionFontFamily").value = item.fontFamily || "";
+  document.getElementById("sectionFontSize").value = stripPx(item.fontSize);
   document.getElementById("sectionSortOrder").value = item.sortOrder || 0;
   document.getElementById("sectionActive").checked = !!item.active;
 
@@ -978,6 +985,11 @@ async function editPageSection(id) {
   document.getElementById("sectionBorderRadius").value = stripPx(settings.borderRadius);
   document.getElementById("sectionShadow").value = settings.shadow || "";
   document.getElementById("sectionAnimation").value = settings.animation || "";
+  document.getElementById("sectionBackgroundSize").value = settings.backgroundSize || "cover";
+  document.getElementById("sectionBackgroundPosition").value = settings.backgroundPosition || "center center";
+  document.getElementById("sectionBackgroundRepeat").value = settings.backgroundRepeat || "no-repeat";
+  document.getElementById("sectionHeadingFontFamily").value = settings.headingFontFamily || "";
+  document.getElementById("sectionHeadingFontSize").value = stripPx(settings.headingFontSize);
   loadCards(settings.cards || []);
 
   document.getElementById("sectionBuilderBox")?.classList.remove("hidden");

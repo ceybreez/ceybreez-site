@@ -493,6 +493,8 @@ function initV18BlockDatePickers(bookings){
   }
 
   function ensureShell(){
+    // Never construct the application shell while logged out.
+    if(!localStorage.getItem(TOKEN_KEY)) return;
     if(shellReady) return;
     const panel=document.getElementById("adminPanel");
     if(!panel) return;
@@ -678,7 +680,11 @@ function initV18BlockDatePickers(bookings){
   if(typeof originalLogin==="function"){
     window.loginAdmin=function(){
       originalLogin();
-      setTimeout(()=>{ ensureShell(); window.showTab("dashboard"); },500);
+      document.documentElement.classList.remove("v15-logged-out");
+      document.documentElement.classList.add("v15-authenticated");
+      document.body.classList.remove("v15-logged-out");
+      document.body.classList.add("v15-authenticated", "v15-booting");
+      setTimeout(()=>{ ensureShell(); window.showTab("dashboard"); },120);
     };
   }
 
@@ -687,13 +693,24 @@ function initV18BlockDatePickers(bookings){
     const panel = document.getElementById("adminPanel");
 
     if(hasToken){
+      document.documentElement.classList.remove("v15-logged-out");
+      document.documentElement.classList.add("v15-authenticated");
+      document.body.classList.remove("v15-logged-out");
+      document.body.classList.add("v15-authenticated");
       // admin.js has already restored the session during the same DOMContentLoaded cycle.
       // Build the final shell immediately so the legacy V10 markup never flashes.
       ensureShell();
       window.showTab("dashboard");
     } else {
-      // Logged-out users must see the normal login form, not the boot screen.
-      document.body.classList.remove("v15-booting");
+      // Logged-out users must see only the login form.
+      document.documentElement.classList.remove("v15-authenticated");
+      document.documentElement.classList.add("v15-logged-out");
+      document.body.classList.remove("v15-authenticated", "v15-booting");
+      document.body.classList.add("v15-logged-out");
+      const panel=document.getElementById("adminPanel");
+      if(panel){ panel.classList.add("hidden"); panel.style.display="none"; }
+      const login=document.getElementById("loginBox");
+      if(login){ login.classList.remove("hidden"); login.style.display="block"; }
       document.getElementById("v15BootScreen")?.remove();
     }
 

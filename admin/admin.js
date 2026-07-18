@@ -842,18 +842,27 @@ async function saveSiteContent(e) {
 
 async function loadPageSections() {
   const page = document.getElementById("sectionFilterPage")?.value || "home";
-
-  const res = await fetch(`${API_BASE}/api/admin/page-sections?page=${page}`, {
-    headers: authHeaders()
-  });
-
-  const data = await res.json();
   const box = document.getElementById("sectionsList");
   if (!box) return;
 
-  box.innerHTML = "";
+  box.innerHTML = '<p class="empty-row">Loading page sections...</p>';
 
-  data.forEach(item => {
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/page-sections?page=${encodeURIComponent(page)}`, {
+      headers: authHeaders(),
+      cache: "no-store"
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed to load page sections");
+    if (!Array.isArray(data)) throw new Error("Invalid page section response");
+
+    box.innerHTML = "";
+    if (!data.length) {
+      box.innerHTML = '<p class="empty-row">No sections saved for this page yet.</p>';
+      return;
+    }
+
+    data.forEach(item => {
     const card = document.createElement("div");
     card.className = "card";
 
@@ -868,8 +877,12 @@ async function loadPageSections() {
       <button class="delete-btn" onclick="deleteSection('${item.id}')">Delete</button>
     `;
 
-    box.appendChild(card);
-  });
+      box.appendChild(card);
+    });
+  } catch (error) {
+    console.error(error);
+    box.innerHTML = `<p class="empty-row">${error.message || "Failed to load page sections"}</p>`;
+  }
 }
 
 async function savePageSection(e) {
@@ -891,8 +904,9 @@ async function savePageSection(e) {
     backgroundSize: document.getElementById("sectionBackgroundSize")?.value || "cover",
     backgroundPosition: document.getElementById("sectionBackgroundPosition")?.value || "center center",
     backgroundRepeat: document.getElementById("sectionBackgroundRepeat")?.value || "no-repeat",
-    headingFontFamily: document.getElementById("sectionHeadingFontFamily")?.value || "",
-    headingFontSize: pxValue("sectionHeadingFontSize"),
+    headingFontFamily: document.getElementById("sectionHeadingFontFamily")?.value.trim() || "",
+    headingFontSize: document.getElementById("sectionHeadingFontSize")?.value.trim() || "",
+    headingColor: document.getElementById("sectionHeadingColor")?.value || "",
     cards: collectCards()
   };
 
@@ -913,7 +927,8 @@ async function savePageSection(e) {
     textColor: document.getElementById("sectionTextColor").value,
     buttonColor: document.getElementById("sectionButtonColor").value,
     fontFamily: document.getElementById("sectionFontFamily").value,
-    fontSize: pxValue("sectionFontSize"),
+    fontSize: document.getElementById("sectionFontSize")?.value.trim() || "",
+    headingColor: document.getElementById("sectionHeadingColor")?.value || "",
     sortOrder: document.getElementById("sectionSortOrder").value,
     active: document.getElementById("sectionActive").checked,
     settings
@@ -974,7 +989,13 @@ async function editPageSection(id) {
   document.getElementById("sectionTextColor").value = item.textColor || "#222222";
   document.getElementById("sectionButtonColor").value = item.buttonColor || "#0f766e";
   document.getElementById("sectionFontFamily").value = item.fontFamily || "";
-  document.getElementById("sectionFontSize").value = stripPx(item.fontSize);
+  if (document.getElementById("sectionFontSize")) document.getElementById("sectionFontSize").value = item.fontSize || "";
+  if (document.getElementById("sectionHeadingFontFamily")) document.getElementById("sectionHeadingFontFamily").value = settings.headingFontFamily || "";
+  if (document.getElementById("sectionHeadingFontSize")) document.getElementById("sectionHeadingFontSize").value = settings.headingFontSize || "";
+  if (document.getElementById("sectionHeadingColor")) document.getElementById("sectionHeadingColor").value = item.headingColor || settings.headingColor || "#222222";
+  if (document.getElementById("sectionBackgroundSize")) document.getElementById("sectionBackgroundSize").value = settings.backgroundSize || "cover";
+  if (document.getElementById("sectionBackgroundPosition")) document.getElementById("sectionBackgroundPosition").value = settings.backgroundPosition || "center center";
+  if (document.getElementById("sectionBackgroundRepeat")) document.getElementById("sectionBackgroundRepeat").value = settings.backgroundRepeat || "no-repeat";
   document.getElementById("sectionSortOrder").value = item.sortOrder || 0;
   document.getElementById("sectionActive").checked = !!item.active;
 
@@ -985,11 +1006,6 @@ async function editPageSection(id) {
   document.getElementById("sectionBorderRadius").value = stripPx(settings.borderRadius);
   document.getElementById("sectionShadow").value = settings.shadow || "";
   document.getElementById("sectionAnimation").value = settings.animation || "";
-  document.getElementById("sectionBackgroundSize").value = settings.backgroundSize || "cover";
-  document.getElementById("sectionBackgroundPosition").value = settings.backgroundPosition || "center center";
-  document.getElementById("sectionBackgroundRepeat").value = settings.backgroundRepeat || "no-repeat";
-  document.getElementById("sectionHeadingFontFamily").value = settings.headingFontFamily || "";
-  document.getElementById("sectionHeadingFontSize").value = stripPx(settings.headingFontSize);
   loadCards(settings.cards || []);
 
   document.getElementById("sectionBuilderBox")?.classList.remove("hidden");

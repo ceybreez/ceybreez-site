@@ -7,39 +7,8 @@
   <link rel="stylesheet" href="admin.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <style id="v15BootStyle">
-    body.v15-booting .admin-wrap { visibility: hidden; }
-    #v15BootScreen { position: fixed; inset: 0; display: grid; place-items: center; background: #f5f7fb; z-index: 999999; font-family: Arial, sans-serif; }
-    #v15BootScreen .v15-boot-card { text-align: center; color: #17324d; }
-    #v15BootScreen .v15-boot-spinner { width: 38px; height: 38px; margin: 0 auto 14px; border: 4px solid #d7e0e8; border-top-color: #17324d; border-radius: 50%; animation: v15spin .75s linear infinite; }
-    @keyframes v15spin { to { transform: rotate(360deg); } }
-    body:not(.v15-booting) #v15BootScreen { display: none; }
-    /* Logged-out mode: show only the login card. Prevent legacy CMS/report sections from leaking below it. */
-    body.v15-logged-out .admin-panel,
-    body.v15-logged-out .admin-section,
-    body.v15-logged-out #v64CmsDrawer,
-    body.v15-logged-out #imagePreviewModal,
-    body.v15-logged-out .v14-sidebar,
-    body.v15-logged-out .v14-main,
-    body.v15-logged-out .v14-mobile-overlay { display: none !important; }
-    body.v15-logged-out #loginBox { display: block !important; }
-  </style>
-  <script>
-    // Apply the correct auth state before the page paints.
-    document.documentElement.classList.add(
-      localStorage.getItem("CEYBREEZ_ADMIN_TOKEN") ? "v15-authenticated" : "v15-logged-out"
-    );
-  </script>
 </head>
-<body class="v15-booting">
-<script>
-  if (document.documentElement.classList.contains("v15-logged-out")) {
-    document.body.classList.add("v15-logged-out");
-  } else {
-    document.body.classList.add("v15-authenticated");
-  }
-</script>
-<div id="v15BootScreen" aria-live="polite"><div class="v15-boot-card"><div class="v15-boot-spinner"></div><strong>Loading CeyBreez Admin…</strong></div></div>
+<body>
 
 <div class="admin-wrap">
   <h1>CeyBreez Admin V10 Professional Stable</h1>
@@ -432,9 +401,21 @@
 <select id="sectionKey">
   <option value="hero">Hero</option>
   <option value="about">About Section</option>
+  <option value="intro">Intro Section</option>
   <option value="things">Things To Do</option>
   <option value="experiences">Experiences</option>
+  <option value="properties">Properties List</option>
+  <option value="packages">Packages</option>
+  <option value="types">Types</option>
+  <option value="destinations">Destinations</option>
+  <option value="why">Why Choose Us</option>
+  <option value="planner">Trip Planner</option>
+  <option value="inquiry">Inquiry Section</option>
+  <option value="categories">Categories</option>
+  <option value="featured">Featured Section</option>
+  <option value="gallery">Gallery</option>
   <option value="contact">Contact Section</option>
+  <option value="cta">CTA Section</option>
   <option value="footer">Footer</option>
   <option value="custom">Custom Section</option>
 </select>

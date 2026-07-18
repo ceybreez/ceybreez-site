@@ -30,7 +30,7 @@ content="Experience local hospitality through carefully selected homestays in Sr
   <link rel="stylesheet" href="reviews-showcase.css">
 </head>
 
-<body>
+<body data-page="homestays">
 
 <header>
   <nav>
@@ -44,7 +44,7 @@ content="Experience local hospitality through carefully selected homestays in Sr
   </nav>
 </header>
 
-<section class="page-hero">
+<section class="page-hero" data-section="hero">
   <div class="hero-content">
     <img src="logo.png" alt="CeyBreez Logo" class="hero-logo" />
     <h1>Authentic Homestays in Sri Lanka</h1>
@@ -53,12 +53,12 @@ content="Experience local hospitality through carefully selected homestays in Sr
   </div>
 </section>
 
-<section class="intro">
+<section class="intro" data-section="intro">
   <h2>Feel Sri Lanka Like Home</h2>
   <p>Discover handpicked homestays across Sri Lanka with CeyBreez. Perfect for travelers who love local culture, comfort and friendly hospitality.</p>
 </section>
 
-<section class="properties-section" id="properties">
+<section class="properties-section" data-section="properties" id="properties">
   <h2>Featured Homestays</h2>
   <p class="section-intro">These homestays are managed from the CeyBreez admin panel.</p>
 <div class="property-filters">
@@ -97,7 +97,7 @@ content="Experience local hospitality through carefully selected homestays in Sr
   </div>
 </section>
 
-<section class="property-inquiry-section" id="propertyInquiry">
+<section class="property-inquiry-section" data-section="inquiry" id="propertyInquiry">
   <h2>Send Homestay Inquiry</h2>
   <p class="section-intro">Select a homestay, add your travel details, and send your inquiry to CeyBreez.</p>
 
@@ -172,7 +172,7 @@ content="Experience local hospitality through carefully selected homestays in Sr
   </div>
 </section>
 
-<section class="cta">
+<section class="cta" data-section="cta">
   <h2>Need Help Choosing a Homestay?</h2>
   <p>Tell us your dates, guest count and preferred location. We’ll help you find a suitable stay.</p>
   <a href="#propertyInquiry">Send Inquiry</a>
@@ -808,5 +808,6 @@ if(waBtn){
 }
 </script>
 <script src="reviews-showcase.js"></script>
+<script src="page-builder.js"></script>
 </body>
 </html>

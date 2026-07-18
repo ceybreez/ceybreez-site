@@ -5,150 +5,167 @@ document.addEventListener("DOMContentLoaded", () => {
   loadCeyBreezSections(page);
 });
 
-async function loadCeyBreezSections(page) {
-  try {
-    const response = await fetch(`${CEYBREEZ_API_BASE}/api/page-sections?page=${encodeURIComponent(page)}`, {
-      headers: { Accept: "application/json" },
-      cache: "no-store"
+async function loadCeyBreezSections(page){
+  try{
+    const response = await fetch(`${CEYBREEZ_API_BASE}/api/page-sections?page=${page}`);
+    const sections = await response.json();
+
+    sections.forEach(section => {
+      applySection(section);
     });
-
-    if (!response.ok) throw new Error(`Page sections request failed (${response.status})`);
-
-    const payload = await response.json();
-    const sections = Array.isArray(payload) ? payload : [];
-
-    sections.forEach(applySection);
-  } catch (error) {
-    // Keep the original HTML visible if the CMS/API is unavailable.
+document.body.classList.add("cms-ready");
+  }catch(error){
     console.error("Page Builder load failed", error);
-  } finally {
-    document.body.classList.add("cms-ready");
   }
 }
 
-function parseSettings(value) {
-  if (!value) return {};
-  if (typeof value === "object") return value;
-  try { return JSON.parse(value); } catch { return {}; }
-}
+function applySection(section){
+  const key = section.sectionKey;
+  const target = document.querySelector(`[data-section="${key}"]`);
 
-function first(target, explicitSelector, fallbackSelector) {
-  return target.querySelector(explicitSelector) || target.querySelector(fallbackSelector);
-}
+  if(!target) return;
 
-function setText(element, value) {
-  if (element && typeof value === "string" && value.trim()) element.textContent = value;
-}
+  let settings = {};
 
-function applySection(section) {
-  if (!section || !section.sectionKey) return;
+  try{
+    settings = typeof section.settings === "string"
+      ? JSON.parse(section.settings || "{}")
+      : section.settings || {};
+  }catch{
+    settings = {};
+  }
 
-  const target = document.querySelector(`[data-section="${CSS.escape(section.sectionKey)}"]`);
-  if (!target) return;
+  if(section.title){
+    const title = target.querySelector("[data-field='title']");
+    if(title) title.textContent = section.title;
+  }
 
-  const settings = parseSettings(section.settings);
-  const isActive = section.active === undefined || section.active === null || Number(section.active) === 1 || section.active === true;
-  target.hidden = !isActive;
-  if (!isActive) return;
+  if(section.subtitle){
+    const subtitle = target.querySelector("[data-field='subtitle']");
+    if(subtitle) subtitle.textContent = section.subtitle;
+  }
 
-  setText(first(target, "[data-field='title']", "h1, h2, h3"), section.title);
-  setText(first(target, "[data-field='subtitle']", ".subtitle, .hero-subtitle, h1 + p, h2 + p"), section.subtitle);
-  setText(first(target, "[data-field='content']", "p"), section.content);
+  if(section.content){
+    const content = target.querySelector("[data-field='content']");
+    if(content) content.textContent = section.content;
+  }
 
-  const button = first(target, "[data-field='button']", "a.hero-btn, a.btn, a.cta-btn, a[href]");
-  setText(button, section.buttonText);
-  if (button && section.buttonUrl && String(section.buttonUrl).trim()) button.href = section.buttonUrl;
+  if(section.buttonText){
+    const button = target.querySelector("[data-field='button']");
+    if(button) button.textContent = section.buttonText;
+  }
 
-  const image = first(target, "[data-field='image']", "img:not(.hero-logo):not(.logo)");
-  if (image && section.mediaUrl && String(section.mediaUrl).trim()) image.src = section.mediaUrl;
+  if(section.buttonUrl){
+    const button = target.querySelector("[data-field='button']");
+    if(button) button.href = section.buttonUrl;
+  }
 
-  if (settings.videoUrl && String(settings.videoUrl).trim()) applyVideoBackground(target, settings.videoUrl);
-  if (Array.isArray(settings.gallery) && settings.gallery.length) renderGallery(target, settings.gallery);
-  if (Array.isArray(settings.cards) && settings.cards.length) renderCards(target, settings.cards);
+  if(section.mediaUrl){
+    const img = target.querySelector("[data-field='image']");
+    if(img) img.src = section.mediaUrl;
+  }
+
+  if(settings.videoUrl){
+    applyVideoBackground(target, settings.videoUrl);
+  }
+
+  if(settings.gallery && Array.isArray(settings.gallery)){
+    renderGallery(target, settings.gallery);
+  }
+
+  if(settings.cards && Array.isArray(settings.cards)){
+    renderCards(target, settings.cards);
+  }
 
   applySectionStyles(target, section, settings);
 }
 
-function applySectionStyles(target, section, settings = {}) {
-  const backgroundImage = String(section.backgroundImage || "").trim();
-  const backgroundColor = String(section.backgroundColor || "").trim();
+function applySectionStyles(target, section, passedSettings){
+ let settings = passedSettings || {};
 
-  if (backgroundImage) {
-    const overlay = settings.backgroundOverlay || "rgba(0,0,0,.35)";
-    target.style.backgroundImage = `linear-gradient(${overlay}, ${overlay}), url("${backgroundImage.replace(/\"/g, '%22')}")`;
-    target.style.backgroundSize = settings.backgroundSize || "cover";
-    target.style.backgroundPosition = settings.backgroundPosition || "center center";
-    target.style.backgroundRepeat = settings.backgroundRepeat || "no-repeat";
-  } else if (settings.gradientStart && settings.gradientEnd) {
-    target.style.background = `linear-gradient(135deg, ${settings.gradientStart}, ${settings.gradientEnd})`;
-  } else if (backgroundColor) {
-    target.style.background = backgroundColor;
+  if(section.backgroundImage){
+    target.style.backgroundImage =
+      `linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)), url('${section.backgroundImage}')`;
+    target.style.backgroundSize = "cover";
+    target.style.backgroundPosition = "center";
+  }else if(settings.gradientStart && settings.gradientEnd){
+    target.style.background =
+      `linear-gradient(135deg, ${settings.gradientStart}, ${settings.gradientEnd})`;
+  }else if(section.backgroundColor){
+    target.style.background = section.backgroundColor;
   }
 
-  if (section.textColor) target.style.color = section.textColor;
-
-  const headingColor = section.headingColor || settings.headingColor;
-  if (headingColor) target.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.style.color = headingColor);
-
-  if (section.fontFamily) target.style.fontFamily = section.fontFamily;
-  if (section.fontSize) target.style.fontSize = normalizeCssSize(section.fontSize);
-
-  if (settings.headingFontFamily) {
-    target.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.style.fontFamily = settings.headingFontFamily);
-  }
-  if (settings.headingFontSize) {
-    target.querySelectorAll("h1,h2,h3").forEach(h => h.style.fontSize = normalizeCssSize(settings.headingFontSize));
+  if(section.textColor){
+    target.style.color = section.textColor;
   }
 
-  if (settings.paddingTop) target.style.paddingTop = normalizeCssSize(settings.paddingTop);
-  if (settings.paddingBottom) target.style.paddingBottom = normalizeCssSize(settings.paddingBottom);
-  if (settings.borderRadius) target.style.borderRadius = normalizeCssSize(settings.borderRadius);
-
-  const shadows = {
-    none: "none",
-    soft: "0 10px 30px rgba(0,0,0,.08)",
-    medium: "0 18px 45px rgba(0,0,0,.15)",
-    strong: "0 28px 70px rgba(0,0,0,.25)"
-  };
-  if (settings.shadow in shadows) target.style.boxShadow = shadows[settings.shadow];
-
-  if (section.buttonColor) {
-    target.querySelectorAll("a.hero-btn, a.btn, a.cta-btn, button").forEach(btn => btn.style.background = section.buttonColor);
+  if(section.headingColor){
+    target.querySelectorAll("h1,h2,h3").forEach(h => {
+      h.style.color = section.headingColor;
+    });
   }
 
-  if (settings.animation) target.classList.add("cms-animate", settings.animation);
+  if(section.fontFamily){
+    target.style.fontFamily = section.fontFamily;
+  }
+
+  if(section.fontSize){
+    target.style.fontSize = section.fontSize;
+  }
+
+  if(settings.paddingTop){
+    target.style.paddingTop = settings.paddingTop;
+  }
+
+  if(settings.paddingBottom){
+    target.style.paddingBottom = settings.paddingBottom;
+  }
+
+  if(settings.borderRadius){
+    target.style.borderRadius = settings.borderRadius;
+  }
+
+  if(settings.shadow){
+    if(settings.shadow === "none") target.style.boxShadow = "none";
+    if(settings.shadow === "soft") target.style.boxShadow = "0 10px 30px rgba(0,0,0,.08)";
+    if(settings.shadow === "medium") target.style.boxShadow = "0 18px 45px rgba(0,0,0,.15)";
+    if(settings.shadow === "strong") target.style.boxShadow = "0 28px 70px rgba(0,0,0,.25)";
+  }
+
+  if(section.buttonColor){
+    target.querySelectorAll("a, button").forEach(btn => {
+      btn.style.background = section.buttonColor;
+    });
+  }
+
+  if(settings.animation){
+    target.classList.add("cms-animate", settings.animation);
+  }
 }
-
-function normalizeCssSize(value) {
-  const text = String(value ?? "").trim();
-  if (!text) return "";
-  return /^-?\d+(\.\d+)?$/.test(text) ? `${text}px` : text;
-}
-
-function applyVideoBackground(target, videoUrl) {
+function applyVideoBackground(target, videoUrl){
   let video = target.querySelector(".cms-bg-video");
-  if (!video) {
+
+  if(!video){
     video = document.createElement("video");
     video.className = "cms-bg-video";
     video.autoplay = true;
     video.muted = true;
     video.loop = true;
     video.playsInline = true;
-    video.setAttribute("aria-hidden", "true");
+
     target.prepend(video);
   }
-  if (video.src !== videoUrl) video.src = videoUrl;
+
+  video.src = videoUrl;
 }
 
-function renderGallery(target, gallery) {
+function renderGallery(target, gallery){
   const galleryBox = target.querySelector("[data-field='gallery']");
-  if (!galleryBox) return;
-
-  const valid = gallery.filter(url => typeof url === "string" && url.trim());
-  if (!valid.length) return;
+  if(!galleryBox) return;
 
   galleryBox.innerHTML = "";
-  valid.forEach(url => {
+
+  gallery.forEach(url => {
     const img = document.createElement("img");
     img.src = url;
     img.alt = "CeyBreez Gallery";
@@ -157,40 +174,23 @@ function renderGallery(target, gallery) {
   });
 }
 
-function renderCards(target, cards) {
+function renderCards(target, cards){
   const cardsBox = target.querySelector("[data-field='cards']");
-  if (!cardsBox) return;
-
-  const valid = cards.filter(card => card && (card.title || card.description || card.image || card.buttonText));
-  if (!valid.length) return;
+  if(!cardsBox) return;
 
   cardsBox.innerHTML = "";
-  valid.forEach(card => {
+
+  cards.forEach(card => {
     const item = document.createElement("div");
     item.className = "cms-card";
 
-    if (card.image) {
-      const img = document.createElement("img");
-      img.src = card.image;
-      img.alt = card.title || "";
-      item.appendChild(img);
-    }
-    if (card.title) {
-      const h3 = document.createElement("h3");
-      h3.textContent = card.title;
-      item.appendChild(h3);
-    }
-    if (card.description) {
-      const p = document.createElement("p");
-      p.textContent = card.description;
-      item.appendChild(p);
-    }
-    if (card.buttonText) {
-      const a = document.createElement("a");
-      a.href = card.buttonUrl || "#";
-      a.textContent = card.buttonText;
-      item.appendChild(a);
-    }
+    item.innerHTML = `
+      ${card.image ? `<img src="${card.image}" alt="${card.title || ''}">` : ""}
+      <h3>${card.title || ""}</h3>
+      <p>${card.description || ""}</p>
+      ${card.buttonText ? `<a href="${card.buttonUrl || "#"}">${card.buttonText}</a>` : ""}
+    `;
+
     cardsBox.appendChild(item);
   });
 }

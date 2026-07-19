@@ -252,34 +252,127 @@
     width:100%;
   }
 }
-/* ===== Sections List Text Visibility Fix ===== */
 
-.pb2-section-item {
-    color: #1f2937 !important;
+/* =========================================================
+   CeyBreez Page Builder - Permanent Button Visibility Fix
+   Prevents buttons/section headers from appearing only on hover
+   ========================================================= */
+
+/* Reset inherited transparent/white button styles inside Page Builder */
+.pb2-page-builder button,
+.pb2-page-builder .pb2-btn,
+.pb2-page-builder input[type="button"],
+.pb2-page-builder input[type="submit"]{
+  -webkit-appearance:none;
+  appearance:none;
+  opacity:1 !important;
+  visibility:visible !important;
+  filter:none !important;
+  text-shadow:none !important;
+  box-shadow:none;
 }
 
-.pb2-section-item strong {
-    color: #1f2937 !important;
-    font-weight: 700;
+/* Primary action buttons */
+.pb2-page-builder .pb2-btn-primary,
+.pb2-page-builder .pb2-panel-head > button,
+.pb2-page-builder .pb2-inline > button,
+.pb2-page-builder .pb2-save-bottom,
+.pb2-page-builder .pb3-add,
+.pb2-page-builder button[onclick*="Select"],
+.pb2-page-builder button[id*="Select"],
+.pb2-page-builder button[type="submit"]{
+  background:#087f72 !important;
+  color:#ffffff !important;
+  border:1px solid #087f72 !important;
 }
 
-.pb2-section-item small {
-    color: #6b7280 !important;
+/* Secondary and toolbar buttons */
+.pb2-page-builder .pb2-btn-light,
+.pb2-page-builder .pb2-btn-outline,
+.pb2-page-builder .pb2-devices button,
+.pb2-page-builder .pb3-device-row button,
+.pb2-page-builder .pb2-section-item button{
+  background:#ffffff !important;
+  color:#1f2937 !important;
+  border:1px solid #cbd5e1 !important;
 }
 
-.pb2-section-item.active {
-    background: #e8f8f6 !important;
-    border-color: #0f766e !important;
+/* Active device buttons */
+.pb2-page-builder .pb2-devices button.active,
+.pb2-page-builder .pb3-device-row button.active{
+  background:#087f72 !important;
+  color:#ffffff !important;
+  border-color:#087f72 !important;
 }
 
-.pb2-section-item.active strong {
-    color: #0f172a !important;
+/* Accordion titles such as Content / Background & Media */
+.pb2-page-builder .pb2-accordion-title{
+  display:block !important;
+  width:100%;
+  min-height:32px;
+  padding:7px 10px !important;
+  margin:4px 0;
+  background:#0d6b62 !important;
+  color:#ffffff !important;
+  border:0 !important;
+  border-radius:999px;
+  opacity:1 !important;
+  visibility:visible !important;
+  text-align:left;
+  font-weight:800;
 }
 
-.pb2-section-item.active small {
-    color: #475569 !important;
+/* Never hide button labels until hover */
+.pb2-page-builder button,
+.pb2-page-builder button *,
+.pb2-page-builder .pb2-btn,
+.pb2-page-builder .pb2-btn *{
+  color:inherit;
+  opacity:1 !important;
+  visibility:visible !important;
 }
 
-.pb2-section-item:hover {
-    background: #f8fafc;
+/* Stable hover states without relying on hover for visibility */
+.pb2-page-builder .pb2-btn-primary:hover,
+.pb2-page-builder .pb2-panel-head > button:hover,
+.pb2-page-builder .pb2-inline > button:hover,
+.pb2-page-builder .pb2-save-bottom:hover,
+.pb2-page-builder .pb3-add:hover,
+.pb2-page-builder button[type="submit"]:hover{
+  background:#075f57 !important;
+  color:#ffffff !important;
+}
+
+.pb2-page-builder .pb2-btn-light:hover,
+.pb2-page-builder .pb2-btn-outline:hover,
+.pb2-page-builder .pb2-devices button:hover,
+.pb2-page-builder .pb3-device-row button:hover{
+  background:#eef7f5 !important;
+  color:#075f57 !important;
+  border-color:#69a9a0 !important;
+}
+
+/* Fix tiny Select buttons inside media fields */
+.pb2-page-builder .pb2-inline button,
+.pb2-page-builder button[onclick*="select"],
+.pb2-page-builder button[onclick*="Select"]{
+  min-width:58px;
+  min-height:34px;
+  padding:7px 10px !important;
+  font-size:11px !important;
+  line-height:1.1;
+  background:#087f72 !important;
+  color:#ffffff !important;
+  border:1px solid #087f72 !important;
+  border-radius:6px;
+}
+
+/* Keep all controls above inherited overlays */
+.pb2-page-builder .pb2-settings-panel button,
+.pb2-page-builder .pb2-sections-panel button,
+.pb2-page-builder .pb2-toolbar button,
+.pb2-page-builder .pb2-header button{
+  position:relative;
+  z-index:5;
+  pointer-events:auto;
 }

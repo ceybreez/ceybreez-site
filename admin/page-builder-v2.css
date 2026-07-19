@@ -131,3 +131,10 @@
   outline:3px solid #00a88f!important;
   outline-offset:3px!important;
 }
+
+/* V5.2: the resize frame is rendered in iframe viewport coordinates.
+   This prevents displaced handles caused by transformed/positioned sections. */
+
+/* V5.3 isolated editing:
+   transformed original elements keep their original layout slot,
+   so neighbouring content is not reflowed when one item is moved/resized. */

@@ -85,9 +85,9 @@ function applySectionStyles(target, section, passedSettings){
 
   if(section.backgroundImage){
     target.style.backgroundImage =
-      `linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)), url('${section.backgroundImage}')`;
-    target.style.backgroundSize = "cover";
-    target.style.backgroundPosition = "center";
+      `linear-gradient(rgba(0,0,0,${Number(settings.overlay ?? 35)/100}), rgba(0,0,0,${Number(settings.overlay ?? 35)/100})), url('${section.backgroundImage}')`;
+    target.style.backgroundSize = settings.backgroundSize || "cover";
+    target.style.backgroundPosition = settings.backgroundPosition || "center center";
   }else if(settings.gradientStart && settings.gradientEnd){
     target.style.background =
       `linear-gradient(135deg, ${settings.gradientStart}, ${settings.gradientEnd})`;
@@ -109,9 +109,13 @@ function applySectionStyles(target, section, passedSettings){
     target.style.fontFamily = section.fontFamily;
   }
 
-  if(section.fontSize){
-    target.style.fontSize = section.fontSize;
+  if(section.fontSize || settings.fontSize){
+    target.style.fontSize = section.fontSize || settings.fontSize;
   }
+
+  if(section.headingColor || settings.headingColor){ target.querySelectorAll("h1,h2,h3").forEach(h => h.style.color = section.headingColor || settings.headingColor); }
+  if(settings.headingFont){ target.querySelectorAll("h1,h2,h3").forEach(h => h.style.fontFamily = settings.headingFont); }
+  if(settings.headingSize){ target.querySelectorAll("h1,h2,h3").forEach(h => h.style.fontSize = settings.headingSize); }
 
   if(settings.paddingTop){
     target.style.paddingTop = settings.paddingTop;

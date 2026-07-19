@@ -125,3 +125,9 @@
   .pb5-format{grid-template-columns:repeat(3,minmax(0,1fr))}
   .pb5-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+/* CeyBreez V5.1 selection accuracy */
+.pb3-selected{
+  outline:3px solid #00a88f!important;
+  outline-offset:3px!important;
+}

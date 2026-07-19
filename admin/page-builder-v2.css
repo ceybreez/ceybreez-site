@@ -252,3 +252,34 @@
     width:100%;
   }
 }
+/* ===== Sections List Text Visibility Fix ===== */
+
+.pb2-section-item {
+    color: #1f2937 !important;
+}
+
+.pb2-section-item strong {
+    color: #1f2937 !important;
+    font-weight: 700;
+}
+
+.pb2-section-item small {
+    color: #6b7280 !important;
+}
+
+.pb2-section-item.active {
+    background: #e8f8f6 !important;
+    border-color: #0f766e !important;
+}
+
+.pb2-section-item.active strong {
+    color: #0f172a !important;
+}
+
+.pb2-section-item.active small {
+    color: #475569 !important;
+}
+
+.pb2-section-item:hover {
+    background: #f8fafc;
+}

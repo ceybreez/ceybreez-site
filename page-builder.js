@@ -259,8 +259,36 @@ function renderVisualCustomElements(target,section,settings){
     n.dataset.pbCustom='1';n.dataset.pbId=item.id;target.style.position=target.style.position||'relative';target.appendChild(n);
   });
 }
+
+function pbPublicStablePath(el,section){
+  if(!el||el===section)return 'root';
+  const parts=[];
+  let node=el;
+  while(node&&node!==section){
+    const parent=node.parentElement;
+    if(!parent)break;
+    const siblings=[...parent.children].filter(x=>
+      !x.classList.contains('pb5-selection-box') &&
+      !x.classList.contains('pb4-resize-handle')
+    );
+    parts.unshift(Math.max(0,siblings.indexOf(node)).toString(36));
+    node=parent;
+  }
+  return parts.join('-')||'root';
+}
+function pbAssignStableIds(section){
+  if(!section)return;
+  const key=String(section.dataset.section||'section').replace(/[^a-zA-Z0-9_-]/g,'_');
+  [section,...section.querySelectorAll('*')].forEach(node=>{
+    node.dataset.pbUid=node.dataset.pbId
+      ? `custom-${node.dataset.pbId}`
+      : `${key}-${pbPublicStablePath(node,section)}`;
+  });
+}
+
 function applyVisualElements(target,section,settings){
   renderVisualCustomElements(target,section,settings);
+  pbAssignStableIds(target);
   Object.entries(settings.elementStyles||{}).forEach(([selector,byDevice])=>{
     let nodes=[];
     try{nodes=selector===':scope'?[target]:Array.from(target.querySelectorAll(selector))}catch(error){return}

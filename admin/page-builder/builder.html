@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CeyBreez Visual Builder V4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="builder.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">C</span><div><strong>CeyBreez</strong><small>Visual Builder V4 Prototype</small></div></div>
+    <div class="top-actions">
+      <button class="btn ghost" id="undoBtn">↶ Undo</button>
+      <button class="btn ghost" id="redoBtn">↷ Redo</button>
+      <button class="btn ghost" id="previewBtn">Open Page</button>
+      <button class="btn primary" id="saveBtn">Save Draft</button>
+      <button class="btn" id="backBtn">Back to Admin</button>
+    </div>
+  </header>
+
+  <main class="builder-grid">
+    <aside class="panel left-panel">
+      <div class="panel-title">Pages</div>
+      <select id="pageSelect" class="input">
+        <option value="../../index.html">Home</option>
+        <option value="../../villas.html">Villas</option>
+        <option value="../../homestays.html">Homestays</option>
+        <option value="../../apartments.html">Apartments</option>
+        <option value="../../tours.html">Tours</option>
+        <option value="../../services.html">Services</option>
+        <option value="../../contact.html">Contact</option>
+      </select>
+
+      <div class="panel-title row-title"><span>Layers</span><button id="refreshLayers" class="icon-btn" title="Refresh">↻</button></div>
+      <div id="layers" class="layers"><div class="empty">Page loading…</div></div>
+
+      <div class="panel-title">Add Element</div>
+      <div class="add-grid">
+        <button data-add="heading">Heading</button>
+        <button data-add="text">Text</button>
+        <button data-add="button">Button</button>
+        <button data-add="image">Image</button>
+      </div>
+      <p class="note">New items are added inside the selected section. Button destinations remain locked.</p>
+    </aside>
+
+    <section class="workspace">
+      <div class="workspace-toolbar">
+        <div class="device-tabs">
+          <button class="active" data-device="desktop">Desktop</button>
+          <button data-device="tablet">Tablet</button>
+          <button data-device="mobile">Mobile</button>
+        </div>
+        <div class="status" id="status">Ready</div>
+      </div>
+      <div class="canvas-wrap">
+        <div id="frameShell" class="frame-shell desktop">
+          <iframe id="siteFrame" title="CeyBreez live preview" src="../../index.html"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel inspector">
+      <div class="panel-title">Inspector</div>
+      <div id="emptyInspector" class="inspector-empty">Click a logo, heading, paragraph, button, image, or section in the live preview.</div>
+      <form id="inspectorForm" class="hidden" onsubmit="return false">
+        <div class="selected-card"><small>Selected</small><strong id="selectedName">Element</strong><code id="selectedPath"></code></div>
+
+        <details open>
+          <summary>Size & Position</summary>
+          <div class="field-grid two">
+            <label>Width<input id="width" placeholder="auto / 180px / 50%"></label>
+            <label>Height<input id="height" placeholder="auto"></label>
+            <label>Max width<input id="maxWidth" placeholder="none"></label>
+            <label>Scale<input id="scale" type="number" min="0.1" max="4" step="0.05" value="1"></label>
+            <label>X offset<input id="offsetX" type="number" step="1" value="0"></label>
+            <label>Y offset<input id="offsetY" type="number" step="1" value="0"></label>
+            <label>Rotate<input id="rotate" type="number" step="1" value="0"></label>
+            <label>Opacity<input id="opacity" type="number" min="0" max="1" step="0.05" value="1"></label>
+          </div>
+          <label>Alignment<select id="align"><option value="">Default</option><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option></select></label>
+        </details>
+
+        <details open id="backgroundGroup">
+          <summary>Background</summary>
+          <label>Background image URL<input id="backgroundImage" placeholder="https://…"></label>
+          <div class="field-grid two">
+            <label>Size<select id="backgroundSize"><option value="">Default</option><option value="cover">Cover</option><option value="contain">Contain</option><option value="auto">Original</option><option value="100% auto">Fit width</option><option value="auto 100%">Fit height</option></select></label>
+            <label>Repeat<select id="backgroundRepeat"><option value="no-repeat">No repeat</option><option value="repeat">Repeat</option><option value="repeat-x">Repeat X</option><option value="repeat-y">Repeat Y</option></select></label>
+            <label>Position X<input id="bgX" type="range" min="0" max="100" value="50"><output id="bgXOut">50%</output></label>
+            <label>Position Y<input id="bgY" type="range" min="0" max="100" value="50"><output id="bgYOut">50%</output></label>
+            <label>Zoom<input id="bgZoom" type="range" min="50" max="300" value="100"><output id="bgZoomOut">100%</output></label>
+            <label>Color<input id="backgroundColor" type="color" value="#ffffff"></label>
+          </div>
+          <p class="note">Zoom changes background-size while preserving its position.</p>
+        </details>
+
+        <details open>
+          <summary>Typography & Style</summary>
+          <label>Text<textarea id="textValue" rows="3"></textarea></label>
+          <div class="field-grid two">
+            <label>Font size<input id="fontSize" placeholder="32px"></label>
+            <label>Font weight<select id="fontWeight"><option value="">Default</option><option>400</option><option>500</option><option>600</option><option>700</option><option>800</option></select></label>
+            <label>Text color<input id="color" type="color" value="#222222"></label>
+            <label>Radius<input id="radius" placeholder="0 / 18px"></label>
+          </div>
+        </details>
+
+        <details open id="linkGroup">
+          <summary>Button Link</summary>
+          <label>Destination<input id="lockedLink" readonly></label>
+          <div class="locked">🔒 Locked to protect navigation and booking flows</div>
+        </details>
+
+        <div class="inspector-actions">
+          <button id="resetElement" type="button" class="btn ghost">Reset element</button>
+          <button id="duplicateElement" type="button" class="btn ghost">Duplicate</button>
+          <button id="deleteElement" type="button" class="btn danger">Delete added item</button>
+        </div>
+      </form>
+    </aside>
+  </main>
+  <script src="builder.js"></script>
+</body>
+</html>

@@ -465,3 +465,437 @@ document.addEventListener('DOMContentLoaded',()=>setTimeout(bind,400));
     setTimeout(bindCurrentSelected, 0);
   };
 })();
+
+
+/* =========================================================
+   CeyBreez Page Builder V5 — Canvas-style editor
+   Adds accurate absolute positioning, 8 resize handles,
+   Word-style typography controls, keyboard movement,
+   duplicate/delete, layering, undo/redo and zoom.
+   Existing API and section data model remain unchanged.
+   ========================================================= */
+(function(){
+  const $ = id => document.getElementById(id);
+  const num = (v, d=0) => Number.isFinite(Number(v)) ? Number(v) : d;
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+  let selected = null;
+  let action = null;
+  let history = [];
+  let historyIndex = -1;
+  let clipboard = null;
+  let zoom = 1;
+
+  function frame(){ return $('pb2PreviewFrame'); }
+  function doc(){ return frame()?.contentDocument || null; }
+  function device(){ return window.pb3SelectedDevice || 'desktop'; }
+  function section(){
+    const d = doc();
+    const key = $('sectionKey')?.value || '';
+    if(!d || !key) return null;
+    try { return d.querySelector(`[data-section="${CSS.escape(key)}"]`); }
+    catch { return null; }
+  }
+  function selector(){
+    return window.pb3SelectedSelector || '';
+  }
+  function record(create=true){
+    const sel = selector();
+    if(!sel) return null;
+    const all = window.pb3ElementStyles || (window.pb3ElementStyles = {});
+    if(create && !all[sel]) all[sel] = {desktop:{}, tablet:{}, mobile:{}};
+    if(create && !all[sel][device()]) all[sel][device()] = {};
+    return all[sel]?.[device()] || null;
+  }
+  function findSelected(){
+    const s = section(), sel = selector();
+    if(!s || !sel) return null;
+    try { return sel === ':scope' ? s : s.querySelector(sel); }
+    catch { return null; }
+  }
+  function snapshot(){
+    const snap = JSON.stringify({
+      styles: window.pb3ElementStyles || {},
+      custom: window.pb3CustomElements || []
+    });
+    if(history[historyIndex] === snap) return;
+    history = history.slice(0, historyIndex + 1);
+    history.push(snap);
+    if(history.length > 60) history.shift();
+    historyIndex = history.length - 1;
+    updateHistoryButtons();
+  }
+  function restore(index){
+    if(index < 0 || index >= history.length) return;
+    const data = JSON.parse(history[index]);
+    window.pb3ElementStyles = data.styles || {};
+    window.pb3CustomElements = data.custom || [];
+    historyIndex = index;
+    applyAll();
+    window.pb3RenderInspector?.();
+    updateHistoryButtons();
+  }
+  function updateHistoryButtons(){
+    const u = $('pb5Undo'), r = $('pb5Redo');
+    if(u) u.disabled = historyIndex <= 0;
+    if(r) r.disabled = historyIndex >= history.length - 1;
+  }
+  function mergedRecord(sel){
+    const all = window.pb3ElementStyles || {};
+    const by = all[sel] || {};
+    return Object.assign({}, by.desktop || {}, device() !== 'desktop' ? (by[device()] || {}) : {});
+  }
+  function applyRecordV5(node, rec){
+    if(!node || !rec) return;
+    const px = ['width','maxWidth','height','minHeight','marginTop','marginRight','marginBottom','marginLeft',
+      'paddingTop','paddingRight','paddingBottom','paddingLeft','borderRadius','fontSize','lineHeight','letterSpacing',
+      'borderWidth'];
+    px.forEach(k => {
+      node.style[k] = rec[k] !== undefined && rec[k] !== '' ? `${num(rec[k])}px` : '';
+    });
+
+    node.style.display = rec.hidden ? 'none' : (rec.display || '');
+    node.style.textAlign = rec.textAlign || '';
+    node.style.objectFit = rec.objectFit || '';
+    node.style.opacity = rec.opacity !== undefined ? String(rec.opacity) : '';
+    node.style.fontFamily = rec.fontFamily || '';
+    node.style.fontWeight = rec.fontWeight || '';
+    node.style.fontStyle = rec.fontStyle || '';
+    node.style.textDecoration = rec.textDecoration || '';
+    node.style.color = rec.color || '';
+    node.style.backgroundColor = rec.backgroundColor || '';
+    node.style.borderStyle = rec.borderStyle || '';
+    node.style.borderColor = rec.borderColor || '';
+    node.style.boxShadow = rec.boxShadow || '';
+    node.style.zIndex = rec.zIndex !== undefined ? String(rec.zIndex) : '';
+    node.style.transformOrigin = 'center center';
+
+    if(rec.positioned){
+      const parent = node.parentElement;
+      if(parent && getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
+      node.style.position = 'absolute';
+      node.style.left = `${num(rec.x)}px`;
+      node.style.top = `${num(rec.y)}px`;
+      node.style.margin = '0';
+      node.style.transform = `rotate(${num(rec.rotate)}deg)`;
+    } else {
+      node.style.position = '';
+      node.style.left = '';
+      node.style.top = '';
+      node.style.transform = `translate(${num(rec.x)}px, ${num(rec.y)}px) scale(${rec.scale || 1}) rotate(${num(rec.rotate)}deg)`;
+    }
+  }
+  function applyAll(){
+    const s = section();
+    if(!s) return;
+    if(getComputedStyle(s).position === 'static') s.style.position = 'relative';
+    Object.entries(window.pb3ElementStyles || {}).forEach(([sel, by]) => {
+      let nodes = [];
+      try { nodes = sel === ':scope' ? [s] : [...s.querySelectorAll(sel)]; }
+      catch { return; }
+      const rec = Object.assign({}, by.desktop || {}, device() !== 'desktop' ? (by[device()] || {}) : {});
+      nodes.forEach(n => applyRecordV5(n, rec));
+    });
+    drawSelection();
+  }
+  function ensureStyles(){
+    const d = doc();
+    if(!d || d.getElementById('pb5-canvas-style')) return;
+    const st = d.createElement('style');
+    st.id = 'pb5-canvas-style';
+    st.textContent = `
+      body.pb5-editing [data-section]{position:relative!important;min-height:80px}
+      .pb5-selection-box{position:absolute;pointer-events:none;border:2px solid #0ea5a0;z-index:2147483640;box-sizing:border-box}
+      .pb5-handle{position:absolute;width:12px;height:12px;background:#0f766e;border:2px solid white;border-radius:3px;
+        box-shadow:0 1px 5px rgba(0,0,0,.35);pointer-events:auto;touch-action:none;box-sizing:border-box}
+      .pb5-handle[data-dir="nw"]{left:-7px;top:-7px;cursor:nwse-resize}
+      .pb5-handle[data-dir="n"]{left:50%;top:-7px;transform:translateX(-50%);cursor:ns-resize}
+      .pb5-handle[data-dir="ne"]{right:-7px;top:-7px;cursor:nesw-resize}
+      .pb5-handle[data-dir="e"]{right:-7px;top:50%;transform:translateY(-50%);cursor:ew-resize}
+      .pb5-handle[data-dir="se"]{right:-7px;bottom:-7px;cursor:nwse-resize}
+      .pb5-handle[data-dir="s"]{left:50%;bottom:-7px;transform:translateX(-50%);cursor:ns-resize}
+      .pb5-handle[data-dir="sw"]{left:-7px;bottom:-7px;cursor:nesw-resize}
+      .pb5-handle[data-dir="w"]{left:-7px;top:50%;transform:translateY(-50%);cursor:ew-resize}
+      .pb5-size-label{position:absolute;right:0;bottom:-25px;background:#0f766e;color:white;padding:3px 6px;border-radius:4px;
+        font:11px Arial;white-space:nowrap}
+      body.pb5-editing .pb4-resize-handle{display:none!important}
+    `;
+    d.head.appendChild(st);
+    d.body.classList.add('pb5-editing');
+  }
+  function removeSelection(){
+    doc()?.querySelectorAll('.pb5-selection-box').forEach(n => n.remove());
+  }
+  function drawSelection(){
+    removeSelection();
+    const s = section(), target = findSelected();
+    if(!s || !target || target === s || target.style.display === 'none') return;
+    const sr = s.getBoundingClientRect(), tr = target.getBoundingClientRect();
+    const box = doc().createElement('div');
+    box.className = 'pb5-selection-box';
+    box.style.left = `${tr.left - sr.left + s.scrollLeft}px`;
+    box.style.top = `${tr.top - sr.top + s.scrollTop}px`;
+    box.style.width = `${tr.width}px`;
+    box.style.height = `${tr.height}px`;
+    ['nw','n','ne','e','se','s','sw','w'].forEach(dir => {
+      const h = doc().createElement('span');
+      h.className = 'pb5-handle';
+      h.dataset.dir = dir;
+      h.addEventListener('pointerdown', startResize, true);
+      box.appendChild(h);
+    });
+    const label = doc().createElement('span');
+    label.className = 'pb5-size-label';
+    label.textContent = `${Math.round(tr.width)} × ${Math.round(tr.height)}`;
+    box.appendChild(label);
+    s.appendChild(box);
+  }
+  function makePositioned(target, rec){
+    if(rec.positioned) return;
+    const s = section();
+    if(!s) return;
+    const sr = s.getBoundingClientRect(), tr = target.getBoundingClientRect();
+    rec.positioned = true;
+    rec.x = Math.round(tr.left - sr.left + s.scrollLeft);
+    rec.y = Math.round(tr.top - sr.top + s.scrollTop);
+    rec.width = Math.round(tr.width);
+    rec.height = Math.round(tr.height);
+    rec.scale = 1;
+  }
+  function startMove(e){
+    if(e.target.closest('.pb5-handle') || e.target.closest('.pb5-selection-box')) return;
+    const target = findSelected();
+    if(!target || e.target !== target) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    snapshot();
+    const rec = record();
+    makePositioned(target, rec);
+    action = {type:'move', target, startX:e.clientX, startY:e.clientY, x:num(rec.x), y:num(rec.y)};
+    doc().addEventListener('pointermove', move, true);
+    doc().addEventListener('pointerup', endAction, true);
+  }
+  function startResize(e){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    const target = findSelected(), rec = record();
+    if(!target || !rec) return;
+    snapshot();
+    makePositioned(target, rec);
+    const rect = target.getBoundingClientRect();
+    action = {
+      type:'resize', target, dir:e.currentTarget.dataset.dir,
+      startX:e.clientX, startY:e.clientY,
+      x:num(rec.x), y:num(rec.y),
+      w:num(rec.width, rect.width), h:num(rec.height, rect.height),
+      ratio:rect.width / Math.max(rect.height,1)
+    };
+    doc().addEventListener('pointermove', move, true);
+    doc().addEventListener('pointerup', endAction, true);
+  }
+  function move(e){
+    if(!action) return;
+    e.preventDefault();
+    const rec = record(), dx = (e.clientX-action.startX)/zoom, dy = (e.clientY-action.startY)/zoom;
+    if(action.type === 'move'){
+      rec.x = Math.round(action.x + dx);
+      rec.y = Math.round(action.y + dy);
+    } else {
+      let x=action.x, y=action.y, w=action.w, h=action.h;
+      if(action.dir.includes('e')) w = action.w + dx;
+      if(action.dir.includes('s')) h = action.h + dy;
+      if(action.dir.includes('w')) { w = action.w - dx; x = action.x + dx; }
+      if(action.dir.includes('n')) { h = action.h - dy; y = action.y + dy; }
+      if(e.shiftKey){
+        if(action.dir === 'n' || action.dir === 's') w = h * action.ratio;
+        else h = w / action.ratio;
+      }
+      rec.width = Math.round(clamp(w,20,2400));
+      rec.height = Math.round(clamp(h,16,2000));
+      rec.x = Math.round(x);
+      rec.y = Math.round(y);
+    }
+    applyRecordV5(action.target, rec);
+    drawSelection();
+    updateInspectorValues();
+  }
+  function endAction(){
+    if(!action) return;
+    doc().removeEventListener('pointermove', move, true);
+    doc().removeEventListener('pointerup', endAction, true);
+    action = null;
+    snapshot();
+  }
+  function updateInspectorValues(){
+    const rec = record(false) || {};
+    document.querySelectorAll('[data-pb5-key]').forEach(n => {
+      const k=n.dataset.pb5Key;
+      if(document.activeElement === n) return;
+      if(n.type === 'checkbox') n.checked = !!rec[k];
+      else n.value = rec[k] ?? '';
+    });
+  }
+  function setValue(key, value){
+    snapshot();
+    const rec = record();
+    if(!rec) return;
+    rec[key] = value;
+    applyAll();
+    snapshot();
+  }
+  function toolbar(){
+    const host = document.querySelector('.pb3-visual-editor');
+    if(!host || $('pb5Toolbar')) return;
+    const wrap = document.createElement('div');
+    wrap.id = 'pb5Toolbar';
+    wrap.className = 'pb5-toolbar';
+    wrap.innerHTML = `
+      <div class="pb5-toolbar-row pb5-actions">
+        <button type="button" id="pb5Undo" title="Undo">↶</button>
+        <button type="button" id="pb5Redo" title="Redo">↷</button>
+        <button type="button" id="pb5Duplicate" title="Duplicate">Duplicate</button>
+        <button type="button" id="pb5Delete" title="Delete custom element">Delete</button>
+      </div>
+      <div class="pb5-toolbar-row">
+        <label>Font<select data-pb5-key="fontFamily">
+          <option value="">Original</option><option value="Poppins">Poppins</option>
+          <option value="Cormorant Garamond">Cormorant Garamond</option>
+          <option value="Arial">Arial</option><option value="Georgia">Georgia</option>
+          <option value="Times New Roman">Times New Roman</option>
+        </select></label>
+        <label>Size<input data-pb5-key="fontSize" type="number" min="8" max="200"></label>
+      </div>
+      <div class="pb5-toolbar-row pb5-format">
+        <button type="button" data-pb5-toggle="fontWeight" data-on="700" title="Bold"><b>B</b></button>
+        <button type="button" data-pb5-toggle="fontStyle" data-on="italic" title="Italic"><i>I</i></button>
+        <button type="button" data-pb5-toggle="textDecoration" data-on="underline" title="Underline"><u>U</u></button>
+        <button type="button" data-pb5-align="left">Left</button>
+        <button type="button" data-pb5-align="center">Center</button>
+        <button type="button" data-pb5-align="right">Right</button>
+      </div>
+      <div class="pb5-toolbar-row">
+        <label>Text<input data-pb5-key="color" type="color" value="#222222"></label>
+        <label>Background<input data-pb5-key="backgroundColor" type="color" value="#ffffff"></label>
+      </div>
+      <div class="pb5-toolbar-row">
+        <label>X<input data-pb5-key="x" type="number"></label>
+        <label>Y<input data-pb5-key="y" type="number"></label>
+        <label>W<input data-pb5-key="width" type="number" min="20"></label>
+        <label>H<input data-pb5-key="height" type="number" min="16"></label>
+      </div>
+      <div class="pb5-toolbar-row">
+        <label>Line<input data-pb5-key="lineHeight" type="number" min="8" max="300"></label>
+        <label>Spacing<input data-pb5-key="letterSpacing" type="number" min="-10" max="50" step="0.5"></label>
+        <label>Radius<input data-pb5-key="borderRadius" type="number" min="0" max="500"></label>
+      </div>
+      <div class="pb5-toolbar-row pb5-actions">
+        <button type="button" id="pb5Back">Send Back</button>
+        <button type="button" id="pb5Front">Bring Front</button>
+        <label class="pb5-zoom">Zoom
+          <select id="pb5Zoom"><option value=".5">50%</option><option value=".75">75%</option><option value="1" selected>100%</option><option value="1.25">125%</option><option value="1.5">150%</option></select>
+        </label>
+      </div>`;
+    host.insertBefore(wrap, host.querySelector('#pb3Inspector'));
+
+    wrap.querySelectorAll('[data-pb5-key]').forEach(input => {
+      input.addEventListener('input', () => {
+        let v = input.type === 'number' ? (input.value === '' ? '' : Number(input.value)) : input.value;
+        setValue(input.dataset.pb5Key, v);
+      });
+    });
+    wrap.querySelectorAll('[data-pb5-toggle]').forEach(btn => btn.onclick = () => {
+      const key=btn.dataset.pb5Toggle, on=btn.dataset.on, rec=record();
+      setValue(key, rec?.[key] === on ? '' : on);
+    });
+    wrap.querySelectorAll('[data-pb5-align]').forEach(btn => btn.onclick = () => setValue('textAlign', btn.dataset.pb5Align));
+    $('pb5Undo').onclick = () => restore(historyIndex-1);
+    $('pb5Redo').onclick = () => restore(historyIndex+1);
+    $('pb5Front').onclick = () => { const r=record(); setValue('zIndex', num(r?.zIndex,0)+1); };
+    $('pb5Back').onclick = () => { const r=record(); setValue('zIndex', num(r?.zIndex,0)-1); };
+    $('pb5Duplicate').onclick = duplicate;
+    $('pb5Delete').onclick = removeCustom;
+    $('pb5Zoom').onchange = e => setZoom(Number(e.target.value)||1);
+    snapshot();
+  }
+  function setZoom(value){
+    zoom = value;
+    const wrap = document.querySelector('.pb2-preview-frame-wrap');
+    if(!wrap) return;
+    wrap.style.transformOrigin = 'top center';
+    wrap.style.transform = `scale(${zoom})`;
+    wrap.style.marginBottom = `${Math.max(0,(zoom-1)*720)}px`;
+    setTimeout(drawSelection,80);
+  }
+  function duplicate(){
+    const sel = selector();
+    if(!sel) return;
+    const idMatch = sel.match(/\[data-pb-id="([^"]+)"\]/);
+    if(!idMatch){ alert('Duplicate works for custom elements added from the builder.'); return; }
+    snapshot();
+    const oldId=idMatch[1], source=(window.pb3CustomElements||[]).find(x=>x.id===oldId);
+    if(!source) return;
+    const newId='pb'+Date.now();
+    const copy=JSON.parse(JSON.stringify(source)); copy.id=newId;
+    window.pb3CustomElements.push(copy);
+    const oldStyles=(window.pb3ElementStyles||{})[sel] || {desktop:{},tablet:{},mobile:{}};
+    const newSel=`[data-pb-id="${newId}"]`;
+    window.pb3ElementStyles[newSel]=JSON.parse(JSON.stringify(oldStyles));
+    ['desktop','tablet','mobile'].forEach(d=>{
+      const r=window.pb3ElementStyles[newSel][d]||(window.pb3ElementStyles[newSel][d]={});
+      r.x=num(r.x)+20; r.y=num(r.y)+20;
+    });
+    window.pb3SelectedSelector=newSel;
+    applyAll(); snapshot();
+  }
+  function removeCustom(){
+    const sel=selector(), m=sel.match(/\[data-pb-id="([^"]+)"\]/);
+    if(!m){ alert('Original website elements are protected. Only custom builder elements can be deleted.'); return; }
+    snapshot();
+    const id=m[1];
+    window.pb3CustomElements=(window.pb3CustomElements||[]).filter(x=>x.id!==id);
+    delete window.pb3ElementStyles[sel];
+    window.pb3SelectedSelector='';
+    applyAll(); snapshot(); window.pb3RenderInspector?.();
+  }
+  function keyboard(e){
+    if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)) return;
+    const target=findSelected(), rec=record(false);
+    if(!target || !rec) return;
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='d'){e.preventDefault();duplicate();return}
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?restore(historyIndex+1):restore(historyIndex-1);return}
+    if(e.key==='Delete'){e.preventDefault();removeCustom();return}
+    const step=e.shiftKey?10:1;
+    if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){
+      e.preventDefault(); snapshot(); makePositioned(target,rec);
+      if(e.key==='ArrowLeft')rec.x=num(rec.x)-step;
+      if(e.key==='ArrowRight')rec.x=num(rec.x)+step;
+      if(e.key==='ArrowUp')rec.y=num(rec.y)-step;
+      if(e.key==='ArrowDown')rec.y=num(rec.y)+step;
+      applyAll(); snapshot();
+    }
+  }
+  function bindPreview(){
+    ensureStyles();
+    const d=doc(), s=section();
+    if(!d || !s) return;
+    if(!d.__pb5MoveBound){
+      d.__pb5MoveBound=true;
+      d.addEventListener('pointerdown', startMove, true);
+      d.addEventListener('keydown', keyboard, true);
+      d.addEventListener('click',()=>setTimeout(()=>{selected=findSelected();applyAll();updateInspectorValues()},0),true);
+    }
+    applyAll();
+  }
+  function init(){
+    toolbar();
+    const f=frame();
+    f?.addEventListener('load',()=>setTimeout(bindPreview,450));
+    setTimeout(bindPreview,700);
+    document.addEventListener('keydown',keyboard);
+    const old=window.pb3RenderInspector;
+    window.pb3RenderInspector=function(){
+      old?.();
+      setTimeout(()=>{toolbar();bindPreview();updateInspectorValues()},0);
+    };
+  }
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(init,1300));
+})();

@@ -61,3 +61,67 @@
   color:#fff !important;
   background:#087f72 !important;
 }
+
+
+/* =========================================================
+   CeyBreez Page Builder V5 Canvas UI
+   ========================================================= */
+.pb5-toolbar{
+  display:grid;
+  gap:8px;
+  padding:10px;
+  margin:0 0 10px;
+  border:1px solid #b7dcd6;
+  border-radius:9px;
+  background:#ffffff;
+}
+.pb5-toolbar-row{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:6px;
+  align-items:end;
+}
+.pb5-toolbar-row label{
+  margin:0!important;
+  font-size:10px!important;
+  color:#355b57!important;
+}
+.pb5-toolbar-row input,
+.pb5-toolbar-row select{
+  min-height:32px;
+  padding:6px!important;
+}
+.pb5-actions{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+.pb5-actions button,
+.pb5-format button{
+  min-height:32px;
+  border:1px solid #b8d7d2;
+  border-radius:6px;
+  background:#f8fffd;
+  color:#0f5f58;
+  font-weight:700;
+  cursor:pointer;
+}
+.pb5-actions button:hover,
+.pb5-format button:hover{
+  background:#e8f8f5;
+}
+.pb5-actions button:disabled{
+  opacity:.4!important;
+  cursor:not-allowed;
+}
+.pb5-format{
+  grid-template-columns:repeat(6,minmax(0,1fr));
+}
+.pb5-zoom{
+  grid-column:span 2;
+}
+.pb2-preview-frame-wrap{
+  transform-origin:top center;
+}
+@media(max-width:1250px){
+  .pb5-format{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .pb5-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+}

@@ -163,32 +163,39 @@ document.addEventListener('DOMContentLoaded',()=>setTimeout(bind,400));
     renderInspector();
     setTimeout(()=>window.pb3RenderInspector?.(),0);
   }
-  function input(label,key,type='number',attrs=''){
-    const r=styleRecord(false)||{}; const value=r[key]??(key==='scale'?1:key==='opacity'?1:'');
-    return `<label>${label}<input data-pb3-key="${key}" type="${type}" value="${value}" ${attrs}></label>`;
-  }
   function renderInspector(){
     const box=$('pb3Inspector'); if(!box)return;
     const sel=window.pb3SelectedSelector;
-    if(!sel){box.innerHTML='<div class="pb3-hint">Live preview එකේ logo, text, image හෝ button එක click කරන්න.</div>';return}
-    const r=styleRecord()||{};
-    box.innerHTML=`<div class="pb3-selected-name"><b>Selected:</b><code>${sel}</code><button type="button" id="pb3ResetElement">Reset</button></div>
-    <div class="pb3-grid2">${input('Width','width')}${input('Max width','maxWidth')}${input('Height','height')}${input('Min height','minHeight')}${input('Scale','scale','number','step="0.05" min="0.1" max="5"')}${input('Opacity','opacity','number','step="0.05" min="0" max="1"')}${input('Move X','x')}${input('Move Y','y')}${input('Rotate','rotate')}</div>
-    <label>Text alignment<select data-pb3-key="textAlign"><option value="">Original</option><option>left</option><option>center</option><option>right</option></select></label>
-    <label>Image fit<select data-pb3-key="objectFit"><option value="">Original</option><option>contain</option><option>cover</option><option>fill</option></select></label>
-    <div class="pb3-subtitle">Margin</div><div class="pb3-grid4">${input('Top','marginTop')}${input('Right','marginRight')}${input('Bottom','marginBottom')}${input('Left','marginLeft')}</div>
-    <div class="pb3-subtitle">Padding</div><div class="pb3-grid4">${input('Top','paddingTop')}${input('Right','paddingRight')}${input('Bottom','paddingBottom')}${input('Left','paddingLeft')}</div>
-    <label class="pb3-check"><input data-pb3-key="hidden" type="checkbox" ${r.hidden?'checked':''}> Hide on ${device()}</label>`;
-    box.querySelectorAll('[data-pb3-key]').forEach(n=>{
-      const k=n.dataset.pb3Key;if(n.tagName==='SELECT')n.value=r[k]||'';
-      n.addEventListener('input',()=>{const rec=styleRecord();rec[k]=n.type==='checkbox'?n.checked:(n.type==='number'?(n.value===''?'':Number(n.value)):n.value);applyAllToPreview()})
+    const d=device();
+    if(!sel){
+      box.innerHTML=`<div class="pb6-guide">
+        <b>1.</b> Preview එකේ item එක click කරන්න.<br>
+        <b>2.</b> Mouse එකෙන් drag / resize කරන්න.<br>
+        <b>3.</b> Text style toolbar එකෙන් වෙනස් කරන්න.
+      </div>`;
+      return;
+    }
+    box.innerHTML=`<div class="pb6-selected-card">
+      <div><small>Selected item</small><strong>${sel===':scope'?'Section':sel.replace(/\[data-pb-id="|"\]/g,'')}</strong></div>
+      <button type="button" id="pb6ResetView">${d==='desktop'?'Reset Item':'Use Main Layout'}</button>
+    </div>
+    <div class="pb6-responsive-note ${d}">
+      ${d==='desktop'
+        ? '<b>Main Web</b> changes automatically apply to Tablet and Mobile.'
+        : `<b>${d==='tablet'?'Tablet':'Mobile'} adjustment</b> — only change this view when necessary.`}
+    </div>`;
+    $('pb6ResetView')?.addEventListener('click',()=>{
+      const all=window.pb3ElementStyles||{};
+      if(!all[sel])return;
+      if(d==='desktop') all[sel].desktop={};
+      else all[sel][d]={};
+      applyAllToPreview(); renderInspector();
     });
-    $('pb3ResetElement')?.addEventListener('click',()=>{const all=window.pb3ElementStyles||{};if(all[sel])delete all[sel][device()];renderInspector();pb2RefreshPreview()});
   }
   window.pb3RenderInspector=renderInspector;
   function addInspectorUI(){
     const settings=document.querySelector('.pb2-settings-panel'); if(!settings||$('pb3Inspector'))return;
-    const wrap=document.createElement('div');wrap.className='pb3-visual-editor';wrap.innerHTML=`<div class="pb3-visual-head"><h3>Visual Element Editor</h3><span>Click inside preview</span></div><div class="pb3-device-row"><button data-device="desktop" class="active">Desktop</button><button data-device="tablet">Tablet</button><button data-device="mobile">Mobile</button></div><div id="pb3Inspector"></div><button type="button" class="pb2-btn pb2-btn-outline pb3-add" id="pb3AddElement">+ Add Element</button>`;
+    const wrap=document.createElement('div');wrap.className='pb3-visual-editor';wrap.innerHTML=`<div class="pb3-visual-head"><h3>Easy Page Editor</h3><span>Main-first responsive editing</span></div><div class="pb3-device-row"><button data-device="desktop" class="active">Main Web</button><button data-device="tablet">Tablet Adjust</button><button data-device="mobile">Mobile Adjust</button></div><div id="pb3Inspector"></div><button type="button" class="pb2-btn pb2-btn-outline pb3-add" id="pb3AddElement">+ Add Element</button>`;
     settings.prepend(wrap);
     wrap.querySelectorAll('[data-device]').forEach(b=>b.onclick=()=>{window.pb3SelectedDevice=b.dataset.device;wrap.querySelectorAll('[data-device]').forEach(x=>x.classList.toggle('active',x===b));document.querySelector(`.pb2-devices button[onclick*="${b.dataset.device}"]`)?.click();renderInspector();applyAllToPreview()});
     $('pb3AddElement').onclick=addElement;
@@ -825,7 +832,7 @@ document.addEventListener('DOMContentLoaded',()=>setTimeout(bind,400));
     snapshot();
   }
   function updateInspectorValues(){
-    const rec = record(false) || {};
+    const rec = mergedRecord(selector()) || {};
     document.querySelectorAll('[data-pb5-key]').forEach(n => {
       const k=n.dataset.pb5Key;
       if(document.activeElement === n) return;
@@ -848,50 +855,42 @@ document.addEventListener('DOMContentLoaded',()=>setTimeout(bind,400));
     wrap.id = 'pb5Toolbar';
     wrap.className = 'pb5-toolbar';
     wrap.innerHTML = `
-      <div class="pb5-toolbar-row pb5-actions">
-        <button type="button" id="pb5Undo" title="Undo">↶</button>
-        <button type="button" id="pb5Redo" title="Redo">↷</button>
-        <button type="button" id="pb5Duplicate" title="Duplicate">Duplicate</button>
-        <button type="button" id="pb5Delete" title="Delete custom element">Delete</button>
-      </div>
-      <div class="pb5-toolbar-row">
-        <label>Font<select data-pb5-key="fontFamily">
-          <option value="">Original</option><option value="Poppins">Poppins</option>
-          <option value="Cormorant Garamond">Cormorant Garamond</option>
-          <option value="Arial">Arial</option><option value="Georgia">Georgia</option>
-          <option value="Times New Roman">Times New Roman</option>
-        </select></label>
-        <label>Size<input data-pb5-key="fontSize" type="number" min="8" max="200"></label>
-      </div>
-      <div class="pb5-toolbar-row pb5-format">
-        <button type="button" data-pb5-toggle="fontWeight" data-on="700" title="Bold"><b>B</b></button>
-        <button type="button" data-pb5-toggle="fontStyle" data-on="italic" title="Italic"><i>I</i></button>
-        <button type="button" data-pb5-toggle="textDecoration" data-on="underline" title="Underline"><u>U</u></button>
-        <button type="button" data-pb5-align="left">Left</button>
-        <button type="button" data-pb5-align="center">Center</button>
-        <button type="button" data-pb5-align="right">Right</button>
-      </div>
-      <div class="pb5-toolbar-row">
-        <label>Text<input data-pb5-key="color" type="color" value="#222222"></label>
-        <label>Background<input data-pb5-key="backgroundColor" type="color" value="#ffffff"></label>
-      </div>
-      <div class="pb5-toolbar-row">
-        <label>X<input data-pb5-key="x" type="number"></label>
-        <label>Y<input data-pb5-key="y" type="number"></label>
-        <label>W<input data-pb5-key="width" type="number" min="20"></label>
-        <label>H<input data-pb5-key="height" type="number" min="16"></label>
-      </div>
-      <div class="pb5-toolbar-row">
-        <label>Line<input data-pb5-key="lineHeight" type="number" min="8" max="300"></label>
-        <label>Spacing<input data-pb5-key="letterSpacing" type="number" min="-10" max="50" step="0.5"></label>
-        <label>Radius<input data-pb5-key="borderRadius" type="number" min="0" max="500"></label>
-      </div>
-      <div class="pb5-toolbar-row pb5-actions">
-        <button type="button" id="pb5Back">Send Back</button>
-        <button type="button" id="pb5Front">Bring Front</button>
-        <label class="pb5-zoom">Zoom
-          <select id="pb5Zoom"><option value=".5">50%</option><option value=".75">75%</option><option value="1" selected>100%</option><option value="1.25">125%</option><option value="1.5">150%</option></select>
-        </label>
+      <div class="pb6-quickbar">
+        <div class="pb6-group">
+          <button type="button" id="pb5Undo" title="Undo">↶</button>
+          <button type="button" id="pb5Redo" title="Redo">↷</button>
+        </div>
+        <div class="pb6-group pb6-text-tools">
+          <label>Font<select data-pb5-key="fontFamily">
+            <option value="">Original</option><option value="Poppins">Poppins</option>
+            <option value="Cormorant Garamond">Cormorant Garamond</option>
+            <option value="Arial">Arial</option><option value="Georgia">Georgia</option>
+          </select></label>
+          <label>Size<input data-pb5-key="fontSize" type="number" min="8" max="200"></label>
+          <button type="button" data-pb5-toggle="fontWeight" data-on="700" title="Bold"><b>B</b></button>
+          <button type="button" data-pb5-toggle="fontStyle" data-on="italic" title="Italic"><i>I</i></button>
+          <button type="button" data-pb5-toggle="textDecoration" data-on="underline" title="Underline"><u>U</u></button>
+          <button type="button" data-pb5-align="left" title="Align left">☰</button>
+          <button type="button" data-pb5-align="center" title="Align center">≡</button>
+          <button type="button" data-pb5-align="right" title="Align right">☷</button>
+          <label>Text<input data-pb5-key="color" type="color" value="#222222"></label>
+        </div>
+        <details class="pb6-more">
+          <summary>More</summary>
+          <div class="pb6-more-grid">
+            <label>Background<input data-pb5-key="backgroundColor" type="color" value="#ffffff"></label>
+            <label>Opacity<input data-pb5-key="opacity" type="number" min="0" max="1" step="0.05"></label>
+            <label>Rotate<input data-pb5-key="rotate" type="number"></label>
+            <label>Line height<input data-pb5-key="lineHeight" type="number" min="8" max="300"></label>
+            <label>Letter spacing<input data-pb5-key="letterSpacing" type="number" min="-10" max="50" step="0.5"></label>
+            <label>Corner radius<input data-pb5-key="borderRadius" type="number" min="0" max="500"></label>
+            <button type="button" id="pb5Back">Send Back</button>
+            <button type="button" id="pb5Front">Bring Front</button>
+            <button type="button" id="pb5Duplicate">Duplicate</button>
+            <button type="button" id="pb5Delete">Delete</button>
+            <label>Zoom<select id="pb5Zoom"><option value=".5">50%</option><option value=".75">75%</option><option value="1" selected>100%</option><option value="1.25">125%</option><option value="1.5">150%</option></select></label>
+          </div>
+        </details>
       </div>`;
     host.insertBefore(wrap, host.querySelector('#pb3Inspector'));
 

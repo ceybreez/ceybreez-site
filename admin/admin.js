@@ -1528,6 +1528,7 @@ async function loadReviews(){
     allReviews = data || [];
     renderReviewsSummary();
     renderReviewsTable();
+    await loadReviewShowcaseSettings();
   }catch(err){
     const tbody = document.getElementById("reviewsTableBody");
     if(tbody) tbody.innerHTML = `<tr><td colspan="8" class="empty-row">${escapeHtml(err.message)}</td></tr>`;
@@ -1671,6 +1672,84 @@ async function saveReview(e){
   alert(result.message || "Review saved");
   closeReviewForm();
   await loadReviews();
+}
+
+
+async function loadReviewShowcaseSettings(){
+  const ids = {
+    happy_customer_count: "happyCustomerCount",
+    completed_trip_count: "completedTripCount",
+    google_rating: "googleRating",
+    google_review_url: "googleReviewUrl",
+    review_reels: "reviewReels"
+  };
+
+  try{
+    const res = await fetch(`${API_BASE}/api/admin/site-content`, {
+      headers: authHeaders()
+    });
+    const data = await res.json().catch(() => ({}));
+    if(!res.ok) throw new Error(data.error || "Failed to load website showcase");
+
+    Object.entries(ids).forEach(([key, id]) => {
+      const el = document.getElementById(id);
+      if(!el) return;
+      let value = data?.[key] ?? "";
+      if(key === "review_reels" && Array.isArray(value)) value = value.join("\n");
+      el.value = value;
+    });
+  }catch(err){
+    console.error("Review showcase load failed:", err);
+  }
+}
+
+async function saveReviewShowcaseSettings(){
+  const button = document.querySelector('#reviewsShowcaseSettings button[onclick="saveReviewShowcaseSettings()"]');
+  const originalText = button?.textContent || "Save Website Showcase";
+
+  const ratingRaw = document.getElementById("googleRating")?.value.trim() || "";
+  if(ratingRaw && (Number.isNaN(Number(ratingRaw)) || Number(ratingRaw) < 0 || Number(ratingRaw) > 5)){
+    alert("Displayed Guest Rating must be between 0 and 5.");
+    return;
+  }
+
+  const payload = {
+    happy_customer_count: document.getElementById("happyCustomerCount")?.value.trim() || "0",
+    completed_trip_count: document.getElementById("completedTripCount")?.value.trim() || "0",
+    google_rating: ratingRaw || "5.0",
+    google_review_url: document.getElementById("googleReviewUrl")?.value.trim() || "",
+    review_reels: (document.getElementById("reviewReels")?.value || "")
+      .split("\n")
+      .map(value => value.trim())
+      .filter(Boolean)
+      .join("\n")
+  };
+
+  try{
+    if(button){
+      button.disabled = true;
+      button.textContent = "Saving...";
+    }
+
+    const res = await fetch(`${API_BASE}/api/admin/site-content`, {
+      method: "PUT",
+      headers: authHeaders(),
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json().catch(() => ({}));
+    if(!res.ok) throw new Error(result.error || "Website showcase save failed");
+
+    await loadReviewShowcaseSettings();
+    alert(result.message || "Website showcase saved successfully.");
+  }catch(err){
+    console.error("Review showcase save failed:", err);
+    alert(err.message || "Website showcase save failed");
+  }finally{
+    if(button){
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  }
 }
 
 async function deleteReview(id){

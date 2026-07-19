@@ -155,3 +155,313 @@ document.addEventListener('DOMContentLoaded',()=>setTimeout(bind,400));
   }
   document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{addInspectorUI();patchDeviceButtons();$('pb2PreviewFrame')?.addEventListener('load',()=>setTimeout(injectSelectable,250));injectSelectable()},900));
 })();
+
+/* =========================================================
+   CeyBreez Page Builder V4 — Drag, Drop & Resize
+   Works only by updating page-builder-admin-v2.js + CSS.
+   Button destinations remain locked.
+   ========================================================= */
+(function(){
+  const $ = id => document.getElementById(id);
+  const clamp = (n,min,max) => Math.max(min,Math.min(max,n));
+  let drag = null;
+  let resize = null;
+
+  function currentDevice(){
+    return window.pb3SelectedDevice || 'desktop';
+  }
+
+  function currentSection(){
+    const frame = $('pb2PreviewFrame');
+    const key = $('sectionKey')?.value;
+    return frame?.contentDocument?.querySelector(`[data-section="${CSS.escape(key || '')}"]`);
+  }
+
+  function selectedElement(){
+    const section = currentSection();
+    const sel = window.pb3SelectedSelector;
+    if(!section || !sel) return null;
+    try{
+      return sel === ':scope' ? section : section.querySelector(sel);
+    }catch{
+      return null;
+    }
+  }
+
+  function record(){
+    const sel = window.pb3SelectedSelector;
+    if(!sel) return null;
+    const all = window.pb3ElementStyles || (window.pb3ElementStyles = {});
+    if(!all[sel]) all[sel] = {desktop:{},tablet:{},mobile:{}};
+    if(!all[sel][currentDevice()]) all[sel][currentDevice()] = {};
+    return all[sel][currentDevice()];
+  }
+
+  function num(v, fallback=0){
+    const n = Number(v);
+    return Number.isFinite(n) ? n : fallback;
+  }
+
+  function saveTransformFromElement(el){
+    if(!el) return;
+    const rec = record();
+    if(!rec) return;
+
+    const rect = el.getBoundingClientRect();
+    const parentRect = el.parentElement?.getBoundingClientRect();
+
+    if(rect.width > 0) rec.width = Math.round(rect.width);
+    if(rect.height > 0) rec.height = Math.round(rect.height);
+
+    if(parentRect){
+      rec.x = Math.round(rect.left - parentRect.left);
+      rec.y = Math.round(rect.top - parentRect.top);
+    }
+  }
+
+  function ensureEditorLayer(){
+    const frame = $('pb2PreviewFrame');
+    const doc = frame?.contentDocument;
+    if(!doc) return;
+
+    let style = doc.getElementById('pb4-drag-style');
+    if(!style){
+      style = doc.createElement('style');
+      style.id = 'pb4-drag-style';
+      style.textContent = `
+        body.pb4-drag-mode [data-section] *{
+          box-sizing:border-box;
+        }
+        .pb4-draggable{
+          position:relative !important;
+          cursor:move !important;
+          touch-action:none !important;
+          user-select:none !important;
+        }
+        .pb4-resize-handle{
+          position:absolute;
+          width:12px;
+          height:12px;
+          background:#00a88f;
+          border:2px solid #fff;
+          border-radius:3px;
+          z-index:2147483647;
+          box-shadow:0 1px 4px rgba(0,0,0,.35);
+        }
+        .pb4-resize-handle[data-dir="nw"]{left:-8px;top:-8px;cursor:nwse-resize}
+        .pb4-resize-handle[data-dir="ne"]{right:-8px;top:-8px;cursor:nesw-resize}
+        .pb4-resize-handle[data-dir="sw"]{left:-8px;bottom:-8px;cursor:nesw-resize}
+        .pb4-resize-handle[data-dir="se"]{right:-8px;bottom:-8px;cursor:nwse-resize}
+        .pb4-link-locked{
+          pointer-events:none !important;
+        }
+      `;
+      doc.head.appendChild(style);
+    }
+
+    doc.body.classList.add('pb4-drag-mode');
+    bindCurrentSelected();
+  }
+
+  function removeHandles(doc){
+    doc?.querySelectorAll('.pb4-resize-handle').forEach(h => h.remove());
+    doc?.querySelectorAll('.pb4-draggable').forEach(n => n.classList.remove('pb4-draggable'));
+  }
+
+  function bindCurrentSelected(){
+    const frame = $('pb2PreviewFrame');
+    const doc = frame?.contentDocument;
+    const el = selectedElement();
+    if(!doc) return;
+
+    removeHandles(doc);
+    if(!el) return;
+
+    el.classList.add('pb4-draggable');
+
+    if(el.tagName === 'A' || el.closest('a')){
+      el.classList.add('pb4-link-locked');
+    }
+
+    ['nw','ne','sw','se'].forEach(dir => {
+      const h = doc.createElement('span');
+      h.className = 'pb4-resize-handle';
+      h.dataset.dir = dir;
+      h.addEventListener('pointerdown', onResizeStart, true);
+      el.appendChild(h);
+    });
+
+    el.addEventListener('pointerdown', onDragStart, true);
+  }
+
+  function onDragStart(e){
+    if(e.target.classList.contains('pb4-resize-handle')) return;
+
+    const el = selectedElement();
+    if(!el || e.currentTarget !== el) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const rec = record();
+    const rect = el.getBoundingClientRect();
+
+    drag = {
+      el,
+      startX:e.clientX,
+      startY:e.clientY,
+      baseX:num(rec.x),
+      baseY:num(rec.y),
+      width:rect.width,
+      height:rect.height
+    };
+
+    const doc = el.ownerDocument;
+    doc.addEventListener('pointermove', onDragMove, true);
+    doc.addEventListener('pointerup', onDragEnd, true);
+  }
+
+  function onDragMove(e){
+    if(!drag) return;
+    e.preventDefault();
+
+    const rec = record();
+    const dx = e.clientX - drag.startX;
+    const dy = e.clientY - drag.startY;
+
+    rec.x = Math.round(drag.baseX + dx);
+    rec.y = Math.round(drag.baseY + dy);
+
+    drag.el.style.transform =
+      `translate(${rec.x}px, ${rec.y}px) scale(${rec.scale || 1}) rotate(${num(rec.rotate)}deg)`;
+
+    window.pb3RenderInspector?.();
+  }
+
+  function onDragEnd(){
+    if(!drag) return;
+    const doc = drag.el.ownerDocument;
+    doc.removeEventListener('pointermove', onDragMove, true);
+    doc.removeEventListener('pointerup', onDragEnd, true);
+    drag = null;
+  }
+
+  function onResizeStart(e){
+    e.preventDefault();
+    e.stopPropagation();
+
+    const el = selectedElement();
+    if(!el) return;
+
+    const rect = el.getBoundingClientRect();
+    resize = {
+      el,
+      dir:e.currentTarget.dataset.dir,
+      startX:e.clientX,
+      startY:e.clientY,
+      startW:rect.width,
+      startH:rect.height,
+      ratio:rect.width / Math.max(rect.height,1)
+    };
+
+    const doc = el.ownerDocument;
+    doc.addEventListener('pointermove', onResizeMove, true);
+    doc.addEventListener('pointerup', onResizeEnd, true);
+  }
+
+  function onResizeMove(e){
+    if(!resize) return;
+    e.preventDefault();
+
+    const dx = e.clientX - resize.startX;
+    const dy = e.clientY - resize.startY;
+    let w = resize.startW;
+    let h = resize.startH;
+
+    if(resize.dir.includes('e')) w += dx;
+    if(resize.dir.includes('w')) w -= dx;
+    if(resize.dir.includes('s')) h += dy;
+    if(resize.dir.includes('n')) h -= dy;
+
+    w = clamp(w,30,2000);
+    h = clamp(h,20,1600);
+
+    if(e.shiftKey){
+      h = w / resize.ratio;
+    }
+
+    const rec = record();
+    rec.width = Math.round(w);
+    rec.height = Math.round(h);
+
+    resize.el.style.width = `${rec.width}px`;
+    resize.el.style.height = `${rec.height}px`;
+    resize.el.style.maxWidth = 'none';
+
+    window.pb3RenderInspector?.();
+  }
+
+  function onResizeEnd(){
+    if(!resize) return;
+    const doc = resize.el.ownerDocument;
+    doc.removeEventListener('pointermove', onResizeMove, true);
+    doc.removeEventListener('pointerup', onResizeEnd, true);
+    resize = null;
+  }
+
+  function addModeToggle(){
+    const host = document.querySelector('.pb3-visual-editor');
+    if(!host || $('pb4ModeToggle')) return;
+
+    const row = document.createElement('div');
+    row.className = 'pb4-mode-row';
+    row.innerHTML = `
+      <button type="button" id="pb4ModeToggle" class="active">Drag & Resize: ON</button>
+      <span>Drag selected element. Use corner handles to resize. Hold Shift to keep ratio.</span>
+    `;
+    host.insertBefore(row, host.querySelector('#pb3Inspector'));
+
+    $('pb4ModeToggle').addEventListener('click', () => {
+      const frame = $('pb2PreviewFrame');
+      const doc = frame?.contentDocument;
+      const on = !$('pb4ModeToggle').classList.toggle('off');
+      $('pb4ModeToggle').classList.toggle('active', on);
+      $('pb4ModeToggle').textContent = `Drag & Resize: ${on ? 'ON' : 'OFF'}`;
+      if(on){
+        doc?.body.classList.add('pb4-drag-mode');
+        bindCurrentSelected();
+      }else{
+        doc?.body.classList.remove('pb4-drag-mode');
+        removeHandles(doc);
+      }
+    });
+  }
+
+  function patchPreviewSelection(){
+    const frame = $('pb2PreviewFrame');
+    const doc = frame?.contentDocument;
+    if(!doc || doc.__pb4Bound) return;
+    doc.__pb4Bound = true;
+
+    doc.addEventListener('click', () => {
+      setTimeout(bindCurrentSelected, 0);
+    }, true);
+  }
+
+  function refresh(){
+    addModeToggle();
+    ensureEditorLayer();
+    patchPreviewSelection();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(refresh, 1200);
+    $('pb2PreviewFrame')?.addEventListener('load', () => setTimeout(refresh, 350));
+  });
+
+  const oldRender = window.pb3RenderInspector;
+  window.pb3RenderInspector = function(){
+    oldRender?.();
+    setTimeout(bindCurrentSelected, 0);
+  };
+})();

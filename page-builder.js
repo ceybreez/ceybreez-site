@@ -84,7 +84,11 @@ function applySection(section){
 function applySectionStyles(target, section, passedSettings){
  let settings = passedSettings || {};
 
-  if(section.backgroundImage){
+  const builderBg = settings.sectionBackground;
+
+  if(builderBg && builderBg.type){
+    applyBuilderSectionBackground(target, builderBg);
+  }else if(section.backgroundImage){
     target.style.backgroundImage =
       `linear-gradient(rgba(0,0,0,${Number(settings.overlay ?? 35)/100}), rgba(0,0,0,${Number(settings.overlay ?? 35)/100})), url('${section.backgroundImage}')`;
     target.style.backgroundSize = settings.backgroundSize || "cover";
@@ -147,6 +151,121 @@ function applySectionStyles(target, section, passedSettings){
     target.classList.add("cms-animate", settings.animation);
   }
 }
+
+function applyBuilderSectionBackground(target, bg){
+  target.querySelectorAll(":scope > .cms-bg-slideshow").forEach(node => node.remove());
+
+  target.style.backgroundImage = "";
+  target.style.backgroundColor = "";
+  target.style.backgroundSize = "";
+  target.style.backgroundPosition = "";
+  target.style.backgroundRepeat = "";
+
+  if(bg.minHeight !== "" && bg.minHeight !== undefined){
+    target.style.minHeight = `${Number(bg.minHeight) || 0}px`;
+  }
+
+  if(Number(bg.borderRadius) > 0){
+    target.style.borderRadius = `${Number(bg.borderRadius)}px`;
+  }
+
+  const size = bg.size === "custom"
+    ? `${Number(bg.customWidth) || 100}% ${Number(bg.customHeight) || 100}%`
+    : (bg.size || "cover");
+
+  const position =
+    `${Number(bg.positionX ?? 50)}% ${Number(bg.positionY ?? 50)}%`;
+
+  const overlay =
+    Math.max(0, Math.min(90, Number(bg.overlay) || 0)) / 100;
+
+  const imageCss = url => overlay > 0
+    ? `linear-gradient(rgba(0,0,0,${overlay}), rgba(0,0,0,${overlay})), url("${url}")`
+    : `url("${url}")`;
+
+  if(bg.type === "none") return;
+
+  if(bg.type === "color"){
+    target.style.backgroundColor = bg.color || "#ffffff";
+    return;
+  }
+
+  if(bg.type === "image" && bg.image){
+    target.style.backgroundImage = imageCss(bg.image);
+    target.style.backgroundSize = size;
+    target.style.backgroundPosition = position;
+    target.style.backgroundRepeat = bg.repeat || "no-repeat";
+    return;
+  }
+
+  if(bg.type === "slideshow" && Array.isArray(bg.slides) && bg.slides.length){
+    if(getComputedStyle(target).position === "static"){
+      target.style.position = "relative";
+    }
+
+    const holder = document.createElement("div");
+    holder.className = "cms-bg-slideshow";
+
+    Object.assign(holder.style, {
+      position: "absolute",
+      inset: "0",
+      overflow: "hidden",
+      pointerEvents: "none",
+      zIndex: "0"
+    });
+
+    const layer = document.createElement("div");
+
+    Object.assign(layer.style, {
+      position: "absolute",
+      inset: "0",
+      backgroundSize: size,
+      backgroundPosition: position,
+      backgroundRepeat: bg.repeat || "no-repeat",
+      transition: "opacity .65s ease, transform .65s ease"
+    });
+
+    holder.appendChild(layer);
+    target.prepend(holder);
+
+    [...target.children].forEach(child => {
+      if(child !== holder){
+        if(getComputedStyle(child).position === "static"){
+          child.style.position = "relative";
+        }
+        if(!child.style.zIndex){
+          child.style.zIndex = "1";
+        }
+      }
+    });
+
+    let index = 0;
+
+    const showSlide = () => {
+      const url = bg.slides[index % bg.slides.length];
+      layer.style.opacity = "0";
+
+      if(bg.effect === "slide"){
+        layer.style.transform = "translateX(4%)";
+      }
+
+      setTimeout(() => {
+        layer.style.backgroundImage = imageCss(url);
+        layer.style.opacity = "1";
+        layer.style.transform = "translateX(0)";
+      }, 120);
+
+      index += 1;
+    };
+
+    showSlide();
+
+    if(bg.slides.length > 1){
+      setInterval(showSlide, Math.max(1500, Number(bg.duration) || 5000));
+    }
+  }
+}
+
 function applyVideoBackground(target, videoUrl){
   let video = target.querySelector(".cms-bg-video");
 

@@ -138,3 +138,35 @@
 /* V5.3 isolated editing:
    transformed original elements keep their original layout slot,
    so neighbouring content is not reflowed when one item is moved/resized. */
+
+
+/* =========================================================
+   CeyBreez Page Builder V6 Lite — user-friendly main-first UI
+   One property appears in one place only.
+   Desktop/Main Web values are inherited by tablet and mobile.
+   ========================================================= */
+.pb3-visual-editor{border:1px solid #dce6e4!important;border-radius:14px!important;background:#fff!important;overflow:hidden}
+.pb3-visual-head{padding:14px 16px!important;background:#f6fbfa!important;border-bottom:1px solid #e5efed!important}
+.pb3-visual-head h3{margin:0!important;font-size:16px!important}
+.pb3-visual-head span{font-size:11px!important;color:#67817c!important}
+.pb3-device-row{display:grid!important;grid-template-columns:1.2fr 1fr 1fr!important;gap:6px!important;padding:10px!important;background:#fff!important}
+.pb3-device-row button{border:1px solid #d7e5e2!important;background:#fff!important;border-radius:9px!important;padding:9px 7px!important;font-size:12px!important;font-weight:600!important}
+.pb3-device-row button.active{background:#0f766e!important;color:#fff!important;border-color:#0f766e!important}
+.pb6-guide{margin:10px;padding:12px;border-radius:10px;background:#f8fafc;color:#52616b;font-size:12px;line-height:1.7}
+.pb6-selected-card{margin:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px;border:1px solid #deebe8;border-radius:10px}
+.pb6-selected-card small{display:block;color:#7a8e89;font-size:10px}.pb6-selected-card strong{display:block;max-width:175px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
+.pb6-selected-card button{border:0;background:#eef6f4;color:#0f766e;border-radius:7px;padding:7px 9px;font-size:11px;font-weight:700}
+.pb6-responsive-note{margin:0 10px 10px;padding:10px;border-radius:9px;font-size:11px;line-height:1.45;background:#ecfdf5;color:#166534}
+.pb6-responsive-note.tablet,.pb6-responsive-note.mobile{background:#fff7ed;color:#9a3412}
+.pb5-toolbar{padding:0!important;background:#fff!important;border:0!important}
+.pb6-quickbar{padding:10px;border-top:1px solid #e5efed;border-bottom:1px solid #e5efed;background:#fbfdfd}
+.pb6-group{display:flex;gap:6px;align-items:end;flex-wrap:wrap;margin-bottom:8px}.pb6-group:last-child{margin-bottom:0}
+.pb6-group button,.pb6-more button{min-height:34px;border:1px solid #d6e4e1;background:#fff;border-radius:8px;padding:6px 9px;cursor:pointer}
+.pb6-group label,.pb6-more label{font-size:10px;color:#657b76;display:flex;flex-direction:column;gap:3px}
+.pb6-group input[type=number],.pb6-group select,.pb6-more input[type=number],.pb6-more select{height:34px;border:1px solid #d6e4e1;border-radius:8px;padding:4px 7px;max-width:105px;background:#fff}
+.pb6-group input[type=color],.pb6-more input[type=color]{width:42px;height:34px;border:1px solid #d6e4e1;border-radius:8px;padding:3px;background:#fff}
+.pb6-text-tools{padding-top:2px}.pb6-more{margin-top:3px}.pb6-more summary{cursor:pointer;color:#0f766e;font-weight:700;font-size:12px;padding:6px 2px}
+.pb6-more-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding-top:8px}
+.pb6-more-grid button{font-size:11px}
+/* Hide the older duplicate inspector controls; V6 uses toolbar + drag handles only. */
+.pb3-grid2,.pb3-grid4,.pb3-subtitle,.pb3-check,.pb3-selected-name{display:none!important}

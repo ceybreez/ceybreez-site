@@ -4,3 +4,251 @@
 
 /* Page Builder V3 Visual Editor */
 .pb3-visual-editor{border:1px solid #b9ded8;background:#f1fbf9;border-radius:10px;padding:12px;margin-bottom:14px}.pb3-visual-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.pb3-visual-head h3{margin:0;font-size:15px;color:#075f57}.pb3-visual-head span{font-size:11px;color:#607d78}.pb3-device-row{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:10px 0}.pb3-device-row button{border:1px solid #acd4ce;background:#fff;padding:7px;border-radius:6px;cursor:pointer}.pb3-device-row button.active{background:#087f72;color:#fff}.pb3-hint{padding:16px 8px;text-align:center;color:#607d78;font-size:12px;border:1px dashed #acd4ce;border-radius:7px}.pb3-selected-name{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:9px}.pb3-selected-name code{max-width:170px;overflow:hidden;text-overflow:ellipsis;background:#fff;padding:3px 5px;border-radius:4px}.pb3-selected-name button{margin-left:auto;border:0;background:#e7f0f2;padding:5px 7px;border-radius:5px;cursor:pointer}.pb3-grid2{display:grid;grid-template-columns:1fr 1fr;gap:7px}.pb3-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.pb3-grid4 label{font-size:10px}.pb3-subtitle{font-size:11px;font-weight:800;margin:7px 0 4px;color:#075f57}.pb3-check{display:flex!important;grid-template-columns:auto 1fr!important;align-items:center}.pb3-check input{width:auto!important}.pb3-add{width:100%;margin-top:10px}.pb3-visual-editor input,.pb3-visual-editor select{padding:7px!important}.pb3-visual-editor label{font-size:11px!important;margin-bottom:6px!important}
+
+/* =========================================================
+   CeyBreez Page Builder V4 - Responsive Layout Fix
+   Fixes compressed settings panel and preview overflow
+   ========================================================= */
+
+.pb2-page-builder{
+  width:100%;
+  min-width:0;
+  overflow-x:hidden;
+}
+
+.pb2-workspace{
+  width:100%;
+  min-width:0;
+  grid-template-columns:210px minmax(270px,320px) minmax(0,1fr);
+}
+
+.pb2-sections-panel,
+.pb2-settings-panel,
+.pb2-preview-panel{
+  min-width:0;
+}
+
+.pb2-sections-panel,
+.pb2-settings-panel{
+  overflow-x:hidden;
+}
+
+.pb2-preview-panel{
+  overflow:auto;
+}
+
+.pb2-preview-frame-wrap{
+  width:100%;
+  max-width:100%;
+}
+
+.pb2-preview-frame-wrap iframe{
+  display:block;
+  min-width:0;
+}
+
+.pb2-section-item{
+  min-width:0;
+}
+
+.pb2-section-item > div{
+  min-width:0;
+}
+
+.pb2-section-item strong,
+.pb2-section-item small{
+  display:block;
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+
+.pb2-settings-panel label{
+  min-width:0;
+  line-height:1.35;
+  overflow-wrap:anywhere;
+}
+
+.pb2-settings-panel input,
+.pb2-settings-panel select,
+.pb2-settings-panel textarea{
+  min-width:0;
+  max-width:100%;
+}
+
+.pb2-two,
+.pb2-inline,
+.pb3-grid2,
+.pb3-grid4{
+  min-width:0;
+}
+
+.pb2-toolbar{
+  grid-template-columns:auto minmax(180px,1fr) auto auto auto;
+}
+
+@media (max-width:1450px){
+  .pb2-workspace{
+    grid-template-columns:190px minmax(250px,290px) minmax(0,1fr);
+  }
+
+  .pb2-sections-panel,
+  .pb2-settings-panel{
+    padding:12px;
+  }
+}
+
+@media (max-width:1180px){
+  .pb2-workspace{
+    grid-template-columns:175px minmax(240px,270px) minmax(0,1fr);
+  }
+
+  .pb2-toolbar{
+    grid-template-columns:auto minmax(160px,1fr) auto auto;
+  }
+
+  .pb2-global-btn{
+    justify-self:stretch;
+  }
+
+  .pb2-header{
+    padding:14px 16px;
+  }
+
+  .pb2-toolbar{
+    padding:10px 16px;
+  }
+
+  .pb2-preview-panel{
+    padding:10px;
+  }
+}
+
+@media (max-width:900px){
+  .pb2-workspace{
+    grid-template-columns:1fr;
+  }
+
+  .pb2-sections-panel,
+  .pb2-settings-panel{
+    position:static;
+    max-height:none;
+    border-right:0;
+    border-bottom:1px solid #dfe7eb;
+  }
+
+  .pb2-toolbar{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .pb2-preview-frame-wrap.tablet,
+  .pb2-preview-frame-wrap.mobile,
+  .pb2-preview-frame-wrap.desktop{
+    width:100%;
+  }
+}
+
+/* =========================================================
+   Button visibility and control clipping fix
+   ========================================================= */
+
+.pb2-header-actions,
+.pb2-devices,
+.pb2-panel-head,
+.pb2-inline,
+.pb3-device-row{
+  min-width:0;
+  flex-wrap:wrap;
+}
+
+.pb2-btn,
+.pb2-devices button,
+.pb2-panel-head button,
+.pb2-inline button,
+.pb3-device-row button{
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:center;
+  min-height:38px;
+  min-width:38px;
+  line-height:1.2;
+  white-space:nowrap;
+  opacity:1 !important;
+  visibility:visible !important;
+  overflow:visible;
+  position:relative;
+  z-index:2;
+  font-size:12px;
+}
+
+.pb2-btn-light,
+.pb2-devices button,
+.pb3-device-row button{
+  color:#334155 !important;
+  background:#ffffff !important;
+  border:1px solid #d3dde2 !important;
+}
+
+.pb2-btn-primary,
+.pb2-panel-head button,
+.pb2-inline button,
+.pb2-devices button.active,
+.pb3-device-row button.active{
+  color:#ffffff !important;
+  background:#087f72 !important;
+  border-color:#087f72 !important;
+}
+
+.pb2-btn-outline{
+  color:#087f72 !important;
+  background:#ffffff !important;
+  border:1px solid #087f72 !important;
+}
+
+.pb2-settings-panel,
+.pb2-sections-panel{
+  overflow-y:auto !important;
+  padding-bottom:90px;
+}
+
+.pb2-save-bottom,
+.pb3-add{
+  display:flex !important;
+  width:100% !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  position:relative;
+  z-index:3;
+}
+
+.pb2-panel-head{
+  gap:8px;
+}
+
+.pb2-panel-head h3{
+  min-width:0;
+}
+
+.pb2-toolbar > *{
+  min-width:0;
+}
+
+.pb2-toolbar button,
+.pb2-header button{
+  flex-shrink:0;
+}
+
+@media (max-width:1180px){
+  .pb2-header-actions{
+    width:100%;
+  }
+
+  .pb2-header-actions .pb2-btn{
+    flex:1 1 auto;
+  }
+
+  .pb2-devices{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(38px,1fr));
+    width:100%;
+  }
+}

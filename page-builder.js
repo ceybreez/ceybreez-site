@@ -212,11 +212,16 @@ function mergeDeviceStyles(byDevice){
 }
 function applyVisualRecord(el,rec){
   if(!el||!rec)return;
-  ['width','maxWidth','height','minHeight','marginTop','marginRight','marginBottom','marginLeft',
-   'paddingTop','paddingRight','paddingBottom','paddingLeft','borderRadius','fontSize','lineHeight',
-   'letterSpacing','borderWidth'].forEach(k=>{
+
+  const isCustom=!!el.dataset.pbId;
+  const isolated=rec.positioned&&!isCustom;
+
+  ['maxWidth','minHeight','marginTop','marginRight','marginBottom','marginLeft',
+   'paddingTop','paddingRight','paddingBottom','paddingLeft','borderRadius','fontSize',
+   'lineHeight','letterSpacing','borderWidth'].forEach(k=>{
     el.style[k]=rec[k]!==undefined&&rec[k]!==''?`${Number(rec[k])}px`:'';
   });
+
   el.style.display=rec.hidden?'none':(rec.display||'');
   el.style.textAlign=rec.textAlign||'';
   el.style.objectFit=rec.objectFit||'';
@@ -233,20 +238,39 @@ function applyVisualRecord(el,rec){
   el.style.zIndex=rec.zIndex!==undefined?String(rec.zIndex):'';
   el.style.transformOrigin='center center';
 
-  if(rec.positioned){
+  if(rec.positioned&&isCustom){
     const parent=el.parentElement;
-    if(parent&&getComputedStyle(parent).position==='static') parent.style.position='relative';
+    if(parent&&getComputedStyle(parent).position==='static')parent.style.position='relative';
     el.style.position='absolute';
     el.style.left=`${Number(rec.x)||0}px`;
     el.style.top=`${Number(rec.y)||0}px`;
+    el.style.width=rec.width!==undefined&&rec.width!==''?`${Number(rec.width)}px`:'';
+    el.style.height=rec.height!==undefined&&rec.height!==''?`${Number(rec.height)}px`:'';
     el.style.margin='0';
     el.style.transform=`rotate(${Number(rec.rotate)||0}deg)`;
-  }else{
-    el.style.position='';
-    el.style.left='';
-    el.style.top='';
-    el.style.transform=`translate(${Number(rec.x)||0}px, ${Number(rec.y)||0}px) scale(${rec.scale||1}) rotate(${Number(rec.rotate)||0}deg)`;
+    return;
   }
+
+  if(isolated){
+    const bw=Math.max(1,Number(rec.baseWidth)||el.getBoundingClientRect().width||1);
+    const bh=Math.max(1,Number(rec.baseHeight)||el.getBoundingClientRect().height||1);
+    const vw=Math.max(1,Number(rec.width)||bw);
+    const vh=Math.max(1,Number(rec.height)||bh);
+    el.style.position='relative';
+    el.style.left='0';
+    el.style.top='0';
+    el.style.width=rec.baseCssWidth||'';
+    el.style.height=rec.baseCssHeight||'';
+    el.style.transform=`translate(${Number(rec.x)||0}px, ${Number(rec.y)||0}px) scale(${vw/bw}, ${vh/bh}) rotate(${Number(rec.rotate)||0}deg)`;
+    return;
+  }
+
+  el.style.position='';
+  el.style.left='';
+  el.style.top='';
+  el.style.width=rec.width!==undefined&&rec.width!==''?`${Number(rec.width)}px`:'';
+  el.style.height=rec.height!==undefined&&rec.height!==''?`${Number(rec.height)}px`:'';
+  el.style.transform=`translate(${Number(rec.x)||0}px, ${Number(rec.y)||0}px) scale(${rec.scale||1}) rotate(${Number(rec.rotate)||0}deg)`;
 }
 function renderVisualCustomElements(target,section,settings){
   target.querySelectorAll('[data-pb-custom="1"]').forEach(n=>n.remove());

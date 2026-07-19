@@ -1675,6 +1675,103 @@ async function saveReview(e){
 }
 
 
+
+/* =========================
+   REVIEW TRAVEL REEL UPLOAD
+========================= */
+
+async function uploadReviewReel(){
+  const input = document.getElementById("reviewReelUploader");
+  const status = document.getElementById("reviewReelUploadStatus");
+  const reelsBox = document.getElementById("reviewReels");
+  const file = input?.files?.[0];
+
+  if(!file){
+    alert("Please select a video first.");
+    return;
+  }
+
+  const allowedTypes = [
+    "video/mp4",
+    "video/webm",
+    "video/quicktime"
+  ];
+
+  const extension = String(file.name || "").split(".").pop().toLowerCase();
+  const allowedExtensions = ["mp4", "webm", "mov"];
+
+  if(!allowedTypes.includes(file.type) && !allowedExtensions.includes(extension)){
+    input.value = "";
+    alert("Only MP4, WebM or MOV video files are allowed.");
+    return;
+  }
+
+  const maxSize = 100 * 1024 * 1024;
+  if(file.size > maxSize){
+    input.value = "";
+    alert("Video is too large. Maximum allowed size is 100 MB.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("folder", "review-reels");
+
+  try{
+    if(status) status.textContent = `Uploading ${file.name}...`;
+
+    const res = await fetch(`${API_BASE}/api/admin/upload-video`, {
+      method: "POST",
+      headers: uploadHeaders(),
+      body: formData
+    });
+
+    const result = await res.json().catch(() => ({}));
+    if(!res.ok) throw new Error(result.error || "Video upload failed");
+
+    const currentUrls = (reelsBox?.value || "")
+      .split("\n")
+      .map(value => value.trim())
+      .filter(Boolean);
+
+    if(result.url && !currentUrls.includes(result.url)){
+      currentUrls.push(result.url);
+    }
+
+    if(reelsBox) reelsBox.value = currentUrls.join("\n");
+
+    if(status) status.textContent = "Video uploaded. Saving website showcase...";
+
+    const payload = {
+      happy_customer_count: document.getElementById("happyCustomerCount")?.value.trim() || "0",
+      completed_trip_count: document.getElementById("completedTripCount")?.value.trim() || "0",
+      google_rating: document.getElementById("googleRating")?.value.trim() || "5.0",
+      google_review_url: document.getElementById("googleReviewUrl")?.value.trim() || "",
+      review_reels: currentUrls.join("\n")
+    };
+
+    const saveRes = await fetch(`${API_BASE}/api/admin/site-content`, {
+      method: "PUT",
+      headers: authHeaders(),
+      body: JSON.stringify(payload)
+    });
+
+    const saveResult = await saveRes.json().catch(() => ({}));
+    if(!saveRes.ok){
+      throw new Error(saveResult.error || "Video uploaded, but showcase save failed");
+    }
+
+    if(status) status.textContent = "Travel reel uploaded and saved successfully.";
+    alert("Travel reel uploaded and saved successfully.");
+  }catch(err){
+    console.error("Travel reel upload failed:", err);
+    if(status) status.textContent = err.message || "Video upload failed.";
+    alert(err.message || "Video upload failed");
+  }finally{
+    if(input) input.value = "";
+  }
+}
+
 async function loadReviewShowcaseSettings(){
   const ids = {
     happy_customer_count: "happyCustomerCount",
@@ -4774,5 +4871,3 @@ async function ceybreezLoadBookedDatesForProperty(propertyName) {
 
   return booked;
 }
-
-

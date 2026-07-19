@@ -600,43 +600,71 @@ document.addEventListener('DOMContentLoaded',()=>setTimeout(bind,400));
   }
   function applyRecordV5(node, rec){
     if(!node || !rec) return;
-    const px = ['width','maxWidth','height','minHeight','marginTop','marginRight','marginBottom','marginLeft',
-      'paddingTop','paddingRight','paddingBottom','paddingLeft','borderRadius','fontSize','lineHeight','letterSpacing',
-      'borderWidth'];
-    px.forEach(k => {
-      node.style[k] = rec[k] !== undefined && rec[k] !== '' ? `${num(rec[k])}px` : '';
+
+    const isCustom=!!node.dataset.pbId;
+    const isolated=rec.positioned && !isCustom;
+
+    const commonPx=['maxWidth','minHeight','marginTop','marginRight','marginBottom','marginLeft',
+      'paddingTop','paddingRight','paddingBottom','paddingLeft','borderRadius','fontSize','lineHeight',
+      'letterSpacing','borderWidth'];
+
+    commonPx.forEach(k=>{
+      node.style[k]=rec[k]!==undefined&&rec[k]!==''?`${num(rec[k])}px`:'';
     });
 
-    node.style.display = rec.hidden ? 'none' : (rec.display || '');
-    node.style.textAlign = rec.textAlign || '';
-    node.style.objectFit = rec.objectFit || '';
-    node.style.opacity = rec.opacity !== undefined ? String(rec.opacity) : '';
-    node.style.fontFamily = rec.fontFamily || '';
-    node.style.fontWeight = rec.fontWeight || '';
-    node.style.fontStyle = rec.fontStyle || '';
-    node.style.textDecoration = rec.textDecoration || '';
-    node.style.color = rec.color || '';
-    node.style.backgroundColor = rec.backgroundColor || '';
-    node.style.borderStyle = rec.borderStyle || '';
-    node.style.borderColor = rec.borderColor || '';
-    node.style.boxShadow = rec.boxShadow || '';
-    node.style.zIndex = rec.zIndex !== undefined ? String(rec.zIndex) : '';
-    node.style.transformOrigin = 'center center';
+    node.style.display=rec.hidden?'none':(rec.display||'');
+    node.style.textAlign=rec.textAlign||'';
+    node.style.objectFit=rec.objectFit||'';
+    node.style.opacity=rec.opacity!==undefined?String(rec.opacity):'';
+    node.style.fontFamily=rec.fontFamily||'';
+    node.style.fontWeight=rec.fontWeight||'';
+    node.style.fontStyle=rec.fontStyle||'';
+    node.style.textDecoration=rec.textDecoration||'';
+    node.style.color=rec.color||'';
+    node.style.backgroundColor=rec.backgroundColor||'';
+    node.style.borderStyle=rec.borderStyle||'';
+    node.style.borderColor=rec.borderColor||'';
+    node.style.boxShadow=rec.boxShadow||'';
+    node.style.zIndex=rec.zIndex!==undefined?String(rec.zIndex):'';
+    node.style.transformOrigin='center center';
 
-    if(rec.positioned){
-      const parent = node.parentElement;
-      if(parent && getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
-      node.style.position = 'absolute';
-      node.style.left = `${num(rec.x)}px`;
-      node.style.top = `${num(rec.y)}px`;
-      node.style.margin = '0';
-      node.style.transform = `rotate(${num(rec.rotate)}deg)`;
-    } else {
-      node.style.position = '';
-      node.style.left = '';
-      node.style.top = '';
-      node.style.transform = `translate(${num(rec.x)}px, ${num(rec.y)}px) scale(${rec.scale || 1}) rotate(${num(rec.rotate)}deg)`;
+    if(rec.positioned && isCustom){
+      const parent=node.parentElement;
+      if(parent&&getComputedStyle(parent).position==='static')parent.style.position='relative';
+      node.style.position='absolute';
+      node.style.left=`${num(rec.x)}px`;
+      node.style.top=`${num(rec.y)}px`;
+      node.style.width=rec.width!==undefined&&rec.width!==''?`${num(rec.width)}px`:'';
+      node.style.height=rec.height!==undefined&&rec.height!==''?`${num(rec.height)}px`:'';
+      node.style.margin='0';
+      node.style.transform=`rotate(${num(rec.rotate)}deg)`;
+      return;
     }
+
+    if(isolated){
+      const bw=Math.max(1,num(rec.baseWidth,node.getBoundingClientRect().width||1));
+      const bh=Math.max(1,num(rec.baseHeight,node.getBoundingClientRect().height||1));
+      const vw=Math.max(1,num(rec.width,bw));
+      const vh=Math.max(1,num(rec.height,bh));
+      const sx=vw/bw, sy=vh/bh;
+
+      // Relative positioning and transforms preserve the element's original layout slot,
+      // so moving/resizing this element does not push or pull neighbouring elements.
+      node.style.position='relative';
+      node.style.left='0';
+      node.style.top='0';
+      node.style.width=rec.baseCssWidth||'';
+      node.style.height=rec.baseCssHeight||'';
+      node.style.transform=`translate(${num(rec.x)}px, ${num(rec.y)}px) scale(${sx}, ${sy}) rotate(${num(rec.rotate)}deg)`;
+      return;
+    }
+
+    node.style.position='';
+    node.style.left='';
+    node.style.top='';
+    node.style.width=rec.width!==undefined&&rec.width!==''?`${num(rec.width)}px`:'';
+    node.style.height=rec.height!==undefined&&rec.height!==''?`${num(rec.height)}px`:'';
+    node.style.transform=`translate(${num(rec.x)}px, ${num(rec.y)}px) scale(${rec.scale||1}) rotate(${num(rec.rotate)}deg)`;
   }
   function applyAll(){
     const s = section();
@@ -658,7 +686,7 @@ document.addEventListener('DOMContentLoaded',()=>setTimeout(bind,400));
     st.id = 'pb5-canvas-style';
     st.textContent = `
       body.pb5-editing [data-section]{position:relative!important;min-height:80px}
-      .pb5-selection-box{position:absolute;pointer-events:none;border:2px solid #0ea5a0;z-index:2147483640;box-sizing:border-box}
+      .pb5-selection-box{position:fixed;pointer-events:none;border:2px solid #0ea5a0;z-index:2147483640;box-sizing:border-box}
       .pb5-handle{position:absolute;width:12px;height:12px;background:#0f766e;border:2px solid white;border-radius:3px;
         box-shadow:0 1px 5px rgba(0,0,0,.35);pointer-events:auto;touch-action:none;box-sizing:border-box}
       .pb5-handle[data-dir="nw"]{left:-7px;top:-7px;cursor:nwse-resize}
@@ -683,11 +711,13 @@ document.addEventListener('DOMContentLoaded',()=>setTimeout(bind,400));
     removeSelection();
     const s = section(), target = findSelected();
     if(!s || !target || target === s || target.style.display === 'none') return;
-    const sr = s.getBoundingClientRect(), tr = target.getBoundingClientRect();
+    const tr = target.getBoundingClientRect();
+    if(!tr.width || !tr.height) return;
     const box = doc().createElement('div');
     box.className = 'pb5-selection-box';
-    box.style.left = `${tr.left - sr.left + s.scrollLeft}px`;
-    box.style.top = `${tr.top - sr.top + s.scrollTop}px`;
+    box.dataset.forSelector = selector();
+    box.style.left = `${tr.left}px`;
+    box.style.top = `${tr.top}px`;
     box.style.width = `${tr.width}px`;
     box.style.height = `${tr.height}px`;
     ['nw','n','ne','e','se','s','sw','w'].forEach(dir => {
@@ -701,19 +731,33 @@ document.addEventListener('DOMContentLoaded',()=>setTimeout(bind,400));
     label.className = 'pb5-size-label';
     label.textContent = `${Math.round(tr.width)} × ${Math.round(tr.height)}`;
     box.appendChild(label);
-    s.appendChild(box);
+    doc().body.appendChild(box);
   }
   function makePositioned(target, rec){
     if(rec.positioned) return;
-    const s = section();
-    if(!s) return;
-    const sr = s.getBoundingClientRect(), tr = target.getBoundingClientRect();
-    rec.positioned = true;
-    rec.x = Math.round(tr.left - sr.left + s.scrollLeft);
-    rec.y = Math.round(tr.top - sr.top + s.scrollTop);
-    rec.width = Math.round(tr.width);
-    rec.height = Math.round(tr.height);
-    rec.scale = 1;
+    const rect=target.getBoundingClientRect();
+    const isCustom=!!target.dataset.pbId;
+
+    rec.positioned=true;
+    rec.baseWidth=Math.max(1,Math.round(rect.width));
+    rec.baseHeight=Math.max(1,Math.round(rect.height));
+    rec.width=Math.max(1,Math.round(rect.width));
+    rec.height=Math.max(1,Math.round(rect.height));
+    rec.scale=1;
+
+    if(isCustom){
+      const s=section();
+      const sr=s?.getBoundingClientRect();
+      rec.x=Math.round(rect.left-(sr?.left||0)+(s?.scrollLeft||0));
+      rec.y=Math.round(rect.top-(sr?.top||0)+(s?.scrollTop||0));
+    }else{
+      // Existing site elements start at zero offset and keep their original layout space.
+      rec.x=0;
+      rec.y=0;
+      rec.baseCssWidth=target.style.width||'';
+      rec.baseCssHeight=target.style.height||'';
+      rec.isolated=true;
+    }
   }
   function startMove(e){
     if(e.target.closest('.pb5-handle') || e.target.closest('.pb5-selection-box')) return;
@@ -937,8 +981,16 @@ document.addEventListener('DOMContentLoaded',()=>setTimeout(bind,400));
       d.addEventListener('pointerdown', startMove, true);
       d.addEventListener('keydown', keyboard, true);
       d.addEventListener('click',()=>setTimeout(()=>{selected=findSelected();applyAll();updateInspectorValues()},0),true);
+      d.addEventListener('scroll',()=>requestAnimationFrame(drawSelection),true);
+      d.defaultView?.addEventListener('resize',()=>requestAnimationFrame(drawSelection));
+      if(d.defaultView?.ResizeObserver){
+        d.__pb5ResizeObserver=new d.defaultView.ResizeObserver(()=>requestAnimationFrame(drawSelection));
+        d.__pb5ResizeObserver.observe(d.body);
+      }
     }
     applyAll();
+    setTimeout(drawSelection,120);
+    setTimeout(drawSelection,400);
   }
   function init(){
     toolbar();

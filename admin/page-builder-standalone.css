@@ -6,12 +6,6 @@
   .builder{grid-template-rows:auto 1fr 58px}.topbar{min-height:116px;height:auto;padding:8px 10px;display:grid;grid-template-columns:1fr auto;align-content:center}.brand{grid-column:1}.brand div{display:flex}.page-device{grid-column:1/-1;grid-row:2;justify-content:space-between;gap:7px}.page-device select{min-width:0;flex:1}.device-switch button{font-size:0;padding:8px 12px}.device-switch button::first-letter{font-size:12px}.top-actions{grid-column:2;grid-row:1}.top-actions .ghost,.top-actions .linkbtn,.save-status{display:none}.top-actions .primary{padding:10px 13px}.workspace{display:block;position:relative;min-height:0}.leftbar,.inspector,.stage{position:absolute;inset:0}.leftbar,.inspector{z-index:12}.stage{z-index:10}.canvas-scroller{padding:14px;justify-content:flex-start}.frame-shell.desktop{width:1200px}.frame-shell.tablet{width:768px}.frame-shell.mobile{width:390px}.stage-toolbar{height:42px}.mobile-builder-nav{display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border-top:1px solid #dce4e8;z-index:50}.mobile-builder-nav button{border:0;background:#fff;color:#63727c;font-size:12px;font-weight:700}.mobile-builder-nav button.active{color:#087f72;background:#effaf8}body[data-mobile-panel="canvas"] .stage{display:grid}body[data-mobile-panel="canvas"] .leftbar,body[data-mobile-panel="canvas"] .inspector{display:none}body[data-mobile-panel="left"] .leftbar{display:block}body[data-mobile-panel="left"] .stage,body[data-mobile-panel="left"] .inspector{display:none}body[data-mobile-panel="right"] .inspector{display:block}body[data-mobile-panel="right"] .stage,body[data-mobile-panel="right"] .leftbar{display:none}.leftbar,.inspector{padding-bottom:80px}.inspector{border-left:0}.leftbar{border-right:0}.grid2{grid-template-columns:1fr 1fr}.toast{bottom:72px}
 }
 
-/* V4 core: section layout and responsive images */
-.visibility-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.visibility-grid label{display:flex!important;flex-direction:row!important;align-items:center;gap:6px;border:1px solid #d9e2e6;border-radius:7px;padding:8px}
-.visibility-grid input{width:auto!important}
-#responsiveImageDetails.hidden{display:none}
-.pb-selected img{max-width:100%}
-@media(max-width:760px){
-  .visibility-grid{grid-template-columns:1fr}
-}
+/* Home full-detail selection fix */
+#previewFrame{background:#fff}
+.section-item span{white-space:normal;line-height:1.25}

@@ -162,8 +162,51 @@ function applyBuilderSectionBackground(target, bg){
   target.style.backgroundPosition = "";
   target.style.backgroundRepeat = "";
 
-  if(bg.minHeight !== "" && bg.minHeight !== undefined){
-    target.style.minHeight = `${Number(bg.minHeight) || 0}px`;
+  const device =
+    window.innerWidth <= 600 ? "mobile" :
+    window.innerWidth <= 900 ? "tablet" : "desktop";
+
+  const deviceHeight =
+    bg.deviceHeights && bg.deviceHeights[device]
+      ? bg.deviceHeights[device]
+      : {};
+
+  const heightMode =
+    deviceHeight.mode || bg.heightMode ||
+    ((bg.minHeight !== "" && bg.minHeight !== undefined) ? "min" : "auto");
+
+  const heightValue =
+    deviceHeight.value ?? bg.heightValue ?? bg.minHeight ?? "";
+
+  target.style.height = "";
+  target.style.minHeight = "";
+  target.style.maxHeight = "";
+
+  if(heightMode === "fixed" && heightValue !== ""){
+    target.style.height = `${Number(heightValue) || 0}px`;
+    target.style.minHeight = `${Number(heightValue) || 0}px`;
+    target.style.maxHeight = `${Number(heightValue) || 0}px`;
+  }else if(heightMode === "min" && heightValue !== ""){
+    target.style.height = "auto";
+    target.style.minHeight = `${Number(heightValue) || 0}px`;
+  }else if(heightMode === "screen"){
+    target.style.height = "100vh";
+    target.style.minHeight = "100vh";
+    target.style.maxHeight = "100vh";
+  }else{
+    target.style.height = "auto";
+    target.style.minHeight = "0";
+  }
+
+  const paddingTop = deviceHeight.paddingTop ?? bg.paddingTop;
+  const paddingBottom = deviceHeight.paddingBottom ?? bg.paddingBottom;
+
+  if(paddingTop !== "" && paddingTop !== undefined){
+    target.style.paddingTop = `${Number(paddingTop) || 0}px`;
+  }
+
+  if(paddingBottom !== "" && paddingBottom !== undefined){
+    target.style.paddingBottom = `${Number(paddingBottom) || 0}px`;
   }
 
   if(Number(bg.borderRadius) > 0){

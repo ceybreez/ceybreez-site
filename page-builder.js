@@ -1,6 +1,7 @@
 const CEYBREEZ_API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 
 document.addEventListener("DOMContentLoaded", () => {
+  document.body.classList.add("cms-ready");
   const page = document.body.dataset.page || "home";
   loadCeyBreezSections(page);
 });
@@ -35,22 +36,22 @@ function applySection(section){
     settings = {};
   }
 
-  if(section.title){
+  if(typeof section.title==="string" && section.title.trim()){
     const title = target.querySelector("[data-field='title']");
     if(title) title.textContent = section.title;
   }
 
-  if(section.subtitle){
+  if(typeof section.subtitle==="string" && section.subtitle.trim()){
     const subtitle = target.querySelector("[data-field='subtitle']");
     if(subtitle) subtitle.textContent = section.subtitle;
   }
 
-  if(section.content){
+  if(typeof section.content==="string" && section.content.trim()){
     const content = target.querySelector("[data-field='content']");
     if(content) content.textContent = section.content;
   }
 
-  if(section.buttonText){
+  if(typeof section.buttonText==="string" && section.buttonText.trim()){
     const button = target.querySelector("[data-field='button']");
     if(button) button.textContent = section.buttonText;
   }
@@ -79,7 +80,6 @@ function applySection(section){
 
   applySectionStyles(target, section, settings);
   applyVisualElements(target, section, settings);
-  applyBuilderSectionLayout(target, settings.sectionLayout || {});
 }
 
 function applySectionStyles(target, section, passedSettings){
@@ -151,68 +151,6 @@ function applySectionStyles(target, section, passedSettings){
   if(settings.animation){
     target.classList.add("cms-animate", settings.animation);
   }
-}
-
-
-function applyBuilderSectionLayout(target, raw){
-  const l = Object.assign({
-    heightMode:"auto",heightValue:600,contentWidth:"full",customWidth:1200,
-    paddingTop:60,paddingBottom:60,paddingLeft:20,paddingRight:20,
-    showDesktop:true,showTablet:true,showMobile:true
-  }, raw||{});
-
-  target.style.height="";
-  target.style.minHeight="";
-  target.style.overflow="";
-
-  if(l.heightMode==="min") target.style.minHeight=`${Number(l.heightValue)||600}px`;
-  if(l.heightMode==="fixed"){
-    target.style.height=`${Number(l.heightValue)||600}px`;
-    target.style.overflow="hidden";
-  }
-  if(l.heightMode==="screen") target.style.minHeight="100svh";
-  if(l.heightMode==="fit"){
-    target.style.height="auto";
-    target.style.minHeight="0";
-    target.style.overflow="visible";
-  }
-
-  target.style.paddingTop=`${Number(l.paddingTop)||0}px`;
-  target.style.paddingBottom=`${Number(l.paddingBottom)||0}px`;
-  target.style.paddingLeft=`${Number(l.paddingLeft)||0}px`;
-  target.style.paddingRight=`${Number(l.paddingRight)||0}px`;
-
-  const max = l.contentWidth==="boxed"?"1200px":
-              l.contentWidth==="wide"?"1400px":
-              l.contentWidth==="custom"?`${Number(l.customWidth)||1200}px`:"100%";
-  target.style.setProperty("--pb-content-max",max);
-
-  target.classList.toggle("pb-hide-desktop",l.showDesktop===false);
-  target.classList.toggle("pb-hide-tablet",l.showTablet===false);
-  target.classList.toggle("pb-hide-mobile",l.showMobile===false);
-
-  ensureBuilderRuntimeCss();
-}
-
-function ensureBuilderRuntimeCss(){
-  if(document.getElementById("ceybreez-builder-runtime-css"))return;
-  const style=document.createElement("style");
-  style.id="ceybreez-builder-runtime-css";
-  style.textContent=`
-    [data-section] > .container,[data-section] > .content,[data-section] > .inner{
-      max-width:var(--pb-content-max,100%);
-      margin-left:auto;
-      margin-right:auto;
-    }
-    img[data-pb-responsive="1"],.pb-custom img{
-      max-width:100%;
-      height:auto;
-    }
-    @media(min-width:1025px){.pb-hide-desktop{display:none!important}}
-    @media(min-width:768px) and (max-width:1024px){.pb-hide-tablet{display:none!important}}
-    @media(max-width:767px){.pb-hide-mobile{display:none!important}}
-  `;
-  document.head.appendChild(style);
 }
 
 function applyBuilderSectionBackground(target, bg){
@@ -348,7 +286,7 @@ function applyVideoBackground(target, videoUrl){
 
 function renderGallery(target, gallery){
   const galleryBox = target.querySelector("[data-field='gallery']");
-  if(!galleryBox) return;
+  if(!galleryBox || !Array.isArray(gallery) || gallery.length===0) return;
 
   galleryBox.innerHTML = "";
 
@@ -363,7 +301,7 @@ function renderGallery(target, gallery){
 
 function renderCards(target, cards){
   const cardsBox = target.querySelector("[data-field='cards']");
-  if(!cardsBox) return;
+  if(!cardsBox || !Array.isArray(cards) || cards.length===0) return;
 
   cardsBox.innerHTML = "";
 
@@ -418,7 +356,6 @@ function applyVisualRecord(el,rec){
   el.style.borderColor=rec.borderColor||'';
   el.style.boxShadow=rec.boxShadow||'';
   el.style.zIndex=rec.zIndex!==undefined?String(rec.zIndex):'';
-  applyResponsiveImageStyle(el, r);
   el.style.transformOrigin='center center';
 
   if(rec.positioned&&isCustom){
@@ -511,19 +448,3 @@ window.addEventListener('resize',()=>{
     loadCeyBreezSections(page);
   },180);
 });
-
-
-function applyResponsiveImageStyle(el, r){
-  if(!el || el.tagName!=="IMG") return;
-  const wm=r.imageWidthMode||"auto";
-  if(wm==="auto"){el.style.width="auto";el.style.maxWidth="100%";}
-  if(wm==="full"){el.style.width="100%";el.style.maxWidth="100%";}
-  if(wm==="percent"){el.style.width=`${Number(r.imageWidthValue)||100}%`;el.style.maxWidth="100%";}
-  if(wm==="pixel"){el.style.width=`${Number(r.imageWidthValue)||320}px`;el.style.maxWidth="100%";}
-  el.style.height=(r.imageHeightMode==="fixed")?`${Number(r.imageHeightValue)||300}px`:"auto";
-  el.style.objectFit=r.objectFit||"contain";
-  el.style.aspectRatio=(r.aspectRatio&&r.aspectRatio!=="auto")?r.aspectRatio:"auto";
-  el.style.display="block";
-  el.dataset.pbResponsive="1";
-}
-

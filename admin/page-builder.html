@@ -77,59 +77,7 @@
             <button id="removeBackgroundBtn" class="danger-text" type="button">Remove</button>
           </div>
 
-
           <details open>
-            <summary>Section Layout</summary>
-            <div class="control-body">
-              <label>Height mode
-                <select id="sectionHeightMode">
-                  <option value="auto">Auto height</option>
-                  <option value="min">Minimum height</option>
-                  <option value="fixed">Fixed height</option>
-                  <option value="screen">Full screen</option>
-                  <option value="fit">Fit content</option>
-                </select>
-              </label>
-
-              <div id="sectionHeightValueWrap">
-                <label>Height / minimum height (px)
-                  <input id="sectionHeightValue" type="number" min="0" max="3000" step="10" value="600">
-                </label>
-              </div>
-
-              <label>Content width
-                <select id="sectionContentWidth">
-                  <option value="full">Full width</option>
-                  <option value="boxed">Boxed 1200px</option>
-                  <option value="wide">Wide 1400px</option>
-                  <option value="custom">Custom</option>
-                </select>
-              </label>
-
-              <div id="sectionCustomWidthWrap" class="hidden">
-                <label>Custom width (px)
-                  <input id="sectionCustomWidth" type="number" min="280" max="2400" step="10" value="1200">
-                </label>
-              </div>
-
-              <div class="grid2">
-                <label>Padding top (px)<input id="sectionPadTop" type="number" min="0" max="500" value="60"></label>
-                <label>Padding bottom (px)<input id="sectionPadBottom" type="number" min="0" max="500" value="60"></label>
-                <label>Padding left (px)<input id="sectionPadLeft" type="number" min="0" max="300" value="20"></label>
-                <label>Padding right (px)<input id="sectionPadRight" type="number" min="0" max="300" value="20"></label>
-              </div>
-
-              <div class="visibility-grid">
-                <label><input id="showDesktop" type="checkbox" checked> Desktop</label>
-                <label><input id="showTablet" type="checkbox" checked> Tablet</label>
-                <label><input id="showMobile" type="checkbox" checked> Mobile</label>
-              </div>
-
-              <button id="applySectionLayoutBtn" type="button" class="wide-action">Apply Section Layout</button>
-            </div>
-          </details>
-
-          <details>
             <summary>Section Background</summary>
             <div class="control-body">
               <label>Background type

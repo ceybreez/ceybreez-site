@@ -3,6 +3,10 @@
   const API_BASE="https://ceybreez-contact-api.ceybreez.workers.dev";
   const pages={home:"../index.html",villas:"../villas.html",apartments:"../apartments.html",homestays:"../homestays.html",tours:"../tours.html",services:"../services.html",contact:"../contact.html"};
   const $=id=>document.getElementById(id);
+  const on=(id,event,handler)=>{const el=$(id);if(el)el.addEventListener(event,handler)};
+  const valueOf=(id,fallback="")=>{const el=$(id);return el?el.value:fallback};
+  const setValue=(id,value)=>{const el=$(id);if(el)el.value=value??""};
+  const toggleHidden=(id,hidden)=>{const el=$(id);if(el)el.classList.toggle("hidden",!!hidden)};
   const state={token:localStorage.getItem("CEYBREEZ_ADMIN_TOKEN")||"",page:"home",device:"desktop",sections:[],section:null,selected:null,selector:"",styles:{},custom:[],sectionBackground:{},zoom:1,history:[],future:[],dirty:false,slideTimer:null};
   const auth=()=>({"Content-Type":"application/json","Authorization":`Bearer ${state.token}`});
   const upAuth=()=>({"Authorization":`Bearer ${state.token}`});
@@ -29,28 +33,28 @@
     $("resetBtn").onclick=resetSelected; $("useMainBtn").onclick=useMain;
     $("browseImage").onclick=()=>$("imageFile").click(); $("imageFile").onchange=uploadImage;
 
-    $("backgroundType").onchange=changeSectionBackground;
-    $("sectionBgColor").oninput=changeSectionBackground;
-    $("sectionBgImage").onchange=changeSectionBackground;
-    $("sectionBgSize").onchange=changeSectionBackground;
-    $("sectionBgWidth").oninput=changeSectionBackground;
-    $("sectionBgHeight").oninput=changeSectionBackground;
-    $("sectionBgPosX").oninput=changeSectionBackground;
-    $("sectionBgPosY").oninput=changeSectionBackground;
-    $("sectionBgRepeat").onchange=changeSectionBackground;
-    $("sectionBgOverlay").oninput=changeSectionBackground;
-    $("sectionHeightMode").onchange=changeSectionBackground;
-    $("sectionHeightValue").oninput=changeSectionBackground;
-    $("sectionPaddingTop").oninput=changeSectionBackground;
-    $("sectionPaddingBottom").oninput=changeSectionBackground;
-    $("sectionRadius").oninput=changeSectionBackground;
-    $("slideDuration").onchange=changeSectionBackground;
-    $("slideEffect").onchange=changeSectionBackground;
-    $("uploadBgBtn").onclick=()=>$("sectionBgFile").click();
-    $("sectionBgFile").onchange=uploadSectionBackground;
-    $("addSlidesBtn").onclick=()=>$("slideFiles").click();
-    $("slideFiles").onchange=uploadSlides;
-    $("removeBackgroundBtn").onclick=removeSectionBackground;
+    on("backgroundType","change",changeSectionBackground);
+    on("sectionBgColor","input",changeSectionBackground);
+    on("sectionBgImage","change",changeSectionBackground);
+    on("sectionBgSize","change",changeSectionBackground);
+    on("sectionBgWidth","input",changeSectionBackground);
+    on("sectionBgHeight","input",changeSectionBackground);
+    on("sectionBgPosX","input",changeSectionBackground);
+    on("sectionBgPosY","input",changeSectionBackground);
+    on("sectionBgRepeat","change",changeSectionBackground);
+    on("sectionBgOverlay","input",changeSectionBackground);
+    on("sectionHeightMode","change",changeSectionBackground);
+    on("sectionHeightValue","input",changeSectionBackground);
+    on("sectionPaddingTop","input",changeSectionBackground);
+    on("sectionPaddingBottom","input",changeSectionBackground);
+    on("sectionRadius","input",changeSectionBackground);
+    on("slideDuration","change",changeSectionBackground);
+    on("slideEffect","change",changeSectionBackground);
+    on("uploadBgBtn","click",()=>$("sectionBgFile")?.click());
+    on("sectionBgFile","change",uploadSectionBackground);
+    on("addSlidesBtn","click",()=>$("slideFiles")?.click());
+    on("slideFiles","change",uploadSlides);
+    on("removeBackgroundBtn","click",removeSectionBackground);
     document.querySelectorAll("[data-add-element]").forEach(button=>{
       button.onclick=()=>addCustomElement(button.dataset.addElement);
     });
@@ -134,7 +138,7 @@
     list.querySelectorAll(".section-item").forEach(b=>b.onclick=()=>selectSection(b.dataset.id));
     if(!state.section)selectSection(state.sections[0].id);
   }
-  function selectSection(id){state.section=state.sections.find(s=>String(s.id)===String(id));if(!state.section)return;const settings=parseSettings(state.section.settings);state.styles=settings.elementStyles||{};state.custom=settings.customElements||[];state.sectionBackground=normalizeSectionBackground(settings.sectionBackground||legacyBackground(state.section,settings));clearSelection();renderSections();fillSectionInspector();$("editingLabel").textContent=`Editing: ${state.section.title||state.section.sectionKey}`;$("sectionName").textContent=state.section.title||state.section.sectionKey||"Section";afterFrameReady(()=>{markSection();applyAll();applySectionBackgroundPreview()})}
+  function selectSection(id){state.section=state.sections.find(s=>String(s.id)===String(id));if(!state.section)return;const settings=parseSettings(state.section.settings);state.styles=settings.elementStyles||{};state.custom=settings.customElements||[];state.sectionBackground=normalizeSectionBackground(settings.sectionBackground||legacyBackground(state.section,settings));clearSelection();renderSections();try{fillSectionInspector()}catch(error){console.warn("Section inspector control missing:",error)}const editing=$("editingLabel");if(editing)editing.textContent=`Editing: ${state.section.title||state.section.sectionKey}`;const name=$("sectionName");if(name)name.textContent=state.section.title||state.section.sectionKey||"Section";afterFrameReady(()=>{markSection();applyAll();applySectionBackgroundPreview()})}
   function parseSettings(v){if(!v)return{};if(typeof v==="object")return v;try{return JSON.parse(v)}catch{return{}}}
   function loadFrame(){const f=$("previewFrame");f.onload=()=>{prepareFrame();if(state.section)markSection();applyAll()};f.src=`${pages[state.page]}?builder=${Date.now()}`}
   function afterFrameReady(fn){const f=$("previewFrame");if(f.contentDocument?.readyState==="complete")fn();else f.addEventListener("load",fn,{once:true})}
@@ -348,76 +352,77 @@
   function fillSectionInspector(){
     const b=normalizeSectionBackground(state.sectionBackground);
     state.sectionBackground=b;
-    $("backgroundType").value=b.type;
-    $("sectionBgColor").value=rgbHex(b.color||"#ffffff","#ffffff");
-    $("sectionBgImage").value=b.image||"";
-    $("sectionBgSize").value=b.size||"cover";
-    $("sectionBgWidth").value=num(b.customWidth,100);
-    $("sectionBgHeight").value=num(b.customHeight,100);
-    $("sectionBgPosX").value=num(b.positionX,50);
-    $("sectionBgPosY").value=num(b.positionY,50);
-    $("sectionBgPosXOut").textContent=`${num(b.positionX,50)}%`;
-    $("sectionBgPosYOut").textContent=`${num(b.positionY,50)}%`;
-    $("sectionBgRepeat").value=b.repeat||"no-repeat";
-    $("sectionBgOverlay").value=num(b.overlay,0);
-    $("slideDuration").value=String(num(b.duration,5000));
-    $("slideEffect").value=b.effect||"fade";
+    setValue("backgroundType",b.type);
+    setValue("sectionBgColor",rgbHex(b.color||"#ffffff","#ffffff"));
+    setValue("sectionBgImage",b.image||"");
+    setValue("sectionBgSize",b.size||"cover");
+    setValue("sectionBgWidth",num(b.customWidth,100));
+    setValue("sectionBgHeight",num(b.customHeight,100));
+    setValue("sectionBgPosX",num(b.positionX,50));
+    setValue("sectionBgPosY",num(b.positionY,50));
+    const posXOut=$("sectionBgPosXOut");if(posXOut)posXOut.textContent=`${num(b.positionX,50)}%`;
+    const posYOut=$("sectionBgPosYOut");if(posYOut)posYOut.textContent=`${num(b.positionY,50)}%`;
+    setValue("sectionBgRepeat",b.repeat||"no-repeat");
+    setValue("sectionBgOverlay",num(b.overlay,0));
+    setValue("slideDuration",String(num(b.duration,5000)));
+    setValue("slideEffect",b.effect||"fade");
     const deviceHeight=(b.deviceHeights&&b.deviceHeights[state.device])||{};
-    $("sectionHeightMode").value=deviceHeight.mode||b.heightMode||"auto";
-    $("sectionHeightValue").value=deviceHeight.value??b.heightValue??b.minHeight??"";
-    $("sectionPaddingTop").value=deviceHeight.paddingTop??b.paddingTop??"";
-    $("sectionPaddingBottom").value=deviceHeight.paddingBottom??b.paddingBottom??"";
-    $("sectionRadius").value=num(b.borderRadius,0);
+    setValue("sectionHeightMode",deviceHeight.mode||b.heightMode||"auto");
+    setValue("sectionHeightValue",deviceHeight.value??b.heightValue??b.minHeight??"");
+    setValue("sectionPaddingTop",deviceHeight.paddingTop??b.paddingTop??"");
+    setValue("sectionPaddingBottom",deviceHeight.paddingBottom??b.paddingBottom??"");
+    setValue("sectionRadius",num(b.borderRadius,0));
     updateBackgroundControls();
     updateSectionHeightControls();
     renderSlideList();
     updateBgPreview();
   }
   function updateBackgroundControls(){
-    const type=$("backgroundType").value;
-    $("backgroundColorControls").classList.toggle("hidden",type!=="color");
-    $("backgroundImageControls").classList.toggle("hidden",type!=="image"&&type!=="slideshow");
-    $("slideshowControls").classList.toggle("hidden",type!=="slideshow");
-    $("customBgSize").classList.toggle("hidden",$("sectionBgSize").value!=="custom");
+    const type=valueOf("backgroundType","none");
+    toggleHidden("backgroundColorControls",type!=="color");
+    toggleHidden("backgroundImageControls",type!=="image"&&type!=="slideshow");
+    toggleHidden("slideshowControls",type!=="slideshow");
+    toggleHidden("customBgSize",valueOf("sectionBgSize","cover")!=="custom");
   }
   function updateSectionHeightControls(){
-    const mode=$("sectionHeightMode").value;
-    $("sectionHeightValueWrap").classList.toggle("hidden",mode==="auto"||mode==="screen");
+    const mode=valueOf("sectionHeightMode","auto");
+    toggleHidden("sectionHeightValueWrap",mode==="auto"||mode==="screen");
   }
   function changeSectionBackground(){
     if(!state.section)return;
     pushHistory();
+    const current=normalizeSectionBackground(state.sectionBackground);
+    const mode=valueOf("sectionHeightMode",(current.deviceHeights?.[state.device]?.mode||current.heightMode||"auto"));
+    const heightRaw=valueOf("sectionHeightValue",current.deviceHeights?.[state.device]?.value??current.heightValue??"");
+    const ptRaw=valueOf("sectionPaddingTop",current.deviceHeights?.[state.device]?.paddingTop??current.paddingTop??"");
+    const pbRaw=valueOf("sectionPaddingBottom",current.deviceHeights?.[state.device]?.paddingBottom??current.paddingBottom??"");
     state.sectionBackground=normalizeSectionBackground({
-      ...state.sectionBackground,
-      type:$("backgroundType").value,
-      color:$("sectionBgColor").value,
-      image:$("sectionBgImage").value.trim(),
-      size:$("sectionBgSize").value,
-      customWidth:num($("sectionBgWidth").value,100),
-      customHeight:num($("sectionBgHeight").value,100),
-      positionX:num($("sectionBgPosX").value,50),
-      positionY:num($("sectionBgPosY").value,50),
-      repeat:$("sectionBgRepeat").value,
-      overlay:num($("sectionBgOverlay").value,0),
-      duration:num($("slideDuration").value,5000),
-      effect:$("slideEffect").value,
-      heightMode:state.sectionBackground.heightMode||"auto",
-      heightValue:state.sectionBackground.heightValue??"",
+      ...current,
+      type:valueOf("backgroundType",current.type),
+      color:valueOf("sectionBgColor",current.color),
+      image:valueOf("sectionBgImage",current.image).trim(),
+      size:valueOf("sectionBgSize",current.size),
+      customWidth:num(valueOf("sectionBgWidth",current.customWidth),100),
+      customHeight:num(valueOf("sectionBgHeight",current.customHeight),100),
+      positionX:num(valueOf("sectionBgPosX",current.positionX),50),
+      positionY:num(valueOf("sectionBgPosY",current.positionY),50),
+      repeat:valueOf("sectionBgRepeat",current.repeat||"no-repeat"),
+      overlay:num(valueOf("sectionBgOverlay",current.overlay),0),
+      duration:num(valueOf("slideDuration",current.duration),5000),
+      effect:valueOf("slideEffect",current.effect||"fade"),
       deviceHeights:{
-        ...(state.sectionBackground.deviceHeights||{}),
+        ...(current.deviceHeights||{}),
         [state.device]:{
-          mode:$("sectionHeightMode").value,
-          value:$("sectionHeightValue").value===""?"":num($("sectionHeightValue").value),
-          paddingTop:$("sectionPaddingTop").value===""?"":num($("sectionPaddingTop").value),
-          paddingBottom:$("sectionPaddingBottom").value===""?"":num($("sectionPaddingBottom").value)
+          mode,
+          value:heightRaw===""?"":num(heightRaw),
+          paddingTop:ptRaw===""?"":num(ptRaw),
+          paddingBottom:pbRaw===""?"":num(pbRaw)
         }
       },
-      paddingTop:state.sectionBackground.paddingTop??"",
-      paddingBottom:state.sectionBackground.paddingBottom??"",
-      borderRadius:num($("sectionRadius").value,0)
+      borderRadius:num(valueOf("sectionRadius",current.borderRadius),0)
     });
-    $("sectionBgPosXOut").textContent=`${state.sectionBackground.positionX}%`;
-    $("sectionBgPosYOut").textContent=`${state.sectionBackground.positionY}%`;
+    const posXOut=$("sectionBgPosXOut");if(posXOut)posXOut.textContent=`${state.sectionBackground.positionX}%`;
+    const posYOut=$("sectionBgPosYOut");if(posYOut)posYOut.textContent=`${state.sectionBackground.positionY}%`;
     updateBackgroundControls();
     updateSectionHeightControls();
     updateBgPreview();
@@ -505,7 +510,7 @@
     }
   }
   function updateBgPreview(){
-    const p=$("sectionBgPreview"),b=state.sectionBackground||{};
+    const p=$("sectionBgPreview"),b=state.sectionBackground||{};if(!p)return;
     const url=b.type==="slideshow"?(b.slides?.[0]||""):b.image;
     p.textContent=url?"":"No image";
     p.style.backgroundImage=url?`url("${url}")`:"";
@@ -514,19 +519,19 @@
     p.style.backgroundRepeat=b.repeat||"no-repeat";
   }
   function renderSlideList(){
-    const list=$("slideList"),slides=state.sectionBackground.slides||[];
+    const list=$("slideList"),slides=state.sectionBackground.slides||[];if(!list)return;
     if(!slides.length){list.innerHTML='<div class="left-help">No slideshow images added.</div>';return}
     list.innerHTML=slides.map((url,i)=>`<div class="slide-row"><img src="${esc(url)}" alt=""><span>${esc(url.split("/").pop()||`Slide ${i+1}`)}</span><button type="button" data-remove-slide="${i}">×</button></div>`).join("");
     list.querySelectorAll("[data-remove-slide]").forEach(btn=>btn.onclick=()=>{pushHistory();state.sectionBackground.slides.splice(num(btn.dataset.removeSlide),1);renderSlideList();updateBgPreview();applySectionBackgroundPreview();markDirty()});
   }
   async function uploadSectionBackground(){
-    const file=$("sectionBgFile").files[0];if(!file)return;
+    const input=$("sectionBgFile");const file=input?.files?.[0];if(!file)return;
     const url=await uploadBuilderFile(file);if(!url)return;
     $("backgroundType").value="image";$("sectionBgImage").value=url;
     changeSectionBackground();toast("Background uploaded");
   }
   async function uploadSlides(){
-    const files=[...$("slideFiles").files];if(!files.length)return;
+    const input=$("slideFiles");const files=[...(input?.files||[])];if(!files.length)return;
     setStatus("Uploading slides...");
     const added=[];
     for(const file of files){const url=await uploadBuilderFile(file,false);if(url)added.push(url)}

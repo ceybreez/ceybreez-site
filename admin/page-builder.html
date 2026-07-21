@@ -172,11 +172,37 @@
             </div>
           </details>
 
-          <details>
+          <details open>
             <summary>Section Size</summary>
-            <div class="control-body grid2">
-              <label>Minimum height px<input id="sectionMinHeight" type="number" min="0" placeholder="Website default"></label>
-              <label>Border radius px<input id="sectionRadius" type="number" min="0" value="0"></label>
+            <div class="control-body">
+              <label>Height mode
+                <select id="sectionHeightMode">
+                  <option value="auto">Auto height</option>
+                  <option value="min">Minimum height</option>
+                  <option value="fixed">Fixed height</option>
+                  <option value="screen">Full screen</option>
+                </select>
+              </label>
+
+              <div id="sectionHeightValueWrap" class="grid2">
+                <label>Height px
+                  <input id="sectionHeightValue" type="number" min="0" placeholder="e.g. 700">
+                </label>
+                <label>Border radius px
+                  <input id="sectionRadius" type="number" min="0" value="0">
+                </label>
+              </div>
+
+              <div class="grid2">
+                <label>Padding top px
+                  <input id="sectionPaddingTop" type="number" min="0" placeholder="Website default">
+                </label>
+                <label>Padding bottom px
+                  <input id="sectionPaddingBottom" type="number" min="0" placeholder="Website default">
+                </label>
+              </div>
+
+              <p class="field-help">Desktop, Tablet and Mobile values are saved separately.</p>
             </div>
           </details>
         </div>

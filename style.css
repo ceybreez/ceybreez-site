@@ -114,7 +114,8 @@ transform:translateY(-2px);
 /* HERO */
 
 .hero{
-  height:100vh;
+  min-height:100vh;
+  height:auto;
   background:
     linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
     url('images/cover.jpg')

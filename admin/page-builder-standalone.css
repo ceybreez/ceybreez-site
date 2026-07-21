@@ -9,3 +9,10 @@
 /* Home full-detail selection fix */
 #previewFrame{background:#fff}
 .section-item span{white-space:normal;line-height:1.25}
+
+.field-help{
+  margin:0;
+  font-size:10px;
+  line-height:1.5;
+  color:#75838d;
+}

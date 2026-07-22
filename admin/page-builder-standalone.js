@@ -1,7 +1,7 @@
 (() => {
   "use strict";
   const API_BASE="https://ceybreez-contact-api.ceybreez.workers.dev";
-  const pages={home:"../index.html",villas:"../villas.html",apartments:"../apartments.html",homestays:"../homestays.html",tours:"../tours.html",services:"../services.html",contact:"../contact.html"};
+  const pages={home:"../index.html",villas:"../villas.html",apartments:"../apartments.html",homestays:"../homestays.html",tours:"../tours.html","tour-details":"../tour-details.html",services:"../services.html",contact:"../contact.html",privacy:"../privacy.html",terms:"../terms.html","404":"../404.html"};
   const $=id=>document.getElementById(id);
   const on=(id,event,handler)=>{const el=$(id);if(el)el.addEventListener(event,handler)};
   const valueOf=(id,fallback="")=>{const el=$(id);return el?el.value:fallback};
@@ -226,6 +226,20 @@
         node.textContent=item.text||"Button";
         node.style.display="inline-block";
         node.style.textDecoration="none";
+      }else if(item.type==="divider"){
+        node=doc().createElement("div");
+        node.setAttribute("aria-hidden","true");
+        node.style.height="1px";
+        node.style.background=item.color||"#c79b52";
+      }else if(item.type==="spacer"){
+        node=doc().createElement("div");
+        node.setAttribute("aria-hidden","true");
+      }else if(item.type==="badge"){
+        node=doc().createElement("span");
+        node.textContent=item.text||"New badge";
+        node.style.display="inline-flex";
+        node.style.alignItems="center";
+        node.style.justifyContent="center";
       }else{
         node=doc().createElement(item.type==="heading"?"h2":"p");
         node.textContent=item.text||(item.type==="heading"?"New heading":"New text");
@@ -246,22 +260,23 @@
       id,
       sectionKey:state.section.sectionKey,
       type,
-      text:type==="heading"?"New heading":type==="button"?"Button":type==="text"?"New text":"",
+      text:type==="heading"?"New heading":type==="button"?"Button":type==="text"?"New text":type==="badge"?"New badge":"",
       url:type==="image"?"../images/cover.jpg":type==="button"?"#":"",
-      alt:type==="image"?"CeyBreez image":""
+      alt:type==="image"?"CeyBreez image":"",
+      color:type==="divider"?"#c79b52":""
     };
     state.custom.push(item);
     state.styles[`[data-pb-uid="custom-${id}"]`]={
       desktop:{
         x:30,y:30,
-        width:type==="image"?320:type==="button"?140:360,
-        height:type==="image"?220:type==="button"?48:type==="heading"?70:90,
-        fontSize:type==="heading"?42:type==="button"?16:18,
-        lineHeight:type==="heading"?48:type==="button"?22:28,
-        padding:type==="button"?12:0,
-        borderRadius:type==="button"?8:0,
-        backgroundColor:type==="button"?"#087f72":"",
-        color:type==="button"?"#ffffff":"",
+        width:type==="image"?320:type==="button"?140:type==="divider"?320:type==="spacer"?240:type==="badge"?130:360,
+        height:type==="image"?220:type==="button"?48:type==="heading"?70:type==="divider"?1:type==="spacer"?60:type==="badge"?38:90,
+        fontSize:type==="heading"?42:type==="button"?16:type==="badge"?12:18,
+        lineHeight:type==="heading"?48:type==="button"?22:type==="badge"?18:28,
+        padding:type==="button"?12:type==="badge"?10:0,
+        borderRadius:type==="button"?999:type==="badge"?999:0,
+        backgroundColor:type==="button"?"#087f72":type==="badge"?"#c79b52":type==="divider"?"#c79b52":"",
+        color:type==="button"?"#ffffff":type==="badge"?"#071c2c":"",
         zIndex:5
       },tablet:{},mobile:{}
     };

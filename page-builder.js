@@ -442,6 +442,9 @@ function renderVisualCustomElements(target,section,settings){
     let n;
     if(item.type==='button'){n=document.createElement('a');n.href=item.url||'#';n.textContent=item.text||'Button';n.className='cms-custom-button'}
     else if(item.type==='image'){n=document.createElement('img');n.src=item.url||'';n.alt=item.alt||'';n.className='cms-custom-image'}
+    else if(item.type==='divider'){n=document.createElement('div');n.className='cms-custom-divider';n.setAttribute('aria-hidden','true')}
+    else if(item.type==='spacer'){n=document.createElement('div');n.className='cms-custom-spacer';n.setAttribute('aria-hidden','true')}
+    else if(item.type==='badge'){n=document.createElement('span');n.textContent=item.text||'Badge';n.className='cms-custom-badge'}
     else {n=document.createElement(item.type==='heading'?'h2':'p');n.textContent=item.text||'';n.className='cms-custom-text'}
     n.dataset.pbCustom='1';n.dataset.pbId=item.id;target.style.position=target.style.position||'relative';target.appendChild(n);
   });

@@ -16,3 +16,8 @@
   line-height:1.5;
   color:#75838d;
 }
+
+/* CeyBreez Builder V2 element library */
+.element-library{grid-template-columns:repeat(2,minmax(0,1fr))}
+.element-library button{min-height:68px}
+@media(min-width:1500px){.workspace{grid-template-columns:270px minmax(520px,1fr) 350px}}

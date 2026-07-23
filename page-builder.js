@@ -79,8 +79,21 @@ function applySection(section){
   }
 
   applySectionStyles(target, section, settings);
+  applyContentOverrides(target, settings.contentOverrides || {});
   applyVisualElements(target, section, settings);
   if(key === "welcome") applyWelcomeScreenSettings(target, settings.welcomeSettings || {});
+}
+
+function applyContentOverrides(target, overrides){
+  Object.entries(overrides || {}).forEach(([selector, values]) => {
+    let el;
+    try{ el = target.querySelector(selector); }catch{ return; }
+    if(!el) return;
+    if(values.text !== undefined && el.tagName !== "IMG") el.textContent = values.text;
+    if(values.src !== undefined && el.tagName === "IMG") el.src = values.src;
+    if(values.alt !== undefined && el.tagName === "IMG") el.alt = values.alt;
+    if(values.href !== undefined && el.matches("a,button")) el.setAttribute("href", values.href);
+  });
 }
 
 function applyWelcomeScreenSettings(target,input){

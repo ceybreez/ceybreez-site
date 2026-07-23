@@ -141,11 +141,39 @@
 
   function renderSections(){
     const list=$("sectionList");if(!state.sections.length){list.innerHTML='<div class="left-help">No saved sections found for this page.</div>';state.section=null;return}
-    list.innerHTML=state.sections.sort((a,b)=>num(a.sortOrder)-num(b.sortOrder)).map((s,i)=>`<button class="section-item ${state.section&&String(state.section.id)===String(s.id)?"active":""}" data-id="${esc(s.id)}"><strong>${esc(s.title||s.sectionKey||`Section ${i+1}`)}</strong><span>${esc(s.sectionKey||s.sectionType||"")} · ${(s.isActive===0||s.active===0||s.isVisible===0)?"Hidden":"Active"}</span></button>`).join("");
-    list.querySelectorAll(".section-item").forEach(b=>b.onclick=()=>selectSection(b.dataset.id));
-    if(!state.section)selectSection(state.sections[0].id);
+    list.innerHTML=state.sections.sort((a,b)=>num(a.sortOrder)-num(b.sortOrder)).map((s,i)=>`<button class="section-item ${state.section&&String(state.section.sectionKey)===String(s.sectionKey)?"active":""}" data-section-key="${esc(s.sectionKey||"")}"><strong>${esc(s.title||s.sectionKey||`Section ${i+1}`)}</strong><span>${esc(s.sectionKey||s.sectionType||"")} · ${(s.isActive===0||s.active===0||s.isVisible===0)?"Hidden":"Active"}</span></button>`).join("");
+    list.querySelectorAll(".section-item").forEach(b=>b.onclick=()=>selectSectionByKey(b.dataset.sectionKey,{scroll:true}));
+    if(!state.section)selectSectionByKey(state.sections[0].sectionKey,{scroll:true});
   }
-  function selectSection(id){state.section=state.sections.find(s=>String(s.id)===String(id));if(!state.section)return;const settings=parseSettings(state.section.settings);state.styles=settings.elementStyles||{};state.custom=settings.customElements||[];state.contentOverrides=settings.contentOverrides||{};state.sectionBackground=normalizeSectionBackground(settings.sectionBackground||legacyBackground(state.section,settings));state.welcomeSettings=normalizeWelcomeSettings(settings.welcomeSettings||{});clearSelection();renderSections();try{fillSectionInspector()}catch(error){console.warn("Section inspector control missing:",error)}const editing=$("editingLabel");if(editing)editing.textContent=`Editing: ${state.section.title||state.section.sectionKey}`;const name=$("sectionName");if(name)name.textContent=state.section.title||state.section.sectionKey||"Section";afterFrameReady(()=>{syncPreviewSectionVisibility();markSection();applyAll();applySectionBackgroundPreview()})}
+  function selectSection(id){
+    const found=state.sections.find(s=>String(s.id)===String(id));
+    if(found)return selectSectionByKey(found.sectionKey,{scroll:true});
+  }
+  function selectSectionByKey(key,options={}){
+    const next=state.sections.find(s=>String(s.sectionKey)===String(key));
+    if(!next)return false;
+    state.section=next;
+    const settings=parseSettings(state.section.settings);
+    state.styles=settings.elementStyles||{};
+    state.custom=settings.customElements||[];
+    state.contentOverrides=settings.contentOverrides||{};
+    state.sectionBackground=normalizeSectionBackground(settings.sectionBackground||legacyBackground(state.section,settings));
+    state.welcomeSettings=normalizeWelcomeSettings(settings.welcomeSettings||{});
+    clearSelection();
+    renderSections();
+    try{fillSectionInspector()}catch(error){console.warn("Section inspector control missing:",error)}
+    const editing=$("editingLabel");if(editing)editing.textContent=`Editing: ${state.section.title||state.section.sectionKey}`;
+    const name=$("sectionName");if(name)name.textContent=state.section.title||state.section.sectionKey||"Section";
+    afterFrameReady(()=>{
+      syncPreviewSectionVisibility();markSection();applyAll();applySectionBackgroundPreview();
+      if(options.scroll){
+        const section=targetSection();
+        section?.scrollIntoView?.({behavior:"smooth",block:"center"});
+      }
+      if(typeof options.after==="function")options.after();
+    });
+    return true;
+  }
   function parseSettings(v){if(!v)return{};if(typeof v==="object")return v;try{return JSON.parse(v)}catch{return{}}}
   function loadFrame(){const f=$("previewFrame");f.onload=()=>{prepareFrame();if(state.section)markSection();applyAll()};f.src=`${pages[state.page]}?builder=${Date.now()}`}
   function afterFrameReady(fn){const f=$("previewFrame");if(f.contentDocument?.readyState==="complete")fn();else f.addEventListener("load",fn,{once:true})}
@@ -224,8 +252,22 @@
     }
     return `[data-pb-uid="${CSS.escape(el.dataset.pbUid||"")}"]`;
   }
+  function sectionKeyFromNode(node){
+    const owner=node?.closest?.("[data-section]");
+    return owner?.dataset?.section||"";
+  }
   function selectClick(e){
-    const target=resolveSelectable(e.target);
+    const raw=e.target;
+    const clickedKey=sectionKeyFromNode(raw);
+    if(clickedKey&&String(clickedKey)!==String(state.section?.sectionKey||"")){
+      e.preventDefault();e.stopPropagation();
+      selectSectionByKey(clickedKey,{after:()=>{
+        const target=resolveSelectable(raw);
+        if(target)selectElement(target);
+      }});
+      return;
+    }
+    const target=resolveSelectable(raw);
     if(!target)return;
     e.preventDefault();e.stopPropagation();selectElement(target);
   }

@@ -67,6 +67,25 @@ body{
   opacity:0.9;
 }
 
+
+.welcome-enter-button{
+  margin-top:18px;
+  padding:13px 28px;
+  border:1px solid rgba(255,255,255,.7);
+  border-radius:999px;
+  background:rgba(5,28,38,.38);
+  color:#fff;
+  font:600 13px/1 'Poppins',sans-serif;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  cursor:pointer;
+  backdrop-filter:blur(8px);
+  transition:.25s ease;
+}
+.welcome-enter-button:hover{background:#fff;color:#0d3241;transform:translateY(-2px)}
+body.welcome-disabled .welcome-screen{display:none!important}
+@media(max-width:900px){.welcome-enter-button{padding:12px 22px;font-size:12px}}
+
 /* HEADER */
 
 header{

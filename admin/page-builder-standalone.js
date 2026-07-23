@@ -209,44 +209,44 @@
     return id?state.custom.find(item=>String(item.id)===String(id)):null;
   }
 
+  function customTemplate(type,item){
+    const d=doc();
+    const wrap=d.createElement("div");
+    const make=(tag,cls,text)=>{const n=d.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n};
+    if(type==="section"){wrap.className="pb-block pb-section-block";wrap.append(make("div","pb-block-kicker","NEW SECTION"),make("h2","pb-block-title",item.text||"Your premium section"),make("p","pb-block-copy","Add content, images and calls to action here."));}
+    else if(type==="container"){wrap.className="pb-block pb-container-block";wrap.append(make("span","","Container"));}
+    else if(type==="columns"){wrap.className="pb-block pb-columns-block";["Column one","Column two","Column three"].forEach(t=>wrap.append(make("div","pb-column",t)));}
+    else if(type==="spacer"){wrap.className="pb-spacer-block";wrap.setAttribute("aria-label","Spacer");}
+    else if(type==="divider"){wrap.className="pb-divider-block";}
+    else if(type==="heading"){const n=make("h2","pb-basic-heading",item.text||"New heading");return n;}
+    else if(type==="text"){const n=make("p","pb-basic-text",item.text||"New text");return n;}
+    else if(type==="button"){const n=make("a","pb-basic-button",item.text||"Explore");n.href=item.url||"#";return n;}
+    else if(type==="icon"){const n=make("div","pb-icon-block",item.text||"✦");return n;}
+    else if(type==="badge"){const n=make("span","pb-badge-block",item.text||"CEYBREEZ");return n;}
+    else if(type==="image"){const n=d.createElement("img");n.className="pb-basic-image";n.src=item.url||"../images/cover.jpg";n.alt=item.alt||"CeyBreez image";return n;}
+    else if(type==="gallery"){wrap.className="pb-block pb-gallery-block";["../images/beach.jpg","../images/mountains.jpg","../images/nature.jpg"].forEach(src=>{const i=d.createElement("img");i.src=src;i.alt="Gallery image";wrap.append(i)});}
+    else if(type==="video"){const n=d.createElement("video");n.className="pb-video-block";n.controls=true;n.muted=true;n.poster="../images/cover.jpg";return n;}
+    else if(type==="property-card"){wrap.className="pb-block pb-card-block";const i=d.createElement("img");i.src="../images/cover.jpg";i.alt="Property";wrap.append(i,make("small","","CEYBREEZ STAYS"),make("h3","",item.text||"Luxury Property"),make("p","","Private comfort, thoughtful details and island character."),make("a","pb-card-link","View property →"));}
+    else if(type==="tour-card"){wrap.className="pb-block pb-card-block";const i=d.createElement("img");i.src="../images/train.jpg";i.alt="Tour";wrap.append(i,make("small","","CURATED JOURNEY"),make("h3","",item.text||"Sri Lanka Experience"),make("p","","A memorable route designed around culture, nature and comfort."),make("a","pb-card-link","Explore tour →"));}
+    else if(type==="service-card"){wrap.className="pb-block pb-mini-card";wrap.append(make("div","pb-icon-block","◇"),make("h3","",item.text||"Premium Service"),make("p","","Personal support before, during and after your stay."));}
+    else if(type==="review-card"){wrap.className="pb-block pb-review-card";wrap.append(make("div","pb-stars","★★★★★"),make("blockquote","",item.text||"A wonderful CeyBreez experience from start to finish."),make("strong","","Guest Review"));}
+    else if(type==="inquiry-form"||type==="booking-form"){wrap.className="pb-block pb-form-block";wrap.append(make("h3","",type==="booking-form"?"Book your stay":"Send an inquiry"));["Name","Email","Phone"].forEach(x=>{const i=d.createElement("input");i.placeholder=x;wrap.append(i)});if(type==="booking-form"){["Check-in","Check-out"].forEach(x=>{const i=d.createElement("input");i.placeholder=x;wrap.append(i)})}const b=make("button","",type==="booking-form"?"Check availability":"Send inquiry");b.type="button";wrap.append(b);}
+    else if(type==="map"){wrap.className="pb-block pb-map-block";wrap.append(make("div","pb-map-pin","⌖"),make("strong","","CeyBreez Location"),make("span","","Connect Google Maps URL in the element settings."));}
+    else {wrap.className="pb-block";wrap.textContent=item.text||type;}
+    return wrap;
+  }
+
   function renderEditorCustomElements(){
     const section=targetSection();
     if(!section)return;
     section.querySelectorAll('[data-pb-editor-custom="1"]').forEach(node=>node.remove());
     (state.custom||[]).forEach(item=>{
       if(item.sectionKey!==state.section?.sectionKey)return;
-      let node;
-      if(item.type==="image"){
-        node=doc().createElement("img");
-        node.src=item.url||"../images/cover.jpg";
-        node.alt=item.alt||"Custom image";
-      }else if(item.type==="button"){
-        node=doc().createElement("a");
-        node.href=item.url||"#";
-        node.textContent=item.text||"Button";
-        node.style.display="inline-block";
-        node.style.textDecoration="none";
-      }else if(item.type==="divider"){
-        node=doc().createElement("div");
-        node.setAttribute("aria-hidden","true");
-        node.style.height="1px";
-        node.style.background=item.color||"#c79b52";
-      }else if(item.type==="spacer"){
-        node=doc().createElement("div");
-        node.setAttribute("aria-hidden","true");
-      }else if(item.type==="badge"){
-        node=doc().createElement("span");
-        node.textContent=item.text||"New badge";
-        node.style.display="inline-flex";
-        node.style.alignItems="center";
-        node.style.justifyContent="center";
-      }else{
-        node=doc().createElement(item.type==="heading"?"h2":"p");
-        node.textContent=item.text||(item.type==="heading"?"New heading":"New text");
-      }
+      const node=customTemplate(item.type,item);
       node.dataset.pbEditorCustom="1";
       node.dataset.pbId=item.id;
       node.dataset.pbUid=`custom-${item.id}`;
+      node.dataset.pbType=item.type;
       node.classList.add("pb-custom");
       section.appendChild(node);
     });
@@ -260,23 +260,22 @@
       id,
       sectionKey:state.section.sectionKey,
       type,
-      text:type==="heading"?"New heading":type==="button"?"Button":type==="text"?"New text":type==="badge"?"New badge":"",
+      text:type==="heading"?"New heading":type==="button"?"Explore":type==="text"?"New text":type==="badge"?"CEYBREEZ":type==="icon"?"✦":"",
       url:type==="image"?"../images/cover.jpg":type==="button"?"#":"",
-      alt:type==="image"?"CeyBreez image":"",
-      color:type==="divider"?"#c79b52":""
+      alt:type==="image"?"CeyBreez image":""
     };
     state.custom.push(item);
     state.styles[`[data-pb-uid="custom-${id}"]`]={
       desktop:{
-        x:30,y:30,
-        width:type==="image"?320:type==="button"?140:type==="divider"?320:type==="spacer"?240:type==="badge"?130:360,
-        height:type==="image"?220:type==="button"?48:type==="heading"?70:type==="divider"?1:type==="spacer"?60:type==="badge"?38:90,
-        fontSize:type==="heading"?42:type==="button"?16:type==="badge"?12:18,
-        lineHeight:type==="heading"?48:type==="button"?22:type==="badge"?18:28,
-        padding:type==="button"?12:type==="badge"?10:0,
-        borderRadius:type==="button"?999:type==="badge"?999:0,
-        backgroundColor:type==="button"?"#087f72":type==="badge"?"#c79b52":type==="divider"?"#c79b52":"",
-        color:type==="button"?"#ffffff":type==="badge"?"#071c2c":"",
+        positioned:true,x:30,y:30,
+        width:["section","container","columns","gallery","inquiry-form","booking-form","map"].includes(type)?760:["property-card","tour-card"].includes(type)?340:type==="image"?320:type==="button"?150:type==="divider"?420:type==="spacer"?300:360,
+        height:type==="section"?280:type==="container"?120:type==="columns"?180:type==="gallery"?230:["inquiry-form","booking-form"].includes(type)?360:type==="map"?260:["property-card","tour-card"].includes(type)?430:type==="service-card"?230:type==="review-card"?220:type==="image"?220:type==="button"?48:type==="divider"?8:type==="spacer"?80:type==="heading"?70:90,
+        fontSize:type==="heading"?42:type==="button"?16:18,
+        lineHeight:type==="heading"?48:type==="button"?22:28,
+        padding:type==="button"?12:0,
+        borderRadius:type==="button"?8:["property-card","tour-card","service-card","review-card","inquiry-form","booking-form","map"].includes(type)?18:0,
+        backgroundColor:type==="button"?"#087f72":"",
+        color:type==="button"?"#ffffff":"",
         zIndex:5
       },tablet:{},mobile:{}
     };

@@ -1,15 +1,24 @@
 const CEYBREEZ_API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   document.body.classList.add("cms-ready");
   const builderMode = new URLSearchParams(window.location.search).has("builder");
+  const page = document.body.dataset.page || "home";
+
+  // Builder preview must render the exact same saved API content as the live page.
+  // The editor waits for this event before attaching selection/inspector handlers.
   if(builderMode){
-    document.body.classList.add("pb-runtime-paused");
-    window.dispatchEvent(new CustomEvent("ceybreez:builder-frame-ready"));
+    document.body.classList.add("pb-runtime-builder");
+    try{
+      await loadCeyBreezSections(page);
+    }finally{
+      window.CEYBREEZ_BUILDER_DATA_READY = true;
+      window.dispatchEvent(new CustomEvent("ceybreez:builder-frame-ready"));
+    }
     return;
   }
-  const page = document.body.dataset.page || "home";
-  loadCeyBreezSections(page);
+
+  await loadCeyBreezSections(page);
 });
 
 async function loadCeyBreezSections(page){

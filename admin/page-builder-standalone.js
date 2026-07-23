@@ -66,6 +66,7 @@
       button.onclick=()=>setMobilePanel(button.dataset.mobilePanel);
     });
     ["widthValue","heightValue","xValue","yValue","rotateValue","opacityValue","fontSize","lineHeight","radiusValue","paddingValue","zValue"].forEach(id=>$(id).addEventListener("input",()=>changeNumeric(id)));
+    on("autoHeightToggle","change",toggleAutoHeight);
     ["fontFamily","shadowValue"].forEach(id=>$(id).onchange=()=>changeSimple(id));
     ["textColor","bgColor"].forEach(id=>$(id).oninput=()=>changeSimple(id));
     $("textValue").oninput=()=>{if(!state.selected)return;state.selected.textContent=$("textValue").value;syncSelectedCustom();markDirty()};
@@ -169,13 +170,54 @@
   function clearSelection(){try{doc()?.querySelectorAll(".pb-selected").forEach(n=>n.classList.remove("pb-selected"))}catch{}state.selected=null;state.selector="";$("emptyInspector").classList.remove("hidden");$("elementInspector").classList.add("hidden")}
   function record(create=true){if(!state.selector)return null;let all=state.styles[state.selector];if(!all&&create)all=state.styles[state.selector]={desktop:{},tablet:{},mobile:{}};if(!all)return null;if(!all[state.device]&&create)all[state.device]={};return all[state.device]}
   function mergedRecord(){const all=state.styles[state.selector]||{};return state.device==="desktop"?{...(all.desktop||{})}:{...(all.desktop||{}),...(all[state.device]||{})}}
-  function fillInspector(){if(!state.selected)return;const r=mergedRecord();const rect=state.selected.getBoundingClientRect();$("selectedName").textContent=niceName(state.selected);const isImg=state.selected.tagName==="IMG";$("imageControl").classList.toggle("hidden",!isImg);$("textControl").classList.toggle("hidden",isImg);if(isImg)$("imageValue").value=state.selected.src||"";else $("textValue").value=state.selected.textContent||"";const vals={widthValue:r.width??Math.round(rect.width),heightValue:r.height??Math.round(rect.height),xValue:r.x??0,yValue:r.y??0,rotateValue:r.rotate??0,opacityValue:r.opacity??1,fontSize:r.fontSize??(parseFloat(getComputedStyle(state.selected).fontSize)||16),lineHeight:r.lineHeight??(parseFloat(getComputedStyle(state.selected).lineHeight)||20),radiusValue:r.borderRadius??(parseFloat(getComputedStyle(state.selected).borderRadius)||0),paddingValue:r.padding??(parseFloat(getComputedStyle(state.selected).padding)||0),zValue:r.zIndex??0};Object.entries(vals).forEach(([id,v])=>$(id).value=Math.round(v*100)/100);$("fontFamily").value=r.fontFamily||"";$("shadowValue").value=r.boxShadow||"";$("textColor").value=rgbHex(r.color||getComputedStyle(state.selected).color,"#222222");$("bgColor").value=rgbHex(r.backgroundColor||getComputedStyle(state.selected).backgroundColor,"#ffffff")}
+  function fillInspector(){if(!state.selected)return;const r=mergedRecord();const rect=state.selected.getBoundingClientRect();$("selectedName").textContent=niceName(state.selected);const isImg=state.selected.tagName==="IMG";$("imageControl").classList.toggle("hidden",!isImg);$("textControl").classList.toggle("hidden",isImg);if(isImg)$("imageValue").value=state.selected.src||"";else $("textValue").value=state.selected.textContent||"";const vals={widthValue:r.width??Math.round(rect.width),heightValue:r.height??Math.round(rect.height),xValue:r.x??0,yValue:r.y??0,rotateValue:r.rotate??0,opacityValue:r.opacity??1,fontSize:r.fontSize??(parseFloat(getComputedStyle(state.selected).fontSize)||16),lineHeight:r.lineHeight??(parseFloat(getComputedStyle(state.selected).lineHeight)||20),radiusValue:r.borderRadius??(parseFloat(getComputedStyle(state.selected).borderRadius)||0),paddingValue:r.padding??(parseFloat(getComputedStyle(state.selected).padding)||0),zValue:r.zIndex??0};Object.entries(vals).forEach(([id,v])=>$(id).value=Math.round(v*100)/100);const auto=$("autoHeightToggle");if(auto)auto.checked=r.autoHeight!==false;$("fontFamily").value=r.fontFamily||"";$("shadowValue").value=r.boxShadow||"";$("textColor").value=rgbHex(r.color||getComputedStyle(state.selected).color,"#222222");$("bgColor").value=rgbHex(r.backgroundColor||getComputedStyle(state.selected).backgroundColor,"#ffffff")}
   function rgbHex(v,f){if(!v||v==="transparent"||v.includes("rgba(0, 0, 0, 0)"))return f;if(v.startsWith("#"))return v.slice(0,7);const m=v.match(/\d+/g);if(!m)return f;return"#"+m.slice(0,3).map(x=>(+x).toString(16).padStart(2,"0")).join("")}
   function pushHistory(){state.history.push(JSON.stringify(state.styles));if(state.history.length>40)state.history.shift();state.future=[]}
   function undo(){if(!state.history.length)return;state.future.push(JSON.stringify(state.styles));state.styles=JSON.parse(state.history.pop());applyAll();fillInspector();markDirty()}
   function redo(){if(!state.future.length)return;state.history.push(JSON.stringify(state.styles));state.styles=JSON.parse(state.future.pop());applyAll();fillInspector();markDirty()}
   function markDirty(){state.dirty=true;setStatus("Unsaved")}
-  function changeNumeric(id){if(!state.selected)return;pushHistory();const map={widthValue:"width",heightValue:"height",xValue:"x",yValue:"y",rotateValue:"rotate",opacityValue:"opacity",fontSize:"fontSize",lineHeight:"lineHeight",radiusValue:"borderRadius",paddingValue:"padding",zValue:"zIndex"};record()[map[id]]=num($(id).value);applySelected();markDirty()}
+  function currentAspectRatio(){
+    if(!state.selected)return 1;
+    const r=mergedRecord();
+    if(num(r.aspectRatio)>0)return num(r.aspectRatio);
+    if(state.selected.tagName==="IMG"&&state.selected.naturalWidth&&state.selected.naturalHeight)return state.selected.naturalWidth/state.selected.naturalHeight;
+    const rect=state.selected.getBoundingClientRect();
+    const w=num(r.width,rect.width),h=num(r.height,rect.height);
+    return w>0&&h>0?w/h:1;
+  }
+  function toggleAutoHeight(){
+    if(!state.selected)return;
+    pushHistory();
+    const r=record();
+    r.autoHeight=$("autoHeightToggle").checked;
+    if(r.autoHeight)r.aspectRatio=currentAspectRatio();
+    markDirty();
+  }
+  function changeNumeric(id){
+    if(!state.selected)return;
+    pushHistory();
+    const map={widthValue:"width",heightValue:"height",xValue:"x",yValue:"y",rotateValue:"rotate",opacityValue:"opacity",fontSize:"fontSize",lineHeight:"lineHeight",radiusValue:"borderRadius",paddingValue:"padding",zValue:"zIndex"};
+    const r=record();
+    const value=num($(id).value);
+    if(id==="widthValue"){
+      const ratio=currentAspectRatio();
+      r.width=value;
+      if($("autoHeightToggle")?.checked){
+        r.autoHeight=true;
+        r.aspectRatio=ratio;
+        r.height=Math.max(1,Math.round((value/Math.max(.0001,ratio))*100)/100);
+        $("heightValue").value=r.height;
+      }
+    }else if(id==="heightValue"){
+      r.height=value;
+      const width=num(r.width,$("widthValue").value);
+      if(width>0&&value>0)r.aspectRatio=width/value;
+    }else{
+      r[map[id]]=value;
+    }
+    applySelected();
+    markDirty();
+  }
   function changeSimple(id){if(!state.selected)return;pushHistory();const map={fontFamily:"fontFamily",shadowValue:"boxShadow",textColor:"color",bgColor:"backgroundColor"};record()[map[id]]=$(id).value;applySelected();markDirty()}
   function toggleFormat(k){if(!state.selected)return;pushHistory();const r=record();if(k==="bold")r.fontWeight=r.fontWeight==="700"?"":"700";if(k==="italic")r.fontStyle=r.fontStyle==="italic"?"":"italic";if(k==="underline")r.textDecoration=r.textDecoration==="underline"?"":"underline";applySelected();markDirty()}
   function setAlign(a){if(!state.selected)return;pushHistory();record().textAlign=a;applySelected();markDirty()}

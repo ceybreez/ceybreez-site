@@ -401,7 +401,7 @@ function applyVisualRecord(el,rec){
   el.style.zIndex=rec.zIndex!==undefined?String(rec.zIndex):'';
   el.style.transformOrigin='center center';
 
-  if(rec.positioned&&isCustom){
+  if((rec.positioned||isCustom)&&isCustom){
     const parent=el.parentElement;
     if(parent&&getComputedStyle(parent).position==='static')parent.style.position='relative';
     el.style.position='absolute';
@@ -435,18 +435,44 @@ function applyVisualRecord(el,rec){
   el.style.height=rec.height!==undefined&&rec.height!==''?`${Number(rec.height)}px`:'';
   el.style.transform=`translate(${Number(rec.x)||0}px, ${Number(rec.y)||0}px) scale(${rec.scale||1}) rotate(${Number(rec.rotate)||0}deg)`;
 }
+function pbCreateCustomElement(item){
+  const wrap=document.createElement('div');
+  const make=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n};
+  const type=item.type;
+  if(type==='section'){wrap.className='pb-block pb-section-block';wrap.append(make('div','pb-block-kicker','NEW SECTION'),make('h2','pb-block-title',item.text||'Your premium section'),make('p','pb-block-copy','Add content, images and calls to action here.'))}
+  else if(type==='container'){wrap.className='pb-block pb-container-block';wrap.append(make('span','','Container'))}
+  else if(type==='columns'){wrap.className='pb-block pb-columns-block';['Column one','Column two','Column three'].forEach(t=>wrap.append(make('div','pb-column',t)))}
+  else if(type==='spacer'){wrap.className='pb-spacer-block'}
+  else if(type==='divider'){wrap.className='pb-divider-block'}
+  else if(type==='heading')return make('h2','pb-basic-heading',item.text||'New heading');
+  else if(type==='text')return make('p','pb-basic-text',item.text||'New text');
+  else if(type==='button'){const n=make('a','pb-basic-button',item.text||'Explore');n.href=item.url||'#';return n}
+  else if(type==='icon')return make('div','pb-icon-block',item.text||'✦');
+  else if(type==='badge')return make('span','pb-badge-block',item.text||'CEYBREEZ');
+  else if(type==='image'){const n=document.createElement('img');n.className='pb-basic-image';n.src=item.url||'images/cover.jpg';n.alt=item.alt||'CeyBreez image';return n}
+  else if(type==='gallery'){wrap.className='pb-block pb-gallery-block';['images/beach.jpg','images/mountains.jpg','images/nature.jpg'].forEach(src=>{const i=document.createElement('img');i.src=src;i.alt='Gallery image';wrap.append(i)})}
+  else if(type==='video'){const n=document.createElement('video');n.className='pb-video-block';n.controls=true;n.muted=true;n.poster='images/cover.jpg';return n}
+  else if(type==='property-card'||type==='tour-card'){wrap.className='pb-block pb-card-block';const tour=type==='tour-card';const i=document.createElement('img');i.src=tour?'images/train.jpg':'images/cover.jpg';i.alt=tour?'Tour':'Property';wrap.append(i,make('small','',tour?'CURATED JOURNEY':'CEYBREEZ STAYS'),make('h3','',item.text||(tour?'Sri Lanka Experience':'Luxury Property')),make('p','',tour?'A memorable route designed around culture, nature and comfort.':'Private comfort, thoughtful details and island character.'),make('a','pb-card-link',tour?'Explore tour →':'View property →'))}
+  else if(type==='service-card'){wrap.className='pb-block pb-mini-card';wrap.append(make('div','pb-icon-block','◇'),make('h3','',item.text||'Premium Service'),make('p','','Personal support before, during and after your stay.'))}
+  else if(type==='review-card'){wrap.className='pb-block pb-review-card';wrap.append(make('div','pb-stars','★★★★★'),make('blockquote','',item.text||'A wonderful CeyBreez experience from start to finish.'),make('strong','','Guest Review'))}
+  else if(type==='inquiry-form'||type==='booking-form'){wrap.className='pb-block pb-form-block';wrap.append(make('h3','',type==='booking-form'?'Book your stay':'Send an inquiry'));['Name','Email','Phone'].forEach(x=>{const i=document.createElement('input');i.placeholder=x;wrap.append(i)});if(type==='booking-form')['Check-in','Check-out'].forEach(x=>{const i=document.createElement('input');i.placeholder=x;wrap.append(i)});const b=make('button','',type==='booking-form'?'Check availability':'Send inquiry');b.type='button';wrap.append(b)}
+  else if(type==='map'){wrap.className='pb-block pb-map-block';wrap.append(make('div','pb-map-pin','⌖'),make('strong','','CeyBreez Location'),make('span','','Connect Google Maps URL in the element settings.'))}
+  else {wrap.className='pb-block';wrap.textContent=item.text||type}
+  return wrap;
+}
+function ensurePbV2Styles(){
+  if(document.getElementById('ceybreez-pb-v2-styles'))return;
+  const st=document.createElement('style');st.id='ceybreez-pb-v2-styles';st.textContent=`.pb-block{box-sizing:border-box;font-family:Inter,Arial,sans-serif}.pb-section-block{padding:38px;background:#f6f1e8;border:1px solid #dfd3bc}.pb-block-kicker{font-size:11px;letter-spacing:.18em;color:#9a741d}.pb-block-title{font-family:'Cormorant Garamond',serif;font-size:42px;margin:7px 0}.pb-block-copy{max-width:560px;line-height:1.7}.pb-container-block{border:2px dashed rgba(8,127,114,.45);display:grid;place-items:center;background:rgba(255,255,255,.7)}.pb-columns-block{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.pb-column{padding:30px 18px;background:#f7f7f4;border:1px solid #e4e4df;text-align:center}.pb-spacer-block{border:1px dashed rgba(8,127,114,.25)}.pb-divider-block{height:2px;background:linear-gradient(90deg,transparent,#b58a2a,transparent)}.pb-basic-button{display:inline-grid;place-items:center;text-decoration:none}.pb-icon-block{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:#0d3241;color:#d5ad50;font-size:24px}.pb-badge-block{display:inline-block;padding:8px 13px;border:1px solid #b58a2a;border-radius:999px;font-size:11px;letter-spacing:.16em}.pb-basic-image,.pb-card-block img,.pb-gallery-block img{width:100%;height:100%;object-fit:cover}.pb-gallery-block{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}.pb-video-block{background:#0b2531;width:100%;height:100%}.pb-card-block{overflow:hidden;background:#fff;box-shadow:0 18px 45px rgba(6,32,42,.15);padding-bottom:22px}.pb-card-block img{height:230px}.pb-card-block small,.pb-card-block h3,.pb-card-block p,.pb-card-link{display:block;margin-left:22px;margin-right:22px}.pb-card-block small{margin-top:18px;letter-spacing:.14em;color:#9a741d}.pb-card-block h3{font-family:'Cormorant Garamond',serif;font-size:30px;margin-top:7px;margin-bottom:7px}.pb-card-link{color:#087f72;text-decoration:none;font-weight:700}.pb-mini-card,.pb-review-card,.pb-form-block,.pb-map-block{padding:28px;background:#fff;box-shadow:0 14px 40px rgba(6,32,42,.12)}.pb-stars{color:#c7952b;letter-spacing:.12em}.pb-review-card blockquote{font-family:'Cormorant Garamond',serif;font-size:24px;line-height:1.45;margin:18px 0}.pb-form-block{display:grid;grid-template-columns:1fr 1fr;gap:12px}.pb-form-block h3{grid-column:1/-1}.pb-form-block input{padding:12px;border:1px solid #d8dedf}.pb-form-block button{grid-column:1/-1;padding:13px;background:#087f72;color:#fff;border:0}.pb-map-block{display:grid;place-items:center;text-align:center;background:linear-gradient(135deg,#edf4f1,#f7f0e2)}.pb-map-pin{font-size:60px;color:#087f72}@media(max-width:700px){.pb-columns-block,.pb-gallery-block,.pb-form-block{grid-template-columns:1fr}}`;
+  document.head.appendChild(st);
+}
 function renderVisualCustomElements(target,section,settings){
+  ensurePbV2Styles();
   target.querySelectorAll('[data-pb-custom="1"]').forEach(n=>n.remove());
   (settings.customElements||[]).forEach(item=>{
     if(item.sectionKey!==section.sectionKey)return;
-    let n;
-    if(item.type==='button'){n=document.createElement('a');n.href=item.url||'#';n.textContent=item.text||'Button';n.className='cms-custom-button'}
-    else if(item.type==='image'){n=document.createElement('img');n.src=item.url||'';n.alt=item.alt||'';n.className='cms-custom-image'}
-    else if(item.type==='divider'){n=document.createElement('div');n.className='cms-custom-divider';n.setAttribute('aria-hidden','true')}
-    else if(item.type==='spacer'){n=document.createElement('div');n.className='cms-custom-spacer';n.setAttribute('aria-hidden','true')}
-    else if(item.type==='badge'){n=document.createElement('span');n.textContent=item.text||'Badge';n.className='cms-custom-badge'}
-    else {n=document.createElement(item.type==='heading'?'h2':'p');n.textContent=item.text||'';n.className='cms-custom-text'}
-    n.dataset.pbCustom='1';n.dataset.pbId=item.id;target.style.position=target.style.position||'relative';target.appendChild(n);
+    const n=pbCreateCustomElement(item);
+    n.dataset.pbCustom='1';n.dataset.pbId=item.id;n.dataset.pbType=item.type;
+    target.style.position=target.style.position||'relative';target.appendChild(n);
   });
 }
 

@@ -2,6 +2,12 @@ const CEYBREEZ_API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 
 document.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("cms-ready");
+  const builderMode = new URLSearchParams(window.location.search).has("builder");
+  if(builderMode){
+    document.body.classList.add("pb-runtime-paused");
+    window.dispatchEvent(new CustomEvent("ceybreez:builder-frame-ready"));
+    return;
+  }
   const page = document.body.dataset.page || "home";
   loadCeyBreezSections(page);
 });
@@ -441,20 +447,26 @@ function applyVisualRecord(el,rec){
     const parent=el.parentElement;
     if(parent&&getComputedStyle(parent).position==='static')parent.style.position='relative';
     const parentWidth=Math.max(1,parent?.clientWidth||1200);
-    const xPercent=rec.xPercent!==undefined?Number(rec.xPercent):(Number(rec.x)||0)/parentWidth*100;
-    const widthPercent=rec.widthPercent!==undefined?Number(rec.widthPercent):(rec.width!==undefined&&rec.width!==''?Number(rec.width)/parentWidth*100:null);
+    const device=currentCmsDevice();
+    const fallbackDesignWidth=device==='mobile'?390:(device==='tablet'?768:1200);
+    const designWidth=Math.max(1,Number(rec.designWidth)||fallbackDesignWidth);
+    const scale=parentWidth/designWidth;
+    const xPercent=rec.xPercent!==undefined?Number(rec.xPercent):(Number(rec.x)||0)/designWidth*100;
+    const widthPercent=rec.widthPercent!==undefined?Number(rec.widthPercent):(rec.width!==undefined&&rec.width!==''?Number(rec.width)/designWidth*100:null);
+    const clampedX=Math.max(0,Math.min(100,xPercent));
+    el.style.boxSizing='border-box';
     el.style.position='absolute';
-    el.style.left=`${xPercent}%`;
-    el.style.top=`${Number(rec.y)||0}px`;
-    el.style.width=widthPercent!==null?`${widthPercent}%`:'';
+    el.style.left=`${clampedX}%`;
+    el.style.top=`${Math.max(0,(Number(rec.y)||0)*scale)}px`;
+    el.style.width=widthPercent!==null?`${Math.max(1,Math.min(100-clampedX,widthPercent))}%`:'';
     if(rec.autoHeight!==false){
       el.style.height='auto';
       el.style.aspectRatio=Number(rec.aspectRatio)>0?String(Number(rec.aspectRatio)):'';
     }else{
-      el.style.height=rec.height!==undefined&&rec.height!==''?`${Number(rec.height)}px`:'';
+      el.style.height=rec.height!==undefined&&rec.height!==''?`${Math.max(1,Number(rec.height)*scale)}px`:'';
       el.style.aspectRatio='';
     }
-    el.style.maxWidth='100%';
+    el.style.maxWidth=`calc(100% - ${clampedX}%)`;
     el.style.margin='0';
     el.style.transform=`rotate(${Number(rec.rotate)||0}deg)`;
     return;
@@ -548,6 +560,33 @@ function pbAssignStableIds(section){
   });
 }
 
+function pbAutoFitSection(target,settings){
+  if(!target)return;
+  const bg=settings?.sectionBackground||{};
+  const device=currentCmsDevice();
+  const deviceHeight=bg.deviceHeights?.[device]||{};
+  const mode=deviceHeight.mode||bg.heightMode||'auto';
+  if(mode==='fixed'||mode==='screen')return;
+  const fit=()=>{
+    const top=target.getBoundingClientRect().top;
+    let bottom=0;
+    target.querySelectorAll('[data-pb-custom="1"]').forEach(el=>{
+      if(getComputedStyle(el).display==='none')return;
+      const r=el.getBoundingClientRect();
+      bottom=Math.max(bottom,r.bottom-top);
+    });
+    if(bottom>0){
+      const pad=Math.max(24,parseFloat(getComputedStyle(target).paddingBottom)||0);
+      target.style.minHeight=`${Math.ceil(bottom+pad)}px`;
+      target.style.overflow='visible';
+    }
+  };
+  requestAnimationFrame(()=>requestAnimationFrame(fit));
+  target.querySelectorAll('[data-pb-custom="1"] img').forEach(img=>{
+    if(!img.complete)img.addEventListener('load',fit,{once:true});
+  });
+}
+
 function applyVisualElements(target,section,settings){
   renderVisualCustomElements(target,section,settings);
   pbAssignStableIds(target);
@@ -557,9 +596,11 @@ function applyVisualElements(target,section,settings){
     const rec=mergeDeviceStyles(byDevice);
     nodes.forEach(n=>applyVisualRecord(n,rec));
   });
+  pbAutoFitSection(target,settings);
 }
 let cmsResizeTimer;
 window.addEventListener('resize',()=>{
+  if(new URLSearchParams(window.location.search).has('builder')) return;
   clearTimeout(cmsResizeTimer);
   cmsResizeTimer=setTimeout(()=>{
     const page=document.body.dataset.page||'home';

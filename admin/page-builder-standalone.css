@@ -28,14 +28,10 @@
 
 .toggle-row{display:flex!important;flex-direction:row!important;align-items:center!important;gap:9px!important;padding:9px 10px;border:1px solid #dce4e8;border-radius:7px;background:#f7fafb}.toggle-row input{width:16px!important;height:16px!important;accent-color:#087f72}.toggle-row span{font-size:11px;color:#42525c}
 
-
-/* Critical left-section interaction isolation */
-.workspace{isolation:isolate}
-.leftbar{position:relative!important;z-index:100!important;pointer-events:auto!important;isolation:isolate}
-.leftbar::before,.leftbar::after{pointer-events:none!important}
-#sectionList,.section-list{position:relative!important;z-index:101!important;pointer-events:auto!important}
-#sectionList .section-item,.section-list .section-item{position:relative!important;z-index:102!important;pointer-events:auto!important;touch-action:manipulation!important;user-select:none}
-#sectionList .section-item *,.section-list .section-item *{pointer-events:none!important}
-.stage{position:relative;z-index:1}
-.inspector{position:relative;z-index:2}
-@media (min-width:761px){.leftbar,.stage,.inspector{inset:auto!important}.leftbar{display:block!important}.stage{display:grid!important}.inspector{display:block!important}}
+/* Builder section navigator: keep it as an independent clickable layer. */
+.leftbar{position:relative;z-index:80;isolation:isolate;pointer-events:auto!important}
+#sectionList{position:relative;z-index:82;pointer-events:auto!important}
+#sectionList .section-item{position:relative;z-index:83;pointer-events:auto!important;touch-action:manipulation;user-select:none}
+#sectionList .section-item *{pointer-events:none!important}
+.stage,.inspector{isolation:isolate}
+@media (min-width:761px){.workspace{position:relative}.leftbar{transform:translateZ(0)}}

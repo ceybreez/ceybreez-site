@@ -23,24 +23,6 @@
     bind(); await loadSections(); loadFrame();
   }
   function bind(){
-    const sectionList=$("sectionList");
-    if(sectionList&&!sectionList.dataset.bound){
-      sectionList.dataset.bound="1";
-      const chooseSection=(event)=>{
-        const button=event.target.closest?.("button.section-item[data-section-key]");
-        if(!button||!sectionList.contains(button))return;
-        event.preventDefault();
-        event.stopPropagation();
-        const key=button.dataset.sectionKey;
-        if(key)selectSectionByKey(key,{scroll:true,skipListRender:true});
-      };
-      sectionList.addEventListener("pointerdown",chooseSection,true);
-      sectionList.addEventListener("click",chooseSection,true);
-      sectionList.addEventListener("keydown",event=>{
-        if(event.key!=="Enter"&&event.key!==" ")return;
-        chooseSection(event);
-      },true);
-    }
     $("pageSelect").onchange=async e=>{state.page=e.target.value;clearSelection();await loadSections();loadFrame()};
     document.querySelectorAll("[data-device]").forEach(b=>b.onclick=()=>setDevice(b.dataset.device));
     $("refreshBtn").onclick=async()=>{await loadSections();loadFrame()};
@@ -157,23 +139,11 @@
     renderSections();
   }
 
-  function updateSectionActiveState(){
-    const list=$("sectionList");
-    if(!list)return;
-    list.querySelectorAll(".section-item").forEach(button=>{
-      button.classList.toggle("active",String(button.dataset.sectionKey||"")===String(state.section?.sectionKey||""));
-      button.setAttribute("aria-pressed",button.classList.contains("active")?"true":"false");
-    });
-  }
   function renderSections(){
-    const list=$("sectionList");
-    if(!list)return;
-    if(!state.sections.length){list.innerHTML='<div class="left-help">No saved sections found for this page.</div>';state.section=null;return}
-    list.innerHTML=state.sections.sort((a,b)=>num(a.sortOrder)-num(b.sortOrder)).map((s,i)=>`<button type="button" class="section-item ${state.section&&String(state.section.sectionKey)===String(s.sectionKey)?"active":""}" data-section-key="${esc(s.sectionKey||"")}" aria-pressed="${state.section&&String(state.section.sectionKey)===String(s.sectionKey)?"true":"false"}"><strong>${esc(s.title||s.sectionKey||`Section ${i+1}`)}</strong><span>${esc(s.sectionKey||s.sectionType||"")} · ${(s.isActive===0||s.active===0||s.isVisible===0)?"Hidden":"Active"}</span></button>`).join("");
-    if(!state.section){
-      const first=state.sections[0];
-      if(first)selectSectionByKey(first.sectionKey,{scroll:true,skipListRender:true});
-    }else updateSectionActiveState();
+    const list=$("sectionList");if(!state.sections.length){list.innerHTML='<div class="left-help">No saved sections found for this page.</div>';state.section=null;return}
+    list.innerHTML=state.sections.sort((a,b)=>num(a.sortOrder)-num(b.sortOrder)).map((s,i)=>`<button class="section-item ${state.section&&String(state.section.sectionKey)===String(s.sectionKey)?"active":""}" data-section-key="${esc(s.sectionKey||"")}"><strong>${esc(s.title||s.sectionKey||`Section ${i+1}`)}</strong><span>${esc(s.sectionKey||s.sectionType||"")} · ${(s.isActive===0||s.active===0||s.isVisible===0)?"Hidden":"Active"}</span></button>`).join("");
+    list.querySelectorAll(".section-item").forEach(b=>b.onclick=()=>selectSectionByKey(b.dataset.sectionKey,{scroll:true}));
+    if(!state.section)selectSectionByKey(state.sections[0].sectionKey,{scroll:true});
   }
   function selectSection(id){
     const found=state.sections.find(s=>String(s.id)===String(id));
@@ -190,8 +160,7 @@
     state.sectionBackground=normalizeSectionBackground(settings.sectionBackground||legacyBackground(state.section,settings));
     state.welcomeSettings=normalizeWelcomeSettings(settings.welcomeSettings||{});
     clearSelection();
-    if(options.skipListRender) updateSectionActiveState();
-    else updateSectionActiveState();
+    renderSections();
     try{fillSectionInspector()}catch(error){console.warn("Section inspector control missing:",error)}
     const editing=$("editingLabel");if(editing)editing.textContent=`Editing: ${state.section.title||state.section.sectionKey}`;
     const name=$("sectionName");if(name)name.textContent=state.section.title||state.section.sectionKey||"Section";
@@ -206,7 +175,29 @@
     return true;
   }
   function parseSettings(v){if(!v)return{};if(typeof v==="object")return v;try{return JSON.parse(v)}catch{return{}}}
-  function loadFrame(){const f=$("previewFrame");f.onload=()=>{prepareFrame();if(state.section)markSection();applyAll()};f.src=`${pages[state.page]}?builder=${Date.now()}`}
+  function loadFrame(){
+    const f=$("previewFrame");
+    f.onload=()=>{
+      const w=f.contentWindow;
+      let prepared=false;
+      const finish=()=>{
+        if(prepared)return;
+        prepared=true;
+        prepareFrame();
+        mergeStaticSectionsFromFrame();
+        if(state.section)markSection();
+        applyAll();
+      };
+      if(w?.CEYBREEZ_BUILDER_DATA_READY){
+        finish();
+      }else{
+        w?.addEventListener("ceybreez:builder-frame-ready",finish,{once:true});
+        // Fallback only for pages that do not include page-builder.js.
+        setTimeout(finish,2500);
+      }
+    };
+    f.src=`${pages[state.page]}?builder=${Date.now()}`;
+  }
   function afterFrameReady(fn){const f=$("previewFrame");if(f.contentDocument?.readyState==="complete")fn();else f.addEventListener("load",fn,{once:true})}
   function doc(){return $("previewFrame").contentDocument}
   function targetSection(){const d=doc();if(!d||!state.section)return null;return d.querySelector(`[data-section="${CSS.escape(state.section.sectionKey||"")}"]`)||[...d.querySelectorAll("section,header,main,footer")][num(state.section.sortOrder,1)-1]||d.body}

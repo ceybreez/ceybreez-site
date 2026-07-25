@@ -21,3 +21,11 @@
 .element-library{grid-template-columns:repeat(2,minmax(0,1fr))}
 .element-library button{min-height:68px}
 @media(min-width:1500px){.workspace{grid-template-columns:270px minmax(520px,1fr) 350px}}
+
+/* Builder V4 interaction and responsive preview safeguards */
+.leftbar{position:relative;z-index:40;pointer-events:auto!important}
+.section-list,.section-item,.section-item *{pointer-events:auto!important}
+.section-item{position:relative;z-index:1;touch-action:manipulation;user-select:none}
+.stage{position:relative;z-index:10}.inspector{position:relative;z-index:30}
+.frame-shell{overflow:hidden}.frame-shell iframe{min-height:1800px}
+.device-note span::after{content:" Desktop values resize automatically. Use this device only when you need a manual override."}

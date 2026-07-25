@@ -1,7 +1,6 @@
 const CEYBREEZ_API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.body.classList.add("cms-ready");
   const page = document.body.dataset.page || "home";
   loadCeyBreezSections(page);
 });
@@ -36,22 +35,22 @@ function applySection(section){
     settings = {};
   }
 
-  if(typeof section.title==="string" && section.title.trim()){
+  if(section.title){
     const title = target.querySelector("[data-field='title']");
     if(title) title.textContent = section.title;
   }
 
-  if(typeof section.subtitle==="string" && section.subtitle.trim()){
+  if(section.subtitle){
     const subtitle = target.querySelector("[data-field='subtitle']");
     if(subtitle) subtitle.textContent = section.subtitle;
   }
 
-  if(typeof section.content==="string" && section.content.trim()){
+  if(section.content){
     const content = target.querySelector("[data-field='content']");
     if(content) content.textContent = section.content;
   }
 
-  if(typeof section.buttonText==="string" && section.buttonText.trim()){
+  if(section.buttonText){
     const button = target.querySelector("[data-field='button']");
     if(button) button.textContent = section.buttonText;
   }
@@ -85,11 +84,7 @@ function applySection(section){
 function applySectionStyles(target, section, passedSettings){
  let settings = passedSettings || {};
 
-  const builderBg = settings.sectionBackground;
-
-  if(builderBg && builderBg.type){
-    applyBuilderSectionBackground(target, builderBg);
-  }else if(section.backgroundImage){
+  if(section.backgroundImage){
     target.style.backgroundImage =
       `linear-gradient(rgba(0,0,0,${Number(settings.overlay ?? 35)/100}), rgba(0,0,0,${Number(settings.overlay ?? 35)/100})), url('${section.backgroundImage}')`;
     target.style.backgroundSize = settings.backgroundSize || "cover";
@@ -152,164 +147,6 @@ function applySectionStyles(target, section, passedSettings){
     target.classList.add("cms-animate", settings.animation);
   }
 }
-
-function applyBuilderSectionBackground(target, bg){
-  target.querySelectorAll(":scope > .cms-bg-slideshow").forEach(node => node.remove());
-
-  target.style.backgroundImage = "";
-  target.style.backgroundColor = "";
-  target.style.backgroundSize = "";
-  target.style.backgroundPosition = "";
-  target.style.backgroundRepeat = "";
-
-  const device =
-    window.innerWidth <= 600 ? "mobile" :
-    window.innerWidth <= 900 ? "tablet" : "desktop";
-
-  const deviceHeight =
-    bg.deviceHeights && bg.deviceHeights[device]
-      ? bg.deviceHeights[device]
-      : {};
-
-  const heightMode =
-    deviceHeight.mode || bg.heightMode ||
-    ((bg.minHeight !== "" && bg.minHeight !== undefined) ? "min" : "auto");
-
-  const heightValue =
-    deviceHeight.value ?? bg.heightValue ?? bg.minHeight ?? "";
-
-  target.style.height = "";
-  target.style.minHeight = "";
-  target.style.maxHeight = "";
-
-  if(heightMode === "fixed" && heightValue !== ""){
-    target.style.height = `${Number(heightValue) || 0}px`;
-    target.style.minHeight = `${Number(heightValue) || 0}px`;
-    target.style.maxHeight = `${Number(heightValue) || 0}px`;
-  }else if(heightMode === "min" && heightValue !== ""){
-    target.style.height = "auto";
-    target.style.minHeight = `${Number(heightValue) || 0}px`;
-  }else if(heightMode === "screen"){
-    target.style.height = "100vh";
-    target.style.minHeight = "100vh";
-    target.style.maxHeight = "100vh";
-  }else{
-    target.style.height = "auto";
-    target.style.minHeight = "0";
-  }
-
-  const paddingTop = deviceHeight.paddingTop ?? bg.paddingTop;
-  const paddingBottom = deviceHeight.paddingBottom ?? bg.paddingBottom;
-
-  if(paddingTop !== "" && paddingTop !== undefined){
-    target.style.paddingTop = `${Number(paddingTop) || 0}px`;
-  }
-
-  if(paddingBottom !== "" && paddingBottom !== undefined){
-    target.style.paddingBottom = `${Number(paddingBottom) || 0}px`;
-  }
-
-  if(Number(bg.borderRadius) > 0){
-    target.style.borderRadius = `${Number(bg.borderRadius)}px`;
-  }
-
-  const size = bg.size === "custom"
-    ? `${Number(bg.customWidth) || 100}% ${Number(bg.customHeight) || 100}%`
-    : (bg.size || "cover");
-
-  const position =
-    `${Number(bg.positionX ?? 50)}% ${Number(bg.positionY ?? 50)}%`;
-
-  const overlay =
-    Math.max(0, Math.min(90, Number(bg.overlay) || 0)) / 100;
-
-  const imageCss = url => overlay > 0
-    ? `linear-gradient(rgba(0,0,0,${overlay}), rgba(0,0,0,${overlay})), url("${url}")`
-    : `url("${url}")`;
-
-  if(bg.type === "none") return;
-
-  if(bg.type === "color"){
-    target.style.backgroundColor = bg.color || "#ffffff";
-    return;
-  }
-
-  if(bg.type === "image" && bg.image){
-    target.style.backgroundImage = imageCss(bg.image);
-    target.style.backgroundSize = size;
-    target.style.backgroundPosition = position;
-    target.style.backgroundRepeat = bg.repeat || "no-repeat";
-    return;
-  }
-
-  if(bg.type === "slideshow" && Array.isArray(bg.slides) && bg.slides.length){
-    if(getComputedStyle(target).position === "static"){
-      target.style.position = "relative";
-    }
-
-    const holder = document.createElement("div");
-    holder.className = "cms-bg-slideshow";
-
-    Object.assign(holder.style, {
-      position: "absolute",
-      inset: "0",
-      overflow: "hidden",
-      pointerEvents: "none",
-      zIndex: "0"
-    });
-
-    const layer = document.createElement("div");
-
-    Object.assign(layer.style, {
-      position: "absolute",
-      inset: "0",
-      backgroundSize: size,
-      backgroundPosition: position,
-      backgroundRepeat: bg.repeat || "no-repeat",
-      transition: "opacity .65s ease, transform .65s ease"
-    });
-
-    holder.appendChild(layer);
-    target.prepend(holder);
-
-    [...target.children].forEach(child => {
-      if(child !== holder){
-        if(getComputedStyle(child).position === "static"){
-          child.style.position = "relative";
-        }
-        if(!child.style.zIndex){
-          child.style.zIndex = "1";
-        }
-      }
-    });
-
-    let index = 0;
-
-    const showSlide = () => {
-      const url = bg.slides[index % bg.slides.length];
-      layer.style.opacity = "0";
-
-      if(bg.effect === "slide"){
-        layer.style.transform = "translateX(4%)";
-      }
-
-      setTimeout(() => {
-        layer.style.backgroundImage = imageCss(url);
-        layer.style.opacity = "1";
-        layer.style.transform = "translateX(0)";
-      }, 120);
-
-      index += 1;
-    };
-
-    showSlide();
-
-    if(bg.slides.length > 1){
-      setInterval(showSlide, Math.max(1500, Number(bg.duration) || 5000));
-    }
-  }
-}
-
 function applyVideoBackground(target, videoUrl){
   let video = target.querySelector(".cms-bg-video");
 
@@ -329,7 +166,7 @@ function applyVideoBackground(target, videoUrl){
 
 function renderGallery(target, gallery){
   const galleryBox = target.querySelector("[data-field='gallery']");
-  if(!galleryBox || !Array.isArray(gallery) || gallery.length===0) return;
+  if(!galleryBox) return;
 
   galleryBox.innerHTML = "";
 
@@ -344,7 +181,7 @@ function renderGallery(target, gallery){
 
 function renderCards(target, cards){
   const cardsBox = target.querySelector("[data-field='cards']");
-  if(!cardsBox || !Array.isArray(cards) || cards.length===0) return;
+  if(!cardsBox) return;
 
   cardsBox.innerHTML = "";
 
@@ -375,65 +212,15 @@ function mergeDeviceStyles(byDevice){
 }
 function applyVisualRecord(el,rec){
   if(!el||!rec)return;
-
-  const isCustom=!!el.dataset.pbId;
-  const isolated=rec.positioned&&!isCustom;
-
-  ['maxWidth','minHeight','marginTop','marginRight','marginBottom','marginLeft',
-   'paddingTop','paddingRight','paddingBottom','paddingLeft','borderRadius','fontSize',
-   'lineHeight','letterSpacing','borderWidth'].forEach(k=>{
+  ['width','maxWidth','height','minHeight','marginTop','marginRight','marginBottom','marginLeft','paddingTop','paddingRight','paddingBottom','paddingLeft','borderRadius'].forEach(k=>{
     el.style[k]=rec[k]!==undefined&&rec[k]!==''?`${Number(rec[k])}px`:'';
   });
-
   el.style.display=rec.hidden?'none':(rec.display||'');
   el.style.textAlign=rec.textAlign||'';
   el.style.objectFit=rec.objectFit||'';
   el.style.opacity=rec.opacity!==undefined?String(rec.opacity):'';
-  el.style.fontFamily=rec.fontFamily||'';
-  el.style.fontWeight=rec.fontWeight||'';
-  el.style.fontStyle=rec.fontStyle||'';
-  el.style.textDecoration=rec.textDecoration||'';
-  el.style.color=rec.color||'';
-  el.style.backgroundColor=rec.backgroundColor||'';
-  el.style.borderStyle=rec.borderStyle||'';
-  el.style.borderColor=rec.borderColor||'';
-  el.style.boxShadow=rec.boxShadow||'';
-  el.style.zIndex=rec.zIndex!==undefined?String(rec.zIndex):'';
-  el.style.transformOrigin='center center';
-
-  if(rec.positioned&&isCustom){
-    const parent=el.parentElement;
-    if(parent&&getComputedStyle(parent).position==='static')parent.style.position='relative';
-    el.style.position='absolute';
-    el.style.left=`${Number(rec.x)||0}px`;
-    el.style.top=`${Number(rec.y)||0}px`;
-    el.style.width=rec.width!==undefined&&rec.width!==''?`${Number(rec.width)}px`:'';
-    el.style.height=rec.height!==undefined&&rec.height!==''?`${Number(rec.height)}px`:'';
-    el.style.margin='0';
-    el.style.transform=`rotate(${Number(rec.rotate)||0}deg)`;
-    return;
-  }
-
-  if(isolated){
-    const bw=Math.max(1,Number(rec.baseWidth)||el.getBoundingClientRect().width||1);
-    const bh=Math.max(1,Number(rec.baseHeight)||el.getBoundingClientRect().height||1);
-    const vw=Math.max(1,Number(rec.width)||bw);
-    const vh=Math.max(1,Number(rec.height)||bh);
-    el.style.position='relative';
-    el.style.left='0';
-    el.style.top='0';
-    el.style.width=rec.baseCssWidth||'';
-    el.style.height=rec.baseCssHeight||'';
-    el.style.transform=`translate(${Number(rec.x)||0}px, ${Number(rec.y)||0}px) scale(${vw/bw}, ${vh/bh}) rotate(${Number(rec.rotate)||0}deg)`;
-    return;
-  }
-
-  el.style.position='';
-  el.style.left='';
-  el.style.top='';
-  el.style.width=rec.width!==undefined&&rec.width!==''?`${Number(rec.width)}px`:'';
-  el.style.height=rec.height!==undefined&&rec.height!==''?`${Number(rec.height)}px`:'';
   el.style.transform=`translate(${Number(rec.x)||0}px, ${Number(rec.y)||0}px) scale(${rec.scale||1}) rotate(${Number(rec.rotate)||0}deg)`;
+  el.style.transformOrigin='center center';
 }
 function renderVisualCustomElements(target,section,settings){
   target.querySelectorAll('[data-pb-custom="1"]').forEach(n=>n.remove());
@@ -443,39 +230,11 @@ function renderVisualCustomElements(target,section,settings){
     if(item.type==='button'){n=document.createElement('a');n.href=item.url||'#';n.textContent=item.text||'Button';n.className='cms-custom-button'}
     else if(item.type==='image'){n=document.createElement('img');n.src=item.url||'';n.alt=item.alt||'';n.className='cms-custom-image'}
     else {n=document.createElement(item.type==='heading'?'h2':'p');n.textContent=item.text||'';n.className='cms-custom-text'}
-    n.dataset.pbCustom='1';n.dataset.pbId=item.id;target.style.position=target.style.position||'relative';target.appendChild(n);
+    n.dataset.pbCustom='1';n.dataset.pbId=item.id;target.appendChild(n);
   });
 }
-
-function pbPublicStablePath(el,section){
-  if(!el||el===section)return 'root';
-  const parts=[];
-  let node=el;
-  while(node&&node!==section){
-    const parent=node.parentElement;
-    if(!parent)break;
-    const siblings=[...parent.children].filter(x=>
-      !x.classList.contains('pb5-selection-box') &&
-      !x.classList.contains('pb4-resize-handle')
-    );
-    parts.unshift(Math.max(0,siblings.indexOf(node)).toString(36));
-    node=parent;
-  }
-  return parts.join('-')||'root';
-}
-function pbAssignStableIds(section){
-  if(!section)return;
-  const key=String(section.dataset.section||'section').replace(/[^a-zA-Z0-9_-]/g,'_');
-  [section,...section.querySelectorAll('*')].forEach(node=>{
-    node.dataset.pbUid=node.dataset.pbId
-      ? `custom-${node.dataset.pbId}`
-      : `${key}-${pbPublicStablePath(node,section)}`;
-  });
-}
-
 function applyVisualElements(target,section,settings){
   renderVisualCustomElements(target,section,settings);
-  pbAssignStableIds(target);
   Object.entries(settings.elementStyles||{}).forEach(([selector,byDevice])=>{
     let nodes=[];
     try{nodes=selector===':scope'?[target]:Array.from(target.querySelectorAll(selector))}catch(error){return}

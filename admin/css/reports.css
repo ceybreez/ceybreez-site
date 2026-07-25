@@ -1,0 +1,200 @@
+/* =====================================================
+   CEYBREEZ ENTERPRISE PMS
+   Reports Module
+===================================================== */
+
+#reportsTab {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 22px !important;
+}
+
+#reportsTab .reports-toolbar {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  align-items: center !important;
+  background: #fff !important;
+  border-radius: 16px !important;
+  padding: 16px !important;
+  box-shadow: 0 3px 12px rgba(0,0,0,.04) !important;
+}
+
+#reportsTab .reports-toolbar select,
+#reportsTab .reports-toolbar input {
+  height: 42px !important;
+  min-height: 42px !important;
+  padding: 0 14px !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+}
+
+#reportsTab .reports-toolbar select { flex: 0 0 190px !important; }
+#reportsTab .reports-toolbar input { flex: 0 0 170px !important; }
+
+#reportsTab .reports-kpi-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(180px, 1fr)) !important;
+  gap: 18px !important;
+  margin: 0 !important;
+}
+
+#reportsTab .reports-stat-card {
+  background: #fff !important;
+  border-radius: 14px !important;
+  padding: 18px 20px !important;
+  min-height: 98px !important;
+  box-sizing: border-box !important;
+  box-shadow: 0 3px 12px rgba(0,0,0,.05) !important;
+}
+
+#reportsTab .reports-stat-card span {
+  display: block !important;
+  font-size: 12px !important;
+  color: #667085 !important;
+  margin-bottom: 8px !important;
+}
+
+#reportsTab .reports-stat-card strong {
+  display: block !important;
+  font-size: 24px !important;
+  line-height: 1.25 !important;
+  color: #0f766e !important;
+  white-space: nowrap !important;
+}
+
+#reportsTab .reports-stat-card small {
+  display: block !important;
+  margin-top: 8px !important;
+  color: #475467 !important;
+}
+
+#reportsTab .reports-grid-two {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+}
+
+#reportsTab .reports-card {
+  background: #fff !important;
+  border-radius: 16px !important;
+  padding: 18px !important;
+  box-shadow: 0 3px 12px rgba(0,0,0,.04) !important;
+  margin: 0 !important;
+}
+
+#reportsTab .section-head.compact {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  margin: 0 0 14px !important;
+  padding: 0 !important;
+}
+
+#reportsTab .section-head.compact h2 {
+  margin: 0 0 4px !important;
+  font-size: 18px !important;
+}
+
+#reportsTab .section-head.compact p {
+  margin: 0 !important;
+  color: #667085 !important;
+}
+
+#reportsTab .reports-mini-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+
+#reportsTab .reports-mini-grid div {
+  background: #f8fafc !important;
+  border-radius: 12px !important;
+  padding: 14px !important;
+}
+
+#reportsTab .reports-mini-grid span {
+  display: block !important;
+  font-size: 12px !important;
+  color: #667085 !important;
+  margin-bottom: 6px !important;
+}
+
+#reportsTab .reports-mini-grid strong {
+  display: block !important;
+  font-size: 18px !important;
+  color: #0f766e !important;
+}
+
+#reportsTab .table-wrap {
+  width: 100% !important;
+  overflow-x: auto !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+}
+
+#reportsTab .admin-table {
+  width: 100% !important;
+  min-width: 950px !important;
+  border-collapse: collapse !important;
+}
+
+#reportsTab .admin-table th {
+  background: #f5f7fa !important;
+  padding: 12px !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+}
+
+#reportsTab .admin-table td {
+  padding: 12px !important;
+  vertical-align: top !important;
+  line-height: 1.35 !important;
+}
+
+#reportsTab .reports-bar {
+  height: 6px !important;
+  background: #eef2f7 !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  margin-top: 8px !important;
+}
+
+#reportsTab .reports-bar i {
+  display: block !important;
+  height: 100% !important;
+  background: #0f766e !important;
+  border-radius: inherit !important;
+}
+
+#reportsTab .v14-refresh.ghost {
+  background: #eef2f7 !important;
+  color: #0f172a !important;
+}
+
+@media (max-width: 1200px) {
+  #reportsTab .reports-kpi-grid { grid-template-columns: repeat(2, minmax(180px, 1fr)) !important; }
+  #reportsTab .reports-grid-two { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 768px) {
+  #reportsTab { padding: 14px !important; }
+  #reportsTab .reports-toolbar { flex-direction: column !important; align-items: stretch !important; }
+  #reportsTab .reports-toolbar select,
+  #reportsTab .reports-toolbar input,
+  #reportsTab .reports-toolbar button { width: 100% !important; flex: 1 1 auto !important; }
+  #reportsTab .reports-kpi-grid,
+  #reportsTab .reports-mini-grid { grid-template-columns: 1fr !important; }
+}
+
+@media print {
+  .v14-sidebar, .v14-topbar, #reportsTab .reports-toolbar { display: none !important; }
+  #reportsTab { padding: 0 !important; }
+  #reportsTab .reports-card,
+  #reportsTab .reports-stat-card { box-shadow: none !important; border: 1px solid #e5e7eb !important; }
+}

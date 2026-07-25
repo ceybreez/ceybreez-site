@@ -1,0 +1,73 @@
+/* =====================================================
+   CEYBREEZ ENTERPRISE PMS
+   Properties CMS Enterprise v1
+===================================================== */
+
+#propertiesTab {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+#propertiesTab .property-enterprise-box {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 14px 18px;
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 18px;
+  margin: 16px 0;
+  border: 1px solid #e5e7eb;
+}
+
+#propertiesTab .property-enterprise-box h3 {
+  grid-column: 1 / -1;
+  margin: 8px 0 0;
+  color: #0f766e;
+  font-size: 16px;
+}
+
+#propertiesTab .property-enterprise-box label {
+  margin: 0;
+  font-weight: 600;
+  font-size: 12px;
+  color: #0f766e;
+}
+
+#propertiesTab .property-enterprise-box input,
+#propertiesTab .property-enterprise-box textarea,
+#propertiesTab .property-enterprise-box select {
+  width: 100%;
+  min-height: 40px;
+  box-sizing: border-box;
+  border-radius: 10px;
+}
+
+#propertiesTab .property-enterprise-box textarea {
+  min-height: 84px;
+  padding: 10px 12px;
+}
+
+#propertiesTab .cms-table-wrap,
+#propertiesTab .table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+#propertiesTab .admin-table {
+  min-width: 1100px;
+}
+
+#propertiesTab .admin-table th,
+#propertiesTab .admin-table td {
+  vertical-align: top;
+  line-height: 1.35;
+}
+
+@media (max-width: 900px) {
+  #propertiesTab .property-enterprise-box {
+    grid-template-columns: 1fr;
+  }
+}

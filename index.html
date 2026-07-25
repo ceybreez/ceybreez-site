@@ -51,17 +51,15 @@ content="Sri Lanka villas, Sri Lanka homestays, Sri Lanka apartments, Sri Lanka 
   gtag('config', 'G-3QG71CWHW2');
 </script>
   <link rel="stylesheet" href="reviews-showcase.css">
-  <link rel="stylesheet" href="ceybreez-language.css">
 </head>
 
 <body data-page="home">
 
-<section class="welcome-screen" id="welcomeScreen" data-section="welcome">
+<section class="welcome-screen" id="welcomeScreen">
   <div class="welcome-content">
-    <h1 id="welcomeTitle" data-field="title">Welcome</h1>
-    <h1 id="welcomeSubtitle" data-field="subtitle">To</h1>
-    <img id="welcomeLogo" data-field="image" src="logo.png" alt="CeyBreez Logo">
-    <button id="welcomeEnterButton" class="welcome-enter-button" data-field="button" type="button">Enter CeyBreez</button>
+    <h1>Welcome</h1>
+    <h1>To</h1>
+    <img id="welcomeLogo" src="logo.png" alt="CeyBreez Logo">
   </div>
 </section>
 
@@ -213,9 +211,8 @@ content="Sri Lanka villas, Sri Lanka homestays, Sri Lanka apartments, Sri Lanka 
 const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 
 const welcomeScreen = document.getElementById("welcomeScreen");
-const isBuilderPreview = new URLSearchParams(window.location.search).has("builder");
 
-if(!isBuilderPreview && sessionStorage.getItem("ceybreezEntered") === "yes"){
+if(sessionStorage.getItem("ceybreezEntered") === "yes"){
   welcomeScreen.style.display = "none";
   document.body.classList.add("entered");
 }
@@ -230,20 +227,10 @@ function enterSite(){
   }, 900);
 }
 
-if(!isBuilderPreview){
-  const conditionalEnter = () => {
-    if(window.CEYBREEZ_WELCOME_CLICK_TO_ENTER !== false) enterSite();
-  };
-  window.addEventListener("click", conditionalEnter);
-  window.addEventListener("wheel", conditionalEnter);
-  window.addEventListener("keydown", conditionalEnter);
-  window.addEventListener("touchstart", conditionalEnter);
-  document.getElementById("welcomeEnterButton")?.addEventListener("click", enterSite);
-}else{
-  welcomeScreen.style.display = "flex";
-  welcomeScreen.classList.remove("hide");
-  document.body.classList.remove("entered");
-}
+window.addEventListener("click", enterSite);
+window.addEventListener("wheel", enterSite);
+window.addEventListener("keydown", enterSite);
+window.addEventListener("touchstart", enterSite);
 
 async function loadSiteContent(){
   try{
@@ -463,6 +450,5 @@ loadHomeFeatured();
 <script src="page-builder.js"></script>
 
 <script src="reviews-showcase.js"></script>
-  <script src="ceybreez-language.js" defer></script>
 </body>
 </html>

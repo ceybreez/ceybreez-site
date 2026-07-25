@@ -1,7 +1,7 @@
 (() => {
   "use strict";
   const API_BASE="https://ceybreez-contact-api.ceybreez.workers.dev";
-  const pages={home:"../index.html",villas:"../villas.html",apartments:"../apartments.html",homestays:"../homestays.html",tours:"../tours.html","tour-details":"../tour-details.html",services:"../services.html",contact:"../contact.html",privacy:"../privacy.html",terms:"../terms.html","404":"../404.html"};
+  const pages={home:"../index.html",villas:"../villas.html",apartments:"../apartments.html",homestays:"../homestays.html",tours:"../tours.html",services:"../services.html",contact:"../contact.html"};
   const $=id=>document.getElementById(id);
   const on=(id,event,handler)=>{const el=$(id);if(el)el.addEventListener(event,handler)};
   const valueOf=(id,fallback="")=>{const el=$(id);return el?el.value:fallback};
@@ -66,7 +66,6 @@
       button.onclick=()=>setMobilePanel(button.dataset.mobilePanel);
     });
     ["widthValue","heightValue","xValue","yValue","rotateValue","opacityValue","fontSize","lineHeight","radiusValue","paddingValue","zValue"].forEach(id=>$(id).addEventListener("input",()=>changeNumeric(id)));
-    on("autoHeightToggle","change",toggleAutoHeight);
     ["fontFamily","shadowValue"].forEach(id=>$(id).onchange=()=>changeSimple(id));
     ["textColor","bgColor"].forEach(id=>$(id).oninput=()=>changeSimple(id));
     $("textValue").oninput=()=>{if(!state.selected)return;state.selected.textContent=$("textValue").value;syncSelectedCustom();markDirty()};
@@ -170,54 +169,13 @@
   function clearSelection(){try{doc()?.querySelectorAll(".pb-selected").forEach(n=>n.classList.remove("pb-selected"))}catch{}state.selected=null;state.selector="";$("emptyInspector").classList.remove("hidden");$("elementInspector").classList.add("hidden")}
   function record(create=true){if(!state.selector)return null;let all=state.styles[state.selector];if(!all&&create)all=state.styles[state.selector]={desktop:{},tablet:{},mobile:{}};if(!all)return null;if(!all[state.device]&&create)all[state.device]={};return all[state.device]}
   function mergedRecord(){const all=state.styles[state.selector]||{};return state.device==="desktop"?{...(all.desktop||{})}:{...(all.desktop||{}),...(all[state.device]||{})}}
-  function fillInspector(){if(!state.selected)return;const r=mergedRecord();const rect=state.selected.getBoundingClientRect();$("selectedName").textContent=niceName(state.selected);const isImg=state.selected.tagName==="IMG";$("imageControl").classList.toggle("hidden",!isImg);$("textControl").classList.toggle("hidden",isImg);if(isImg)$("imageValue").value=state.selected.src||"";else $("textValue").value=state.selected.textContent||"";const vals={widthValue:r.width??Math.round(rect.width),heightValue:r.height??Math.round(rect.height),xValue:r.x??0,yValue:r.y??0,rotateValue:r.rotate??0,opacityValue:r.opacity??1,fontSize:r.fontSize??(parseFloat(getComputedStyle(state.selected).fontSize)||16),lineHeight:r.lineHeight??(parseFloat(getComputedStyle(state.selected).lineHeight)||20),radiusValue:r.borderRadius??(parseFloat(getComputedStyle(state.selected).borderRadius)||0),paddingValue:r.padding??(parseFloat(getComputedStyle(state.selected).padding)||0),zValue:r.zIndex??0};Object.entries(vals).forEach(([id,v])=>$(id).value=Math.round(v*100)/100);const auto=$("autoHeightToggle");if(auto)auto.checked=r.autoHeight!==false;$("fontFamily").value=r.fontFamily||"";$("shadowValue").value=r.boxShadow||"";$("textColor").value=rgbHex(r.color||getComputedStyle(state.selected).color,"#222222");$("bgColor").value=rgbHex(r.backgroundColor||getComputedStyle(state.selected).backgroundColor,"#ffffff")}
+  function fillInspector(){if(!state.selected)return;const r=mergedRecord();const rect=state.selected.getBoundingClientRect();$("selectedName").textContent=niceName(state.selected);const isImg=state.selected.tagName==="IMG";$("imageControl").classList.toggle("hidden",!isImg);$("textControl").classList.toggle("hidden",isImg);if(isImg)$("imageValue").value=state.selected.src||"";else $("textValue").value=state.selected.textContent||"";const vals={widthValue:r.width??Math.round(rect.width),heightValue:r.height??Math.round(rect.height),xValue:r.x??0,yValue:r.y??0,rotateValue:r.rotate??0,opacityValue:r.opacity??1,fontSize:r.fontSize??(parseFloat(getComputedStyle(state.selected).fontSize)||16),lineHeight:r.lineHeight??(parseFloat(getComputedStyle(state.selected).lineHeight)||20),radiusValue:r.borderRadius??(parseFloat(getComputedStyle(state.selected).borderRadius)||0),paddingValue:r.padding??(parseFloat(getComputedStyle(state.selected).padding)||0),zValue:r.zIndex??0};Object.entries(vals).forEach(([id,v])=>$(id).value=Math.round(v*100)/100);$("fontFamily").value=r.fontFamily||"";$("shadowValue").value=r.boxShadow||"";$("textColor").value=rgbHex(r.color||getComputedStyle(state.selected).color,"#222222");$("bgColor").value=rgbHex(r.backgroundColor||getComputedStyle(state.selected).backgroundColor,"#ffffff")}
   function rgbHex(v,f){if(!v||v==="transparent"||v.includes("rgba(0, 0, 0, 0)"))return f;if(v.startsWith("#"))return v.slice(0,7);const m=v.match(/\d+/g);if(!m)return f;return"#"+m.slice(0,3).map(x=>(+x).toString(16).padStart(2,"0")).join("")}
   function pushHistory(){state.history.push(JSON.stringify(state.styles));if(state.history.length>40)state.history.shift();state.future=[]}
   function undo(){if(!state.history.length)return;state.future.push(JSON.stringify(state.styles));state.styles=JSON.parse(state.history.pop());applyAll();fillInspector();markDirty()}
   function redo(){if(!state.future.length)return;state.history.push(JSON.stringify(state.styles));state.styles=JSON.parse(state.future.pop());applyAll();fillInspector();markDirty()}
   function markDirty(){state.dirty=true;setStatus("Unsaved")}
-  function currentAspectRatio(){
-    if(!state.selected)return 1;
-    const r=mergedRecord();
-    if(num(r.aspectRatio)>0)return num(r.aspectRatio);
-    if(state.selected.tagName==="IMG"&&state.selected.naturalWidth&&state.selected.naturalHeight)return state.selected.naturalWidth/state.selected.naturalHeight;
-    const rect=state.selected.getBoundingClientRect();
-    const w=num(r.width,rect.width),h=num(r.height,rect.height);
-    return w>0&&h>0?w/h:1;
-  }
-  function toggleAutoHeight(){
-    if(!state.selected)return;
-    pushHistory();
-    const r=record();
-    r.autoHeight=$("autoHeightToggle").checked;
-    if(r.autoHeight)r.aspectRatio=currentAspectRatio();
-    markDirty();
-  }
-  function changeNumeric(id){
-    if(!state.selected)return;
-    pushHistory();
-    const map={widthValue:"width",heightValue:"height",xValue:"x",yValue:"y",rotateValue:"rotate",opacityValue:"opacity",fontSize:"fontSize",lineHeight:"lineHeight",radiusValue:"borderRadius",paddingValue:"padding",zValue:"zIndex"};
-    const r=record();
-    const value=num($(id).value);
-    if(id==="widthValue"){
-      const ratio=currentAspectRatio();
-      r.width=value;
-      if($("autoHeightToggle")?.checked){
-        r.autoHeight=true;
-        r.aspectRatio=ratio;
-        r.height=Math.max(1,Math.round((value/Math.max(.0001,ratio))*100)/100);
-        $("heightValue").value=r.height;
-      }
-    }else if(id==="heightValue"){
-      r.height=value;
-      const width=num(r.width,$("widthValue").value);
-      if(width>0&&value>0)r.aspectRatio=width/value;
-    }else{
-      r[map[id]]=value;
-    }
-    applySelected();
-    markDirty();
-  }
+  function changeNumeric(id){if(!state.selected)return;pushHistory();const map={widthValue:"width",heightValue:"height",xValue:"x",yValue:"y",rotateValue:"rotate",opacityValue:"opacity",fontSize:"fontSize",lineHeight:"lineHeight",radiusValue:"borderRadius",paddingValue:"padding",zValue:"zIndex"};record()[map[id]]=num($(id).value);applySelected();markDirty()}
   function changeSimple(id){if(!state.selected)return;pushHistory();const map={fontFamily:"fontFamily",shadowValue:"boxShadow",textColor:"color",bgColor:"backgroundColor"};record()[map[id]]=$(id).value;applySelected();markDirty()}
   function toggleFormat(k){if(!state.selected)return;pushHistory();const r=record();if(k==="bold")r.fontWeight=r.fontWeight==="700"?"":"700";if(k==="italic")r.fontStyle=r.fontStyle==="italic"?"":"italic";if(k==="underline")r.textDecoration=r.textDecoration==="underline"?"":"underline";applySelected();markDirty()}
   function setAlign(a){if(!state.selected)return;pushHistory();record().textAlign=a;applySelected();markDirty()}
@@ -251,44 +209,30 @@
     return id?state.custom.find(item=>String(item.id)===String(id)):null;
   }
 
-  function customTemplate(type,item){
-    const d=doc();
-    const wrap=d.createElement("div");
-    const make=(tag,cls,text)=>{const n=d.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n};
-    if(type==="section"){wrap.className="pb-block pb-section-block";wrap.append(make("div","pb-block-kicker","NEW SECTION"),make("h2","pb-block-title",item.text||"Your premium section"),make("p","pb-block-copy","Add content, images and calls to action here."));}
-    else if(type==="container"){wrap.className="pb-block pb-container-block";wrap.append(make("span","","Container"));}
-    else if(type==="columns"){wrap.className="pb-block pb-columns-block";["Column one","Column two","Column three"].forEach(t=>wrap.append(make("div","pb-column",t)));}
-    else if(type==="spacer"){wrap.className="pb-spacer-block";wrap.setAttribute("aria-label","Spacer");}
-    else if(type==="divider"){wrap.className="pb-divider-block";}
-    else if(type==="heading"){const n=make("h2","pb-basic-heading",item.text||"New heading");return n;}
-    else if(type==="text"){const n=make("p","pb-basic-text",item.text||"New text");return n;}
-    else if(type==="button"){const n=make("a","pb-basic-button",item.text||"Explore");n.href=item.url||"#";return n;}
-    else if(type==="icon"){const n=make("div","pb-icon-block",item.text||"✦");return n;}
-    else if(type==="badge"){const n=make("span","pb-badge-block",item.text||"CEYBREEZ");return n;}
-    else if(type==="image"){const n=d.createElement("img");n.className="pb-basic-image";n.src=item.url||"../images/cover.jpg";n.alt=item.alt||"CeyBreez image";return n;}
-    else if(type==="gallery"){wrap.className="pb-block pb-gallery-block";["../images/beach.jpg","../images/mountains.jpg","../images/nature.jpg"].forEach(src=>{const i=d.createElement("img");i.src=src;i.alt="Gallery image";wrap.append(i)});}
-    else if(type==="video"){const n=d.createElement("video");n.className="pb-video-block";n.controls=true;n.muted=true;n.poster="../images/cover.jpg";return n;}
-    else if(type==="property-card"){wrap.className="pb-block pb-card-block";const i=d.createElement("img");i.src="../images/cover.jpg";i.alt="Property";wrap.append(i,make("small","","CEYBREEZ STAYS"),make("h3","",item.text||"Luxury Property"),make("p","","Private comfort, thoughtful details and island character."),make("a","pb-card-link","View property →"));}
-    else if(type==="tour-card"){wrap.className="pb-block pb-card-block";const i=d.createElement("img");i.src="../images/train.jpg";i.alt="Tour";wrap.append(i,make("small","","CURATED JOURNEY"),make("h3","",item.text||"Sri Lanka Experience"),make("p","","A memorable route designed around culture, nature and comfort."),make("a","pb-card-link","Explore tour →"));}
-    else if(type==="service-card"){wrap.className="pb-block pb-mini-card";wrap.append(make("div","pb-icon-block","◇"),make("h3","",item.text||"Premium Service"),make("p","","Personal support before, during and after your stay."));}
-    else if(type==="review-card"){wrap.className="pb-block pb-review-card";wrap.append(make("div","pb-stars","★★★★★"),make("blockquote","",item.text||"A wonderful CeyBreez experience from start to finish."),make("strong","","Guest Review"));}
-    else if(type==="inquiry-form"||type==="booking-form"){wrap.className="pb-block pb-form-block";wrap.append(make("h3","",type==="booking-form"?"Book your stay":"Send an inquiry"));["Name","Email","Phone"].forEach(x=>{const i=d.createElement("input");i.placeholder=x;wrap.append(i)});if(type==="booking-form"){["Check-in","Check-out"].forEach(x=>{const i=d.createElement("input");i.placeholder=x;wrap.append(i)})}const b=make("button","",type==="booking-form"?"Check availability":"Send inquiry");b.type="button";wrap.append(b);}
-    else if(type==="map"){wrap.className="pb-block pb-map-block";wrap.append(make("div","pb-map-pin","⌖"),make("strong","","CeyBreez Location"),make("span","","Connect Google Maps URL in the element settings."));}
-    else {wrap.className="pb-block";wrap.textContent=item.text||type;}
-    return wrap;
-  }
-
   function renderEditorCustomElements(){
     const section=targetSection();
     if(!section)return;
     section.querySelectorAll('[data-pb-editor-custom="1"]').forEach(node=>node.remove());
     (state.custom||[]).forEach(item=>{
       if(item.sectionKey!==state.section?.sectionKey)return;
-      const node=customTemplate(item.type,item);
+      let node;
+      if(item.type==="image"){
+        node=doc().createElement("img");
+        node.src=item.url||"../images/cover.jpg";
+        node.alt=item.alt||"Custom image";
+      }else if(item.type==="button"){
+        node=doc().createElement("a");
+        node.href=item.url||"#";
+        node.textContent=item.text||"Button";
+        node.style.display="inline-block";
+        node.style.textDecoration="none";
+      }else{
+        node=doc().createElement(item.type==="heading"?"h2":"p");
+        node.textContent=item.text||(item.type==="heading"?"New heading":"New text");
+      }
       node.dataset.pbEditorCustom="1";
       node.dataset.pbId=item.id;
       node.dataset.pbUid=`custom-${item.id}`;
-      node.dataset.pbType=item.type;
       node.classList.add("pb-custom");
       section.appendChild(node);
     });
@@ -302,20 +246,20 @@
       id,
       sectionKey:state.section.sectionKey,
       type,
-      text:type==="heading"?"New heading":type==="button"?"Explore":type==="text"?"New text":type==="badge"?"CEYBREEZ":type==="icon"?"✦":"",
+      text:type==="heading"?"New heading":type==="button"?"Button":type==="text"?"New text":"",
       url:type==="image"?"../images/cover.jpg":type==="button"?"#":"",
       alt:type==="image"?"CeyBreez image":""
     };
     state.custom.push(item);
     state.styles[`[data-pb-uid="custom-${id}"]`]={
       desktop:{
-        positioned:true,x:30,y:30,
-        width:["section","container","columns","gallery","inquiry-form","booking-form","map"].includes(type)?760:["property-card","tour-card"].includes(type)?340:type==="image"?320:type==="button"?150:type==="divider"?420:type==="spacer"?300:360,
-        height:type==="section"?280:type==="container"?120:type==="columns"?180:type==="gallery"?230:["inquiry-form","booking-form"].includes(type)?360:type==="map"?260:["property-card","tour-card"].includes(type)?430:type==="service-card"?230:type==="review-card"?220:type==="image"?220:type==="button"?48:type==="divider"?8:type==="spacer"?80:type==="heading"?70:90,
+        x:30,y:30,
+        width:type==="image"?320:type==="button"?140:360,
+        height:type==="image"?220:type==="button"?48:type==="heading"?70:90,
         fontSize:type==="heading"?42:type==="button"?16:18,
         lineHeight:type==="heading"?48:type==="button"?22:28,
         padding:type==="button"?12:0,
-        borderRadius:type==="button"?8:["property-card","tour-card","service-card","review-card","inquiry-form","booking-form","map"].includes(type)?18:0,
+        borderRadius:type==="button"?8:0,
         backgroundColor:type==="button"?"#087f72":"",
         color:type==="button"?"#ffffff":"",
         zIndex:5

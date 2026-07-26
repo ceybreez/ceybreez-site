@@ -1,467 +1,322 @@
-(function(){
-const pageUrls={home:'../index.html',villas:'../villas.html',homestays:'../homestays.html',apartments:'../apartments.html',tours:'../tours.html',services:'../services.html',contact:'../contact.html'};
-let pb2Items=[];
-window.pb3ElementStyles={};
-window.pb3CustomElements=[];
-window.pb3SelectedSelector="";
-window.pb3SelectedDevice="desktop";
-function el(id){return document.getElementById(id)}
-function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-window.pb2ChangePage=function(page){if(el('sectionPage'))el('sectionPage').value=page;loadPageSections();pb2RefreshPreview()}
-window.pb2RefreshPreview=function(){const page=el('sectionFilterPage')?.value||'home';const f=el('pb2PreviewFrame');if(f)f.src=(pageUrls[page]||pageUrls.home)+'?pbpreview='+Date.now()}
-window.pb2SetDevice=function(device,btn){const w=el('pb2PreviewFrameWrap');if(!w)return;w.className='pb2-preview-frame-wrap '+device;document.querySelectorAll('.pb2-devices button').forEach(b=>b.classList.remove('active'));btn?.classList.add('active')}
-window.pb2NewSection=function(){resetSectionForm();el('sectionPage').value=el('sectionFilterPage').value;el('sectionKey').value='custom';pb2LivePreview()}
-window.pb2ResetSelectedSection=function(){if(!confirm('Clear the selected section form? Saved website data will not be deleted until you save.'))return;resetSectionForm();el('sectionPage').value=el('sectionFilterPage').value;pb2LivePreview()}
-window.pb2SaveCurrentSection=function(){el('sectionForm')?.requestSubmit()}
-window.pb2LivePreview=function(){try{const frame=el('pb2PreviewFrame');const doc=frame?.contentDocument;if(!doc)return;const key=el('sectionKey')?.value;const target=doc.querySelector(`[data-section="${CSS.escape(key||'')}"]`);if(!target)return;const set=(sel,val)=>{const n=target.querySelector(sel);if(n&&val!==undefined&&val!=='')n.textContent=val};set('[data-field="title"]',el('sectionTitle')?.value);set('[data-field="subtitle"]',el('sectionSubtitle')?.value);set('[data-field="content"]',el('sectionContent')?.value);const btn=target.querySelector('[data-field="button"]');if(btn){if(el('sectionButtonText')?.value)btn.textContent=el('sectionButtonText').value;if(el('sectionButtonUrl')?.value)btn.href=el('sectionButtonUrl').value}const bg=el('sectionBackgroundImage')?.value;if(bg)target.style.backgroundImage=`linear-gradient(rgba(0,0,0,${(Number(el('sectionOverlay')?.value||35)/100)}),rgba(0,0,0,${(Number(el('sectionOverlay')?.value||35)/100)})),url('${bg}')`;target.style.backgroundSize=el('sectionBackgroundSize')?.value||'cover';target.style.backgroundPosition=el('sectionBackgroundPosition')?.value||'center center';target.style.color=el('sectionTextColor')?.value||'';target.style.fontFamily=el('sectionFontFamily')?.value||'';target.style.fontSize=el('sectionFontSize')?.value?el('sectionFontSize').value+'px':'';target.style.paddingTop=el('sectionPaddingTop')?.value?el('sectionPaddingTop').value+'px':'';target.style.paddingBottom=el('sectionPaddingBottom')?.value?el('sectionPaddingBottom').value+'px':'';target.querySelectorAll('h1,h2,h3').forEach(h=>{h.style.color=el('sectionHeadingColor')?.value||'';h.style.fontFamily=el('sectionHeadingFont')?.value||'';h.style.fontSize=el('sectionHeadingSize')?.value?el('sectionHeadingSize').value+'px':''})}catch(e){}}
-const oldLoad=window.loadPageSections;
-window.loadPageSections=async function(){const page=el('sectionFilterPage')?.value||'home';if(el('sectionPage'))el('sectionPage').value=page;const box=el('sectionsList');if(box)box.innerHTML='<div class="pb2-empty">Loading sections…</div>';try{const res=await fetch(`${API_BASE}/api/admin/page-sections?page=${encodeURIComponent(page)}`,{headers:authHeaders()});const data=await res.json();if(!res.ok)throw new Error(data.error||'Failed to load sections');pb2Items=Array.isArray(data)?data:[];renderList();if(pb2Items.length&&!el('sectionEditId')?.value)editPageSection(pb2Items[0].id)}catch(err){if(box)box.innerHTML=`<div class="pb2-empty pb2-status-error">${esc(err.message)}</div>`}}
-function renderList(){const box=el('sectionsList');if(!box)return;if(!pb2Items.length){box.innerHTML='<div class="pb2-empty">No saved sections yet.<br>Use “Add Section”.</div>';return}box.innerHTML=pb2Items.sort((a,b)=>(+a.sortOrder||0)-(+b.sortOrder||0)).map(x=>`<div class="pb2-section-item ${el('sectionEditId')?.value===x.id?'active':''}" onclick="editPageSection('${esc(x.id)}')"><span>☷</span><div><strong>${esc(x.title||x.sectionKey||'Untitled')}</strong><small>${esc(x.sectionKey||'custom')}</small></div><button type="button" class="pb2-eye" title="${x.active?'Visible':'Hidden'}" onclick="event.stopPropagation();pb2ToggleSection('${esc(x.id)}')">${x.active?'◉':'○'}</button></div>`).join('')}
-window.pb2ToggleSection=async function(id){const item=pb2Items.find(x=>x.id===id);if(!item)return;await fetch(`${API_BASE}/api/admin/page-sections`,{method:'POST',headers:authHeaders(),body:JSON.stringify({...item,active:!item.active,settings:typeof item.settings==='string'?JSON.parse(item.settings||'{}'):(item.settings||{})})});loadPageSections();pb2RefreshPreview()}
-const oldEdit=window.editPageSection;
-window.editPageSection=async function(id){const item=pb2Items.find(x=>x.id===id);if(!item){await loadPageSections();return}let settings={};try{settings=typeof item.settings==='string'?JSON.parse(item.settings||'{}'):(item.settings||{})}catch{};el('sectionEditId').value=item.id||'';el('sectionPage').value=item.page||el('sectionFilterPage').value;el('sectionKey').value=item.sectionKey||'custom';el('sectionType').value=item.sectionType||'custom';el('sectionTitle').value=item.title||'';el('sectionSubtitle').value=item.subtitle||'';el('sectionContent').value=item.content||'';el('sectionButtonText').value=item.buttonText||settings.buttonText||'';el('sectionButtonUrl').value=item.buttonUrl||settings.buttonUrl||'';el('sectionImage').value=item.mediaUrl||'';el('sectionVideo').value=settings.videoUrl||'';el('sectionBgColor').value=item.backgroundColor||'#ffffff';el('sectionBackgroundImage').value=item.backgroundImage||'';el('sectionTextColor').value=item.textColor||'#222222';el('sectionButtonColor').value=item.buttonColor||'#0f766e';el('sectionFontFamily').value=item.fontFamily||'';el('sectionFontSize').value=(item.fontSize||settings.fontSize||'').toString().replace('px','');el('sectionHeadingColor').value=item.headingColor||settings.headingColor||'#17324d';el('sectionHeadingFont').value=settings.headingFont||'';el('sectionHeadingSize').value=(settings.headingSize||'').toString().replace('px','');el('sectionBackgroundSize').value=settings.backgroundSize||'cover';el('sectionBackgroundPosition').value=settings.backgroundPosition||'center center';el('sectionOverlay').value=settings.overlay??35;el('sectionSortOrder').value=item.sortOrder||0;el('sectionActive').checked=!!item.active;el('sectionGradientStart').value=settings.gradientStart||'#ffffff';el('sectionGradientEnd').value=settings.gradientEnd||'#f8f3eb';el('sectionPaddingTop').value=(settings.paddingTop||'').toString().replace('px','');el('sectionPaddingBottom').value=(settings.paddingBottom||'').toString().replace('px','');el('sectionBorderRadius').value=(settings.borderRadius||'').toString().replace('px','');el('sectionShadow').value=settings.shadow||'';el('sectionAnimation').value=settings.animation||'';window.pb3ElementStyles=settings.elementStyles||{};window.pb3CustomElements=settings.customElements||[];window.pb3SelectedSelector='';loadCards(settings.cards||[]);renderList();pb2LivePreview();window.pb3RenderInspector?.()}
-const oldSave=window.savePageSection;
-window.savePageSection=async function(e){e.preventDefault();const status=el('pb2SaveStatus');if(status){status.textContent='Saving…';status.className=''};const settings={videoUrl:el('sectionVideo').value.trim(),gradientStart:el('sectionGradientStart').value,gradientEnd:el('sectionGradientEnd').value,paddingTop:pxValue('sectionPaddingTop'),paddingBottom:pxValue('sectionPaddingBottom'),borderRadius:pxValue('sectionBorderRadius'),shadow:el('sectionShadow').value,animation:el('sectionAnimation').value,cards:collectCards(),buttonText:el('sectionButtonText').value.trim(),buttonUrl:el('sectionButtonUrl').value.trim(),backgroundSize:el('sectionBackgroundSize').value,backgroundPosition:el('sectionBackgroundPosition').value,overlay:Number(el('sectionOverlay').value||35),headingColor:el('sectionHeadingColor').value,headingFont:el('sectionHeadingFont').value,headingSize:pxValue('sectionHeadingSize'),fontSize:pxValue('sectionFontSize'),elementStyles:window.pb3ElementStyles||{},customElements:window.pb3CustomElements||[]};const data={id:el('sectionEditId').value||'',page:el('sectionFilterPage').value,sectionKey:el('sectionKey').value,sectionType:el('sectionType').value,title:el('sectionTitle').value.trim(),subtitle:el('sectionSubtitle').value.trim(),content:el('sectionContent').value.trim(),buttonText:el('sectionButtonText').value.trim(),buttonUrl:el('sectionButtonUrl').value.trim(),mediaUrl:el('sectionImage').value.trim(),backgroundType:el('sectionBackgroundImage').value.trim()?'image':'color',backgroundColor:el('sectionBgColor').value,backgroundImage:el('sectionBackgroundImage').value.trim(),textColor:el('sectionTextColor').value,headingColor:el('sectionHeadingColor').value,buttonColor:el('sectionButtonColor').value,fontFamily:el('sectionFontFamily').value,fontSize:pxValue('sectionFontSize'),sortOrder:el('sectionSortOrder').value,active:el('sectionActive').checked,settings};try{const res=await fetch(`${API_BASE}/api/admin/page-sections`,{method:'POST',headers:authHeaders(),body:JSON.stringify(data)});const result=await res.json();if(!res.ok)throw new Error(result.error||'Save section failed');if(status){status.textContent='Saved';status.className='pb2-status-ok'};await loadPageSections();pb2RefreshPreview()}catch(err){if(status){status.textContent=err.message;status.className='pb2-status-error'};alert(err.message)}}
-function bind(){document.querySelectorAll('.pb2-accordion-title').forEach(b=>b.addEventListener('click',()=>b.parentElement.classList.toggle('open')));document.querySelectorAll('#sectionForm input,#sectionForm textarea,#sectionForm select').forEach(x=>x.addEventListener('input',pb2LivePreview));el('pb2PreviewFrame')?.addEventListener('load',pb2LivePreview);pb2RefreshPreview()}
-document.addEventListener('DOMContentLoaded',()=>setTimeout(bind,400));
-})();
+/* CeyBreez Page Builder — Clean Rebuild
+   One selection engine, one inspector, one preview binding.
+*/
+(() => {
+  'use strict';
 
-/* CeyBreez Page Builder V3 — controlled visual element editor */
-(function(){
-  const $=id=>document.getElementById(id);
-  const num=v=>Number.isFinite(Number(v))?Number(v):0;
-  const safe=s=>String(s||'').replace(/[^a-zA-Z0-9_-]/g,'');
-  let selectedEl=null;
+  const $ = (id) => document.getElementById(id);
+  const PAGE_URLS = {
+    home: '../index.html', villas: '../villas.html', homestays: '../homestays.html',
+    apartments: '../apartments.html', tours: '../tours.html', services: '../services.html',
+    contact: '../contact.html'
+  };
 
-  function device(){ return window.pb3SelectedDevice||'desktop'; }
-  function selectorFor(el, section){
-    if(!el||el===section) return ':scope';
-    if(el.dataset?.field) return `[data-field="${CSS.escape(el.dataset.field)}"]`;
-    if(el.id) return `#${CSS.escape(el.id)}`;
-    if(el.classList?.length){
-      const cls=[...el.classList].filter(c=>!c.startsWith('pb3-')&&!c.startsWith('cms-'))[0];
-      if(cls) return `.${CSS.escape(cls)}`;
+  const state = {
+    items: [], selectedId: '', selectedSelector: '', selectedDevice: 'desktop',
+    elementStyles: {}, customElements: [], previewController: null, initialized: false
+  };
+
+  const esc = (value) => String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  })[ch]);
+  const cssEscape = (value) => window.CSS?.escape ? CSS.escape(String(value || '')) : String(value || '').replace(/[^a-zA-Z0-9_-]/g, '\\$&');
+  const px = (id) => { const v = $(id)?.value; return v === '' || v == null ? '' : `${Number(v)}px`; };
+  const stripPx = (v) => String(v || '').replace('px','');
+  const parseSettings = (raw) => {
+    try { return typeof raw === 'string' ? JSON.parse(raw || '{}') : (raw || {}); }
+    catch { return {}; }
+  };
+  const currentPage = () => $('sectionFilterPage')?.value || 'home';
+  const currentItem = () => state.items.find(x => String(x.id) === String(state.selectedId));
+  const frameDoc = () => $('pb2PreviewFrame')?.contentDocument || null;
+  const selectedSection = () => {
+    const doc = frameDoc();
+    const key = $('sectionKey')?.value || currentItem()?.sectionKey;
+    return doc?.querySelector(`[data-section="${cssEscape(key)}"]`) || null;
+  };
+  const selectedElement = () => {
+    const section = selectedSection();
+    if (!section || !state.selectedSelector) return null;
+    try { return state.selectedSelector === ':scope' ? section : section.querySelector(state.selectedSelector); }
+    catch { return null; }
+  };
+  const record = () => {
+    if (!state.selectedSelector) return null;
+    state.elementStyles[state.selectedSelector] ||= { desktop:{}, tablet:{}, mobile:{} };
+    state.elementStyles[state.selectedSelector][state.selectedDevice] ||= {};
+    return state.elementStyles[state.selectedSelector][state.selectedDevice];
+  };
+
+  function selectorFor(el, section) {
+    if (el === section) return ':scope';
+    if (el.dataset.pbId) return `[data-pb-id="${cssEscape(el.dataset.pbId)}"]`;
+    if (el.dataset.field) return `[data-field="${cssEscape(el.dataset.field)}"]`;
+    if (el.id) return `#${cssEscape(el.id)}`;
+    const path = [];
+    let node = el;
+    while (node && node !== section && path.length < 5) {
+      let part = node.tagName.toLowerCase();
+      const classes = [...node.classList].filter(c => !c.startsWith('pbx-')).slice(0,2);
+      if (classes.length) part += '.' + classes.map(cssEscape).join('.');
+      const siblings = node.parentElement ? [...node.parentElement.children].filter(n => n.tagName === node.tagName) : [];
+      if (siblings.length > 1) part += `:nth-of-type(${siblings.indexOf(node)+1})`;
+      path.unshift(part);
+      node = node.parentElement;
     }
-    const tag=el.tagName.toLowerCase();
-    const peers=[...el.parentElement.children].filter(x=>x.tagName===el.tagName);
-    return peers.length>1?`${tag}:nth-of-type(${peers.indexOf(el)+1})`:tag;
+    return path.join(' > ');
   }
-  function currentSection(){
-    const f=$('pb2PreviewFrame');
-    const key=$('sectionKey')?.value;
-    return f?.contentDocument?.querySelector(`[data-section="${CSS.escape(key||'')}"]`);
+
+  function ensureInspector() {
+    if ($('pbxInspector')) return;
+    const form = $('sectionForm');
+    const head = form?.querySelector('.pb2-panel-head');
+    if (!form || !head) return;
+    const box = document.createElement('div');
+    box.id = 'pbxInspector';
+    box.className = 'pbx-inspector';
+    box.innerHTML = `
+      <div class="pbx-inspector-head"><div><strong>Visual Element Editor</strong><small id="pbxSelectedName">Click an element in preview</small></div><button type="button" id="pbxClearSelection">Clear</button></div>
+      <div class="pbx-device-tabs">
+        <button type="button" data-pbx-device="desktop" class="active">Desktop</button>
+        <button type="button" data-pbx-device="tablet">Tablet</button>
+        <button type="button" data-pbx-device="mobile">Mobile</button>
+      </div>
+      <div id="pbxEmpty" class="pbx-empty">Click a heading, paragraph, image or button in the preview.</div>
+      <div id="pbxFields" class="pbx-fields hidden">
+        <label>Text / Label<textarea id="pbxText" rows="3"></textarea></label>
+        <label>Link URL<input id="pbxHref" placeholder="https:// or page.html"></label>
+        <label>Image URL<input id="pbxSrc" placeholder="Image URL"></label>
+        <div class="pbx-grid2"><label>Text Colour<input id="pbxColor" type="color" value="#222222"></label><label>Background<input id="pbxBackground" type="color" value="#ffffff"></label></div>
+        <div class="pbx-grid2"><label>Font Size<input id="pbxFontSize" type="number" min="8"></label><label>Font Weight<select id="pbxFontWeight"><option value="">Default</option><option value="300">Light</option><option value="400">Regular</option><option value="500">Medium</option><option value="600">Semi-bold</option><option value="700">Bold</option></select></label></div>
+        <label>Alignment<select id="pbxTextAlign"><option value="">Default</option><option value="left">Left</option><option value="center">Centre</option><option value="right">Right</option></select></label>
+        <div class="pbx-grid2"><label>Width px<input id="pbxWidth" type="number" min="0"></label><label>Height px<input id="pbxHeight" type="number" min="0"></label></div>
+        <div class="pbx-grid2"><label>Move X<input id="pbxX" type="number"></label><label>Move Y<input id="pbxY" type="number"></label></div>
+        <div class="pbx-grid4"><label>Margin T<input id="pbxMt" type="number"></label><label>Margin R<input id="pbxMr" type="number"></label><label>Margin B<input id="pbxMb" type="number"></label><label>Margin L<input id="pbxMl" type="number"></label></div>
+        <div class="pbx-grid4"><label>Padding T<input id="pbxPt" type="number"></label><label>Padding R<input id="pbxPr" type="number"></label><label>Padding B<input id="pbxPb" type="number"></label><label>Padding L<input id="pbxPl" type="number"></label></div>
+        <div class="pbx-grid2"><label>Radius<input id="pbxRadius" type="number" min="0"></label><label>Opacity<input id="pbxOpacity" type="number" min="0" max="1" step="0.05"></label></div>
+        <label class="pbx-check"><input id="pbxHidden" type="checkbox"> Hide on this device</label>
+        <div class="pbx-actions"><button type="button" id="pbxResetDevice">Reset Device Style</button><button type="button" id="pbxDeleteCustom" class="danger">Delete Added Element</button></div>
+      </div>
+      <div class="pbx-add-row"><button type="button" data-pbx-add="heading">+ Heading</button><button type="button" data-pbx-add="text">+ Text</button><button type="button" data-pbx-add="button">+ Button</button><button type="button" data-pbx-add="image">+ Image</button></div>
+    `;
+    head.insertAdjacentElement('afterend', box);
+    bindInspector();
   }
-  function styleRecord(create=true){
-    const sel=window.pb3SelectedSelector;
-    if(!sel) return null;
-    const all=window.pb3ElementStyles||(window.pb3ElementStyles={});
-    if(create&&!all[sel]) all[sel]={desktop:{},tablet:{},mobile:{}};
-    if(all[sel]&&!all[sel][device()]) all[sel][device()]={};
-    return all[sel]?.[device()]||null;
-  }
-  function applyRecord(el, rec){
-    if(!el||!rec)return;
-    const px=['width','maxWidth','height','minHeight','marginTop','marginRight','marginBottom','marginLeft','paddingTop','paddingRight','paddingBottom','paddingLeft','borderRadius'];
-    px.forEach(k=>{el.style[k]=rec[k]!==undefined&&rec[k]!==''?`${rec[k]}px`:''});
-    el.style.display=rec.hidden?'none':(rec.display||'');
-    el.style.textAlign=rec.textAlign||'';
-    el.style.objectFit=rec.objectFit||'';
-    el.style.opacity=rec.opacity!==undefined?String(rec.opacity):'';
-    el.style.transform=`translate(${num(rec.x)}px, ${num(rec.y)}px) scale(${rec.scale||1}) rotate(${num(rec.rotate)}deg)`;
-    el.style.transformOrigin='center center';
-    if(rec.alignSelf) el.style.alignSelf=rec.alignSelf;
-  }
-  function applyAllToPreview(){
-    const section=currentSection(); if(!section)return;
-    Object.entries(window.pb3ElementStyles||{}).forEach(([sel,byDevice])=>{
-      let nodes=[]; try{nodes=sel===':scope'?[section]:[...section.querySelectorAll(sel)]}catch{}
-      const merged={...(byDevice.desktop||{}),...(device()!=='desktop'?(byDevice[device()]||{}):{})};
-      nodes.forEach(n=>applyRecord(n,merged));
+
+  const fieldMap = {
+    pbxText:'text', pbxHref:'href', pbxSrc:'src', pbxColor:'color', pbxBackground:'backgroundColor',
+    pbxFontSize:'fontSize', pbxFontWeight:'fontWeight', pbxTextAlign:'textAlign', pbxWidth:'width',
+    pbxHeight:'height', pbxX:'x', pbxY:'y', pbxMt:'marginTop', pbxMr:'marginRight', pbxMb:'marginBottom',
+    pbxMl:'marginLeft', pbxPt:'paddingTop', pbxPr:'paddingRight', pbxPb:'paddingBottom', pbxPl:'paddingLeft',
+    pbxRadius:'borderRadius', pbxOpacity:'opacity'
+  };
+
+  function bindInspector() {
+    Object.keys(fieldMap).forEach(id => {
+      $(id)?.addEventListener('input', () => {
+        const rec = record(); if (!rec) return;
+        const key = fieldMap[id]; const value = $(id).value;
+        rec[key] = ['fontSize','width','height','x','y','marginTop','marginRight','marginBottom','marginLeft','paddingTop','paddingRight','paddingBottom','paddingLeft','borderRadius','opacity'].includes(key)
+          ? (value === '' ? '' : Number(value)) : value;
+        applySelectedRecord();
+      });
     });
+    $('pbxHidden')?.addEventListener('change', () => { const rec=record(); if(rec){rec.hidden=$('pbxHidden').checked;applySelectedRecord();} });
+    $('pbxClearSelection')?.addEventListener('click', clearSelection);
+    $('pbxResetDevice')?.addEventListener('click', () => {
+      if (!state.selectedSelector) return;
+      state.elementStyles[state.selectedSelector][state.selectedDevice] = {};
+      renderInspector(); applyAllToPreview();
+    });
+    $('pbxDeleteCustom')?.addEventListener('click', deleteSelectedCustom);
+    document.querySelectorAll('[data-pbx-device]').forEach(btn => btn.addEventListener('click', () => setDevice(btn.dataset.pbxDevice)));
+    document.querySelectorAll('[data-pbx-add]').forEach(btn => btn.addEventListener('click', () => addCustom(btn.dataset.pbxAdd)));
+  }
+
+  function renderInspector() {
+    ensureInspector();
+    const rec = record();
+    const el = selectedElement();
+    $('pbxEmpty')?.classList.toggle('hidden', !!el);
+    $('pbxFields')?.classList.toggle('hidden', !el);
+    if (!el || !rec) { if($('pbxSelectedName')) $('pbxSelectedName').textContent='Click an element in preview'; return; }
+    $('pbxSelectedName').textContent = state.selectedSelector;
+    const values = {
+      pbxText: rec.text ?? (['INPUT','TEXTAREA'].includes(el.tagName) ? el.value : el.textContent.trim()),
+      pbxHref: rec.href ?? (el.getAttribute('href') || ''), pbxSrc: rec.src ?? (el.getAttribute('src') || ''),
+      pbxColor: rec.color || '#222222', pbxBackground: rec.backgroundColor || '#ffffff',
+      pbxFontSize: rec.fontSize ?? '', pbxFontWeight: rec.fontWeight || '', pbxTextAlign: rec.textAlign || '',
+      pbxWidth: rec.width ?? '', pbxHeight: rec.height ?? '', pbxX: rec.x ?? '', pbxY: rec.y ?? '',
+      pbxMt: rec.marginTop ?? '', pbxMr: rec.marginRight ?? '', pbxMb: rec.marginBottom ?? '', pbxMl: rec.marginLeft ?? '',
+      pbxPt: rec.paddingTop ?? '', pbxPr: rec.paddingRight ?? '', pbxPb: rec.paddingBottom ?? '', pbxPl: rec.paddingLeft ?? '',
+      pbxRadius: rec.borderRadius ?? '', pbxOpacity: rec.opacity ?? ''
+    };
+    Object.entries(values).forEach(([id,v]) => { if($(id)) $(id).value = v; });
+    $('pbxHidden').checked = !!rec.hidden;
+    const custom = el.dataset.pbCustom === '1';
+    $('pbxDeleteCustom').style.display = custom ? '' : 'none';
+  }
+
+  function applyRecord(el, rec) {
+    if (!el || !rec) return;
+    if (rec.text !== undefined) { if(['INPUT','TEXTAREA'].includes(el.tagName)) el.value=rec.text; else el.textContent=rec.text; }
+    if (rec.href !== undefined && el.matches('a,button')) el.setAttribute('href', rec.href || '#');
+    if (rec.src !== undefined && el.matches('img,video,source')) el.setAttribute('src', rec.src || '');
+    const pxKeys = ['fontSize','width','height','marginTop','marginRight','marginBottom','marginLeft','paddingTop','paddingRight','paddingBottom','paddingLeft','borderRadius'];
+    pxKeys.forEach(k => { el.style[k] = rec[k] === '' || rec[k] == null ? '' : `${Number(rec[k])}px`; });
+    ['color','backgroundColor','fontWeight','textAlign'].forEach(k => { el.style[k] = rec[k] || ''; });
+    el.style.opacity = rec.opacity === '' || rec.opacity == null ? '' : String(rec.opacity);
+    el.style.display = rec.hidden ? 'none' : '';
+    el.style.transform = `translate(${Number(rec.x)||0}px, ${Number(rec.y)||0}px)`;
+  }
+
+  function mergedRecord(byDevice) {
+    return Object.assign({}, byDevice?.desktop || {}, state.selectedDevice !== 'desktop' ? (byDevice?.[state.selectedDevice] || {}) : {});
+  }
+  function applySelectedRecord() { const el=selectedElement(); const by=state.elementStyles[state.selectedSelector]; if(el&&by) applyRecord(el, mergedRecord(by)); }
+  function applyAllToPreview() {
+    const section = selectedSection(); if(!section) return;
     renderCustomElements(section);
+    Object.entries(state.elementStyles).forEach(([selector, byDevice]) => {
+      let nodes=[]; try { nodes = selector === ':scope' ? [section] : [...section.querySelectorAll(selector)]; } catch { return; }
+      nodes.forEach(n => applyRecord(n, mergedRecord(byDevice)));
+    });
+    markSelected();
   }
-  function renderCustomElements(section){
-    section.querySelectorAll('[data-pb-custom="1"]').forEach(n=>n.remove());
-    (window.pb3CustomElements||[]).forEach(item=>{
-      if(item.sectionKey!==$('sectionKey')?.value)return;
+
+  function renderCustomElements(section) {
+    section.querySelectorAll('[data-pb-custom="1"]').forEach(n => n.remove());
+    state.customElements.filter(x => x.sectionKey === ($('sectionKey')?.value || '')).forEach(item => {
       let n;
-      if(item.type==='button'){n=document.createElement('a');n.href=item.url||'#';n.textContent=item.text||'Button';n.className='pb3-custom-button'}
-      else if(item.type==='image'){n=document.createElement('img');n.src=item.url||'';n.alt=item.alt||'';n.className='pb3-custom-image'}
-      else {n=document.createElement(item.type==='heading'?'h2':'p');n.textContent=item.text||'New text';n.className='pb3-custom-text'}
-      n.dataset.pbCustom='1';n.dataset.pbId=item.id;
-      n.style.position='relative';section.appendChild(n);
-      const by=(window.pb3ElementStyles||{})[`[data-pb-id="${item.id}"]`];
-      if(by){n.dataset.pbId=item.id;applyRecord(n,{...(by.desktop||{}),...(device()!=='desktop'?(by[device()]||{}):{})})}
-    })
+      if(item.type==='button'){n=document.createElement('a');n.href=item.url||'#';n.textContent=item.text||'Button';n.className='cms-custom-button';}
+      else if(item.type==='image'){n=document.createElement('img');n.src=item.url||'';n.alt=item.alt||'';n.className='cms-custom-image';}
+      else {n=document.createElement(item.type==='heading'?'h2':'p');n.textContent=item.text|| (item.type==='heading'?'New Heading':'New text');n.className='cms-custom-text';}
+      n.dataset.pbCustom='1'; n.dataset.pbId=item.id; section.appendChild(n);
+    });
   }
-  function injectSelectable(){
-    const frame=$('pb2PreviewFrame'); const doc=frame?.contentDocument; if(!doc)return;
-    let st=doc.getElementById('pb3-editor-style');
-    if(!st){st=doc.createElement('style');st.id='pb3-editor-style';st.textContent=`body.pb3-editing [data-section] *{cursor:pointer} .pb3-selected{outline:2px solid #00a88f!important;outline-offset:3px!important;position:relative}.pb3-selected:after{content:attr(data-pb-label);position:absolute;left:0;top:-25px;background:#007f72;color:white;font:11px Arial;padding:4px 7px;border-radius:4px;z-index:2147483647;white-space:nowrap}.pb3-custom-button{display:inline-block;padding:10px 18px;background:#087f72;color:#fff;text-decoration:none;border-radius:7px;margin:8px}.pb3-custom-image{max-width:220px;height:auto}.pb3-custom-text{margin:8px}`;doc.head.appendChild(st)}
-    doc.body.classList.add('pb3-editing');
-    doc.addEventListener('click',onPreviewClick,true);
+
+  function addCustom(type) {
+    const key=$('sectionKey')?.value; if(!key){alert('Select a section first.');return;}
+    const id=`pb-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
+    state.customElements.push({id,sectionKey:key,type,text:type==='heading'?'New Heading':type==='button'?'Button':'New text',url:'#'});
+    state.selectedSelector=`[data-pb-id="${id}"]`;
+    state.elementStyles[state.selectedSelector]={desktop:{},tablet:{},mobile:{}};
+    applyAllToPreview(); renderInspector();
+  }
+  function deleteSelectedCustom() {
+    const el=selectedElement(); if(!el?.dataset.pbId)return;
+    const id=el.dataset.pbId; state.customElements=state.customElements.filter(x=>x.id!==id); delete state.elementStyles[state.selectedSelector]; clearSelection(); applyAllToPreview();
+  }
+
+  function installPreviewEditor() {
+    const doc=frameDoc(); if(!doc)return;
+    state.previewController?.abort(); state.previewController=new AbortController(); const signal=state.previewController.signal;
+    let style=doc.getElementById('pbx-editor-style');
+    if(!style){style=doc.createElement('style');style.id='pbx-editor-style';style.textContent=`body.pbx-editing [data-section],body.pbx-editing [data-section] *{cursor:pointer!important}.pbx-selected{outline:3px solid #00a88f!important;outline-offset:3px!important;position:relative!important}.pbx-selected:after{content:'Editing';position:absolute;left:0;top:-25px;background:#006f66;color:#fff;font:11px Arial;padding:4px 7px;border-radius:4px;z-index:2147483647}.cms-custom-button{display:inline-block;padding:10px 18px;background:#087f72;color:#fff;text-decoration:none;border-radius:7px;margin:8px}.cms-custom-image{max-width:260px;height:auto}.cms-custom-text{margin:8px}`;doc.head.appendChild(style);}
+    doc.body.classList.add('pbx-editing');
+    doc.addEventListener('click', e => {
+      const section=e.target.closest('[data-section]'); if(!section)return;
+      e.preventDefault(); e.stopPropagation();
+      const key=section.dataset.section; const item=state.items.find(x=>x.sectionKey===key);
+      if(item && String(item.id)!==String(state.selectedId)) editPageSection(item.id, false);
+      const target=e.target.closest('a,button,img,h1,h2,h3,h4,p,span,div,section') || section;
+      state.selectedSelector=selectorFor(target,section); markSelected(target); renderInspector();
+    },{capture:true,signal});
     applyAllToPreview();
   }
-  function onPreviewClick(e){
-    const section=e.target.closest('[data-section]');
-    if(!section||section.dataset.section!==$('sectionKey')?.value)return;
-    e.preventDefault();e.stopPropagation();
-    selectedEl=e.target;
-    section.querySelectorAll('.pb3-selected').forEach(n=>{n.classList.remove('pb3-selected');delete n.dataset.pbLabel});
-    selectedEl.classList.add('pb3-selected');
-    selectedEl.dataset.pbLabel=selectedEl.tagName.toLowerCase()+(selectedEl.dataset.field?` · ${selectedEl.dataset.field}`:'');
-    window.pb3SelectedSelector=selectedEl.dataset.pbId?`[data-pb-id="${selectedEl.dataset.pbId}"]`:selectorFor(selectedEl,section);
-    renderInspector();
-  }
-  function input(label,key,type='number',attrs=''){
-    const r=styleRecord(false)||{}; const value=r[key]??(key==='scale'?1:key==='opacity'?1:'');
-    return `<label>${label}<input data-pb3-key="${key}" type="${type}" value="${value}" ${attrs}></label>`;
-  }
-  function renderInspector(){
-    const box=$('pb3Inspector'); if(!box)return;
-    const sel=window.pb3SelectedSelector;
-    if(!sel){box.innerHTML='<div class="pb3-hint">Live preview එකේ logo, text, image හෝ button එක click කරන්න.</div>';return}
-    const r=styleRecord()||{};
-    box.innerHTML=`<div class="pb3-selected-name"><b>Selected:</b><code>${sel}</code><button type="button" id="pb3ResetElement">Reset</button></div>
-    <div class="pb3-grid2">${input('Width','width')}${input('Max width','maxWidth')}${input('Height','height')}${input('Min height','minHeight')}${input('Scale','scale','number','step="0.05" min="0.1" max="5"')}${input('Opacity','opacity','number','step="0.05" min="0" max="1"')}${input('Move X','x')}${input('Move Y','y')}${input('Rotate','rotate')}</div>
-    <label>Text alignment<select data-pb3-key="textAlign"><option value="">Original</option><option>left</option><option>center</option><option>right</option></select></label>
-    <label>Image fit<select data-pb3-key="objectFit"><option value="">Original</option><option>contain</option><option>cover</option><option>fill</option></select></label>
-    <div class="pb3-subtitle">Margin</div><div class="pb3-grid4">${input('Top','marginTop')}${input('Right','marginRight')}${input('Bottom','marginBottom')}${input('Left','marginLeft')}</div>
-    <div class="pb3-subtitle">Padding</div><div class="pb3-grid4">${input('Top','paddingTop')}${input('Right','paddingRight')}${input('Bottom','paddingBottom')}${input('Left','paddingLeft')}</div>
-    <label class="pb3-check"><input data-pb3-key="hidden" type="checkbox" ${r.hidden?'checked':''}> Hide on ${device()}</label>`;
-    box.querySelectorAll('[data-pb3-key]').forEach(n=>{
-      const k=n.dataset.pb3Key;if(n.tagName==='SELECT')n.value=r[k]||'';
-      n.addEventListener('input',()=>{const rec=styleRecord();rec[k]=n.type==='checkbox'?n.checked:(n.type==='number'?(n.value===''?'':Number(n.value)):n.value);applyAllToPreview()})
-    });
-    $('pb3ResetElement')?.addEventListener('click',()=>{const all=window.pb3ElementStyles||{};if(all[sel])delete all[sel][device()];renderInspector();pb2RefreshPreview()});
-  }
-  window.pb3RenderInspector=renderInspector;
-  function addInspectorUI(){
-    const settings=document.querySelector('.pb2-settings-panel'); if(!settings||$('pb3Inspector'))return;
-    const wrap=document.createElement('div');wrap.className='pb3-visual-editor';wrap.innerHTML=`<div class="pb3-visual-head"><h3>Visual Element Editor</h3><span>Click inside preview</span></div><div class="pb3-device-row"><button data-device="desktop" class="active">Desktop</button><button data-device="tablet">Tablet</button><button data-device="mobile">Mobile</button></div><div id="pb3Inspector"></div><button type="button" class="pb2-btn pb2-btn-outline pb3-add" id="pb3AddElement">+ Add Element</button>`;
-    settings.prepend(wrap);
-    wrap.querySelectorAll('[data-device]').forEach(b=>b.onclick=()=>{window.pb3SelectedDevice=b.dataset.device;wrap.querySelectorAll('[data-device]').forEach(x=>x.classList.toggle('active',x===b));document.querySelector(`.pb2-devices button[onclick*="${b.dataset.device}"]`)?.click();renderInspector();applyAllToPreview()});
-    $('pb3AddElement').onclick=addElement;
-    renderInspector();
-  }
-  function addElement(){
-    const type=prompt('Element type: text, heading, button, image','text');if(!['text','heading','button','image'].includes(type))return;
-    const text=type==='image'?prompt('Image URL',''):prompt(type==='button'?'Button text':'Text','New element');if(text===null)return;
-    const item={id:'pb'+Date.now(),sectionKey:$('sectionKey')?.value,type,text:type==='image'?'':text,url:type==='image'?text:(type==='button'?prompt('Button link','#'):'#')};
-    window.pb3CustomElements.push(item);window.pb3SelectedSelector=`[data-pb-id="${item.id}"]`;window.pb3ElementStyles[window.pb3SelectedSelector]={desktop:{},tablet:{},mobile:{}};applyAllToPreview();renderInspector();
-  }
-  function patchDeviceButtons(){
-    document.querySelectorAll('.pb2-devices button').forEach(b=>b.addEventListener('click',()=>{const m=(b.getAttribute('onclick')||'').match(/'(desktop|tablet|mobile)'/);if(m){window.pb3SelectedDevice=m[1];document.querySelectorAll('.pb3-device-row button').forEach(x=>x.classList.toggle('active',x.dataset.device===m[1]));renderInspector();setTimeout(applyAllToPreview,50)}}))
-  }
-  document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{addInspectorUI();patchDeviceButtons();$('pb2PreviewFrame')?.addEventListener('load',()=>setTimeout(injectSelectable,250));injectSelectable()},900));
-})();
 
-/* =========================================================
-   CeyBreez Page Builder V4 — Drag, Drop & Resize
-   Works only by updating page-builder-admin-v2.js + CSS.
-   Button destinations remain locked.
-   ========================================================= */
-(function(){
-  const $ = id => document.getElementById(id);
-  const clamp = (n,min,max) => Math.max(min,Math.min(max,n));
-  let drag = null;
-  let resize = null;
+  function markSelected(forceEl) {
+    const doc=frameDoc(); if(!doc)return;
+    doc.querySelectorAll('.pbx-selected').forEach(n=>n.classList.remove('pbx-selected'));
+    const el=forceEl||selectedElement(); if(el)el.classList.add('pbx-selected');
+  }
+  function clearSelection(){state.selectedSelector='';markSelected();renderInspector();}
 
-  function currentDevice(){
-    return window.pb3SelectedDevice || 'desktop';
+  function setDevice(device) {
+    state.selectedDevice=device;
+    const wrap=$('pb2PreviewFrameWrap'); if(wrap)wrap.className=`pb2-preview-frame-wrap ${device}`;
+    document.querySelectorAll('.pb2-devices button').forEach(b=>b.classList.toggle('active',(b.dataset.device||b.getAttribute('onclick')||'').includes(device)));
+    document.querySelectorAll('[data-pbx-device]').forEach(b=>b.classList.toggle('active',b.dataset.pbxDevice===device));
+    applyAllToPreview(); renderInspector();
   }
 
-  function currentSection(){
-    const frame = $('pb2PreviewFrame');
-    const key = $('sectionKey')?.value;
-    return frame?.contentDocument?.querySelector(`[data-section="${CSS.escape(key || '')}"]`);
-  }
+  window.pb2SetDevice=(device)=>setDevice(device);
+  window.pb2RefreshPreview=()=>{const f=$('pb2PreviewFrame');if(f)f.src=`${PAGE_URLS[currentPage()]||PAGE_URLS.home}?pbpreview=${Date.now()}`;};
+  window.pb2ChangePage=(page)=>{if($('sectionPage'))$('sectionPage').value=page;state.selectedId='';clearSelection();loadPageSections();window.pb2RefreshPreview();};
+  window.pb2NewSection=()=>{resetSectionForm();$('sectionPage').value=currentPage();$('sectionKey').value='custom';state.selectedId='';clearSelection();};
+  window.pb2ResetSelectedSection=()=>{if(confirm('Clear the selected form? Saved data remains until Save is pressed.'))window.pb2NewSection();};
+  window.pb2SaveCurrentSection=()=>$('sectionForm')?.requestSubmit();
 
-  function selectedElement(){
-    const section = currentSection();
-    const sel = window.pb3SelectedSelector;
-    if(!section || !sel) return null;
+  window.loadPageSections=async function(){
+    const box=$('sectionsList'); if(box)box.innerHTML='<div class="pb2-empty">Loading sections…</div>';
     try{
-      return sel === ':scope' ? section : section.querySelector(sel);
-    }catch{
-      return null;
-    }
-  }
-
-  function record(){
-    const sel = window.pb3SelectedSelector;
-    if(!sel) return null;
-    const all = window.pb3ElementStyles || (window.pb3ElementStyles = {});
-    if(!all[sel]) all[sel] = {desktop:{},tablet:{},mobile:{}};
-    if(!all[sel][currentDevice()]) all[sel][currentDevice()] = {};
-    return all[sel][currentDevice()];
-  }
-
-  function num(v, fallback=0){
-    const n = Number(v);
-    return Number.isFinite(n) ? n : fallback;
-  }
-
-  function saveTransformFromElement(el){
-    if(!el) return;
-    const rec = record();
-    if(!rec) return;
-
-    const rect = el.getBoundingClientRect();
-    const parentRect = el.parentElement?.getBoundingClientRect();
-
-    if(rect.width > 0) rec.width = Math.round(rect.width);
-    if(rect.height > 0) rec.height = Math.round(rect.height);
-
-    if(parentRect){
-      rec.x = Math.round(rect.left - parentRect.left);
-      rec.y = Math.round(rect.top - parentRect.top);
-    }
-  }
-
-  function ensureEditorLayer(){
-    const frame = $('pb2PreviewFrame');
-    const doc = frame?.contentDocument;
-    if(!doc) return;
-
-    let style = doc.getElementById('pb4-drag-style');
-    if(!style){
-      style = doc.createElement('style');
-      style.id = 'pb4-drag-style';
-      style.textContent = `
-        body.pb4-drag-mode [data-section] *{
-          box-sizing:border-box;
-        }
-        .pb4-draggable{
-          position:relative !important;
-          cursor:move !important;
-          touch-action:none !important;
-          user-select:none !important;
-        }
-        .pb4-resize-handle{
-          position:absolute;
-          width:12px;
-          height:12px;
-          background:#00a88f;
-          border:2px solid #fff;
-          border-radius:3px;
-          z-index:2147483647;
-          box-shadow:0 1px 4px rgba(0,0,0,.35);
-        }
-        .pb4-resize-handle[data-dir="nw"]{left:-8px;top:-8px;cursor:nwse-resize}
-        .pb4-resize-handle[data-dir="ne"]{right:-8px;top:-8px;cursor:nesw-resize}
-        .pb4-resize-handle[data-dir="sw"]{left:-8px;bottom:-8px;cursor:nesw-resize}
-        .pb4-resize-handle[data-dir="se"]{right:-8px;bottom:-8px;cursor:nwse-resize}
-        .pb4-link-locked{
-          pointer-events:none !important;
-        }
-      `;
-      doc.head.appendChild(style);
-    }
-
-    doc.body.classList.add('pb4-drag-mode');
-    bindCurrentSelected();
-  }
-
-  function removeHandles(doc){
-    doc?.querySelectorAll('.pb4-resize-handle').forEach(h => h.remove());
-    doc?.querySelectorAll('.pb4-draggable').forEach(n => n.classList.remove('pb4-draggable'));
-  }
-
-  function bindCurrentSelected(){
-    const frame = $('pb2PreviewFrame');
-    const doc = frame?.contentDocument;
-    const el = selectedElement();
-    if(!doc) return;
-
-    removeHandles(doc);
-    if(!el) return;
-
-    el.classList.add('pb4-draggable');
-
-    if(el.tagName === 'A' || el.closest('a')){
-      el.classList.add('pb4-link-locked');
-    }
-
-    ['nw','ne','sw','se'].forEach(dir => {
-      const h = doc.createElement('span');
-      h.className = 'pb4-resize-handle';
-      h.dataset.dir = dir;
-      h.addEventListener('pointerdown', onResizeStart, true);
-      el.appendChild(h);
-    });
-
-    el.addEventListener('pointerdown', onDragStart, true);
-  }
-
-  function onDragStart(e){
-    if(e.target.classList.contains('pb4-resize-handle')) return;
-
-    const el = selectedElement();
-    if(!el || e.currentTarget !== el) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    const rec = record();
-    const rect = el.getBoundingClientRect();
-
-    drag = {
-      el,
-      startX:e.clientX,
-      startY:e.clientY,
-      baseX:num(rec.x),
-      baseY:num(rec.y),
-      width:rect.width,
-      height:rect.height
-    };
-
-    const doc = el.ownerDocument;
-    doc.addEventListener('pointermove', onDragMove, true);
-    doc.addEventListener('pointerup', onDragEnd, true);
-  }
-
-  function onDragMove(e){
-    if(!drag) return;
-    e.preventDefault();
-
-    const rec = record();
-    const dx = e.clientX - drag.startX;
-    const dy = e.clientY - drag.startY;
-
-    rec.x = Math.round(drag.baseX + dx);
-    rec.y = Math.round(drag.baseY + dy);
-
-    drag.el.style.transform =
-      `translate(${rec.x}px, ${rec.y}px) scale(${rec.scale || 1}) rotate(${num(rec.rotate)}deg)`;
-
-    window.pb3RenderInspector?.();
-  }
-
-  function onDragEnd(){
-    if(!drag) return;
-    const doc = drag.el.ownerDocument;
-    doc.removeEventListener('pointermove', onDragMove, true);
-    doc.removeEventListener('pointerup', onDragEnd, true);
-    drag = null;
-  }
-
-  function onResizeStart(e){
-    e.preventDefault();
-    e.stopPropagation();
-
-    const el = selectedElement();
-    if(!el) return;
-
-    const rect = el.getBoundingClientRect();
-    resize = {
-      el,
-      dir:e.currentTarget.dataset.dir,
-      startX:e.clientX,
-      startY:e.clientY,
-      startW:rect.width,
-      startH:rect.height,
-      ratio:rect.width / Math.max(rect.height,1)
-    };
-
-    const doc = el.ownerDocument;
-    doc.addEventListener('pointermove', onResizeMove, true);
-    doc.addEventListener('pointerup', onResizeEnd, true);
-  }
-
-  function onResizeMove(e){
-    if(!resize) return;
-    e.preventDefault();
-
-    const dx = e.clientX - resize.startX;
-    const dy = e.clientY - resize.startY;
-    let w = resize.startW;
-    let h = resize.startH;
-
-    if(resize.dir.includes('e')) w += dx;
-    if(resize.dir.includes('w')) w -= dx;
-    if(resize.dir.includes('s')) h += dy;
-    if(resize.dir.includes('n')) h -= dy;
-
-    w = clamp(w,30,2000);
-    h = clamp(h,20,1600);
-
-    if(e.shiftKey){
-      h = w / resize.ratio;
-    }
-
-    const rec = record();
-    rec.width = Math.round(w);
-    rec.height = Math.round(h);
-
-    resize.el.style.width = `${rec.width}px`;
-    resize.el.style.height = `${rec.height}px`;
-    resize.el.style.maxWidth = 'none';
-
-    window.pb3RenderInspector?.();
-  }
-
-  function onResizeEnd(){
-    if(!resize) return;
-    const doc = resize.el.ownerDocument;
-    doc.removeEventListener('pointermove', onResizeMove, true);
-    doc.removeEventListener('pointerup', onResizeEnd, true);
-    resize = null;
-  }
-
-  function addModeToggle(){
-    const host = document.querySelector('.pb3-visual-editor');
-    if(!host || $('pb4ModeToggle')) return;
-
-    const row = document.createElement('div');
-    row.className = 'pb4-mode-row';
-    row.innerHTML = `
-      <button type="button" id="pb4ModeToggle" class="active">Drag & Resize: ON</button>
-      <span>Drag selected element. Use corner handles to resize. Hold Shift to keep ratio.</span>
-    `;
-    host.insertBefore(row, host.querySelector('#pb3Inspector'));
-
-    $('pb4ModeToggle').addEventListener('click', () => {
-      const frame = $('pb2PreviewFrame');
-      const doc = frame?.contentDocument;
-      const on = !$('pb4ModeToggle').classList.toggle('off');
-      $('pb4ModeToggle').classList.toggle('active', on);
-      $('pb4ModeToggle').textContent = `Drag & Resize: ${on ? 'ON' : 'OFF'}`;
-      if(on){
-        doc?.body.classList.add('pb4-drag-mode');
-        bindCurrentSelected();
-      }else{
-        doc?.body.classList.remove('pb4-drag-mode');
-        removeHandles(doc);
-      }
-    });
-  }
-
-  function patchPreviewSelection(){
-    const frame = $('pb2PreviewFrame');
-    const doc = frame?.contentDocument;
-    if(!doc || doc.__pb4Bound) return;
-    doc.__pb4Bound = true;
-
-    doc.addEventListener('click', () => {
-      setTimeout(bindCurrentSelected, 0);
-    }, true);
-  }
-
-  function refresh(){
-    addModeToggle();
-    ensureEditorLayer();
-    patchPreviewSelection();
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(refresh, 1200);
-    $('pb2PreviewFrame')?.addEventListener('load', () => setTimeout(refresh, 350));
-  });
-
-  const oldRender = window.pb3RenderInspector;
-  window.pb3RenderInspector = function(){
-    oldRender?.();
-    setTimeout(bindCurrentSelected, 0);
+      const res=await fetch(`${API_BASE}/api/admin/page-sections?page=${encodeURIComponent(currentPage())}`,{headers:authHeaders()});
+      const data=await res.json(); if(!res.ok)throw new Error(data.error||'Failed to load sections');
+      state.items=Array.isArray(data)?data:[]; renderList();
+      if(state.items.length && !state.selectedId) await editPageSection(state.items[0].id,false);
+    }catch(err){if(box)box.innerHTML=`<div class="pb2-empty pb2-status-error">${esc(err.message)}</div>`;}
   };
+
+  function renderList(){
+    const box=$('sectionsList'); if(!box)return;
+    if(!state.items.length){box.innerHTML='<div class="pb2-empty">No saved sections for this page.</div>';return;}
+    box.innerHTML=[...state.items].sort((a,b)=>(+a.sortOrder||0)-(+b.sortOrder||0)).map(x=>`
+      <div class="pb2-section-item ${String(state.selectedId)===String(x.id)?'active':''}" data-id="${esc(x.id)}">
+        <span>☷</span><div><strong>${esc(x.title||x.sectionKey||'Untitled')}</strong><small>${esc(x.sectionKey||'custom')}</small></div>
+        <button type="button" class="pb2-eye" title="${x.active?'Visible':'Hidden'}">${x.active?'◉':'○'}</button>
+      </div>`).join('');
+    box.querySelectorAll('.pb2-section-item').forEach(row=>{
+      row.addEventListener('click',()=>editPageSection(row.dataset.id));
+      row.querySelector('.pb2-eye').addEventListener('click',e=>{e.stopPropagation();toggleSection(row.dataset.id);});
+    });
+  }
+
+  async function toggleSection(id){
+    const item=state.items.find(x=>String(x.id)===String(id)); if(!item)return;
+    const body={...item,active:!item.active,settings:parseSettings(item.settings)};
+    const res=await fetch(`${API_BASE}/api/admin/page-sections`,{method:'POST',headers:authHeaders(),body:JSON.stringify(body)});
+    if(!res.ok){const d=await res.json().catch(()=>({}));alert(d.error||'Unable to update section');return;}
+    await loadPageSections(); window.pb2RefreshPreview();
+  }
+
+  window.editPageSection=async function(id, scroll=true){
+    const item=state.items.find(x=>String(x.id)===String(id)); if(!item)return;
+    const s=parseSettings(item.settings); state.selectedId=item.id; state.elementStyles=s.elementStyles||{}; state.customElements=s.customElements||[]; state.selectedSelector='';
+    const vals={sectionEditId:item.id||'',sectionPage:item.page||currentPage(),sectionKey:item.sectionKey||'custom',sectionType:item.sectionType||'custom',sectionTitle:item.title||'',sectionSubtitle:item.subtitle||'',sectionContent:item.content||'',sectionButtonText:item.buttonText||s.buttonText||'',sectionButtonUrl:item.buttonUrl||s.buttonUrl||'',sectionImage:item.mediaUrl||'',sectionVideo:s.videoUrl||'',sectionBgColor:item.backgroundColor||'#ffffff',sectionBackgroundImage:item.backgroundImage||'',sectionTextColor:item.textColor||'#222222',sectionButtonColor:item.buttonColor||'#0f766e',sectionFontFamily:item.fontFamily||'',sectionFontSize:stripPx(item.fontSize||s.fontSize),sectionHeadingColor:item.headingColor||s.headingColor||'#17324d',sectionHeadingFont:s.headingFont||'',sectionHeadingSize:stripPx(s.headingSize),sectionBackgroundSize:s.backgroundSize||'cover',sectionBackgroundPosition:s.backgroundPosition||'center center',sectionOverlay:s.overlay??35,sectionSortOrder:item.sortOrder||0,sectionGradientStart:s.gradientStart||'#ffffff',sectionGradientEnd:s.gradientEnd||'#f8f3eb',sectionPaddingTop:stripPx(s.paddingTop),sectionPaddingBottom:stripPx(s.paddingBottom),sectionBorderRadius:stripPx(s.borderRadius),sectionShadow:s.shadow||'',sectionAnimation:s.animation||''};
+    Object.entries(vals).forEach(([id,v])=>{if($(id))$(id).value=v;}); $('sectionActive').checked=!!item.active; loadCards(s.cards||[]); renderList(); renderInspector(); applySectionFormPreview(); applyAllToPreview(); if(scroll)$('sectionForm')?.scrollIntoView({behavior:'smooth',block:'start'});
+  };
+
+  window.savePageSection=async function(e){
+    e?.preventDefault(); const status=$('pb2SaveStatus'); if(status){status.textContent='Saving…';status.className='';}
+    const settings={videoUrl:$('sectionVideo').value.trim(),gradientStart:$('sectionGradientStart').value,gradientEnd:$('sectionGradientEnd').value,paddingTop:px('sectionPaddingTop'),paddingBottom:px('sectionPaddingBottom'),borderRadius:px('sectionBorderRadius'),shadow:$('sectionShadow').value,animation:$('sectionAnimation').value,cards:collectCards(),buttonText:$('sectionButtonText').value.trim(),buttonUrl:$('sectionButtonUrl').value.trim(),backgroundSize:$('sectionBackgroundSize').value,backgroundPosition:$('sectionBackgroundPosition').value,overlay:Number($('sectionOverlay').value||35),headingColor:$('sectionHeadingColor').value,headingFont:$('sectionHeadingFont').value,headingSize:px('sectionHeadingSize'),fontSize:px('sectionFontSize'),elementStyles:state.elementStyles,customElements:state.customElements};
+    const data={id:$('sectionEditId').value||'',page:currentPage(),sectionKey:$('sectionKey').value,sectionType:$('sectionType').value,title:$('sectionTitle').value.trim(),subtitle:$('sectionSubtitle').value.trim(),content:$('sectionContent').value.trim(),buttonText:$('sectionButtonText').value.trim(),buttonUrl:$('sectionButtonUrl').value.trim(),mediaUrl:$('sectionImage').value.trim(),backgroundType:$('sectionBackgroundImage').value.trim()?'image':'color',backgroundColor:$('sectionBgColor').value,backgroundImage:$('sectionBackgroundImage').value.trim(),textColor:$('sectionTextColor').value,headingColor:$('sectionHeadingColor').value,buttonColor:$('sectionButtonColor').value,fontFamily:$('sectionFontFamily').value,fontSize:px('sectionFontSize'),sortOrder:$('sectionSortOrder').value,active:$('sectionActive').checked,settings};
+    try{const res=await fetch(`${API_BASE}/api/admin/page-sections`,{method:'POST',headers:authHeaders(),body:JSON.stringify(data)});const out=await res.json();if(!res.ok)throw new Error(out.error||'Save failed');if(status){status.textContent='Saved';status.className='pb2-status-ok';}await loadPageSections();window.pb2RefreshPreview();}
+    catch(err){if(status){status.textContent=err.message;status.className='pb2-status-error';}alert(err.message);}
+  };
+
+  function applySectionFormPreview(){
+    const target=selectedSection();if(!target)return;
+    const set=(field,value)=>{const n=target.querySelector(`[data-field="${field}"]`);if(n&&value!=='')n.textContent=value;};
+    set('title',$('sectionTitle')?.value||'');set('subtitle',$('sectionSubtitle')?.value||'');set('content',$('sectionContent')?.value||'');
+    const btn=target.querySelector('[data-field="button"]');if(btn){if($('sectionButtonText')?.value)btn.textContent=$('sectionButtonText').value;if($('sectionButtonUrl')?.value)btn.href=$('sectionButtonUrl').value;}
+    const img=target.querySelector('[data-field="image"]');if(img&&$('sectionImage')?.value)img.src=$('sectionImage').value;
+    const bg=$('sectionBackgroundImage')?.value;if(bg){const o=Number($('sectionOverlay')?.value||35)/100;target.style.backgroundImage=`linear-gradient(rgba(0,0,0,${o}),rgba(0,0,0,${o})),url('${bg}')`;}
+    else target.style.background=$('sectionBgColor')?.value||'';
+    target.style.backgroundSize=$('sectionBackgroundSize')?.value||'cover';target.style.backgroundPosition=$('sectionBackgroundPosition')?.value||'center center';target.style.color=$('sectionTextColor')?.value||'';target.style.fontFamily=$('sectionFontFamily')?.value||'';target.style.fontSize=px('sectionFontSize');target.style.paddingTop=px('sectionPaddingTop');target.style.paddingBottom=px('sectionPaddingBottom');target.style.borderRadius=px('sectionBorderRadius');
+    target.querySelectorAll('h1,h2,h3').forEach(h=>{h.style.color=$('sectionHeadingColor')?.value||'';h.style.fontFamily=$('sectionHeadingFont')?.value||'';h.style.fontSize=px('sectionHeadingSize');});
+  }
+  window.pb2LivePreview=()=>{applySectionFormPreview();applyAllToPreview();};
+
+  function bindOnce(){
+    if(state.initialized)return;state.initialized=true;ensureInspector();
+    document.querySelectorAll('.pb2-accordion-title').forEach(btn=>btn.addEventListener('click',()=>btn.parentElement.classList.toggle('open')));
+    document.querySelectorAll('#sectionForm input,#sectionForm textarea,#sectionForm select').forEach(input=>input.addEventListener('input',window.pb2LivePreview));
+    $('sectionForm')?.addEventListener('submit',window.savePageSection);
+    $('pb2PreviewFrame')?.addEventListener('load',installPreviewEditor);
+    document.querySelectorAll('.pb2-devices button').forEach(btn=>btn.addEventListener('click',()=>setDevice(btn.dataset.device||((btn.getAttribute('onclick')||'').match(/'(desktop|tablet|mobile)'/)||[])[1]||'desktop')));
+    window.pb2RefreshPreview();
+  }
+
+  window.addEventListener('DOMContentLoaded',bindOnce,{once:true});
+  if(document.readyState!=='loading')bindOnce();
 })();

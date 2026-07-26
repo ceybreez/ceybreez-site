@@ -8,7 +8,8 @@
   const PAGE_URLS = {
     home: '../index.html', villas: '../villas.html', homestays: '../homestays.html',
     apartments: '../apartments.html', tours: '../tours.html', services: '../services.html',
-    contact: '../contact.html'
+    contact: '../contact.html', privacy: '../privacy.html', terms: '../terms.html',
+    'tour-details': '../tour-details.html', '404': '../404.html'
   };
 
   const state = {
@@ -208,8 +209,26 @@
     const id=el.dataset.pbId; state.customElements=state.customElements.filter(x=>x.id!==id); delete state.elementStyles[state.selectedSelector]; clearSelection(); applyAllToPreview();
   }
 
+  function discoverPreviewSections() {
+    const doc=frameDoc(); if(!doc)return;
+    const savedKeys=new Set(state.items.filter(x=>!x.__virtual).map(x=>String(x.sectionKey)));
+    const virtual=[...doc.querySelectorAll('[data-section]')].filter(n=>!savedKeys.has(String(n.dataset.section))).map((node,index)=>{
+      const key=node.dataset.section;
+      const title=node.querySelector('[data-field="title"],h1,h2,h3')?.textContent?.trim() || key;
+      const subtitle=node.querySelector('[data-field="subtitle"]')?.textContent?.trim() || '';
+      const content=node.querySelector('[data-field="content"],p')?.textContent?.trim() || '';
+      const button=node.querySelector('[data-field="button"]');
+      const image=node.querySelector('[data-field="image"],img');
+      return {id:`local:${key}`,__virtual:true,page:currentPage(),sectionKey:key,sectionType:'existing',title,subtitle,content,
+        buttonText:button?.textContent?.trim()||'',buttonUrl:button?.getAttribute('href')||'',mediaUrl:image?.getAttribute('src')||'',
+        backgroundColor:'#ffffff',textColor:'#222222',headingColor:'#17324d',buttonColor:'#0f766e',sortOrder:index,active:true,settings:{}};
+    });
+    state.items=[...state.items.filter(x=>!x.__virtual),...virtual]; renderList();
+  }
+
   function installPreviewEditor() {
     const doc=frameDoc(); if(!doc)return;
+    discoverPreviewSections();
     state.previewController?.abort(); state.previewController=new AbortController(); const signal=state.previewController.signal;
     let style=doc.getElementById('pbx-editor-style');
     if(!style){style=doc.createElement('style');style.id='pbx-editor-style';style.textContent=`body.pbx-editing [data-section],body.pbx-editing [data-section] *{cursor:pointer!important}.pbx-selected{outline:3px solid #00a88f!important;outline-offset:3px!important;position:relative!important}.pbx-selected:after{content:'Editing';position:absolute;left:0;top:-25px;background:#006f66;color:#fff;font:11px Arial;padding:4px 7px;border-radius:4px;z-index:2147483647}.cms-custom-button{display:inline-block;padding:10px 18px;background:#087f72;color:#fff;text-decoration:none;border-radius:7px;margin:8px}.cms-custom-image{max-width:260px;height:auto}.cms-custom-text{margin:8px}`;doc.head.appendChild(style);}
@@ -273,6 +292,7 @@
 
   async function toggleSection(id){
     const item=state.items.find(x=>String(x.id)===String(id)); if(!item)return;
+    if(item.__virtual){alert('This section is not saved yet. Select it and press Save Changes first.');return;}
     const body={...item,active:!item.active,settings:parseSettings(item.settings)};
     const res=await fetch(`${API_BASE}/api/admin/page-sections`,{method:'POST',headers:authHeaders(),body:JSON.stringify(body)});
     if(!res.ok){const d=await res.json().catch(()=>({}));alert(d.error||'Unable to update section');return;}
@@ -282,7 +302,7 @@
   window.editPageSection=async function(id, scroll=true){
     const item=state.items.find(x=>String(x.id)===String(id)); if(!item)return;
     const s=parseSettings(item.settings); state.selectedId=item.id; state.elementStyles=s.elementStyles||{}; state.customElements=s.customElements||[]; state.selectedSelector='';
-    const vals={sectionEditId:item.id||'',sectionPage:item.page||currentPage(),sectionKey:item.sectionKey||'custom',sectionType:item.sectionType||'custom',sectionTitle:item.title||'',sectionSubtitle:item.subtitle||'',sectionContent:item.content||'',sectionButtonText:item.buttonText||s.buttonText||'',sectionButtonUrl:item.buttonUrl||s.buttonUrl||'',sectionImage:item.mediaUrl||'',sectionVideo:s.videoUrl||'',sectionBgColor:item.backgroundColor||'#ffffff',sectionBackgroundImage:item.backgroundImage||'',sectionTextColor:item.textColor||'#222222',sectionButtonColor:item.buttonColor||'#0f766e',sectionFontFamily:item.fontFamily||'',sectionFontSize:stripPx(item.fontSize||s.fontSize),sectionHeadingColor:item.headingColor||s.headingColor||'#17324d',sectionHeadingFont:s.headingFont||'',sectionHeadingSize:stripPx(s.headingSize),sectionBackgroundSize:s.backgroundSize||'cover',sectionBackgroundPosition:s.backgroundPosition||'center center',sectionOverlay:s.overlay??35,sectionSortOrder:item.sortOrder||0,sectionGradientStart:s.gradientStart||'#ffffff',sectionGradientEnd:s.gradientEnd||'#f8f3eb',sectionPaddingTop:stripPx(s.paddingTop),sectionPaddingBottom:stripPx(s.paddingBottom),sectionBorderRadius:stripPx(s.borderRadius),sectionShadow:s.shadow||'',sectionAnimation:s.animation||''};
+    const vals={sectionEditId:item.__virtual?'':(item.id||''),sectionPage:item.page||currentPage(),sectionKey:item.sectionKey||'custom',sectionType:item.sectionType||'custom',sectionTitle:item.title||'',sectionSubtitle:item.subtitle||'',sectionContent:item.content||'',sectionButtonText:item.buttonText||s.buttonText||'',sectionButtonUrl:item.buttonUrl||s.buttonUrl||'',sectionImage:item.mediaUrl||'',sectionVideo:s.videoUrl||'',sectionBgColor:item.backgroundColor||'#ffffff',sectionBackgroundImage:item.backgroundImage||'',sectionTextColor:item.textColor||'#222222',sectionButtonColor:item.buttonColor||'#0f766e',sectionFontFamily:item.fontFamily||'',sectionFontSize:stripPx(item.fontSize||s.fontSize),sectionHeadingColor:item.headingColor||s.headingColor||'#17324d',sectionHeadingFont:s.headingFont||'',sectionHeadingSize:stripPx(s.headingSize),sectionBackgroundSize:s.backgroundSize||'cover',sectionBackgroundPosition:s.backgroundPosition||'center center',sectionOverlay:s.overlay??35,sectionSortOrder:item.sortOrder||0,sectionGradientStart:s.gradientStart||'#ffffff',sectionGradientEnd:s.gradientEnd||'#f8f3eb',sectionPaddingTop:stripPx(s.paddingTop),sectionPaddingBottom:stripPx(s.paddingBottom),sectionBorderRadius:stripPx(s.borderRadius),sectionShadow:s.shadow||'',sectionAnimation:s.animation||''};
     Object.entries(vals).forEach(([id,v])=>{if($(id))$(id).value=v;}); $('sectionActive').checked=!!item.active; loadCards(s.cards||[]); renderList(); renderInspector(); applySectionFormPreview(); applyAllToPreview(); if(scroll)$('sectionForm')?.scrollIntoView({behavior:'smooth',block:'start'});
   };
 

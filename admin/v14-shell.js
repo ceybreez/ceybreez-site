@@ -641,16 +641,16 @@ function initV18BlockDatePickers(bookings){
   function refreshLegacy(logical){
     try{
       if(logical==="inquiries" && typeof loadInquiries==="function") loadInquiries();
-      if(logical==="bookings" && typeof loadBookings==="function") loadBookings();
-      if(logical==="availability") renderAvailabilityManager();
-    if(logical==="finance" && typeof window.renderFinanceModule==="function") window.renderFinanceModule();
-      if(logical==="properties" && typeof loadProperties==="function") loadProperties();
-      if(logical==="tours" && typeof loadDestinations==="function") loadDestinations();
-      if(logical==="services" && typeof loadServices==="function") loadServices();
-      if(logical==="reviews" && typeof loadReviews==="function") loadReviews();
-      if(logical==="finance" && typeof window.renderFinanceModule==="function") window.renderFinanceModule();
-      if(logical==="reports" && typeof renderReports==="function") renderReports();
-      if(logical==="pageBuilder"){
+      else if(logical==="bookings" && typeof loadBookings==="function") loadBookings();
+      else if(logical==="availability") renderAvailabilityManager();
+      else if(logical==="finance" && typeof window.renderFinanceModule==="function") window.renderFinanceModule();
+      else if(logical==="properties" && typeof loadProperties==="function") loadProperties();
+      else if(logical==="tours" && typeof loadDestinations==="function") loadDestinations();
+      else if(logical==="services" && typeof loadServices==="function") loadServices();
+      else if(logical==="reviews" && typeof loadReviews==="function") loadReviews();
+      else if(logical==="reports" && typeof window.renderReportsModule==="function") window.renderReportsModule();
+      else if(logical==="reports" && typeof renderReports==="function") renderReports();
+      else if(logical==="pageBuilder"){
         if(typeof loadSiteContent==="function") loadSiteContent();
         if(typeof loadPageSections==="function") loadPageSections();
       }
@@ -661,18 +661,32 @@ function initV18BlockDatePickers(bookings){
     ensureShell();
     const logical=logicalName(tab);
 
-    if(logical!=="dashboard" && typeof originalShowTab==="function"){
-      try{ originalShowTab(legacyCall[logical] || tab); }catch(e){ console.warn("Legacy showTab warning", e); }
-    }
-
     forceOnly(logical);
     setActive(logical);
 
-    if(logical==="dashboard") callDashboard();
-    else refreshLegacy(logical);
+    if(logical==="dashboard"){
+      callDashboard();
+    } else if(logical==="availability"){
+      renderAvailabilityManager();
+    } else if(logical==="finance"){
+      if(typeof window.renderFinanceModule==="function") window.renderFinanceModule();
+    } else if(logical==="reports"){
+      if(typeof window.renderReportsModule==="function") window.renderReportsModule();
+      else if(typeof renderReports==="function") renderReports();
+    } else if(logical==="reviews"){
+      // Legacy showTab changes the visible legacy panel but does not load review data.
+      if(typeof originalShowTab==="function"){
+        try{ originalShowTab(legacyCall[logical] || tab); }catch(e){ console.warn("Legacy showTab warning", e); }
+      }
+      if(typeof loadReviews==="function") loadReviews();
+    } else if(typeof originalShowTab==="function"){
+      // The legacy router already performs the required single loader call for
+      // inquiries, bookings, properties, tours, services and page builder.
+      try{ originalShowTab(legacyCall[logical] || tab); }catch(e){ console.warn("Legacy showTab warning", e); }
+    } else {
+      refreshLegacy(logical);
+    }
 
-    if(logical==="availability") renderAvailabilityManager();
-    if(logical==="finance" && typeof window.renderFinanceModule==="function") window.renderFinanceModule();
     if(typeof window.v14CloseMobileMenu==="function") window.v14CloseMobileMenu();
   };
 

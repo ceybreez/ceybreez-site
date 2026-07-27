@@ -63,3 +63,26 @@ body.tour-modal-open{overflow:hidden;}
   .tour-modal-card{width:98vw;max-height:94vh;}
   .tour-modal-body{max-height:calc(94vh - 190px);}
 }
+
+
+/* Tour image upload */
+.tour-upload-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;}
+.tour-upload-card{border:1px solid #d8e5e4;border-radius:16px;padding:16px;background:#fbfefe;display:flex;flex-direction:column;gap:14px;}
+.tour-upload-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.tour-upload-card h5{margin:0;color:#0f766e;font-size:15px;}
+.tour-upload-card p{margin:4px 0 0;color:#64748b;font-size:12px;}
+.tour-upload-status{font-size:11px;font-weight:800;color:#0f766e;text-align:right;}
+.tour-upload-status.error{color:#b91c1c;}
+.tour-upload-actions{display:flex;gap:9px;flex-wrap:wrap;}
+.tour-upload-actions button{border:0;border-radius:10px;padding:10px 14px;font-weight:900;cursor:pointer;}
+.tour-upload-btn{background:#0f766e;color:#fff;}
+.tour-upload-btn:disabled{opacity:.6;cursor:not-allowed;}
+.tour-remove-btn{background:#fff1f2;color:#be123c;}
+.tour-main-image-preview{height:230px;border:1px dashed #b9d8d4;border-radius:14px;background:#eef8f6;display:grid;place-items:center;overflow:hidden;color:#64748b;font-size:13px;}
+.tour-main-image-preview img{width:100%;height:100%;object-fit:cover;}
+.tour-gallery-preview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;min-height:110px;}
+.tour-gallery-preview>p{grid-column:1/-1;align-self:center;text-align:center;padding:28px;border:1px dashed #b9d8d4;border-radius:12px;background:#eef8f6;}
+.tour-gallery-thumb{position:relative;height:110px;border-radius:12px;overflow:hidden;background:#e5e7eb;}
+.tour-gallery-thumb img{width:100%;height:100%;object-fit:cover;}
+.tour-gallery-thumb button{position:absolute;top:6px;right:6px;width:28px;height:28px;border:0;border-radius:50%;background:rgba(185,28,28,.9);color:#fff;font-size:18px;font-weight:900;cursor:pointer;}
+@media(max-width:900px){.tour-upload-grid{grid-template-columns:1fr}.tour-gallery-preview{grid-template-columns:repeat(2,minmax(0,1fr));}}

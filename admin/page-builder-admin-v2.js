@@ -86,7 +86,14 @@
       <div id="pbxFields" class="pbx-fields hidden">
         <label>Text / Label<textarea id="pbxText" rows="3"></textarea></label>
         <label>Link URL<input id="pbxHref" placeholder="https:// or page.html"></label>
-        <label>Image URL<input id="pbxSrc" placeholder="Image URL"></label>
+        <label>Image
+          <div class="pbx-image-upload-row">
+            <input id="pbxSrc" placeholder="Image URL">
+            <button type="button" id="pbxUploadImageBtn">Upload</button>
+          </div>
+          <input id="pbxImageUploader" class="pbx-hidden-file" type="file" accept="image/*">
+          <small id="pbxImageUploadStatus" class="pbx-upload-status"></small>
+        </label>
         <div class="pbx-grid2"><label>Text Colour<input id="pbxColor" type="color" value="#222222"></label><label>Background<input id="pbxBackground" type="color" value="#ffffff"></label></div>
         <div class="pbx-grid2"><label>Font Size<input id="pbxFontSize" type="number" min="8"></label><label>Font Weight<select id="pbxFontWeight"><option value="">Default</option><option value="300">Light</option><option value="400">Regular</option><option value="500">Medium</option><option value="600">Semi-bold</option><option value="700">Bold</option></select></label></div>
         <label>Alignment<select id="pbxTextAlign"><option value="">Default</option><option value="left">Left</option><option value="center">Centre</option><option value="right">Right</option></select></label>
@@ -130,8 +137,58 @@
       renderInspector(); applyAllToPreview();
     });
     $('pbxDeleteCustom')?.addEventListener('click', deleteSelectedCustom);
+    $('pbxUploadImageBtn')?.addEventListener('click', () => $('pbxImageUploader')?.click());
+    $('pbxImageUploader')?.addEventListener('change', async (event) => {
+      const file = event.target.files?.[0];
+      if (file) await uploadSelectedElementImage(file);
+      event.target.value = '';
+    });
     document.querySelectorAll('[data-pbx-device]').forEach(btn => btn.addEventListener('click', () => setDevice(btn.dataset.pbxDevice)));
     document.querySelectorAll('[data-pbx-add]').forEach(btn => btn.addEventListener('click', () => addCustom(btn.dataset.pbxAdd)));
+  }
+
+  async function uploadSelectedElementImage(file) {
+    const status = $('pbxImageUploadStatus');
+    const button = $('pbxUploadImageBtn');
+    const selected = selectedElement();
+    if (!selected) {
+      alert('Select an image element in the preview first.');
+      return;
+    }
+    if (!selected.matches('img,video,source') && selected.dataset.pbCustom !== '1') {
+      alert('Select an image element, or add a new Image element first.');
+      return;
+    }
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file.');
+      return;
+    }
+    try {
+      if (status) status.textContent = 'Uploading image...';
+      if (button) button.disabled = true;
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'page-builder-images');
+      const res = await fetch(`${API_BASE}/api/admin/upload-image`, {
+        method: 'POST',
+        headers: uploadHeaders(),
+        body: formData
+      });
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(result.error || 'Image upload failed');
+      if (!result.url) throw new Error('Upload completed, but no image URL was returned');
+      const rec = record();
+      if (!rec) throw new Error('No selected element record');
+      rec.src = result.url;
+      if ($('pbxSrc')) $('pbxSrc').value = result.url;
+      applySelectedRecord();
+      if (status) status.textContent = 'Image uploaded successfully.';
+    } catch (error) {
+      if (status) status.textContent = error.message || 'Image upload failed.';
+      alert(error.message || 'Image upload failed.');
+    } finally {
+      if (button) button.disabled = false;
+    }
   }
 
   function renderInspector() {

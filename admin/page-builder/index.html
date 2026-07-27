@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CeyBreez Live Page Builder</title>
+<link rel="stylesheet" href="builder.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><strong>CeyBreez</strong><span>Live Page Builder</span></div>
+  <select id="pageSelect">
+    <option value="home">Home</option><option value="villas">Villas</option><option value="homestays">Homestays</option>
+    <option value="apartments">Apartments</option><option value="tours">Tours</option><option value="tour-details">Tour Details</option>
+    <option value="services">Services</option><option value="contact">Contact</option><option value="privacy">Privacy</option>
+    <option value="terms">Terms</option><option value="404">404</option>
+  </select>
+  <div class="devices"><button data-device="desktop" class="active">Desktop</button><button data-device="tablet">Tablet</button><button data-device="mobile">Mobile</button></div>
+  <button id="undoBtn">Undo</button><button id="redoBtn">Redo</button><button id="openBtn">Open Page</button><button id="saveBtn" class="primary">Save & Publish</button>
+</header>
+<main class="layout">
+  <aside class="left">
+    <h3>Elements</h3>
+    <div class="element-grid">
+      <button data-add="section">Section</button><button data-add="heading">Heading</button><button data-add="text">Text</button>
+      <button data-add="button">Button</button><button data-add="image">Image</button><button data-add="spacer">Spacer</button>
+    </div>
+    <h3>Layers</h3><div id="layers" class="layers"></div>
+  </aside>
+  <section class="stage"><div id="frameShell" class="frame-shell desktop"><iframe id="preview" title="Live page"></iframe></div></section>
+  <aside class="right">
+    <div class="status" id="status">Ready</div>
+    <h3>Selected</h3><div id="selectedName" class="selected-name">Click an element</div>
+    <label>Text<textarea id="textValue" rows="3"></textarea></label>
+    <label>Link URL<input id="hrefValue"></label>
+    <label>Image URL<input id="srcValue"></label>
+    <div class="two"><label>Text colour<input type="color" id="colorValue" value="#222222"></label><label>Background<input type="color" id="bgValue" value="#ffffff"></label></div>
+    <div class="two"><label>Font size<input type="number" id="fontSizeValue" placeholder="Auto"></label><label>Radius<input type="number" id="radiusValue" placeholder="0"></label></div>
+    <div class="two"><label>Width<select id="widthMode"><option value="auto">Auto</option><option value="full">100%</option><option value="custom">Custom px</option></select></label><label>Width px<input type="number" id="widthValue"></label></div>
+    <div class="two"><label>Height<select id="heightMode"><option value="auto">Auto</option><option value="full">100%</option><option value="custom">Custom px</option></select></label><label>Height px<input type="number" id="heightValue"></label></div>
+    <div class="two"><label>Padding<input type="number" id="paddingValue"></label><label>Margin<input type="number" id="marginValue"></label></div>
+    <label>Text align<select id="alignValue"><option value="">Default</option><option>left</option><option>center</option><option>right</option></select></label>
+    <label>Display<select id="displayValue"><option value="">Default</option><option value="block">Block</option><option value="inline-block">Inline block</option><option value="flex">Flex</option><option value="grid">Grid</option><option value="none">Hidden</option></select></label>
+    <label class="check"><input type="checkbox" id="hoverEnabled"> Edit hover background</label>
+    <label>Hover background<input type="color" id="hoverBgValue" value="#0f766e"></label>
+    <div class="actions"><button id="duplicateBtn">Duplicate</button><button id="deleteBtn" class="danger">Delete</button></div>
+    <p class="hint">Desktop styles become the default. Tablet and Mobile only store overrides. Width and height remain Auto unless you set them.</p>
+  </aside>
+</main>
+<script src="builder.js"></script>
+</body></html>

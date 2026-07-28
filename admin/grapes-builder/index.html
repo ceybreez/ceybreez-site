@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CeyBreez Visual Builder</title>
+  <link rel="stylesheet" href="https://unpkg.com/grapesjs@0.23.2/dist/css/grapes.min.css">
+  <link rel="stylesheet" href="builder.css">
+</head>
+<body>
+  <header class="cb-topbar">
+    <div class="cb-brand">
+      <a href="../" class="cb-back" aria-label="Back to admin">←</a>
+      <div><strong>CeyBreez Visual Builder</strong><small>GrapesJS editor — safe draft and export workflow</small></div>
+    </div>
+    <div class="cb-page-tools">
+      <label>Page
+        <select id="pageSelect">
+          <option value="index.html">Home</option>
+          <option value="villas.html">Villas</option>
+          <option value="homestays.html">Homestays</option>
+          <option value="apartments.html">Apartments</option>
+          <option value="tours.html">Tours</option>
+          <option value="tour-details.html">Tour Details</option>
+          <option value="services.html">Services</option>
+          <option value="contact.html">Contact</option>
+          <option value="privacy.html">Privacy</option>
+          <option value="terms.html">Terms</option>
+          <option value="404.html">404</option>
+        </select>
+      </label>
+      <button id="importBtn" class="cb-btn">Import current page</button>
+      <button id="saveBtn" class="cb-btn cb-primary">Save draft</button>
+      <button id="exportBtn" class="cb-btn">Export HTML</button>
+    </div>
+  </header>
+
+  <div class="cb-status" id="status">Ready. Import a page to begin.</div>
+
+  <main class="cb-shell">
+    <aside class="cb-left">
+      <div class="cb-panel-title">Elements</div>
+      <div id="blocks"></div>
+    </aside>
+    <section class="cb-center">
+      <div class="cb-devicebar">
+        <button data-device="Desktop" class="active">Desktop</button>
+        <button data-device="Tablet">Tablet</button>
+        <button data-device="Mobile portrait">Mobile</button>
+        <span id="selectionLabel">Nothing selected</span>
+      </div>
+      <div id="gjs"></div>
+    </section>
+    <aside class="cb-right">
+      <div class="cb-tabs">
+        <button data-tab="styles" class="active">Style</button>
+        <button data-tab="traits">Settings</button>
+        <button data-tab="layers">Layers</button>
+      </div>
+      <div id="styles" class="cb-tab active"></div>
+      <div id="traits" class="cb-tab"></div>
+      <div id="layers" class="cb-tab"></div>
+    </aside>
+  </main>
+
+  <input id="assetInput" type="file" accept="image/*" multiple hidden>
+
+  <script src="https://unpkg.com/grapesjs@0.23.2/dist/grapes.min.js"></script>
+  <script src="builder.js"></script>
+</body>
+</html>

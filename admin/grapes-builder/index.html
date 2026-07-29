@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CeyBreez Visual Builder</title>
+  <link rel="stylesheet" href="builder.css">
+</head>
+<body>
+<header class="cb-topbar">
+  <div class="cb-brand"><a href="../" class="cb-back">←</a><div><strong>CeyBreez Visual Builder</strong><small>Live page editor — full visual workspace</small></div></div>
+  <div class="cb-tools">
+    <label>Page <select id="pageSelect">
+      <option value="welcome">Welcome Screen</option><option value="home" selected>Home Page</option>
+      <option value="villas.html">Villas</option><option value="apartments.html">Apartments</option><option value="homestays.html">Homestays</option>
+      <option value="tours.html">Tours</option><option value="tour-details.html">Tour Details</option><option value="services.html">Services</option>
+      <option value="contact.html">Contact</option><option value="privacy.html">Privacy</option><option value="terms.html">Terms</option><option value="404.html">404</option>
+    </select></label>
+    <button id="reloadBtn">Reload</button><button id="undoBtn">Undo</button><button id="redoBtn">Redo</button>
+    <button id="saveBtn">Save Draft</button><button id="publishBtn" class="primary">Publish Live</button><button id="exportBtn">Export Draft</button><button id="clearBtn">Clear</button>
+  </div>
+</header>
+<div id="status" class="cb-status">Loading Home Page…</div>
+<main class="cb-shell">
+  <aside class="cb-left">
+    <div class="left-tabs"><button class="active" data-left-tab="elements">Elements</button><button data-left-tab="sections">Sections</button></div>
+    <div id="elementsTab" class="left-panel active">
+      <details open><summary>Basic</summary><div class="block-grid">
+        <button data-add="section">Section</button><button data-add="container">Container</button><button data-add="columns">2 Columns</button><button data-add="heading">Heading</button>
+        <button data-add="text">Text</button><button data-add="button">Button</button><button data-add="image">Image</button><button data-add="card">Card</button>
+        <button data-add="spacer">Spacer</button><button data-add="divider">Divider</button>
+      </div></details>
+      <details open><summary>Media</summary><div class="block-grid one"><button id="mediaUploadBtn">Upload Image</button></div></details>
+      <details><summary>Actions</summary><div class="block-grid one"><button id="duplicateBtn">Duplicate selected</button><button id="deleteBtn">Delete selected</button></div></details>
+    </div>
+    <div id="sectionsTab" class="left-panel"><div id="sectionList" class="section-list"></div></div>
+  </aside>
+
+  <section class="cb-workspace">
+    <div class="cb-devicebar"><button data-width="100%" data-device="desktop" class="active">Desktop</button><button data-width="768px" data-device="tablet">Tablet</button><button data-width="390px" data-device="mobile">Mobile</button><label class="auto-responsive"><input id="autoResponsive" type="checkbox" checked> Auto responsive</label><span id="selectedLabel">Nothing selected</span></div>
+    <div class="cb-stage"><iframe id="liveFrame" title="CeyBreez live page"></iframe></div>
+  </section>
+
+  <aside class="cb-right">
+    <div class="right-tabs"><button class="active" data-tab="style">Style</button><button data-tab="settings">Settings</button><button data-tab="layers">Layers</button></div>
+    <div id="styleTab" class="right-panel active">
+      <div id="emptyState" class="empty">Click an element inside the page.</div>
+      <div id="inspector" hidden>
+        <div class="selected-box"><small>Selected</small><strong id="elementName"></strong></div>
+        <div class="quick-actions" aria-label="Selected element actions">
+          <button id="moveUpBtn" title="Move element up">↑ Move up</button>
+          <button id="moveDownBtn" title="Move element down">↓ Move down</button>
+          <button id="duplicateQuickBtn" title="Duplicate selected element">⧉ Duplicate</button>
+          <button id="deleteQuickBtn" class="danger" title="Delete selected element">✕ Delete</button>
+        </div>
+        <details open><summary>Layout</summary>
+          <label>Display<select id="displayValue"><option value="">Default</option><option>block</option><option>inline-block</option><option>flex</option><option>grid</option><option>none</option></select></label>
+          <div class="two"><label>Width<input id="widthValue" placeholder="auto / 100%"></label><label>Height<input id="heightValue" placeholder="auto / 500px"></label></div>
+          <div class="two"><label>Max width<input id="maxWidthValue" placeholder="none"></label><label>Min height<input id="minHeightValue" placeholder="0"></label></div>
+        </details>
+        <details open><summary>Spacing</summary>
+          <div class="four"><label>Margin T<input id="marginTop" type="number"></label><label>R<input id="marginRight" type="number"></label><label>B<input id="marginBottom" type="number"></label><label>L<input id="marginLeft" type="number"></label></div>
+          <div class="four"><label>Padding T<input id="paddingTop" type="number"></label><label>R<input id="paddingRight" type="number"></label><label>B<input id="paddingBottom" type="number"></label><label>L<input id="paddingLeft" type="number"></label></div>
+        </details>
+        <details id="typographyGroup" open><summary>Typography</summary>
+          <label>Font family<input id="fontFamily" placeholder="Poppins"></label>
+          <div class="two"><label>Font size<input id="fontSize" type="number" min="8" max="160"></label><label>Weight<select id="fontWeight"><option value="">Default</option><option>300</option><option>400</option><option>500</option><option>600</option><option>700</option><option>800</option></select></label></div>
+          <div class="two"><label>Line height<input id="lineHeight" placeholder="1.5"></label><label>Letter spacing<input id="letterSpacing" placeholder="0px"></label></div>
+          <label>Text align<select id="textAlign"><option value="">Default</option><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option><option value="justify">Justify</option></select></label>
+          <div class="align-buttons" aria-label="Text alignment">
+            <button type="button" data-align="left">Left</button>
+            <button type="button" data-align="center">Center</button>
+            <button type="button" data-align="right">Right</button>
+            <button type="button" data-align="justify">Justify</button>
+          </div>
+          <label>Flex / Grid justify<select id="justifyContent"><option value="">Default</option><option value="flex-start">Start</option><option value="center">Center</option><option value="flex-end">End</option><option value="space-between">Space between</option><option value="space-around">Space around</option><option value="space-evenly">Space evenly</option></select></label>
+          <label>Items alignment<select id="alignItems"><option value="">Default</option><option value="flex-start">Start</option><option value="center">Center</option><option value="flex-end">End</option><option value="stretch">Stretch</option><option value="baseline">Baseline</option></select></label>
+          <label class="optional-style"><span><input id="useTextColor" type="checkbox"> Text colour</span><input id="colorValue" type="color" disabled></label>
+        </details>
+        <details id="backgroundGroup"><summary>Background</summary>
+          <label class="optional-style"><span><input id="useBgColor" type="checkbox"> Background colour</span><input id="bgValue" type="color" disabled></label>
+          <label>Background image (optional)<div class="inline"><input id="backgroundImage" placeholder="Leave empty for none"><button id="bgUploadBtn">Upload</button><button id="clearBgBtn" type="button">Clear</button></div></label>
+          <div class="two"><label>Size<select id="backgroundSize"><option value="">Default</option><option>cover</option><option>contain</option><option>auto</option></select></label><label>Position<select id="backgroundPosition"><option value="">Default</option><option>center</option><option>top</option><option>bottom</option><option>left</option><option>right</option></select></label></div>
+        </details>
+        <details><summary>Border & Effects</summary>
+          <div class="two"><label>Radius<input id="radius" type="number" min="0" max="200"></label><label>Border width<input id="borderWidth" type="number" min="0" max="20"></label></div>
+          <label>Border colour<input id="borderColor" type="color"></label>
+          <label>Box shadow<input id="boxShadow" placeholder="0 10px 30px rgba(...)"></label>
+          <label>Opacity<input id="opacity" type="range" min="0" max="1" step="0.05"></label>
+        </details>
+      </div>
+    </div>
+    <div id="settingsTab" class="right-panel">
+      <div id="settingsEmpty" class="empty">Select an element.</div>
+      <div id="settingsInspector" hidden>
+        <label>Text / HTML<textarea id="textValue" rows="5"></textarea></label>
+        <label id="linkRow">Link URL<input id="linkValue" placeholder="Leave empty for no link"></label>
+        <label id="imageRow">Image URL<div class="inline"><input id="imageValue"><button id="uploadBtn">Upload</button></div></label><label id="altRow">Alt text<input id="altValue" placeholder="Describe the image"></label>
+        <label>CSS classes<input id="classValue"></label>
+        <label>Element ID<input id="idValue"></label>
+        <div class="actions"><button id="hideBtn">Hide / Show</button><button id="resetElementBtn">Reset element</button></div>
+      </div>
+    </div>
+    <div id="layersTab" class="right-panel"><div id="layerList" class="layer-list"></div></div>
+  </aside>
+</main>
+<input id="fileInput" type="file" accept="image/*" hidden>
+<script src="builder.js"></script>
+</body></html>

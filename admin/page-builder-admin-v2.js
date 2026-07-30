@@ -1,399 +1,438 @@
-/* CeyBreez Page Builder — Clean Rebuild
-   One selection engine, one inspector, one preview binding.
-*/
+/* =========================================================
+   CEYBREEZ PAGE BUILDER — STABLE ADMIN EDITOR
+   Replaces old V2/V3/V4 patched builder scripts.
+   Edits the original iframe DOM only (no clones/duplicates).
+   ========================================================= */
 (() => {
   'use strict';
 
-  const $ = (id) => document.getElementById(id);
   const PAGE_URLS = {
-    home: '../index.html', villas: '../villas.html', homestays: '../homestays.html',
-    apartments: '../apartments.html', tours: '../tours.html', services: '../services.html',
-    contact: '../contact.html', privacy: '../privacy.html', terms: '../terms.html',
-    'tour-details': '../tour-details.html', '404': '../404.html'
+    home: '../index.html',
+    villas: '../villas.html',
+    apartments: '../apartments.html',
+    homestays: '../homestays.html',
+    tours: '../tours.html',
+    services: '../services.html',
+    contact: '../contact.html'
   };
 
   const state = {
-    items: [], selectedId: '', selectedSelector: '', selectedDevice: 'desktop',
-    elementStyles: {}, customElements: [], previewController: null, initialized: false
+    items: [],
+    selectedId: '',
+    page: 'home',
+    device: 'desktop',
+    previewReady: false,
+    loading: false
   };
 
-  const esc = (value) => String(value ?? '').replace(/[&<>"']/g, ch => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  })[ch]);
-  const cssEscape = (value) => window.CSS?.escape ? CSS.escape(String(value || '')) : String(value || '').replace(/[^a-zA-Z0-9_-]/g, '\\$&');
-  const px = (id) => { const v = $(id)?.value; return v === '' || v == null ? '' : `${Number(v)}px`; };
-  const stripPx = (v) => String(v || '').replace('px','');
-  const parseSettings = (raw) => {
-    try { return typeof raw === 'string' ? JSON.parse(raw || '{}') : (raw || {}); }
-    catch { return {}; }
-  };
-  const currentPage = () => $('sectionFilterPage')?.value || 'home';
-  const currentItem = () => state.items.find(x => String(x.id) === String(state.selectedId));
-  const frameDoc = () => $('pb2PreviewFrame')?.contentDocument || null;
-  const selectedSection = () => {
-    const doc = frameDoc();
-    const key = $('sectionKey')?.value || currentItem()?.sectionKey;
-    return doc?.querySelector(`[data-section="${cssEscape(key)}"]`) || null;
-  };
-  const selectedElement = () => {
-    const section = selectedSection();
-    if (!section || !state.selectedSelector) return null;
-    try { return state.selectedSelector === ':scope' ? section : section.querySelector(state.selectedSelector); }
-    catch { return null; }
-  };
-  const record = () => {
-    if (!state.selectedSelector) return null;
-    state.elementStyles[state.selectedSelector] ||= { desktop:{}, tablet:{}, mobile:{} };
-    state.elementStyles[state.selectedSelector][state.selectedDevice] ||= {};
-    return state.elementStyles[state.selectedSelector][state.selectedDevice];
-  };
+  const $ = (id) => document.getElementById(id);
+  const esc = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+  }[c]));
 
-  function selectorFor(el, section) {
-    if (el === section) return ':scope';
-    if (el.dataset.pbId) return `[data-pb-id="${cssEscape(el.dataset.pbId)}"]`;
-    if (el.dataset.field) return `[data-field="${cssEscape(el.dataset.field)}"]`;
-    if (el.id) return `#${cssEscape(el.id)}`;
-    const path = [];
-    let node = el;
-    while (node && node !== section && path.length < 5) {
-      let part = node.tagName.toLowerCase();
-      const classes = [...node.classList].filter(c => !c.startsWith('pbx-')).slice(0,2);
-      if (classes.length) part += '.' + classes.map(cssEscape).join('.');
-      const siblings = node.parentElement ? [...node.parentElement.children].filter(n => n.tagName === node.tagName) : [];
-      if (siblings.length > 1) part += `:nth-of-type(${siblings.indexOf(node)+1})`;
-      path.unshift(part);
-      node = node.parentElement;
+  function apiHeaders() {
+    if (typeof window.authHeaders === 'function') return window.authHeaders();
+    const token = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken') || '';
+    return { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` };
+  }
+
+  function apiBase() {
+    return window.API_BASE || 'https://ceybreez-contact-api.ceybreez.workers.dev';
+  }
+
+  function parseSettings(value) {
+    if (!value) return {};
+    if (typeof value === 'object') return value;
+    try { return JSON.parse(value); } catch { return {}; }
+  }
+
+  function px(id) {
+    const value = String($(id)?.value || '').trim();
+    if (!value) return '';
+    return /^-?\d+(\.\d+)?$/.test(value) ? `${value}px` : value;
+  }
+
+  function currentPage() {
+    return $('sectionFilterPage')?.value || $('sectionPage')?.value || state.page || 'home';
+  }
+
+  function currentItem() {
+    return state.items.find(item => String(item.id) === String(state.selectedId)) || null;
+  }
+
+  function status(message, type = '') {
+    const node = $('pb2SaveStatus');
+    if (!node) return;
+    node.textContent = message;
+    node.className = type === 'ok' ? 'pb2-status-ok' : type === 'error' ? 'pb2-status-error' : '';
+  }
+
+  function showError(error) {
+    console.error('[CeyBreez Builder]', error);
+    status(error?.message || String(error), 'error');
+  }
+
+  function ensureStudioButton() {
+    const bar = document.querySelector('.topbar, .v6-topbar');
+    if (!bar || document.getElementById('openGrapesStudioBtn')) return;
+    const btn = document.createElement('button');
+    btn.id = 'openGrapesStudioBtn';
+    btn.type = 'button';
+    btn.textContent = 'Visual Designer';
+    btn.title = 'Open separate GrapesJS Studio';
+    btn.addEventListener('click', () => window.open('grapes-studio/index.html', '_blank', 'noopener'));
+    const logout = [...bar.querySelectorAll('button')].find(b => /logout/i.test(b.textContent || ''));
+    bar.insertBefore(btn, logout || null);
+  }
+
+  function renderList() {
+    const box = $('sectionsList');
+    if (!box) return;
+    if (!state.items.length) {
+      box.innerHTML = '<div class="pb2-empty">No sections saved for this page.</div>';
+      return;
     }
-    return path.join(' > ');
-  }
+    const sorted = [...state.items].sort((a,b) => Number(a.sortOrder || 0) - Number(b.sortOrder || 0));
+    box.innerHTML = sorted.map(item => `
+      <button type="button" class="pb2-section-item ${String(item.id) === String(state.selectedId) ? 'active' : ''}" data-builder-id="${esc(item.id)}">
+        <span class="pb2-drag-icon">☷</span>
+        <span><strong>${esc(item.title || item.sectionKey || 'Untitled')}</strong><small>${esc(item.sectionKey || 'custom')}</small></span>
+        <span class="pb2-eye" title="${item.active ? 'Visible' : 'Hidden'}">${item.active ? '◉' : '○'}</span>
+      </button>`).join('');
 
-  function ensureInspector() {
-    if ($('pbxInspector')) return;
-    const form = $('sectionForm');
-    const head = form?.querySelector('.pb2-panel-head');
-    if (!form || !head) return;
-    const box = document.createElement('div');
-    box.id = 'pbxInspector';
-    box.className = 'pbx-inspector';
-    box.innerHTML = `
-      <div class="pbx-inspector-head"><div><strong>Visual Element Editor</strong><small id="pbxSelectedName">Click an element in preview</small></div><button type="button" id="pbxClearSelection">Clear</button></div>
-      <div class="pbx-device-tabs">
-        <button type="button" data-pbx-device="desktop" class="active">Desktop</button>
-        <button type="button" data-pbx-device="tablet">Tablet</button>
-        <button type="button" data-pbx-device="mobile">Mobile</button>
-      </div>
-      <div id="pbxEmpty" class="pbx-empty">Click a heading, paragraph, image or button in the preview.</div>
-      <div id="pbxFields" class="pbx-fields hidden">
-        <label>Text / Label<textarea id="pbxText" rows="3"></textarea></label>
-        <label>Link URL<input id="pbxHref" placeholder="https:// or page.html"></label>
-        <label>Image
-          <div class="pbx-image-upload-row">
-            <input id="pbxSrc" placeholder="Image URL">
-            <button type="button" id="pbxUploadImageBtn">Upload</button>
-          </div>
-          <input id="pbxImageUploader" class="pbx-hidden-file" type="file" accept="image/*">
-          <small id="pbxImageUploadStatus" class="pbx-upload-status"></small>
-        </label>
-        <div class="pbx-grid2"><label>Text Colour<input id="pbxColor" type="color" value="#222222"></label><label>Background<input id="pbxBackground" type="color" value="#ffffff"></label></div>
-        <div class="pbx-grid2"><label>Font Size<input id="pbxFontSize" type="number" min="8"></label><label>Font Weight<select id="pbxFontWeight"><option value="">Default</option><option value="300">Light</option><option value="400">Regular</option><option value="500">Medium</option><option value="600">Semi-bold</option><option value="700">Bold</option></select></label></div>
-        <label>Alignment<select id="pbxTextAlign"><option value="">Default</option><option value="left">Left</option><option value="center">Centre</option><option value="right">Right</option></select></label>
-        <div class="pbx-grid2"><label>Width px<input id="pbxWidth" type="number" min="0"></label><label>Height px<input id="pbxHeight" type="number" min="0"></label></div>
-        <div class="pbx-grid2"><label>Move X<input id="pbxX" type="number"></label><label>Move Y<input id="pbxY" type="number"></label></div>
-        <div class="pbx-grid4"><label>Margin T<input id="pbxMt" type="number"></label><label>Margin R<input id="pbxMr" type="number"></label><label>Margin B<input id="pbxMb" type="number"></label><label>Margin L<input id="pbxMl" type="number"></label></div>
-        <div class="pbx-grid4"><label>Padding T<input id="pbxPt" type="number"></label><label>Padding R<input id="pbxPr" type="number"></label><label>Padding B<input id="pbxPb" type="number"></label><label>Padding L<input id="pbxPl" type="number"></label></div>
-        <div class="pbx-grid2"><label>Radius<input id="pbxRadius" type="number" min="0"></label><label>Opacity<input id="pbxOpacity" type="number" min="0" max="1" step="0.05"></label></div>
-        <label class="pbx-check"><input id="pbxHidden" type="checkbox"> Hide on this device</label>
-        <div class="pbx-actions"><button type="button" id="pbxResetDevice">Reset Device Style</button><button type="button" id="pbxDeleteCustom" class="danger">Delete Added Element</button></div>
-      </div>
-      <div class="pbx-add-row"><button type="button" data-pbx-add="heading">+ Heading</button><button type="button" data-pbx-add="text">+ Text</button><button type="button" data-pbx-add="button">+ Button</button><button type="button" data-pbx-add="image">+ Image</button></div>
-    `;
-    head.insertAdjacentElement('afterend', box);
-    bindInspector();
-  }
-
-  const fieldMap = {
-    pbxText:'text', pbxHref:'href', pbxSrc:'src', pbxColor:'color', pbxBackground:'backgroundColor',
-    pbxFontSize:'fontSize', pbxFontWeight:'fontWeight', pbxTextAlign:'textAlign', pbxWidth:'width',
-    pbxHeight:'height', pbxX:'x', pbxY:'y', pbxMt:'marginTop', pbxMr:'marginRight', pbxMb:'marginBottom',
-    pbxMl:'marginLeft', pbxPt:'paddingTop', pbxPr:'paddingRight', pbxPb:'paddingBottom', pbxPl:'paddingLeft',
-    pbxRadius:'borderRadius', pbxOpacity:'opacity'
-  };
-
-  function bindInspector() {
-    Object.keys(fieldMap).forEach(id => {
-      $(id)?.addEventListener('input', () => {
-        const rec = record(); if (!rec) return;
-        const key = fieldMap[id]; const value = $(id).value;
-        rec[key] = ['fontSize','width','height','x','y','marginTop','marginRight','marginBottom','marginLeft','paddingTop','paddingRight','paddingBottom','paddingLeft','borderRadius','opacity'].includes(key)
-          ? (value === '' ? '' : Number(value)) : value;
-        applySelectedRecord();
+    box.querySelectorAll('[data-builder-id]').forEach(button => {
+      button.addEventListener('click', (event) => {
+        const id = button.dataset.builderId;
+        if (event.target.closest('.pb2-eye')) toggleSection(id);
+        else selectSection(id);
       });
     });
-    $('pbxHidden')?.addEventListener('change', () => { const rec=record(); if(rec){rec.hidden=$('pbxHidden').checked;applySelectedRecord();} });
-    $('pbxClearSelection')?.addEventListener('click', clearSelection);
-    $('pbxResetDevice')?.addEventListener('click', () => {
-      if (!state.selectedSelector) return;
-      state.elementStyles[state.selectedSelector][state.selectedDevice] = {};
-      renderInspector(); applyAllToPreview();
-    });
-    $('pbxDeleteCustom')?.addEventListener('click', deleteSelectedCustom);
-    $('pbxUploadImageBtn')?.addEventListener('click', () => $('pbxImageUploader')?.click());
-    $('pbxImageUploader')?.addEventListener('change', async (event) => {
-      const file = event.target.files?.[0];
-      if (file) await uploadSelectedElementImage(file);
-      event.target.value = '';
-    });
-    document.querySelectorAll('[data-pbx-device]').forEach(btn => btn.addEventListener('click', () => setDevice(btn.dataset.pbxDevice)));
-    document.querySelectorAll('[data-pbx-add]').forEach(btn => btn.addEventListener('click', () => addCustom(btn.dataset.pbxAdd)));
   }
 
-  async function uploadSelectedElementImage(file) {
-    const status = $('pbxImageUploadStatus');
-    const button = $('pbxUploadImageBtn');
-    const selected = selectedElement();
-    if (!selected) {
-      alert('Select an image element in the preview first.');
-      return;
-    }
-    if (!selected.matches('img,video,source') && selected.dataset.pbCustom !== '1') {
-      alert('Select an image element, or add a new Image element first.');
-      return;
-    }
-    if (!file.type.startsWith('image/')) {
-      alert('Please select an image file.');
-      return;
-    }
+  async function loadSections() {
+    if (state.loading) return;
+    state.loading = true;
+    state.page = currentPage();
+    const box = $('sectionsList');
+    if (box) box.innerHTML = '<div class="pb2-empty">Loading sections…</div>';
     try {
-      if (status) status.textContent = 'Uploading image...';
-      if (button) button.disabled = true;
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folder', 'page-builder-images');
-      const res = await fetch(`${API_BASE}/api/admin/upload-image`, {
-        method: 'POST',
-        headers: uploadHeaders(),
-        body: formData
+      const response = await fetch(`${apiBase()}/api/admin/page-sections?page=${encodeURIComponent(state.page)}`, {
+        headers: apiHeaders()
       });
-      const result = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(result.error || 'Image upload failed');
-      if (!result.url) throw new Error('Upload completed, but no image URL was returned');
-      const rec = record();
-      if (!rec) throw new Error('No selected element record');
-      rec.src = result.url;
-      if ($('pbxSrc')) $('pbxSrc').value = result.url;
-      applySelectedRecord();
-      if (status) status.textContent = 'Image uploaded successfully.';
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to load sections');
+      state.items = Array.isArray(data) ? data : [];
+      if (!state.items.some(x => String(x.id) === String(state.selectedId))) {
+        state.selectedId = state.items[0]?.id || '';
+      }
+      renderList();
+      if (state.selectedId) fillForm(currentItem());
+      refreshPreview(false);
     } catch (error) {
-      if (status) status.textContent = error.message || 'Image upload failed.';
-      alert(error.message || 'Image upload failed.');
+      if (box) box.innerHTML = `<div class="pb2-empty pb2-status-error">${esc(error.message)}</div>`;
+      showError(error);
     } finally {
-      if (button) button.disabled = false;
+      state.loading = false;
     }
   }
 
-  function renderInspector() {
-    ensureInspector();
-    const rec = record();
-    const el = selectedElement();
-    $('pbxEmpty')?.classList.toggle('hidden', !!el);
-    $('pbxFields')?.classList.toggle('hidden', !el);
-    if (!el || !rec) { if($('pbxSelectedName')) $('pbxSelectedName').textContent='Click an element in preview'; return; }
-    $('pbxSelectedName').textContent = state.selectedSelector;
-    const values = {
-      pbxText: rec.text ?? (['INPUT','TEXTAREA'].includes(el.tagName) ? el.value : el.textContent.trim()),
-      pbxHref: rec.href ?? (el.getAttribute('href') || ''), pbxSrc: rec.src ?? (el.getAttribute('src') || ''),
-      pbxColor: rec.color || '#222222', pbxBackground: rec.backgroundColor || '#ffffff',
-      pbxFontSize: rec.fontSize ?? '', pbxFontWeight: rec.fontWeight || '', pbxTextAlign: rec.textAlign || '',
-      pbxWidth: rec.width ?? '', pbxHeight: rec.height ?? '', pbxX: rec.x ?? '', pbxY: rec.y ?? '',
-      pbxMt: rec.marginTop ?? '', pbxMr: rec.marginRight ?? '', pbxMb: rec.marginBottom ?? '', pbxMl: rec.marginLeft ?? '',
-      pbxPt: rec.paddingTop ?? '', pbxPr: rec.paddingRight ?? '', pbxPb: rec.paddingBottom ?? '', pbxPl: rec.paddingLeft ?? '',
-      pbxRadius: rec.borderRadius ?? '', pbxOpacity: rec.opacity ?? ''
+  function selectSection(id) {
+    state.selectedId = id;
+    fillForm(currentItem());
+    renderList();
+    applyPreview();
+  }
+
+  function setValue(id, value) {
+    const node = $(id);
+    if (node) node.value = value ?? '';
+  }
+
+  function fillForm(item) {
+    if (!item) return;
+    const s = parseSettings(item.settings);
+    setValue('sectionEditId', item.id);
+    setValue('sectionPage', item.page || state.page);
+    setValue('sectionKey', item.sectionKey || 'custom');
+    setValue('sectionType', item.sectionType || 'custom');
+    setValue('sectionTitle', item.title);
+    setValue('sectionSubtitle', item.subtitle);
+    setValue('sectionContent', item.content);
+    setValue('sectionButtonText', item.buttonText || s.buttonText);
+    setValue('sectionButtonUrl', item.buttonUrl || s.buttonUrl);
+    setValue('sectionImage', item.mediaUrl);
+    setValue('sectionVideo', s.videoUrl);
+    setValue('sectionBgColor', item.backgroundColor || '#ffffff');
+    setValue('sectionBackgroundImage', item.backgroundImage);
+    setValue('sectionTextColor', item.textColor || '#222222');
+    setValue('sectionHeadingColor', item.headingColor || s.headingColor || '#17324d');
+    setValue('sectionButtonColor', item.buttonColor || '#0f766e');
+    setValue('sectionFontFamily', item.fontFamily);
+    setValue('sectionFontSize', String(item.fontSize || s.fontSize || '').replace('px',''));
+    setValue('sectionHeadingFont', s.headingFont);
+    setValue('sectionHeadingSize', String(s.headingSize || '').replace('px',''));
+    setValue('sectionBackgroundSize', s.backgroundSize || 'cover');
+    setValue('sectionBackgroundPosition', s.backgroundPosition || 'center center');
+    setValue('sectionOverlay', s.overlay ?? 35);
+    setValue('sectionSortOrder', item.sortOrder || 0);
+    setValue('sectionGradientStart', s.gradientStart || '#ffffff');
+    setValue('sectionGradientEnd', s.gradientEnd || '#f8f3eb');
+    setValue('sectionPaddingTop', String(s.paddingTop || '').replace('px',''));
+    setValue('sectionPaddingBottom', String(s.paddingBottom || '').replace('px',''));
+    setValue('sectionBorderRadius', String(s.borderRadius || '').replace('px',''));
+    setValue('sectionShadow', s.shadow || '');
+    setValue('sectionAnimation', s.animation || '');
+    if ($('sectionActive')) $('sectionActive').checked = item.active !== false && item.active !== 0;
+    if (typeof window.loadCards === 'function') window.loadCards(s.cards || []);
+  }
+
+  function previewDocument() {
+    const frame = $('pb2PreviewFrame');
+    try { return frame?.contentDocument || null; } catch { return null; }
+  }
+
+  function targetSection() {
+    const doc = previewDocument();
+    const key = $('sectionKey')?.value || currentItem()?.sectionKey;
+    if (!doc || !key) return null;
+    return doc.querySelector(`[data-section="${CSS.escape(key)}"]`);
+  }
+
+  function refreshPreview(force = true) {
+    const frame = $('pb2PreviewFrame');
+    if (!frame) return;
+    state.page = currentPage();
+    const base = PAGE_URLS[state.page] || PAGE_URLS.home;
+    const next = `${base}?pbpreview=1${force ? `&t=${Date.now()}` : ''}`;
+    if (force || !frame.src) frame.src = next;
+  }
+
+  function shadowValue(value) {
+    return ({
+      soft: '0 8px 24px rgba(15,23,42,.10)',
+      medium: '0 14px 38px rgba(15,23,42,.16)',
+      strong: '0 22px 60px rgba(15,23,42,.24)',
+      none: 'none'
+    })[value] || '';
+  }
+
+  function applyPreview() {
+    const section = targetSection();
+    if (!section) return;
+
+    const updateText = (selector, value) => {
+      const node = section.querySelector(selector);
+      if (node && value !== undefined) node.textContent = value;
     };
-    Object.entries(values).forEach(([id,v]) => { if($(id)) $(id).value = v; });
-    $('pbxHidden').checked = !!rec.hidden;
-    const custom = el.dataset.pbCustom === '1';
-    $('pbxDeleteCustom').style.display = custom ? '' : 'none';
-  }
 
-  function applyRecord(el, rec) {
-    if (!el || !rec) return;
-    if (rec.text !== undefined) { if(['INPUT','TEXTAREA'].includes(el.tagName)) el.value=rec.text; else el.textContent=rec.text; }
-    if (rec.href !== undefined && el.matches('a,button')) el.setAttribute('href', rec.href || '#');
-    if (rec.src !== undefined && el.matches('img,video,source')) el.setAttribute('src', rec.src || '');
-    const pxKeys = ['fontSize','width','height','marginTop','marginRight','marginBottom','marginLeft','paddingTop','paddingRight','paddingBottom','paddingLeft','borderRadius'];
-    pxKeys.forEach(k => { el.style[k] = rec[k] === '' || rec[k] == null ? '' : `${Number(rec[k])}px`; });
-    ['color','backgroundColor','fontWeight','textAlign'].forEach(k => { el.style[k] = rec[k] || ''; });
-    el.style.opacity = rec.opacity === '' || rec.opacity == null ? '' : String(rec.opacity);
-    el.style.display = rec.hidden ? 'none' : '';
-    el.style.transform = `translate(${Number(rec.x)||0}px, ${Number(rec.y)||0}px)`;
-  }
+    updateText('[data-field="title"]', $('sectionTitle')?.value || '');
+    updateText('[data-field="subtitle"]', $('sectionSubtitle')?.value || '');
+    updateText('[data-field="content"]', $('sectionContent')?.value || '');
 
-  function mergedRecord(byDevice) {
-    return Object.assign({}, byDevice?.desktop || {}, state.selectedDevice !== 'desktop' ? (byDevice?.[state.selectedDevice] || {}) : {});
-  }
-  function applySelectedRecord() { const el=selectedElement(); const by=state.elementStyles[state.selectedSelector]; if(el&&by) applyRecord(el, mergedRecord(by)); }
-  function applyAllToPreview() {
-    const section = selectedSection(); if(!section) return;
-    renderCustomElements(section);
-    Object.entries(state.elementStyles).forEach(([selector, byDevice]) => {
-      let nodes=[]; try { nodes = selector === ':scope' ? [section] : [...section.querySelectorAll(selector)]; } catch { return; }
-      nodes.forEach(n => applyRecord(n, mergedRecord(byDevice)));
+    const button = section.querySelector('[data-field="button"]');
+    if (button) {
+      if ($('sectionButtonText')?.value) button.textContent = $('sectionButtonText').value;
+      if ($('sectionButtonUrl')?.value) button.setAttribute('href', $('sectionButtonUrl').value);
+      button.style.backgroundColor = $('sectionButtonColor')?.value || '';
+    }
+
+    const imageUrl = $('sectionImage')?.value?.trim();
+    if (imageUrl) {
+      const image = section.querySelector('[data-field="image"], img');
+      if (image) image.src = imageUrl;
+    }
+
+    const bgImage = $('sectionBackgroundImage')?.value?.trim();
+    const overlay = Math.max(0, Math.min(100, Number($('sectionOverlay')?.value || 0))) / 100;
+    if (bgImage) {
+      section.style.backgroundImage = `linear-gradient(rgba(0,0,0,${overlay}),rgba(0,0,0,${overlay})),url("${bgImage.replace(/"/g, '%22')}")`;
+    } else {
+      section.style.backgroundImage = '';
+      section.style.backgroundColor = $('sectionBgColor')?.value || '';
+    }
+    section.style.backgroundSize = $('sectionBackgroundSize')?.value || '';
+    section.style.backgroundPosition = $('sectionBackgroundPosition')?.value || '';
+    section.style.color = $('sectionTextColor')?.value || '';
+    section.style.fontFamily = $('sectionFontFamily')?.value || '';
+    section.style.fontSize = px('sectionFontSize');
+    section.style.paddingTop = px('sectionPaddingTop');
+    section.style.paddingBottom = px('sectionPaddingBottom');
+    section.style.borderRadius = px('sectionBorderRadius');
+    section.style.boxShadow = shadowValue($('sectionShadow')?.value);
+
+    section.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(h => {
+      h.style.color = $('sectionHeadingColor')?.value || '';
+      h.style.fontFamily = $('sectionHeadingFont')?.value || '';
+      h.style.fontSize = px('sectionHeadingSize');
     });
-    markSelected();
+
+    section.hidden = $('sectionActive') ? !$('sectionActive').checked : false;
+    section.dataset.builderEditing = 'true';
   }
 
-  function renderCustomElements(section) {
-    section.querySelectorAll('[data-pb-custom="1"]').forEach(n => n.remove());
-    state.customElements.filter(x => x.sectionKey === ($('sectionKey')?.value || '')).forEach(item => {
-      let n;
-      if(item.type==='button'){n=document.createElement('a');n.href=item.url||'#';n.textContent=item.text||'Button';n.className='cms-custom-button';}
-      else if(item.type==='image'){n=document.createElement('img');n.src=item.url||'';n.alt=item.alt||'';n.className='cms-custom-image';}
-      else {n=document.createElement(item.type==='heading'?'h2':'p');n.textContent=item.text|| (item.type==='heading'?'New Heading':'New text');n.className='cms-custom-text';}
-      n.dataset.pbCustom='1'; n.dataset.pbId=item.id; section.appendChild(n);
+  function collectSettings() {
+    return {
+      videoUrl: $('sectionVideo')?.value?.trim() || '',
+      gradientStart: $('sectionGradientStart')?.value || '',
+      gradientEnd: $('sectionGradientEnd')?.value || '',
+      paddingTop: px('sectionPaddingTop'),
+      paddingBottom: px('sectionPaddingBottom'),
+      borderRadius: px('sectionBorderRadius'),
+      shadow: $('sectionShadow')?.value || '',
+      animation: $('sectionAnimation')?.value || '',
+      cards: typeof window.collectCards === 'function' ? window.collectCards() : [],
+      buttonText: $('sectionButtonText')?.value?.trim() || '',
+      buttonUrl: $('sectionButtonUrl')?.value?.trim() || '',
+      backgroundSize: $('sectionBackgroundSize')?.value || 'cover',
+      backgroundPosition: $('sectionBackgroundPosition')?.value || 'center center',
+      overlay: Number($('sectionOverlay')?.value || 35),
+      headingColor: $('sectionHeadingColor')?.value || '',
+      headingFont: $('sectionHeadingFont')?.value || '',
+      headingSize: px('sectionHeadingSize'),
+      fontSize: px('sectionFontSize')
+    };
+  }
+
+  function collectData() {
+    return {
+      id: $('sectionEditId')?.value || '',
+      page: currentPage(),
+      sectionKey: $('sectionKey')?.value || 'custom',
+      sectionType: $('sectionType')?.value || 'custom',
+      title: $('sectionTitle')?.value?.trim() || '',
+      subtitle: $('sectionSubtitle')?.value?.trim() || '',
+      content: $('sectionContent')?.value?.trim() || '',
+      buttonText: $('sectionButtonText')?.value?.trim() || '',
+      buttonUrl: $('sectionButtonUrl')?.value?.trim() || '',
+      mediaUrl: $('sectionImage')?.value?.trim() || '',
+      backgroundType: $('sectionBackgroundImage')?.value?.trim() ? 'image' : 'color',
+      backgroundColor: $('sectionBgColor')?.value || '',
+      backgroundImage: $('sectionBackgroundImage')?.value?.trim() || '',
+      textColor: $('sectionTextColor')?.value || '',
+      headingColor: $('sectionHeadingColor')?.value || '',
+      buttonColor: $('sectionButtonColor')?.value || '',
+      fontFamily: $('sectionFontFamily')?.value || '',
+      fontSize: px('sectionFontSize'),
+      sortOrder: Number($('sectionSortOrder')?.value || 0),
+      active: $('sectionActive') ? $('sectionActive').checked : true,
+      settings: collectSettings()
+    };
+  }
+
+  async function saveSection(event) {
+    event?.preventDefault?.();
+    status('Saving…');
+    try {
+      const response = await fetch(`${apiBase()}/api/admin/page-sections`, {
+        method: 'POST',
+        headers: apiHeaders(),
+        body: JSON.stringify(collectData())
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Save section failed');
+      state.selectedId = data.id || state.selectedId;
+      status('Saved', 'ok');
+      await loadSections();
+      applyPreview();
+    } catch (error) {
+      showError(error);
+      alert(error.message || 'Save failed');
+    }
+  }
+
+  async function toggleSection(id) {
+    const item = state.items.find(x => String(x.id) === String(id));
+    if (!item) return;
+    try {
+      const response = await fetch(`${apiBase()}/api/admin/page-sections`, {
+        method: 'POST',
+        headers: apiHeaders(),
+        body: JSON.stringify({ ...item, active: !(item.active !== false && item.active !== 0), settings: parseSettings(item.settings) })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Visibility update failed');
+      await loadSections();
+    } catch (error) { showError(error); }
+  }
+
+  function newSection() {
+    state.selectedId = '';
+    $('sectionForm')?.reset();
+    setValue('sectionEditId', '');
+    setValue('sectionPage', currentPage());
+    setValue('sectionKey', 'custom');
+    setValue('sectionType', 'custom');
+    setValue('sectionSortOrder', state.items.length * 10);
+    if ($('sectionActive')) $('sectionActive').checked = true;
+    renderList();
+  }
+
+  function setDevice(device, button) {
+    state.device = device;
+    const wrap = $('pb2PreviewFrameWrap');
+    if (wrap) wrap.className = `pb2-preview-frame-wrap ${device}`;
+    document.querySelectorAll('.pb2-devices button').forEach(b => b.classList.toggle('active', b === button));
+  }
+
+  function bind() {
+    ensureStudioButton();
+
+    const pageSelect = $('sectionFilterPage');
+    if (pageSelect && !pageSelect.dataset.stableBound) {
+      pageSelect.dataset.stableBound = '1';
+      pageSelect.addEventListener('change', () => {
+        state.selectedId = '';
+        state.page = currentPage();
+        loadSections();
+      });
+    }
+
+    const form = $('sectionForm');
+    if (form && !form.dataset.stableBound) {
+      form.dataset.stableBound = '1';
+      form.addEventListener('submit', saveSection);
+      form.querySelectorAll('input,textarea,select').forEach(input => {
+        input.addEventListener('input', applyPreview);
+        input.addEventListener('change', applyPreview);
+      });
+    }
+
+    const frame = $('pb2PreviewFrame');
+    if (frame && !frame.dataset.stableBound) {
+      frame.dataset.stableBound = '1';
+      frame.addEventListener('load', () => {
+        state.previewReady = true;
+        setTimeout(applyPreview, 80);
+      });
+    }
+
+    document.querySelectorAll('.pb2-accordion-title').forEach(btn => {
+      if (btn.dataset.stableBound) return;
+      btn.dataset.stableBound = '1';
+      btn.addEventListener('click', () => btn.closest('.pb2-accordion')?.classList.toggle('open'));
     });
+
+    window.loadPageSections = loadSections;
+    window.editPageSection = selectSection;
+    window.savePageSection = saveSection;
+    window.pb2LivePreview = applyPreview;
+    window.pb2RefreshPreview = () => refreshPreview(true);
+    window.pb2ChangePage = (page) => {
+      if ($('sectionFilterPage')) $('sectionFilterPage').value = page;
+      if ($('sectionPage')) $('sectionPage').value = page;
+      state.page = page;
+      state.selectedId = '';
+      loadSections();
+    };
+    window.pb2SetDevice = setDevice;
+    window.pb2NewSection = newSection;
+    window.pb2ResetSelectedSection = newSection;
+    window.pb2SaveCurrentSection = () => form?.requestSubmit();
+    window.pb2ToggleSection = toggleSection;
+
+    loadSections();
   }
 
-  function addCustom(type) {
-    const key=$('sectionKey')?.value; if(!key){alert('Select a section first.');return;}
-    const id=`pb-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
-    state.customElements.push({id,sectionKey:key,type,text:type==='heading'?'New Heading':type==='button'?'Button':'New text',url:'#'});
-    state.selectedSelector=`[data-pb-id="${id}"]`;
-    state.elementStyles[state.selectedSelector]={desktop:{},tablet:{},mobile:{}};
-    applyAllToPreview(); renderInspector();
-  }
-  function deleteSelectedCustom() {
-    const el=selectedElement(); if(!el?.dataset.pbId)return;
-    const id=el.dataset.pbId; state.customElements=state.customElements.filter(x=>x.id!==id); delete state.elementStyles[state.selectedSelector]; clearSelection(); applyAllToPreview();
-  }
-
-  function discoverPreviewSections() {
-    const doc=frameDoc(); if(!doc)return;
-    const savedKeys=new Set(state.items.filter(x=>!x.__virtual).map(x=>String(x.sectionKey)));
-    const virtual=[...doc.querySelectorAll('[data-section]')].filter(n=>!savedKeys.has(String(n.dataset.section))).map((node,index)=>{
-      const key=node.dataset.section;
-      const title=node.querySelector('[data-field="title"],h1,h2,h3')?.textContent?.trim() || key;
-      const subtitle=node.querySelector('[data-field="subtitle"]')?.textContent?.trim() || '';
-      const content=node.querySelector('[data-field="content"],p')?.textContent?.trim() || '';
-      const button=node.querySelector('[data-field="button"]');
-      const image=node.querySelector('[data-field="image"],img');
-      return {id:`local:${key}`,__virtual:true,page:currentPage(),sectionKey:key,sectionType:'existing',title,subtitle,content,
-        buttonText:button?.textContent?.trim()||'',buttonUrl:button?.getAttribute('href')||'',mediaUrl:image?.getAttribute('src')||'',
-        backgroundColor:'#ffffff',textColor:'#222222',headingColor:'#17324d',buttonColor:'#0f766e',sortOrder:index,active:true,settings:{}};
-    });
-    state.items=[...state.items.filter(x=>!x.__virtual),...virtual]; renderList();
-  }
-
-  function installPreviewEditor() {
-    const doc=frameDoc(); if(!doc)return;
-    discoverPreviewSections();
-    state.previewController?.abort(); state.previewController=new AbortController(); const signal=state.previewController.signal;
-    let style=doc.getElementById('pbx-editor-style');
-    if(!style){style=doc.createElement('style');style.id='pbx-editor-style';style.textContent=`body.pbx-editing [data-section],body.pbx-editing [data-section] *{cursor:pointer!important}.pbx-selected{outline:3px solid #00a88f!important;outline-offset:3px!important;position:relative!important}.pbx-selected:after{content:'Editing';position:absolute;left:0;top:-25px;background:#006f66;color:#fff;font:11px Arial;padding:4px 7px;border-radius:4px;z-index:2147483647}.cms-custom-button{display:inline-block;padding:10px 18px;background:#087f72;color:#fff;text-decoration:none;border-radius:7px;margin:8px}.cms-custom-image{max-width:260px;height:auto}.cms-custom-text{margin:8px}`;doc.head.appendChild(style);}
-    doc.body.classList.add('pbx-editing');
-    doc.addEventListener('click', e => {
-      const section=e.target.closest('[data-section]'); if(!section)return;
-      e.preventDefault(); e.stopPropagation();
-      const key=section.dataset.section; const item=state.items.find(x=>x.sectionKey===key);
-      if(item && String(item.id)!==String(state.selectedId)) editPageSection(item.id, false);
-      const target=e.target.closest('a,button,img,h1,h2,h3,h4,p,span,div,section') || section;
-      state.selectedSelector=selectorFor(target,section); markSelected(target); renderInspector();
-    },{capture:true,signal});
-    applyAllToPreview();
-  }
-
-  function markSelected(forceEl) {
-    const doc=frameDoc(); if(!doc)return;
-    doc.querySelectorAll('.pbx-selected').forEach(n=>n.classList.remove('pbx-selected'));
-    const el=forceEl||selectedElement(); if(el)el.classList.add('pbx-selected');
-  }
-  function clearSelection(){state.selectedSelector='';markSelected();renderInspector();}
-
-  function setDevice(device) {
-    state.selectedDevice=device;
-    const wrap=$('pb2PreviewFrameWrap'); if(wrap)wrap.className=`pb2-preview-frame-wrap ${device}`;
-    document.querySelectorAll('.pb2-devices button').forEach(b=>b.classList.toggle('active',(b.dataset.device||b.getAttribute('onclick')||'').includes(device)));
-    document.querySelectorAll('[data-pbx-device]').forEach(b=>b.classList.toggle('active',b.dataset.pbxDevice===device));
-    applyAllToPreview(); renderInspector();
-  }
-
-  window.pb2SetDevice=(device)=>setDevice(device);
-  window.pb2RefreshPreview=()=>{const f=$('pb2PreviewFrame');if(f)f.src=`${PAGE_URLS[currentPage()]||PAGE_URLS.home}?pbpreview=${Date.now()}`;};
-  window.pb2ChangePage=(page)=>{if($('sectionPage'))$('sectionPage').value=page;state.selectedId='';clearSelection();loadPageSections();window.pb2RefreshPreview();};
-  window.pb2NewSection=()=>{resetSectionForm();$('sectionPage').value=currentPage();$('sectionKey').value='custom';state.selectedId='';clearSelection();};
-  window.pb2ResetSelectedSection=()=>{if(confirm('Clear the selected form? Saved data remains until Save is pressed.'))window.pb2NewSection();};
-  window.pb2SaveCurrentSection=()=>$('sectionForm')?.requestSubmit();
-
-  window.loadPageSections=async function(){
-    const box=$('sectionsList'); if(box)box.innerHTML='<div class="pb2-empty">Loading sections…</div>';
-    try{
-      const res=await fetch(`${API_BASE}/api/admin/page-sections?page=${encodeURIComponent(currentPage())}`,{headers:authHeaders()});
-      const data=await res.json(); if(!res.ok)throw new Error(data.error||'Failed to load sections');
-      state.items=Array.isArray(data)?data:[]; renderList();
-      if(state.items.length && !state.selectedId) await editPageSection(state.items[0].id,false);
-    }catch(err){if(box)box.innerHTML=`<div class="pb2-empty pb2-status-error">${esc(err.message)}</div>`;}
-  };
-
-  function renderList(){
-    const box=$('sectionsList'); if(!box)return;
-    if(!state.items.length){box.innerHTML='<div class="pb2-empty">No saved sections for this page.</div>';return;}
-    box.innerHTML=[...state.items].sort((a,b)=>(+a.sortOrder||0)-(+b.sortOrder||0)).map(x=>`
-      <div class="pb2-section-item ${String(state.selectedId)===String(x.id)?'active':''}" data-id="${esc(x.id)}">
-        <span>☷</span><div><strong>${esc(x.title||x.sectionKey||'Untitled')}</strong><small>${esc(x.sectionKey||'custom')}</small></div>
-        <button type="button" class="pb2-eye" title="${x.active?'Visible':'Hidden'}">${x.active?'◉':'○'}</button>
-      </div>`).join('');
-    box.querySelectorAll('.pb2-section-item').forEach(row=>{
-      row.addEventListener('click',()=>editPageSection(row.dataset.id));
-      row.querySelector('.pb2-eye').addEventListener('click',e=>{e.stopPropagation();toggleSection(row.dataset.id);});
-    });
-  }
-
-  async function toggleSection(id){
-    const item=state.items.find(x=>String(x.id)===String(id)); if(!item)return;
-    if(item.__virtual){alert('This section is not saved yet. Select it and press Save Changes first.');return;}
-    const body={...item,active:!item.active,settings:parseSettings(item.settings)};
-    const res=await fetch(`${API_BASE}/api/admin/page-sections`,{method:'POST',headers:authHeaders(),body:JSON.stringify(body)});
-    if(!res.ok){const d=await res.json().catch(()=>({}));alert(d.error||'Unable to update section');return;}
-    await loadPageSections(); window.pb2RefreshPreview();
-  }
-
-  window.editPageSection=async function(id, scroll=true){
-    const item=state.items.find(x=>String(x.id)===String(id)); if(!item)return;
-    const s=parseSettings(item.settings); state.selectedId=item.id; state.elementStyles=s.elementStyles||{}; state.customElements=s.customElements||[]; state.selectedSelector='';
-    const vals={sectionEditId:item.__virtual?'':(item.id||''),sectionPage:item.page||currentPage(),sectionKey:item.sectionKey||'custom',sectionType:item.sectionType||'custom',sectionTitle:item.title||'',sectionSubtitle:item.subtitle||'',sectionContent:item.content||'',sectionButtonText:item.buttonText||s.buttonText||'',sectionButtonUrl:item.buttonUrl||s.buttonUrl||'',sectionImage:item.mediaUrl||'',sectionVideo:s.videoUrl||'',sectionBgColor:item.backgroundColor||'#ffffff',sectionBackgroundImage:item.backgroundImage||'',sectionTextColor:item.textColor||'#222222',sectionButtonColor:item.buttonColor||'#0f766e',sectionFontFamily:item.fontFamily||'',sectionFontSize:stripPx(item.fontSize||s.fontSize),sectionHeadingColor:item.headingColor||s.headingColor||'#17324d',sectionHeadingFont:s.headingFont||'',sectionHeadingSize:stripPx(s.headingSize),sectionBackgroundSize:s.backgroundSize||'cover',sectionBackgroundPosition:s.backgroundPosition||'center center',sectionOverlay:s.overlay??35,sectionSortOrder:item.sortOrder||0,sectionGradientStart:s.gradientStart||'#ffffff',sectionGradientEnd:s.gradientEnd||'#f8f3eb',sectionPaddingTop:stripPx(s.paddingTop),sectionPaddingBottom:stripPx(s.paddingBottom),sectionBorderRadius:stripPx(s.borderRadius),sectionShadow:s.shadow||'',sectionAnimation:s.animation||''};
-    Object.entries(vals).forEach(([id,v])=>{if($(id))$(id).value=v;}); $('sectionActive').checked=!!item.active; loadCards(s.cards||[]); renderList(); renderInspector(); applySectionFormPreview(); applyAllToPreview(); if(scroll)$('sectionForm')?.scrollIntoView({behavior:'smooth',block:'start'});
-  };
-
-  window.savePageSection=async function(e){
-    e?.preventDefault(); const status=$('pb2SaveStatus'); if(status){status.textContent='Saving…';status.className='';}
-    const settings={videoUrl:$('sectionVideo').value.trim(),gradientStart:$('sectionGradientStart').value,gradientEnd:$('sectionGradientEnd').value,paddingTop:px('sectionPaddingTop'),paddingBottom:px('sectionPaddingBottom'),borderRadius:px('sectionBorderRadius'),shadow:$('sectionShadow').value,animation:$('sectionAnimation').value,cards:collectCards(),buttonText:$('sectionButtonText').value.trim(),buttonUrl:$('sectionButtonUrl').value.trim(),backgroundSize:$('sectionBackgroundSize').value,backgroundPosition:$('sectionBackgroundPosition').value,overlay:Number($('sectionOverlay').value||35),headingColor:$('sectionHeadingColor').value,headingFont:$('sectionHeadingFont').value,headingSize:px('sectionHeadingSize'),fontSize:px('sectionFontSize'),elementStyles:state.elementStyles,customElements:state.customElements};
-    const data={id:$('sectionEditId').value||'',page:currentPage(),sectionKey:$('sectionKey').value,sectionType:$('sectionType').value,title:$('sectionTitle').value.trim(),subtitle:$('sectionSubtitle').value.trim(),content:$('sectionContent').value.trim(),buttonText:$('sectionButtonText').value.trim(),buttonUrl:$('sectionButtonUrl').value.trim(),mediaUrl:$('sectionImage').value.trim(),backgroundType:$('sectionBackgroundImage').value.trim()?'image':'color',backgroundColor:$('sectionBgColor').value,backgroundImage:$('sectionBackgroundImage').value.trim(),textColor:$('sectionTextColor').value,headingColor:$('sectionHeadingColor').value,buttonColor:$('sectionButtonColor').value,fontFamily:$('sectionFontFamily').value,fontSize:px('sectionFontSize'),sortOrder:$('sectionSortOrder').value,active:$('sectionActive').checked,settings};
-    try{const res=await fetch(`${API_BASE}/api/admin/page-sections`,{method:'POST',headers:authHeaders(),body:JSON.stringify(data)});const out=await res.json();if(!res.ok)throw new Error(out.error||'Save failed');if(status){status.textContent='Saved';status.className='pb2-status-ok';}await loadPageSections();window.pb2RefreshPreview();}
-    catch(err){if(status){status.textContent=err.message;status.className='pb2-status-error';}alert(err.message);}
-  };
-
-  function applySectionFormPreview(){
-    const target=selectedSection();if(!target)return;
-    const set=(field,value)=>{const n=target.querySelector(`[data-field="${field}"]`);if(n&&value!=='')n.textContent=value;};
-    set('title',$('sectionTitle')?.value||'');set('subtitle',$('sectionSubtitle')?.value||'');set('content',$('sectionContent')?.value||'');
-    const btn=target.querySelector('[data-field="button"]');if(btn){if($('sectionButtonText')?.value)btn.textContent=$('sectionButtonText').value;if($('sectionButtonUrl')?.value)btn.href=$('sectionButtonUrl').value;}
-    const img=target.querySelector('[data-field="image"]');if(img&&$('sectionImage')?.value)img.src=$('sectionImage').value;
-    const bg=$('sectionBackgroundImage')?.value;if(bg){const o=Number($('sectionOverlay')?.value||35)/100;target.style.backgroundImage=`linear-gradient(rgba(0,0,0,${o}),rgba(0,0,0,${o})),url('${bg}')`;}
-    else target.style.background=$('sectionBgColor')?.value||'';
-    target.style.backgroundSize=$('sectionBackgroundSize')?.value||'cover';target.style.backgroundPosition=$('sectionBackgroundPosition')?.value||'center center';target.style.color=$('sectionTextColor')?.value||'';target.style.fontFamily=$('sectionFontFamily')?.value||'';target.style.fontSize=px('sectionFontSize');target.style.paddingTop=px('sectionPaddingTop');target.style.paddingBottom=px('sectionPaddingBottom');target.style.borderRadius=px('sectionBorderRadius');
-    target.querySelectorAll('h1,h2,h3').forEach(h=>{h.style.color=$('sectionHeadingColor')?.value||'';h.style.fontFamily=$('sectionHeadingFont')?.value||'';h.style.fontSize=px('sectionHeadingSize');});
-  }
-  window.pb2LivePreview=()=>{applySectionFormPreview();applyAllToPreview();};
-
-  function bindOnce(){
-    if(state.initialized)return;state.initialized=true;ensureInspector();
-    document.querySelectorAll('.pb2-accordion-title').forEach(btn=>btn.addEventListener('click',()=>btn.parentElement.classList.toggle('open')));
-    document.querySelectorAll('#sectionForm input,#sectionForm textarea,#sectionForm select').forEach(input=>input.addEventListener('input',window.pb2LivePreview));
-    $('sectionForm')?.addEventListener('submit',window.savePageSection);
-    $('pb2PreviewFrame')?.addEventListener('load',installPreviewEditor);
-    document.querySelectorAll('.pb2-devices button').forEach(btn=>btn.addEventListener('click',()=>setDevice(btn.dataset.device||((btn.getAttribute('onclick')||'').match(/'(desktop|tablet|mobile)'/)||[])[1]||'desktop')));
-    window.pb2RefreshPreview();
-  }
-
-  window.addEventListener('DOMContentLoaded',bindOnce,{once:true});
-  if(document.readyState!=='loading')bindOnce();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => setTimeout(bind, 250));
+  else setTimeout(bind, 250);
 })();

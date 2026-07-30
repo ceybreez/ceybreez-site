@@ -26,3 +26,32 @@
 .pb2-choice:has(input:checked){border-color:#087f72;background:#ebf8f6;box-shadow:0 0 0 1px #087f72 inset}
 .pb2-choice input:checked + .pb2-choice-tick{border-color:#087f72;background:#087f72;color:#fff}
 @media(max-width:420px){.pb2-choice-grid{grid-template-columns:1fr}}
+
+
+/* =========================================================
+   Unified contextual inspector
+   Section controls and element controls share one inspector.
+   ========================================================= */
+#pb2InspectorMode{display:block;margin-top:3px;color:#71808a;font-size:11px;font-weight:600}
+.pbx-context-tools{margin:0 0 14px;border:0;border-radius:0;background:transparent;padding:0}
+.pbx-context-tools.hidden{display:none!important}
+.pbx-context-tools .pbx-inspector-head{padding:10px 11px;background:#edf9f7;border:1px solid #9bd2ca;border-radius:9px;margin-bottom:10px}
+.pbx-context-tools .pbx-device-tabs,.pbx-context-tools .pbx-fields,.pbx-context-tools .pbx-add-row{padding-left:1px;padding-right:1px}
+
+/* Element mode: hide the section-only form and show only relevant element controls. */
+#sectionForm.pbx-element-mode > label,
+#sectionForm.pbx-element-mode > .pb2-accordion,
+#sectionForm.pbx-element-mode > .pb2-two,
+#sectionForm.pbx-element-mode > .pb2-save-bottom,
+#sectionForm.pbx-element-mode > button.pb2-btn-light{display:none!important}
+#sectionForm.pbx-element-mode > input[type="hidden"]{display:none!important}
+#sectionForm.pbx-element-mode #pbxInspector{display:block!important}
+
+/* Section mode: use the normal section controls; there is no second editor. */
+#sectionForm.pbx-section-mode #pbxInspector{display:none!important}
+
+/* Context filtering inside the element inspector. */
+.pbx-context-hidden{display:none!important}
+#pbxFields > label:not(.pbx-context-hidden),
+#pbxFields > div:not(.pbx-context-hidden){animation:pbxInspectorIn .12s ease-out}
+@keyframes pbxInspectorIn{from{opacity:.35;transform:translateY(3px)}to{opacity:1;transform:none}}

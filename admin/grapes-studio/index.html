@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CeyBreez Visual Designer</title>
+  <link rel="stylesheet" href="https://unpkg.com/grapesjs/dist/css/grapes.min.css">
+  <link rel="stylesheet" href="studio.css">
+</head>
+<body>
+  <header class="studio-topbar">
+    <div class="brand"><strong>CeyBreez</strong><span>Visual Designer</span></div>
+    <select id="pageSelect"></select>
+    <div class="actions">
+      <button id="desktopBtn">Desktop</button>
+      <button id="tabletBtn">Tablet</button>
+      <button id="mobileBtn">Mobile</button>
+      <button id="undoBtn">Undo</button>
+      <button id="redoBtn">Redo</button>
+      <button id="saveBtn" class="primary">Save Draft</button>
+      <button id="exportBtn">Export HTML</button>
+      <a href="../admin.html">Admin</a>
+    </div>
+  </header>
+  <div id="status" class="status">Ready</div>
+  <main class="studio-layout">
+    <aside class="blocks-panel"><h3>Blocks</h3><div id="blocks"></div></aside>
+    <section id="gjs"></section>
+  </main>
+  <script src="https://unpkg.com/grapesjs"></script>
+  <script src="studio.js"></script>
+</body>
+</html>

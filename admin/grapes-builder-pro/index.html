@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CEYBREEZ Builder Pro</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/grapesjs@0.23.2/dist/css/grapes.min.css">
+  <link rel="stylesheet" href="builder-pro.css">
+</head>
+<body>
+  <div class="cbp-shell">
+    <header class="cbp-topbar">
+      <div class="cbp-brand"><span>CB</span><div><strong>CEYBREEZ Builder Pro</strong><small>Visual website editor</small></div></div>
+      <div class="cbp-actions">
+        <button id="undoBtn" title="Undo">↶</button>
+        <button id="redoBtn" title="Redo">↷</button>
+        <button id="desktopBtn" class="active">Desktop</button>
+        <button id="tabletBtn">Tablet</button>
+        <button id="mobileBtn">Mobile</button>
+        <button id="previewBtn">Preview</button>
+        <button id="saveBtn">Save Draft</button>
+        <button id="publishBtn" class="primary">Publish</button>
+        <button id="exportBtn">Export ZIP</button>
+      </div>
+    </header>
+
+    <aside class="cbp-pages">
+      <div class="cbp-panel-title">Website Pages</div>
+      <div id="pageList"></div>
+      <button id="reloadPageBtn" class="wide">Reload original page</button>
+      <button id="clearDraftBtn" class="wide danger">Clear current draft</button>
+      <div class="cbp-help">
+        <b>How to use</b>
+        <p>Choose a page, drag blocks into the canvas, click any element to edit it, then save or publish.</p>
+      </div>
+    </aside>
+
+    <main class="cbp-editor-area">
+      <div id="gjs"></div>
+    </main>
+
+    <aside class="cbp-right">
+      <div class="cbp-tabs">
+        <button data-tab="blocks" class="active">Blocks</button>
+        <button data-tab="styles">Styles</button>
+        <button data-tab="layers">Layers</button>
+        <button data-tab="traits">Settings</button>
+      </div>
+      <div id="blocksPanel" class="cbp-tab-body active"></div>
+      <div id="stylesPanel" class="cbp-tab-body"></div>
+      <div id="layersPanel" class="cbp-tab-body"></div>
+      <div id="traitsPanel" class="cbp-tab-body"></div>
+    </aside>
+  </div>
+
+  <div id="statusToast" class="cbp-toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/grapesjs@0.23.2/dist/grapes.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="builder-pro.js"></script>
+</body>
+</html>

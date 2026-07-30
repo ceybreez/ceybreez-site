@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CEYBREEZ Live Builder Pro</title>
+  <link rel="stylesheet" href="builder-pro.css" />
+</head>
+<body>
+<div class="cbp-shell">
+  <header class="cbp-topbar">
+    <div class="cbp-brand"><span>CB</span><div><strong>CEYBREEZ Live Builder</strong><small>Original page + CSS + JavaScript</small></div></div>
+    <div class="cbp-actions">
+      <button id="undoBtn" title="Undo">↶</button><button id="redoBtn" title="Redo">↷</button>
+      <button id="desktopBtn" class="active">Desktop</button><button id="tabletBtn">Tablet</button><button id="mobileBtn">Mobile</button>
+      <button id="editBtn" class="active">Edit</button><button id="previewBtn">Preview</button>
+      <button id="saveBtn">Save Draft</button><button id="publishBtn" class="primary">Publish</button><button id="exportBtn">Export</button>
+    </div>
+  </header>
+
+  <aside class="cbp-pages">
+    <div class="cbp-panel-title">Website Pages</div>
+    <div id="pageList"></div>
+    <button id="reloadPageBtn" class="wide">Reload live page</button>
+    <button id="clearDraftBtn" class="wide danger">Clear page edits</button>
+    <div class="cbp-status-card"><b>Live-page mode</b><p>The real page runs inside the canvas. CSS, API content, sliders and page JavaScript load normally.</p></div>
+  </aside>
+
+  <main class="cbp-workspace">
+    <div id="deviceStage" class="cbp-device-stage desktop">
+      <iframe id="liveFrame" title="CEYBREEZ live page editor"></iframe>
+      <div id="frameLoader" class="cbp-loader"><span></span><b>Loading original page…</b></div>
+    </div>
+  </main>
+
+  <aside class="cbp-right">
+    <div class="cbp-tabs"><button class="active" data-tab="content">Content</button><button data-tab="style">Style</button><button data-tab="element">Element</button></div>
+
+    <section id="contentPanel" class="cbp-panel active">
+      <div class="empty-state" id="emptyState">Click an element in the page to edit it.</div>
+      <div id="contentFields" hidden>
+        <label>Selected element<input id="selectedLabel" readonly /></label>
+        <label id="textFieldWrap">Text<textarea id="textInput" rows="6"></textarea></label>
+        <div id="imageFields" hidden>
+          <label>Image URL<input id="imageSrc" type="text" /></label>
+          <label class="file-pick">Choose image<input id="imageFile" type="file" accept="image/*" /></label>
+          <label>Alt text<input id="imageAlt" type="text" /></label>
+        </div>
+        <div id="linkFields" hidden><label>Link URL<input id="linkHref" type="text" /></label></div>
+        <button id="applyContentBtn" class="wide primary">Apply content</button>
+      </div>
+    </section>
+
+    <section id="stylePanel" class="cbp-panel">
+      <div class="field-grid">
+        <label>Text colour<input id="colorInput" type="color" value="#000000" /></label>
+        <label>Background<input id="bgInput" type="color" value="#ffffff" /></label>
+        <label>Font size<input id="fontSizeInput" placeholder="e.g. 24px" /></label>
+        <label>Font weight<select id="fontWeightInput"><option value="">Default</option><option>300</option><option>400</option><option>500</option><option>600</option><option>700</option><option>800</option></select></label>
+        <label>Text align<select id="textAlignInput"><option value="">Default</option><option>left</option><option>center</option><option>right</option></select></label>
+        <label>Width<input id="widthInput" placeholder="e.g. 100%" /></label>
+        <label>Height<input id="heightInput" placeholder="e.g. auto / 400px" /></label>
+        <label>Padding<input id="paddingInput" placeholder="e.g. 40px 20px" /></label>
+        <label>Margin<input id="marginInput" placeholder="e.g. 0 auto" /></label>
+        <label>Border radius<input id="radiusInput" placeholder="e.g. 16px" /></label>
+      </div>
+      <button id="applyStyleBtn" class="wide primary">Apply style</button>
+      <button id="resetStyleBtn" class="wide">Reset inline style</button>
+    </section>
+
+    <section id="elementPanel" class="cbp-panel">
+      <div class="element-actions">
+        <button id="moveUpBtn">Move up</button><button id="moveDownBtn">Move down</button>
+        <button id="duplicateBtn">Duplicate</button><button id="hideBtn">Hide</button>
+        <button id="deleteBtn" class="danger">Delete</button>
+      </div>
+      <label>Element ID<input id="elementIdInput" /></label>
+      <label>CSS classes<input id="classInput" /></label>
+      <label>Custom CSS property<input id="cssPropertyInput" placeholder="e.g. box-shadow" /></label>
+      <label>Value<input id="cssValueInput" placeholder="e.g. 0 10px 30px rgba(...)" /></label>
+      <button id="applyCustomCssBtn" class="wide">Apply custom CSS</button>
+      <div class="path-box"><b>Saved selector</b><code id="selectorOutput">—</code></div>
+    </section>
+  </aside>
+</div>
+<div id="toast" class="cbp-toast"></div>
+<script src="builder-pro.js"></script>
+</body>
+</html>

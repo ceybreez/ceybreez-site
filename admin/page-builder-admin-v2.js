@@ -74,9 +74,9 @@
     if (!form || !head) return;
     const box = document.createElement('div');
     box.id = 'pbxInspector';
-    box.className = 'pbx-inspector';
+    box.className = 'pbx-inspector pbx-context-tools';
     box.innerHTML = `
-      <div class="pbx-inspector-head"><div><strong>Visual Element Editor</strong><small id="pbxSelectedName">Click an element in preview</small></div><button type="button" id="pbxClearSelection">Clear</button></div>
+      <div class="pbx-inspector-head"><div><strong id="pbxElementType">Element</strong><small id="pbxSelectedName">Click an element in preview</small></div><button type="button" id="pbxClearSelection">Back to Section</button></div>
       <div class="pbx-device-tabs">
         <button type="button" data-pbx-device="desktop" class="active">Desktop</button>
         <button type="button" data-pbx-device="tablet">Tablet</button>
@@ -109,6 +109,7 @@
     `;
     head.insertAdjacentElement('afterend', box);
     bindInspector();
+    setInspectorMode(null);
   }
 
 
@@ -302,6 +303,27 @@
     } finally {
       if (button) button.disabled = false;
     }
+  }
+
+  function elementLabel(el) {
+    if (!el) return 'Section';
+    if (el.matches('img')) return 'Image';
+    if (el.matches('video,source')) return 'Video';
+    if (el.matches('a,button')) return 'Button / Link';
+    if (el.matches('h1,h2,h3,h4,h5,h6')) return 'Heading';
+    if (el.matches('p,span,label,li,input,textarea')) return 'Text';
+    return 'Container';
+  }
+
+  function setInspectorMode(el) {
+    const form = $('sectionForm');
+    const elementMode = !!el && state.selectedSelector && state.selectedSelector !== ':scope';
+    form?.classList.toggle('pbx-element-mode', elementMode);
+    form?.classList.toggle('pbx-section-mode', !elementMode);
+    $('pbxInspector')?.classList.toggle('hidden', !elementMode);
+    if ($('pb2InspectorTitle')) $('pb2InspectorTitle').textContent = 'Inspector';
+    if ($('pb2InspectorMode')) $('pb2InspectorMode').textContent = elementMode ? `${elementLabel(el)} settings` : 'Section settings';
+    if ($('pbxElementType')) $('pbxElementType').textContent = elementLabel(el);
   }
 
   function renderInspector() {

@@ -521,6 +521,7 @@ function initV18BlockDatePickers(bookings){
         <button data-v14-tab="finance">💰 Finance</button>
         <button data-v14-tab="reports">📈 Reports</button>
         <button data-v14-tab="pageBuilder">📄 Page Builder</button>
+        <button type="button" onclick="window.open('visual-builder/index.html','_blank','noopener')">🎨 Visual Designer</button>
         <button data-v14-tab="settings">⚙ Settings</button>
       </nav>
       <button class="v14-logout" type="button" onclick="logoutAdmin()">Logout</button>`;

@@ -14,7 +14,7 @@
 
   const state = {
     items: [], selectedId: '', selectedSelector: '', selectedDevice: 'desktop',
-    elementStyles: {}, customElements: [], previewController: null, initialized: false, sectionBackgroundMode: 'color'
+    elementStyles: {}, customElements: [], previewController: null, initialized: false
   };
 
   const esc = (value) => String(value ?? '').replace(/[&<>"']/g, ch => ({
@@ -29,6 +29,7 @@
   };
   const currentPage = () => $('sectionFilterPage')?.value || 'home';
   const currentItem = () => state.items.find(x => String(x.id) === String(state.selectedId));
+  const backgroundMode = () => document.querySelector('input[name="sectionBackgroundMode"]:checked')?.value || 'color';
   const frameDoc = () => $('pb2PreviewFrame')?.contentDocument || null;
   const selectedSection = () => {
     const doc = frameDoc();
@@ -74,9 +75,10 @@
     if (!form || !head) return;
     const box = document.createElement('div');
     box.id = 'pbxInspector';
-    box.className = 'pbx-inspector pbx-context-tools';
+    box.className = 'pbx-inspector';
+    [...form.children].forEach(child => { if (child !== head) child.classList.add('pbx-section-control'); });
     box.innerHTML = `
-      <div class="pbx-inspector-head"><div><strong id="pbxElementType">Element</strong><small id="pbxSelectedName">Click an element in preview</small></div><button type="button" id="pbxClearSelection">Back to Section</button></div>
+      <div class="pbx-inspector-head"><div><strong id="pbxElementType">Element</strong><small id="pbxSelectedName">Click an element in preview</small></div><button type="button" id="pbxClearSelection">Back to section</button></div>
       <div class="pbx-device-tabs">
         <button type="button" data-pbx-device="desktop" class="active">Desktop</button>
         <button type="button" data-pbx-device="tablet">Tablet</button>
@@ -108,121 +110,56 @@
       <div class="pbx-add-row"><button type="button" data-pbx-add="heading">+ Heading</button><button type="button" data-pbx-add="text">+ Text</button><button type="button" data-pbx-add="button">+ Button</button><button type="button" data-pbx-add="image">+ Image</button></div>
     `;
     head.insertAdjacentElement('afterend', box);
+    box.classList.add('hidden');
     bindInspector();
-    setInspectorMode(null);
+    updateBackgroundControls();
   }
 
-
-  function setVisible(node, show) {
-    if (!node) return;
-    node.classList.toggle('pbx-context-hidden', !show);
+  function elementKind(el) {
+    if (!el) return 'element';
+    if (el.matches('img,picture')) return 'image';
+    if (el.matches('video,source')) return 'video';
+    if (el.matches('a,button')) return 'button';
+    if (el.matches('h1,h2,h3,h4,h5,h6')) return 'heading';
+    if (el.matches('p,span,li,label')) return 'text';
+    if (el.matches('section,header,footer,main,div')) return 'container';
+    return 'element';
   }
 
-  function refreshInspectorGridVisibility() {
-    document.querySelectorAll('#pbxFields .pbx-grid2, #pbxFields .pbx-grid4').forEach(grid => {
-      const visible = [...grid.children].some(child => !child.classList.contains('pbx-context-hidden'));
-      grid.classList.toggle('pbx-context-hidden', !visible);
-    });
+  function setInspectorMode(mode) {
+    const elementMode = mode === 'element';
+    $('sectionForm')?.classList.toggle('pbx-element-mode', elementMode);
+    $('pbxInspector')?.classList.toggle('hidden', !elementMode);
+    if ($('pb2InspectorTitle')) $('pb2InspectorTitle').textContent = elementMode ? `${elementKind(selectedElement()).replace(/^./, c=>c.toUpperCase())} Inspector` : 'Section Inspector';
+    if ($('pb2InspectorHint')) $('pb2InspectorHint').textContent = elementMode ? 'Only settings relevant to the selected element are shown' : 'Section content, background, layout and visibility';
   }
 
-  function updateInspectorVisibility(el) {
-    const textTags = new Set(['H1','H2','H3','H4','H5','H6','P','SPAN','A','BUTTON','LABEL','LI','INPUT','TEXTAREA']);
-    const isText = !!el && textTags.has(el.tagName);
-    const isLink = !!el && el.matches('a,button');
-    const isMedia = !!el && el.matches('img,video,source');
-    const isContainer = !!el && el.matches('section,div,header,footer,main,article,aside,nav');
-
-    setVisible($('pbxText')?.closest('label'), isText);
-    setVisible($('pbxHref')?.closest('label'), isLink);
-    setVisible($('pbxSrc')?.closest('label'), isMedia);
-    setVisible($('pbxColor')?.closest('label'), isText);
-    setVisible($('pbxFontSize')?.closest('label'), isText);
-    setVisible($('pbxFontWeight')?.closest('label'), isText);
-    setVisible($('pbxTextAlign')?.closest('label'), isText || isContainer);
-
-    // Background colour is useful for containers, buttons and text blocks, but not raw media.
-    setVisible($('pbxBackground')?.closest('label'), !isMedia);
-
-    // Geometry and spacing are valid for every visual element.
-    ['pbxWidth','pbxHeight','pbxX','pbxY','pbxMt','pbxMr','pbxMb','pbxMl','pbxPt','pbxPr','pbxPb','pbxPl','pbxRadius','pbxOpacity']
-      .forEach(id => setVisible($(id)?.closest('label'), !!el));
-
-    refreshInspectorGridVisibility();
+  function updateElementFieldVisibility(el) {
+    const kind = elementKind(el);
+    const show = (id, visible) => $(id)?.closest('label,.pbx-grid2,.pbx-grid4')?.classList.toggle('pbx-context-hidden', !visible);
+    show('pbxText', ['heading','text','button'].includes(kind));
+    show('pbxHref', kind === 'button');
+    show('pbxSrc', ['image','video'].includes(kind));
+    show('pbxColor', ['heading','text','button'].includes(kind));
+    show('pbxBackground', ['button','container'].includes(kind));
+    show('pbxFontSize', ['heading','text','button'].includes(kind));
+    show('pbxFontWeight', ['heading','text','button'].includes(kind));
+    show('pbxTextAlign', ['heading','text','button','container'].includes(kind));
+    if ($('pbxElementType')) $('pbxElementType').textContent = kind.replace(/^./, c=>c.toUpperCase());
   }
 
-  function ensureBackgroundModeControls() {
-    const body = $('sectionBackgroundImage')?.closest('.pb2-accordion-body');
-    if (!body || $('sectionBackgroundMode')) return;
-
-    const chooser = document.createElement('div');
-    chooser.id = 'sectionBackgroundMode';
-    chooser.className = 'pb2-choice-group';
-    chooser.innerHTML = `
-      <div class="pb2-choice-title">Background Type</div>
-      <div class="pb2-choice-grid">
-        <label class="pb2-choice"><input type="radio" name="sectionBackgroundMode" value="none"><span class="pb2-choice-tick">✓</span><b>None</b><small>Transparent / default</small></label>
-        <label class="pb2-choice"><input type="radio" name="sectionBackgroundMode" value="color"><span class="pb2-choice-tick">✓</span><b>Colour</b><small>Single colour</small></label>
-        <label class="pb2-choice"><input type="radio" name="sectionBackgroundMode" value="gradient"><span class="pb2-choice-tick">✓</span><b>2 Tone</b><small>Gradient colours</small></label>
-        <label class="pb2-choice"><input type="radio" name="sectionBackgroundMode" value="image"><span class="pb2-choice-tick">✓</span><b>Image</b><small>Image background</small></label>
-        <label class="pb2-choice"><input type="radio" name="sectionBackgroundMode" value="video"><span class="pb2-choice-tick">✓</span><b>Video</b><small>Video background</small></label>
-      </div>`;
-    body.insertBefore(chooser, body.firstChild);
-
-    document.querySelectorAll('input[name="sectionBackgroundMode"]').forEach(input => {
-      input.addEventListener('change', () => {
-        state.sectionBackgroundMode = input.value;
-        updateSectionBackgroundUI();
-        window.pb2LivePreview?.();
-      });
-    });
-    updateSectionBackgroundUI();
-  }
-
-  function detectBackgroundMode(item, settings) {
-    const explicit = item?.backgroundType || settings?.backgroundMode;
-    if (['none','color','gradient','image','video'].includes(explicit)) return explicit;
-    if (settings?.videoUrl) return 'video';
-    if (item?.backgroundImage) return 'image';
-    if (settings?.gradientStart && settings?.gradientEnd) return 'gradient';
-    return 'color';
-  }
-
-  function updateSectionBackgroundUI() {
-    ensureBackgroundModeControls();
-    const mode = state.sectionBackgroundMode || 'color';
-    const radio = document.querySelector(`input[name="sectionBackgroundMode"][value="${mode}"]`);
-    if (radio) radio.checked = true;
-
-    const bgImageLabel = $('sectionBackgroundImage')?.closest('label');
-    const bgImageUploader = $('sectionBackgroundUploader');
-    const bgImageStatus = $('sectionBackgroundUploadStatus');
-    const videoLabel = $('sectionVideo')?.closest('label');
-    const videoUploader = $('sectionVideoUploader');
-    const videoStatus = $('sectionVideoUploadStatus');
-    const colorLabel = $('sectionBgColor')?.closest('label');
-    const overlayLabel = $('sectionOverlay')?.closest('label');
-    const sizeLabel = $('sectionBackgroundSize')?.closest('label');
-    const positionLabel = $('sectionBackgroundPosition')?.closest('label');
-    const gradientStartLabel = $('sectionGradientStart')?.closest('label');
-    const gradientEndLabel = $('sectionGradientEnd')?.closest('label');
-
-    [bgImageLabel,bgImageUploader,bgImageStatus].forEach(n => setVisible(n, mode === 'image'));
-    [videoLabel,videoUploader,videoStatus].forEach(n => setVisible(n, mode === 'video'));
-    setVisible(colorLabel, mode === 'color');
-    setVisible(overlayLabel, mode === 'image' || mode === 'video');
-    setVisible(sizeLabel, mode === 'image' || mode === 'video');
-    setVisible(positionLabel, mode === 'image' || mode === 'video');
-    setVisible(gradientStartLabel, mode === 'gradient');
-    setVisible(gradientEndLabel, mode === 'gradient');
-
-    bodyCleanupRows();
-  }
-
-  function bodyCleanupRows() {
-    document.querySelectorAll('#sectionForm .pb2-two').forEach(row => {
-      const visible = [...row.children].some(child => !child.classList.contains('pbx-context-hidden'));
-      row.classList.toggle('pbx-context-hidden', !visible);
-    });
+  function updateBackgroundControls() {
+    const mode = backgroundMode();
+    const ids = ['sectionImage','sectionBackgroundImage','sectionVideo','sectionBgColor','sectionGradientStart','sectionGradientEnd','sectionBackgroundSize','sectionBackgroundPosition','sectionOverlay'];
+    const visible = {
+      sectionImage: true,
+      sectionBackgroundImage: mode === 'image', sectionVideo: mode === 'video', sectionBgColor: mode === 'color',
+      sectionGradientStart: mode === 'gradient', sectionGradientEnd: mode === 'gradient',
+      sectionBackgroundSize: ['image','video'].includes(mode), sectionBackgroundPosition: ['image','video'].includes(mode),
+      sectionOverlay: ['image','video'].includes(mode)
+    };
+    ids.forEach(id => $(id)?.closest('label,.pb2-two')?.classList.toggle('pbx-background-hidden', !visible[id]));
+    pb2LivePreview();
   }
 
   const fieldMap = {
@@ -305,34 +242,15 @@
     }
   }
 
-  function elementLabel(el) {
-    if (!el) return 'Section';
-    if (el.matches('img')) return 'Image';
-    if (el.matches('video,source')) return 'Video';
-    if (el.matches('a,button')) return 'Button / Link';
-    if (el.matches('h1,h2,h3,h4,h5,h6')) return 'Heading';
-    if (el.matches('p,span,label,li,input,textarea')) return 'Text';
-    return 'Container';
-  }
-
-  function setInspectorMode(el) {
-    const form = $('sectionForm');
-    const elementMode = !!el && state.selectedSelector && state.selectedSelector !== ':scope';
-    form?.classList.toggle('pbx-element-mode', elementMode);
-    form?.classList.toggle('pbx-section-mode', !elementMode);
-    $('pbxInspector')?.classList.toggle('hidden', !elementMode);
-    if ($('pb2InspectorTitle')) $('pb2InspectorTitle').textContent = 'Inspector';
-    if ($('pb2InspectorMode')) $('pb2InspectorMode').textContent = elementMode ? `${elementLabel(el)} settings` : 'Section settings';
-    if ($('pbxElementType')) $('pbxElementType').textContent = elementLabel(el);
-  }
-
   function renderInspector() {
     ensureInspector();
     const rec = record();
     const el = selectedElement();
     $('pbxEmpty')?.classList.toggle('hidden', !!el);
     $('pbxFields')?.classList.toggle('hidden', !el);
-    if (!el || !rec) { if($('pbxSelectedName')) $('pbxSelectedName').textContent='Click an element in preview'; updateInspectorVisibility(null); return; }
+    if (!el || !rec) { setInspectorMode('section'); if($('pbxSelectedName')) $('pbxSelectedName').textContent='Click an element in preview'; return; }
+    setInspectorMode('element');
+    updateElementFieldVisibility(el);
     $('pbxSelectedName').textContent = state.selectedSelector;
     const values = {
       pbxText: rec.text ?? (['INPUT','TEXTAREA'].includes(el.tagName) ? el.value : el.textContent.trim()),
@@ -348,7 +266,6 @@
     $('pbxHidden').checked = !!rec.hidden;
     const custom = el.dataset.pbCustom === '1';
     $('pbxDeleteCustom').style.display = custom ? '' : 'none';
-    updateInspectorVisibility(el);
   }
 
   function applyRecord(el, rec) {
@@ -442,7 +359,7 @@
     doc.querySelectorAll('.pbx-selected').forEach(n=>n.classList.remove('pbx-selected'));
     const el=forceEl||selectedElement(); if(el)el.classList.add('pbx-selected');
   }
-  function clearSelection(){state.selectedSelector='';markSelected();renderInspector();}
+  function clearSelection(){state.selectedSelector='';markSelected();setInspectorMode('section');renderInspector();}
 
   function setDevice(device) {
     state.selectedDevice=device;
@@ -494,15 +411,17 @@
 
   window.editPageSection=async function(id, scroll=true){
     const item=state.items.find(x=>String(x.id)===String(id)); if(!item)return;
-    const s=parseSettings(item.settings); state.selectedId=item.id; state.elementStyles=s.elementStyles||{}; state.customElements=s.customElements||[]; state.selectedSelector=''; state.sectionBackgroundMode=detectBackgroundMode(item,s);
+    const s=parseSettings(item.settings); state.selectedId=item.id; state.elementStyles=s.elementStyles||{}; state.customElements=s.customElements||[]; state.selectedSelector='';
     const vals={sectionEditId:item.__virtual?'':(item.id||''),sectionPage:item.page||currentPage(),sectionKey:item.sectionKey||'custom',sectionType:item.sectionType||'custom',sectionTitle:item.title||'',sectionSubtitle:item.subtitle||'',sectionContent:item.content||'',sectionButtonText:item.buttonText||s.buttonText||'',sectionButtonUrl:item.buttonUrl||s.buttonUrl||'',sectionImage:item.mediaUrl||'',sectionVideo:s.videoUrl||'',sectionBgColor:item.backgroundColor||'#ffffff',sectionBackgroundImage:item.backgroundImage||'',sectionTextColor:item.textColor||'#222222',sectionButtonColor:item.buttonColor||'#0f766e',sectionFontFamily:item.fontFamily||'',sectionFontSize:stripPx(item.fontSize||s.fontSize),sectionHeadingColor:item.headingColor||s.headingColor||'#17324d',sectionHeadingFont:s.headingFont||'',sectionHeadingSize:stripPx(s.headingSize),sectionBackgroundSize:s.backgroundSize||'cover',sectionBackgroundPosition:s.backgroundPosition||'center center',sectionOverlay:s.overlay??35,sectionSortOrder:item.sortOrder||0,sectionGradientStart:s.gradientStart||'#ffffff',sectionGradientEnd:s.gradientEnd||'#f8f3eb',sectionPaddingTop:stripPx(s.paddingTop),sectionPaddingBottom:stripPx(s.paddingBottom),sectionBorderRadius:stripPx(s.borderRadius),sectionShadow:s.shadow||'',sectionAnimation:s.animation||''};
-    Object.entries(vals).forEach(([id,v])=>{if($(id))$(id).value=v;}); $('sectionActive').checked=!!item.active; updateSectionBackgroundUI(); loadCards(s.cards||[]); renderList(); renderInspector(); applySectionFormPreview(); applyAllToPreview(); if(scroll)$('sectionForm')?.scrollIntoView({behavior:'smooth',block:'start'});
+    Object.entries(vals).forEach(([id,v])=>{if($(id))$(id).value=v;}); $('sectionActive').checked=!!item.active; loadCards(s.cards||[]); renderList(); renderInspector(); applySectionFormPreview(); applyAllToPreview(); if(scroll)$('sectionForm')?.scrollIntoView({behavior:'smooth',block:'start'});
+    const mode=s.backgroundMode||item.backgroundType||(s.videoUrl?'video':item.backgroundImage?'image':'color'); const radio=document.querySelector(`input[name="sectionBackgroundMode"][value="${mode}"]`); if(radio)radio.checked=true; updateBackgroundControls();
   };
 
   window.savePageSection=async function(e){
     e?.preventDefault(); const status=$('pb2SaveStatus'); if(status){status.textContent='Saving…';status.className='';}
-    const settings={backgroundMode:state.sectionBackgroundMode,videoUrl:$('sectionVideo').value.trim(),gradientStart:$('sectionGradientStart').value,gradientEnd:$('sectionGradientEnd').value,paddingTop:px('sectionPaddingTop'),paddingBottom:px('sectionPaddingBottom'),borderRadius:px('sectionBorderRadius'),shadow:$('sectionShadow').value,animation:$('sectionAnimation').value,cards:collectCards(),buttonText:$('sectionButtonText').value.trim(),buttonUrl:$('sectionButtonUrl').value.trim(),backgroundSize:$('sectionBackgroundSize').value,backgroundPosition:$('sectionBackgroundPosition').value,overlay:Number($('sectionOverlay').value||35),headingColor:$('sectionHeadingColor').value,headingFont:$('sectionHeadingFont').value,headingSize:px('sectionHeadingSize'),fontSize:px('sectionFontSize'),elementStyles:state.elementStyles,customElements:state.customElements};
-    const data={id:$('sectionEditId').value||'',page:currentPage(),sectionKey:$('sectionKey').value,sectionType:$('sectionType').value,title:$('sectionTitle').value.trim(),subtitle:$('sectionSubtitle').value.trim(),content:$('sectionContent').value.trim(),buttonText:$('sectionButtonText').value.trim(),buttonUrl:$('sectionButtonUrl').value.trim(),mediaUrl:$('sectionImage').value.trim(),backgroundType:state.sectionBackgroundMode,backgroundColor:$('sectionBgColor').value,backgroundImage:$('sectionBackgroundImage').value.trim(),textColor:$('sectionTextColor').value,headingColor:$('sectionHeadingColor').value,buttonColor:$('sectionButtonColor').value,fontFamily:$('sectionFontFamily').value,fontSize:px('sectionFontSize'),sortOrder:$('sectionSortOrder').value,active:$('sectionActive').checked,settings};
+    const mode=backgroundMode();
+    const settings={backgroundMode:mode,videoUrl:mode==='video'?$('sectionVideo').value.trim():'',gradientStart:$('sectionGradientStart').value,gradientEnd:$('sectionGradientEnd').value,paddingTop:px('sectionPaddingTop'),paddingBottom:px('sectionPaddingBottom'),borderRadius:px('sectionBorderRadius'),shadow:$('sectionShadow').value,animation:$('sectionAnimation').value,cards:collectCards(),buttonText:$('sectionButtonText').value.trim(),buttonUrl:$('sectionButtonUrl').value.trim(),backgroundSize:$('sectionBackgroundSize').value,backgroundPosition:$('sectionBackgroundPosition').value,overlay:Number($('sectionOverlay').value||35),headingColor:$('sectionHeadingColor').value,headingFont:$('sectionHeadingFont').value,headingSize:px('sectionHeadingSize'),fontSize:px('sectionFontSize'),elementStyles:state.elementStyles,customElements:state.customElements};
+    const data={id:$('sectionEditId').value||'',page:currentPage(),sectionKey:$('sectionKey').value,sectionType:$('sectionType').value,title:$('sectionTitle').value.trim(),subtitle:$('sectionSubtitle').value.trim(),content:$('sectionContent').value.trim(),buttonText:$('sectionButtonText').value.trim(),buttonUrl:$('sectionButtonUrl').value.trim(),mediaUrl:$('sectionImage').value.trim(),backgroundType:mode,backgroundColor:mode==='color'?$('sectionBgColor').value:'transparent',backgroundImage:mode==='image'?$('sectionBackgroundImage').value.trim():'',textColor:$('sectionTextColor').value,headingColor:$('sectionHeadingColor').value,buttonColor:$('sectionButtonColor').value,fontFamily:$('sectionFontFamily').value,fontSize:px('sectionFontSize'),sortOrder:$('sectionSortOrder').value,active:$('sectionActive').checked,settings};
     try{const res=await fetch(`${API_BASE}/api/admin/page-sections`,{method:'POST',headers:authHeaders(),body:JSON.stringify(data)});const out=await res.json();if(!res.ok)throw new Error(out.error||'Save failed');if(status){status.textContent='Saved';status.className='pb2-status-ok';}await loadPageSections();window.pb2RefreshPreview();}
     catch(err){if(status){status.textContent=err.message;status.className='pb2-status-error';}alert(err.message);}
   };
@@ -513,30 +432,23 @@
     set('title',$('sectionTitle')?.value||'');set('subtitle',$('sectionSubtitle')?.value||'');set('content',$('sectionContent')?.value||'');
     const btn=target.querySelector('[data-field="button"]');if(btn){if($('sectionButtonText')?.value)btn.textContent=$('sectionButtonText').value;if($('sectionButtonUrl')?.value)btn.href=$('sectionButtonUrl').value;}
     const img=target.querySelector('[data-field="image"]');if(img&&$('sectionImage')?.value)img.src=$('sectionImage').value;
-    const mode=state.sectionBackgroundMode||'color';
-    const bg=$('sectionBackgroundImage')?.value||'';
-    target.querySelectorAll(':scope > .pbx-bg-video').forEach(n=>n.remove());
+    const mode=backgroundMode(),bg=$('sectionBackgroundImage')?.value,o=Number($('sectionOverlay')?.value||35)/100;
+    target.querySelector(':scope > .cms-bg-video')?.remove();
     target.style.background=''; target.style.backgroundImage='';
-    if(mode==='image' && bg){const o=Number($('sectionOverlay')?.value||35)/100;target.style.backgroundImage=`linear-gradient(rgba(0,0,0,${o}),rgba(0,0,0,${o})),url('${bg}')`;}
-    else if(mode==='gradient'){target.style.background=`linear-gradient(135deg, ${$('sectionGradientStart')?.value||'#ffffff'}, ${$('sectionGradientEnd')?.value||'#f8f3eb'})`;}
-    else if(mode==='color'){target.style.background=$('sectionBgColor')?.value||'';}
-    else if(mode==='video'){
-      const src=$('sectionVideo')?.value||'';
-      if(src){
-        const video=target.ownerDocument.createElement('video'); video.className='pbx-bg-video'; video.src=src; video.autoplay=true; video.muted=true; video.loop=true; video.playsInline=true;
-        Object.assign(video.style,{position:'absolute',inset:'0',width:'100%',height:'100%',objectFit:$('sectionBackgroundSize')?.value==='contain'?'contain':'cover',zIndex:'-1',pointerEvents:'none'});
-        if(getComputedStyle(target).position==='static')target.style.position='relative'; target.style.isolation='isolate'; target.prepend(video);
-      }
-    }
+    if(mode==='image'&&bg)target.style.backgroundImage=`linear-gradient(rgba(0,0,0,${o}),rgba(0,0,0,${o})),url('${bg}')`;
+    else if(mode==='gradient')target.style.background=`linear-gradient(135deg,${$('sectionGradientStart').value},${$('sectionGradientEnd').value})`;
+    else if(mode==='color')target.style.background=$('sectionBgColor')?.value||'';
+    else if(mode==='video'&&$('sectionVideo')?.value){const v=document.createElement('video');v.className='cms-bg-video';v.src=$('sectionVideo').value;v.autoplay=true;v.muted=true;v.loop=true;v.playsInline=true;target.prepend(v);}
     target.style.backgroundSize=$('sectionBackgroundSize')?.value||'cover';target.style.backgroundPosition=$('sectionBackgroundPosition')?.value||'center center';target.style.color=$('sectionTextColor')?.value||'';target.style.fontFamily=$('sectionFontFamily')?.value||'';target.style.fontSize=px('sectionFontSize');target.style.paddingTop=px('sectionPaddingTop');target.style.paddingBottom=px('sectionPaddingBottom');target.style.borderRadius=px('sectionBorderRadius');
     target.querySelectorAll('h1,h2,h3').forEach(h=>{h.style.color=$('sectionHeadingColor')?.value||'';h.style.fontFamily=$('sectionHeadingFont')?.value||'';h.style.fontSize=px('sectionHeadingSize');});
   }
   window.pb2LivePreview=()=>{applySectionFormPreview();applyAllToPreview();};
 
   function bindOnce(){
-    if(state.initialized)return;state.initialized=true;ensureInspector();ensureBackgroundModeControls();
+    if(state.initialized)return;state.initialized=true;ensureInspector();
     document.querySelectorAll('.pb2-accordion-title').forEach(btn=>btn.addEventListener('click',()=>btn.parentElement.classList.toggle('open')));
     document.querySelectorAll('#sectionForm input,#sectionForm textarea,#sectionForm select').forEach(input=>input.addEventListener('input',window.pb2LivePreview));
+    document.querySelectorAll('input[name="sectionBackgroundMode"]').forEach(input=>input.addEventListener('change',updateBackgroundControls));
     $('sectionForm')?.addEventListener('submit',window.savePageSection);
     $('pb2PreviewFrame')?.addEventListener('load',installPreviewEditor);
     document.querySelectorAll('.pb2-devices button').forEach(btn=>btn.addEventListener('click',()=>setDevice(btn.dataset.device||((btn.getAttribute('onclick')||'').match(/'(desktop|tablet|mobile)'/)||[])[1]||'desktop')));

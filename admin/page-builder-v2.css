@@ -11,47 +11,5 @@
 .pbx-image-upload-row button:hover{background:#08786f}
 .pbx-image-upload-row button:disabled{opacity:.55;cursor:wait}
 .pbx-hidden-file{display:none!important}
+.pb2-panel-head small{display:block;color:#6e7f89;font-size:11px;margin-top:3px}.pb2-background-modes{border:0;padding:0;margin:0 0 14px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.pb2-background-modes legend{grid-column:1/-1;font-weight:800;color:#334;margin-bottom:3px}.pb2-background-modes label{display:flex!important;align-items:center;justify-content:center;gap:5px;margin:0!important;padding:9px 4px;border:1px solid #cad9de;border-radius:7px;cursor:pointer;background:#fff;text-align:center}.pb2-background-modes input{width:auto!important}.pb2-background-modes label:has(input:checked){border-color:#087f72;background:#e8f7f4;color:#075f57}.pbx-element-mode>.pbx-section-control{display:none!important}.pbx-context-hidden,.pbx-background-hidden{display:none!important}.pbx-inspector{margin-top:8px}.pbx-inspector.hidden{display:none!important}.cms-bg-video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;z-index:-1!important}@media(max-width:700px){.pb2-background-modes{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .pbx-upload-status{display:block;min-height:16px;margin-top:4px;color:#0b766d;font-size:11px;line-height:1.35}
-
-
-/* Context-aware controls and background type chooser */
-.pbx-context-hidden{display:none!important}
-.pb2-choice-group{margin:0 0 14px;padding:11px;border:1px solid #cfe1df;border-radius:10px;background:#f7fbfb}
-.pb2-choice-title{font-size:12px;font-weight:800;color:#24464b;margin-bottom:8px}
-.pb2-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
-.pb2-choice{position:relative!important;display:grid!important;grid-template-columns:20px 1fr!important;grid-template-rows:auto auto;column-gap:7px;align-items:center;margin:0!important;padding:9px;border:1px solid #d4e1e3;border-radius:8px;background:#fff;cursor:pointer}
-.pb2-choice input{position:absolute;opacity:0;pointer-events:none}
-.pb2-choice-tick{grid-row:1/3;display:grid;place-items:center;width:18px;height:18px;border:2px solid #9db7b5;border-radius:50%;color:transparent;font-size:11px;font-weight:900}
-.pb2-choice b{font-size:12px;color:#263f45}.pb2-choice small{font-size:10px;color:#75858a;font-weight:500}
-.pb2-choice:has(input:checked){border-color:#087f72;background:#ebf8f6;box-shadow:0 0 0 1px #087f72 inset}
-.pb2-choice input:checked + .pb2-choice-tick{border-color:#087f72;background:#087f72;color:#fff}
-@media(max-width:420px){.pb2-choice-grid{grid-template-columns:1fr}}
-
-
-/* =========================================================
-   Unified contextual inspector
-   Section controls and element controls share one inspector.
-   ========================================================= */
-#pb2InspectorMode{display:block;margin-top:3px;color:#71808a;font-size:11px;font-weight:600}
-.pbx-context-tools{margin:0 0 14px;border:0;border-radius:0;background:transparent;padding:0}
-.pbx-context-tools.hidden{display:none!important}
-.pbx-context-tools .pbx-inspector-head{padding:10px 11px;background:#edf9f7;border:1px solid #9bd2ca;border-radius:9px;margin-bottom:10px}
-.pbx-context-tools .pbx-device-tabs,.pbx-context-tools .pbx-fields,.pbx-context-tools .pbx-add-row{padding-left:1px;padding-right:1px}
-
-/* Element mode: hide the section-only form and show only relevant element controls. */
-#sectionForm.pbx-element-mode > label,
-#sectionForm.pbx-element-mode > .pb2-accordion,
-#sectionForm.pbx-element-mode > .pb2-two,
-#sectionForm.pbx-element-mode > .pb2-save-bottom,
-#sectionForm.pbx-element-mode > button.pb2-btn-light{display:none!important}
-#sectionForm.pbx-element-mode > input[type="hidden"]{display:none!important}
-#sectionForm.pbx-element-mode #pbxInspector{display:block!important}
-
-/* Section mode: use the normal section controls; there is no second editor. */
-#sectionForm.pbx-section-mode #pbxInspector{display:none!important}
-
-/* Context filtering inside the element inspector. */
-.pbx-context-hidden{display:none!important}
-#pbxFields > label:not(.pbx-context-hidden),
-#pbxFields > div:not(.pbx-context-hidden){animation:pbxInspectorIn .12s ease-out}
-@keyframes pbxInspectorIn{from{opacity:.35;transform:translateY(3px)}to{opacity:1;transform:none}}

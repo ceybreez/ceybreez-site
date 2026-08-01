@@ -61,8 +61,8 @@
       <button onclick="showTab('reviewsTab')">Reviews</button>
       <button onclick="showTab('financeTab')">Finance</button>
       <button onclick="showTab('reportsTab')">Reports</button>
-      <button type="button" onclick="window.location.href='grapes-builder/'">Visual Builder</button>
-      <button onclick="showTab('pageControl')">Legacy Page Builder</button>
+      <button type="button" onclick="window.location.href='visual-builder/'">Visual Designer</button>
+      <button onclick="showTab('pageControl')">Page Builder</button>
       <button onclick="showTab('settingsTab')">Settings</button>
       <button onclick="logoutAdmin()">Logout</button>
     </div>
@@ -404,7 +404,7 @@
         <aside class="pb2-settings-panel">
           <form id="sectionForm">
             <input type="hidden" id="sectionEditId" />
-            <div class="pb2-panel-head"><div><h3 id="pb2InspectorTitle">Inspector</h3><small id="pb2InspectorMode">Section settings</small></div><span id="pb2SaveStatus"></span></div>
+            <div class="pb2-panel-head"><div><h3 id="pb2InspectorTitle">Inspector</h3><small id="pb2InspectorHint">Select a section or click an element in the preview</small></div><span id="pb2SaveStatus"></span></div>
 
             <label>Section
               <select id="sectionKey">
@@ -430,6 +430,14 @@
             </div></div>
 
             <div class="pb2-accordion open"><button type="button" class="pb2-accordion-title">Background & Media</button><div class="pb2-accordion-body">
+              <fieldset class="pb2-background-modes">
+                <legend>Background Type</legend>
+                <label><input type="radio" name="sectionBackgroundMode" value="none"> None</label>
+                <label><input type="radio" name="sectionBackgroundMode" value="color" checked> Colour</label>
+                <label><input type="radio" name="sectionBackgroundMode" value="gradient"> 2 Tone</label>
+                <label><input type="radio" name="sectionBackgroundMode" value="image"> Image</label>
+                <label><input type="radio" name="sectionBackgroundMode" value="video"> Video</label>
+              </fieldset>
               <label>Section Image URL<div class="pb2-inline"><input id="sectionImage" placeholder="Image URL" /><button type="button" onclick="document.getElementById('sectionImageUploader').click()">Select</button></div></label>
               <input class="hidden" type="file" id="sectionImageUploader" accept="image/*" onchange="uploadSectionImage()" /><p id="sectionImageUploadStatus" class="upload-status"></p>
               <label>Background Image URL<div class="pb2-inline"><input id="sectionBackgroundImage" placeholder="Background URL" /><button type="button" onclick="document.getElementById('sectionBackgroundUploader').click()">Select</button></div></label>

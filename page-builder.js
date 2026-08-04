@@ -116,6 +116,29 @@
 
   const device = () => (innerWidth <= 600 ? "mobile" : innerWidth <= 900 ? "tablet" : "desktop");
 
+  function analyseResponsive(root = document.body) {
+    if (!root) return;
+    root.querySelectorAll('[data-cb-responsive],[data-cb-responsive-item]').forEach((element) => {
+      delete element.dataset.cbResponsive;
+      delete element.dataset.cbResponsiveItem;
+    });
+    root.querySelectorAll('*').forEach((element) => {
+      if (['NAV','HEADER','FOOTER','SCRIPT','STYLE','LINK','META'].includes(element.tagName)) return;
+      const children = [...element.children].filter((child) => !['SCRIPT','STYLE','LINK'].includes(child.tagName));
+      if (children.length < 2) return;
+      const style = getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
+      const childRects = children.map((child) => child.getBoundingClientRect()).filter((box) => box.width > 0 && box.height > 0);
+      const sideBySide = childRects.length > 1 && childRects.some((box, index) =>
+        childRects.slice(index + 1).some((other) => Math.abs(box.top - other.top) < Math.min(box.height, other.height) * 0.45 && Math.abs(box.left - other.left) > 20)
+      );
+      if (style.display === 'grid') element.dataset.cbResponsive = 'grid';
+      else if (style.display === 'flex' && !element.classList.contains('footer-links')) element.dataset.cbResponsive = 'flex';
+      else if (sideBySide && rect.width > 420) element.dataset.cbResponsive = 'row';
+      if (element.dataset.cbResponsive) children.forEach((child) => { child.dataset.cbResponsiveItem = '1'; });
+    });
+  }
+
   function merged(byDevice) {
     const current = device();
     return Object.assign({}, byDevice?.desktop || {}, current !== "desktop" ? (byDevice?.[current] || {}) : {});
@@ -272,10 +295,11 @@
     if (!document.getElementById("cb-live-responsive")) {
       const responsive = document.createElement("style");
       responsive.id = "cb-live-responsive";
-      responsive.textContent = `html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,svg,canvas,iframe{max-width:100%}section,main,header,footer,div{min-width:0}@media(max-width:900px){[data-cb-responsive="grid"]{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-cb-responsive="flex"]{flex-wrap:wrap!important}}@media(max-width:600px){[data-cb-responsive="grid"],[data-cb-responsive="flex"],[data-cb-responsive="row"]{display:flex!important;flex-direction:column!important;align-items:stretch!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important}[data-cb-responsive-item="1"]{width:100%!important;max-width:100%!important;min-width:0!important;left:auto!important;right:auto!important}main>section{max-width:100%!important}img,video{height:auto}h1{font-size:clamp(1.9rem,10vw,3rem)}h2{font-size:clamp(1.55rem,8vw,2.35rem)}p,a,button{max-width:100%;overflow-wrap:anywhere}nav{max-width:100%!important;min-width:0!important;flex-wrap:wrap!important;white-space:normal!important}}`;
+      responsive.textContent = `html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,svg,canvas,iframe{max-width:100%}section,main,header,footer,div{min-width:0}@media(max-width:900px){[data-cb-responsive="grid"]{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-cb-responsive="flex"],[data-cb-responsive="row"]{display:flex!important;flex-wrap:nowrap!important;align-items:stretch!important;gap:18px!important;width:100%!important;max-width:100%!important}[data-cb-responsive-item="1"]{min-width:0!important;max-width:100%!important;transform:none!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important}[data-cb-responsive="flex"]>[data-cb-responsive-item="1"],[data-cb-responsive="row"]>[data-cb-responsive-item="1"]{position:relative!important;flex:1 1 0!important;width:auto!important}img[data-cb-responsive-item="1"],[data-cb-responsive-item="1"]>img{width:100%!important;height:100%!important;min-height:180px!important;object-fit:cover!important}}@media(max-width:600px){[data-cb-responsive="grid"],[data-cb-responsive="flex"],[data-cb-responsive="row"]{display:flex!important;flex-direction:column!important;align-items:stretch!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important}[data-cb-responsive-item="1"]{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;flex:0 0 auto!important;position:relative!important;transform:none!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important}main>section{max-width:100%!important}img[data-cb-responsive-item="1"],[data-cb-responsive-item="1"]>img{display:block!important;width:100%!important;max-width:100%!important;height:auto!important;min-height:0!important;object-fit:cover!important;visibility:visible!important;opacity:1!important}h1{font-size:clamp(1.9rem,10vw,3rem)}h2{font-size:clamp(1.55rem,8vw,2.35rem)}p,a,button{max-width:100%;overflow-wrap:anywhere}nav{max-width:100%!important;min-width:0!important;flex-wrap:wrap!important;white-space:normal!important}}`;
       document.head.appendChild(responsive);
     }
     const sections = await loadCeyBreezSections(pageKey());
+    requestAnimationFrame(() => analyseResponsive(document.body));
     readyResolve(sections);
     window.dispatchEvent(new CustomEvent("ceybreez:page-builder-ready", { detail: { sections } }));
   }
@@ -289,6 +313,7 @@
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
         lastSections.filter(isVisualSection).forEach(applySection);
+        analyseResponsive(document.body);
       }, 180);
     });
   }

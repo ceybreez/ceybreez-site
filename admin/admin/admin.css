@@ -1,0 +1,17 @@
+/* =====================================================
+   CEYBREEZ ENTERPRISE PMS - MODULAR CSS ENTRY
+   Keep this file as the only CSS linked in admin.html.
+===================================================== */
+
+@import url("./css/v10-legacy.css");
+@import url("./css/layout-shell.css");
+@import url("./css/availability.css");
+@import url("./css/responsive.css");
+@import url("./css/dashboard-module.css");
+@import url("./css/inquiry.css");
+@import url("./css/finance.css");
+@import url("./css/reports.css");
+@import url("./css/properties.css");
+@import url("./css/tours.css");
+
+.review-showcase-admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0}.review-showcase-admin-grid label{display:grid;gap:7px;font-weight:600}.review-quick-actions{display:flex;gap:6px;flex-wrap:wrap}.review-quick-actions button{font-size:12px;padding:7px 10px}@media(max-width:700px){.review-showcase-admin-grid{grid-template-columns:1fr}}

@@ -1,0 +1,52 @@
+<section id="reportsTab" class="hidden">
+  <h2>Reports</h2>
+
+  <section class="admin-section">
+    <div class="section-head">
+      <div>
+        <h2>Business Reports</h2>
+        <p>Inquiry, booking, occupancy and property performance summary.</p>
+      </div>
+
+      <div class="report-tools">
+        <select id="reportTypeFilter">
+          <option value="all">All Types</option>
+          <option value="villa">Villas</option>
+          <option value="homestay">Homestays</option>
+          <option value="apartment">Apartments</option>
+          <option value="tour">Tours</option>
+        </select>
+
+        <input id="reportDateFrom" type="date" />
+        <input id="reportDateTo" type="date" />
+
+        <button type="button" onclick="renderReports()">Run Report</button>
+        <button type="button" onclick="exportReportCSV()">Export Report CSV</button>
+      </div>
+    </div>
+
+    <div id="reportSummaryCards" class="dashboard-cards"></div>
+
+    <div class="report-grid">
+      <div class="report-card">
+        <h3>Property Performance</h3>
+        <div id="propertyPerformanceReport"></div>
+      </div>
+
+      <div class="report-card">
+        <h3>Status Summary</h3>
+        <div id="statusSummaryReport"></div>
+      </div>
+
+      <div class="report-card">
+        <h3>Monthly Booking Trend</h3>
+        <div id="monthlyBookingReport"></div>
+      </div>
+
+      <div class="report-card">
+        <h3>Latest Guest Activity</h3>
+        <div id="latestGuestActivityReport"></div>
+      </div>
+    </div>
+  </section>
+</section>

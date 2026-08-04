@@ -234,6 +234,7 @@
       }
 
       nodes.forEach((element) => {
+        element.dataset.cbLiveEdited = "1";
         if (record.html !== undefined && record.html !== null && !["IMG", "VIDEO", "INPUT", "TEXTAREA"].includes(element.tagName)) {
           element.innerHTML = record.html;
         }
@@ -241,6 +242,17 @@
           if (!name.startsWith("data-cb-") && value !== null && value !== undefined) element.setAttribute(name, value);
         });
         if (record.style !== undefined) element.setAttribute("style", record.style || "");
+        if (record.hover) {
+          const styleId = "cb-live-hover-styles";
+          let hoverStyle = document.getElementById(styleId);
+          if (!hoverStyle) {
+            hoverStyle = document.createElement("style");
+            hoverStyle.id = styleId;
+            document.head.appendChild(hoverStyle);
+          }
+          const safeSelector = record.selector;
+          hoverStyle.textContent += `${safeSelector}{transition:${record.hover.transition || "all .25s ease"}}${safeSelector}:hover{background:${record.hover.background || "inherit"}!important;color:${record.hover.color || "inherit"}!important;transform:${record.hover.transform || "none"}!important}`;
+        }
 
         const override = device() === "desktop" ? {} : (record.deviceStyles?.[device()] || {});
         Object.entries(override).forEach(([name, value]) => {
@@ -257,6 +269,12 @@
   });
 
   async function start() {
+    if (!document.getElementById("cb-live-responsive")) {
+      const responsive = document.createElement("style");
+      responsive.id = "cb-live-responsive";
+      responsive.textContent = `html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,svg,canvas,iframe{max-width:100%}section,main,header,footer,div{min-width:0}@media(max-width:900px){[data-cb-responsive="grid"]{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-cb-responsive="flex"]{flex-wrap:wrap!important}}@media(max-width:600px){[data-cb-responsive="grid"],[data-cb-responsive="flex"],[data-cb-responsive="row"]{display:flex!important;flex-direction:column!important;align-items:stretch!important;grid-template-columns:minmax(0,1fr)!important;width:100%!important;max-width:100%!important}[data-cb-responsive-item="1"]{width:100%!important;max-width:100%!important;min-width:0!important;left:auto!important;right:auto!important}main>section{max-width:100%!important}img,video{height:auto}h1{font-size:clamp(1.9rem,10vw,3rem)}h2{font-size:clamp(1.55rem,8vw,2.35rem)}p,a,button{max-width:100%;overflow-wrap:anywhere}nav{max-width:100%!important;min-width:0!important;flex-wrap:wrap!important;white-space:normal!important}}`;
+      document.head.appendChild(responsive);
+    }
     const sections = await loadCeyBreezSections(pageKey());
     readyResolve(sections);
     window.dispatchEvent(new CustomEvent("ceybreez:page-builder-ready", { detail: { sections } }));

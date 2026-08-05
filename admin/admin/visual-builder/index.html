@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>CeyBreez Visual Builder</title>
-  <link rel="stylesheet" href="builder.css?v=20260803-visual-builder-complete">
+  <link rel="stylesheet" href="builder.css?v=20260801-live-publish">
 </head>
 <body>
 <header class="cb-topbar">
@@ -30,7 +30,7 @@
         <button data-add="text">Text</button><button data-add="button">Button</button><button data-add="image">Image</button><button data-add="card">Card</button>
         <button data-add="spacer">Spacer</button><button data-add="divider">Divider</button>
       </div></details>
-      <details open><summary>Media</summary><div class="block-grid one"><button id="mediaUploadBtn">Upload Image</button><button id="videoUploadBtn">Upload Video</button></div></details>
+      <details open><summary>Media</summary><div class="block-grid one"><button id="mediaUploadBtn">Upload Image</button></div></details>
       <details><summary>Actions</summary><div class="block-grid one"><button id="duplicateBtn">Duplicate selected</button><button id="deleteBtn">Delete selected</button></div></details>
     </div>
     <div id="sectionsTab" class="left-panel"><div id="sectionList" class="section-list"></div></div>
@@ -50,8 +50,6 @@
         <div class="quick-actions" aria-label="Selected element actions">
           <button id="moveUpBtn" title="Move element up">↑ Move up</button>
           <button id="moveDownBtn" title="Move element down">↓ Move down</button>
-          <button id="bringFrontBtn" title="Bring selected element in front">⇧ Bring front</button>
-          <button id="sendBackBtn" title="Send selected element behind">⇩ Send back</button>
           <button id="duplicateQuickBtn" title="Duplicate selected element">⧉ Duplicate</button>
           <button id="deleteQuickBtn" class="danger" title="Delete selected element">✕ Delete</button>
         </div>
@@ -59,8 +57,6 @@
           <label>Display<select id="displayValue"><option value="">Default</option><option>block</option><option>inline-block</option><option>flex</option><option>grid</option><option>none</option></select></label>
           <div class="two"><label>Width<input id="widthValue" placeholder="auto / 100%"></label><label>Height<input id="heightValue" placeholder="auto / 500px"></label></div>
           <div class="two"><label>Max width<input id="maxWidthValue" placeholder="none"></label><label>Min height<input id="minHeightValue" placeholder="0"></label></div>
-          <div class="two"><label>Min width<input id="minWidthValue" placeholder="0"></label><label>Max height<input id="maxHeightValue" placeholder="none"></label></div>
-          <div class="two"><label>Position<select id="positionValue"><option value="">Default</option><option>relative</option><option>absolute</option><option>fixed</option><option>sticky</option></select></label><label>Overflow<select id="overflowValue"><option value="">Default</option><option>visible</option><option>hidden</option><option>auto</option></select></label></div>
         </details>
         <details open><summary>Spacing</summary>
           <div class="four"><label>Margin T<input id="marginTop" type="number"></label><label>R<input id="marginRight" type="number"></label><label>B<input id="marginBottom" type="number"></label><label>L<input id="marginLeft" type="number"></label></div>
@@ -82,11 +78,8 @@
           <label class="optional-style"><span><input id="useTextColor" type="checkbox"> Text colour</span><input id="colorValue" type="color" disabled></label>
         </details>
         <details id="backgroundGroup"><summary>Background</summary>
-          <label>Background type<select id="backgroundMode"><option value="none">None / transparent</option><option value="color">Single colour</option><option value="gradient">Two-colour gradient</option><option value="image">Image</option><option value="video">Video</option></select></label>
           <label class="optional-style"><span><input id="useBgColor" type="checkbox"> Background colour</span><input id="bgValue" type="color" disabled></label>
-          <div class="two"><label>Colour 1<input id="gradientStart" type="color" value="#ffffff"></label><label>Colour 2<input id="gradientEnd" type="color" value="#087f75"></label></div>
           <label>Background image (optional)<div class="inline"><input id="backgroundImage" placeholder="Leave empty for none"><button id="bgUploadBtn">Upload</button><button id="clearBgBtn" type="button">Clear</button></div></label>
-          <label>Background video<div class="inline"><input id="backgroundVideo" placeholder="Video URL"><button id="bgVideoUploadBtn">Upload</button><button id="clearBgVideoBtn" type="button">Clear</button></div></label>
           <div class="two"><label>Size<select id="backgroundSize"><option value="">Default</option><option>cover</option><option>contain</option><option>auto</option></select></label><label>Position<select id="backgroundPosition"><option value="">Default</option><option>center</option><option>top</option><option>bottom</option><option>left</option><option>right</option></select></label></div>
         </details>
         <details><summary>Border & Effects</summary>
@@ -95,8 +88,6 @@
           <label>Box shadow<input id="boxShadow" placeholder="0 10px 30px rgba(...)"></label>
           <label>Opacity<input id="opacity" type="range" min="0" max="1" step="0.05"></label>
         </details>
-        <details id="mediaGroup"><summary>Image / Video</summary><div class="two"><label>Fit<select id="objectFit"><option value="">Default</option><option>cover</option><option>contain</option><option>fill</option><option>scale-down</option></select></label><label>Position<select id="objectPosition"><option value="">Default</option><option>center</option><option>top</option><option>bottom</option><option>left</option><option>right</option></select></label></div></details>
-        <details><summary>Hover & Animation</summary><div class="two"><label>Hover background<input id="hoverBackground" type="color" value="#0b5f78"></label><label>Hover text<input id="hoverColor" type="color" value="#ffffff"></label></div><label>Hover transform<select id="hoverTransform"><option value="">None</option><option value="translateY(-3px)">Lift</option><option value="scale(1.04)">Zoom</option><option value="translateY(-3px) scale(1.02)">Lift + Zoom</option></select></label><label>Transition<input id="transitionValue" placeholder="all .25s ease"></label></details>
       </div>
     </div>
     <div id="settingsTab" class="right-panel">
@@ -113,6 +104,6 @@
     <div id="layersTab" class="right-panel"><div id="layerList" class="layer-list"></div></div>
   </aside>
 </main>
-<input id="fileInput" type="file" accept="image/*,video/*" hidden>
-<script src="builder.js?v=20260804-section-order-fixed"></script>
+<input id="fileInput" type="file" accept="image/*" hidden>
+<script src="builder.js?v=20260801-live-publish"></script>
 </body></html>

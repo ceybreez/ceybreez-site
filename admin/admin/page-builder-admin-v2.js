@@ -86,6 +86,7 @@
       </div>
       <div id="pbxEmpty" class="pbx-empty">Click a heading, paragraph, image or button in the preview.</div>
       <div id="pbxFields" class="pbx-fields hidden">
+        <label>Position Mode<select id="pbxPositionMode"><option value="flow">Normal Responsive Flow</option><option value="free">Free Position (Drag)</option></select><small>Free Position can be dragged inside its section. Tablet and mobile may use their own position or switch back to Flow.</small></label>
         <label>Text / Label<textarea id="pbxText" rows="3"></textarea></label>
         <label>Link URL<input id="pbxHref" placeholder="https:// or page.html"></label>
         <label>Image
@@ -105,9 +106,18 @@
         <div class="pbx-grid4"><label>Padding T<input id="pbxPt" type="number"></label><label>Padding R<input id="pbxPr" type="number"></label><label>Padding B<input id="pbxPb" type="number"></label><label>Padding L<input id="pbxPl" type="number"></label></div>
         <div class="pbx-grid2"><label>Radius<input id="pbxRadius" type="number" min="0"></label><label>Opacity<input id="pbxOpacity" type="number" min="0" max="1" step="0.05"></label></div>
         <label class="pbx-check"><input id="pbxHidden" type="checkbox"> Hide on this device</label>
+        <div id="pbxSlideshowSettings" class="pbx-slideshow-settings hidden">
+          <strong>Slideshow Settings</strong>
+          <label>Upload Slides<input id="pbxSlideUploader" type="file" accept="image/*" multiple></label>
+          <div id="pbxSlideList" class="pbx-slide-list"></div>
+          <div class="pbx-grid2"><label>Autoplay<select id="pbxSlideAutoplay"><option value="true">On</option><option value="false">Off</option></select></label><label>Duration (seconds)<input id="pbxSlideDuration" type="number" min="1" value="5"></label></div>
+          <div class="pbx-grid2"><label>Transition<select id="pbxSlideTransition"><option value="fade">Fade</option><option value="slide">Slide</option></select></label><label>Image Fit<select id="pbxSlideFit"><option value="cover">Cover</option><option value="contain">Contain</option></select></label></div>
+          <div class="pbx-grid2"><label class="pbx-check"><input id="pbxSlideArrows" type="checkbox" checked> Arrows</label><label class="pbx-check"><input id="pbxSlideDots" type="checkbox" checked> Dots</label></div>
+          <label class="pbx-check"><input id="pbxSlideLoop" type="checkbox" checked> Loop</label>
+        </div>
         <div class="pbx-actions"><button type="button" id="pbxResetDevice">Reset Device Style</button><button type="button" id="pbxDeleteCustom" class="danger">Delete Added Element</button></div>
       </div>
-      <div class="pbx-add-row"><button type="button" data-pbx-add="heading">+ Heading</button><button type="button" data-pbx-add="text">+ Text</button><button type="button" data-pbx-add="button">+ Button</button><button type="button" data-pbx-add="image">+ Image</button></div>
+      <div class="pbx-add-row"><button type="button" data-pbx-add="heading">+ Heading</button><button type="button" data-pbx-add="text">+ Text</button><button type="button" data-pbx-add="button">+ Button</button><button type="button" data-pbx-add="image">+ Image</button><button type="button" data-pbx-add="slideshow">+ Slideshow</button></div>
     `;
     head.insertAdjacentElement('afterend', box);
     box.classList.add('hidden');
@@ -117,6 +127,7 @@
 
   function elementKind(el) {
     if (!el) return 'element';
+    if (el.matches('[data-pb-slideshow]')) return 'slideshow';
     if (el.matches('img,picture')) return 'image';
     if (el.matches('video,source')) return 'video';
     if (el.matches('a,button')) return 'button';
@@ -145,6 +156,7 @@
     show('pbxFontSize', ['heading','text','button'].includes(kind));
     show('pbxFontWeight', ['heading','text','button'].includes(kind));
     show('pbxTextAlign', ['heading','text','button','container'].includes(kind));
+    $('pbxSlideshowSettings')?.classList.toggle('hidden', kind !== 'slideshow');
     if ($('pbxElementType')) $('pbxElementType').textContent = kind.replace(/^./, c=>c.toUpperCase());
   }
 
@@ -167,7 +179,7 @@
     pbxFontSize:'fontSize', pbxFontWeight:'fontWeight', pbxTextAlign:'textAlign', pbxWidth:'width',
     pbxHeight:'height', pbxX:'x', pbxY:'y', pbxMt:'marginTop', pbxMr:'marginRight', pbxMb:'marginBottom',
     pbxMl:'marginLeft', pbxPt:'paddingTop', pbxPr:'paddingRight', pbxPb:'paddingBottom', pbxPl:'paddingLeft',
-    pbxRadius:'borderRadius', pbxOpacity:'opacity'
+    pbxRadius:'borderRadius', pbxOpacity:'opacity', pbxPositionMode:'positionMode'
   };
 
   function bindInspector() {
@@ -194,8 +206,38 @@
       if (file) await uploadSelectedElementImage(file);
       event.target.value = '';
     });
+    $('pbxSlideUploader')?.addEventListener('change', async event => { await uploadSlides([...event.target.files]); event.target.value=''; });
+    ['pbxSlideAutoplay','pbxSlideDuration','pbxSlideTransition','pbxSlideFit','pbxSlideArrows','pbxSlideDots','pbxSlideLoop'].forEach(id => $(id)?.addEventListener('change', updateSlideshowSettings));
     document.querySelectorAll('[data-pbx-device]').forEach(btn => btn.addEventListener('click', () => setDevice(btn.dataset.pbxDevice)));
     document.querySelectorAll('[data-pbx-add]').forEach(btn => btn.addEventListener('click', () => addCustom(btn.dataset.pbxAdd)));
+  }
+
+  function customRecordForSelected() {
+    const id=selectedElement()?.dataset.pbId;
+    return id ? state.customElements.find(x=>x.id===id) : null;
+  }
+  async function uploadSlides(files) {
+    const item=customRecordForSelected(); if(!item || item.type!=='slideshow' || !files.length)return;
+    for(const file of files){
+      if(!file.type.startsWith('image/'))continue;
+      const fd=new FormData(); fd.append('file',file); fd.append('folder','page-builder-slides');
+      const res=await fetch(`${API_BASE}/api/admin/upload-image`,{method:'POST',headers:uploadHeaders(),body:fd});
+      const out=await res.json().catch(()=>({})); if(!res.ok||!out.url){alert(out.error||`Could not upload ${file.name}`);continue;}
+      item.slides ||= []; item.slides.push({id:`slide-${Date.now()}-${Math.random().toString(36).slice(2,5)}`,url:out.url,alt:file.name,title:'',text:'',buttonText:'',buttonUrl:''});
+    }
+    applyAllToPreview(); renderInspector();
+  }
+  function updateSlideshowSettings(){
+    const item=customRecordForSelected(); if(!item||item.type!=='slideshow')return;
+    item.options={autoplay:$('pbxSlideAutoplay').value==='true',duration:Math.max(1,Number($('pbxSlideDuration').value)||5),transition:$('pbxSlideTransition').value,fit:$('pbxSlideFit').value,arrows:$('pbxSlideArrows').checked,dots:$('pbxSlideDots').checked,loop:$('pbxSlideLoop').checked};
+    applyAllToPreview();
+  }
+  function renderSlideEditor(item){
+    const options=item.options||{}; $('pbxSlideAutoplay').value=String(options.autoplay!==false); $('pbxSlideDuration').value=options.duration||5; $('pbxSlideTransition').value=options.transition||'fade'; $('pbxSlideFit').value=options.fit||'cover'; $('pbxSlideArrows').checked=options.arrows!==false; $('pbxSlideDots').checked=options.dots!==false; $('pbxSlideLoop').checked=options.loop!==false;
+    $('pbxSlideList').innerHTML=(item.slides||[]).map((s,i)=>`<div class="pbx-slide-row" data-slide-index="${i}"><img src="${esc(s.url)}" alt=""><div><input data-slide-field="title" value="${esc(s.title||'')}" placeholder="Slide title"><input data-slide-field="text" value="${esc(s.text||'')}" placeholder="Slide text"><input data-slide-field="buttonText" value="${esc(s.buttonText||'')}" placeholder="Button text"><input data-slide-field="buttonUrl" value="${esc(s.buttonUrl||'')}" placeholder="Button link"></div><div class="pbx-slide-actions"><button type="button" data-slide-move="-1">↑</button><button type="button" data-slide-move="1">↓</button><button type="button" data-slide-delete>×</button></div></div>`).join('')||'<small>No slides yet. Choose multiple images above.</small>';
+    $('pbxSlideList').querySelectorAll('[data-slide-field]').forEach(input=>input.addEventListener('input',()=>{const row=input.closest('[data-slide-index]');item.slides[Number(row.dataset.slideIndex)][input.dataset.slideField]=input.value;applyAllToPreview();}));
+    $('pbxSlideList').querySelectorAll('[data-slide-delete]').forEach(btn=>btn.addEventListener('click',()=>{item.slides.splice(Number(btn.closest('[data-slide-index]').dataset.slideIndex),1);applyAllToPreview();renderInspector();}));
+    $('pbxSlideList').querySelectorAll('[data-slide-move]').forEach(btn=>btn.addEventListener('click',()=>{const i=Number(btn.closest('[data-slide-index]').dataset.slideIndex),j=i+Number(btn.dataset.slideMove);if(j<0||j>=item.slides.length)return;[item.slides[i],item.slides[j]]=[item.slides[j],item.slides[i]];applyAllToPreview();renderInspector();}));
   }
 
   async function uploadSelectedElementImage(file) {
@@ -264,8 +306,10 @@
     };
     Object.entries(values).forEach(([id,v]) => { if($(id)) $(id).value = v; });
     $('pbxHidden').checked = !!rec.hidden;
+    $('pbxPositionMode').value=rec.positionMode||'flow';
     const custom = el.dataset.pbCustom === '1';
     $('pbxDeleteCustom').style.display = custom ? '' : 'none';
+    const item=customRecordForSelected(); if(item?.type==='slideshow')renderSlideEditor(item);
   }
 
   function applyRecord(el, rec) {
@@ -278,7 +322,12 @@
     ['color','backgroundColor','fontWeight','textAlign'].forEach(k => { el.style[k] = rec[k] || ''; });
     el.style.opacity = rec.opacity === '' || rec.opacity == null ? '' : String(rec.opacity);
     el.style.display = rec.hidden ? 'none' : '';
-    el.style.transform = `translate(${Number(rec.x)||0}px, ${Number(rec.y)||0}px)`;
+    const free=rec.positionMode==='free';
+    el.dataset.pbPositionMode=free?'free':'flow';
+    ['position','left','top','z-index','touch-action'].forEach(name=>el.style.removeProperty(name));
+    if(free){el.style.setProperty('position','absolute','important');el.style.setProperty('left',`${Number(rec.x)||0}px`,'important');el.style.setProperty('top',`${Number(rec.y)||0}px`,'important');el.style.setProperty('z-index','10','important');el.style.setProperty('touch-action','none','important');}
+    el.style.transform='';
+    if(free && el.parentElement && getComputedStyle(el.parentElement).position==='static')el.parentElement.style.position='relative';
   }
 
   function mergedRecord(byDevice) {
@@ -299,17 +348,29 @@
     section.querySelectorAll('[data-pb-custom="1"]').forEach(n => n.remove());
     state.customElements.filter(x => x.sectionKey === ($('sectionKey')?.value || '')).forEach(item => {
       let n;
-      if(item.type==='button'){n=document.createElement('a');n.href=item.url||'#';n.textContent=item.text||'Button';n.className='cms-custom-button';}
+      if(item.type==='slideshow'){n=createSlideshow(item,section.ownerDocument,true);}
+      else if(item.type==='button'){n=document.createElement('a');n.href=item.url||'#';n.textContent=item.text||'Button';n.className='cms-custom-button';}
       else if(item.type==='image'){n=document.createElement('img');n.src=item.url||'';n.alt=item.alt||'';n.className='cms-custom-image';}
       else {n=document.createElement(item.type==='heading'?'h2':'p');n.textContent=item.text|| (item.type==='heading'?'New Heading':'New text');n.className='cms-custom-text';}
       n.dataset.pbCustom='1'; n.dataset.pbId=item.id; section.appendChild(n);
     });
   }
 
+  function createSlideshow(item,doc,editor){
+    const o=item.options||{}, slides=item.slides||[], wrap=doc.createElement('div'); wrap.className='cms-slideshow'; wrap.dataset.pbSlideshow='1'; wrap.style.setProperty('--pb-slide-fit',o.fit||'cover');
+    const track=doc.createElement('div');track.className=`cms-slideshow-track ${o.transition==='slide'?'is-slide':'is-fade'}`;wrap.appendChild(track);
+    slides.forEach((s,i)=>{const slide=doc.createElement('div');slide.className=`cms-slide${i===0?' active':''}`;slide.innerHTML=`<img src="${esc(s.url)}" alt="${esc(s.alt||'')}"><div class="cms-slide-caption">${s.title?`<h3>${esc(s.title)}</h3>`:''}${s.text?`<p>${esc(s.text)}</p>`:''}${s.buttonText?`<a href="${esc(s.buttonUrl||'#')}">${esc(s.buttonText)}</a>`:''}</div>`;track.appendChild(slide);});
+    if(!slides.length)track.innerHTML='<div class="cms-slide-empty">Upload slideshow images in Settings</div>';
+    if(o.arrows!==false){wrap.insertAdjacentHTML('beforeend','<button type="button" class="cms-slide-prev" aria-label="Previous">‹</button><button type="button" class="cms-slide-next" aria-label="Next">›</button>');}
+    if(o.dots!==false&&slides.length){const dots=doc.createElement('div');dots.className='cms-slide-dots';dots.innerHTML=slides.map((_,i)=>`<button type="button" class="${i===0?'active':''}" data-slide-go="${i}" aria-label="Slide ${i+1}"></button>`).join('');wrap.appendChild(dots);}
+    if(!editor)initSlideshow(wrap,o); return wrap;
+  }
+  function initSlideshow(wrap,o){let index=0,timer;const slides=[...wrap.querySelectorAll('.cms-slide')],dots=[...wrap.querySelectorAll('[data-slide-go]')];if(!slides.length)return;const go=n=>{index=o.loop===false?Math.max(0,Math.min(slides.length-1,n)):(n+slides.length)%slides.length;slides.forEach((x,i)=>x.classList.toggle('active',i===index));dots.forEach((x,i)=>x.classList.toggle('active',i===index));};wrap.querySelector('.cms-slide-prev')?.addEventListener('click',()=>go(index-1));wrap.querySelector('.cms-slide-next')?.addEventListener('click',()=>go(index+1));dots.forEach(x=>x.addEventListener('click',()=>go(Number(x.dataset.slideGo))));const play=()=>{if(o.autoplay!==false&&slides.length>1)timer=setInterval(()=>go(index+1),(o.duration||5)*1000);};wrap.addEventListener('mouseenter',()=>clearInterval(timer));wrap.addEventListener('mouseleave',play);play();}
+
   function addCustom(type) {
     const key=$('sectionKey')?.value; if(!key){alert('Select a section first.');return;}
     const id=`pb-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
-    state.customElements.push({id,sectionKey:key,type,text:type==='heading'?'New Heading':type==='button'?'Button':'New text',url:'#'});
+    state.customElements.push(type==='slideshow'?{id,sectionKey:key,type,slides:[],options:{autoplay:true,duration:5,transition:'fade',fit:'cover',arrows:true,dots:true,loop:true}}:{id,sectionKey:key,type,text:type==='heading'?'New Heading':type==='button'?'Button':'New text',url:'#'});
     state.selectedSelector=`[data-pb-id="${id}"]`;
     state.elementStyles[state.selectedSelector]={desktop:{},tablet:{},mobile:{}};
     applyAllToPreview(); renderInspector();
@@ -341,16 +402,25 @@
     discoverPreviewSections();
     state.previewController?.abort(); state.previewController=new AbortController(); const signal=state.previewController.signal;
     let style=doc.getElementById('pbx-editor-style');
-    if(!style){style=doc.createElement('style');style.id='pbx-editor-style';style.textContent=`body.pbx-editing [data-section],body.pbx-editing [data-section] *{cursor:pointer!important}.pbx-selected{outline:3px solid #00a88f!important;outline-offset:3px!important;position:relative!important}.pbx-selected:after{content:'Editing';position:absolute;left:0;top:-25px;background:#006f66;color:#fff;font:11px Arial;padding:4px 7px;border-radius:4px;z-index:2147483647}.cms-custom-button{display:inline-block;padding:10px 18px;background:#087f72;color:#fff;text-decoration:none;border-radius:7px;margin:8px}.cms-custom-image{max-width:260px;height:auto}.cms-custom-text{margin:8px}`;doc.head.appendChild(style);}
+    if(!style){style=doc.createElement('style');style.id='pbx-editor-style';style.textContent=`body.pbx-editing [data-section],body.pbx-editing [data-section] *{cursor:pointer!important}.pbx-selected{outline:3px solid #00a88f!important;outline-offset:3px!important}.pbx-selected:after{content:'Editing';position:absolute;left:0;top:-25px;background:#006f66;color:#fff;font:11px Arial;padding:4px 7px;border-radius:4px;z-index:2147483647}[data-pb-position-mode="free"]{cursor:move!important}.cms-custom-button{display:inline-block;padding:10px 18px;background:#087f72;color:#fff;text-decoration:none;border-radius:7px;margin:8px}.cms-custom-image{max-width:260px;height:auto}.cms-custom-text{margin:8px}`;doc.head.appendChild(style);}
     doc.body.classList.add('pbx-editing');
     doc.addEventListener('click', e => {
       const section=e.target.closest('[data-section]'); if(!section)return;
       e.preventDefault(); e.stopPropagation();
       const key=section.dataset.section; const item=state.items.find(x=>x.sectionKey===key);
       if(item && String(item.id)!==String(state.selectedId)) editPageSection(item.id, false);
-      const target=e.target.closest('a,button,img,h1,h2,h3,h4,p,span,div,section') || section;
+      const target=e.target.closest('[data-pb-custom="1"],a,button,img,h1,h2,h3,h4,p,span,div,section') || section;
       state.selectedSelector=selectorFor(target,section); markSelected(target); renderInspector();
     },{capture:true,signal});
+    let drag=null;
+    doc.addEventListener('pointerdown',e=>{
+      const el=e.target.closest('[data-pb-position-mode="free"]'); if(!el)return;
+      const section=el.closest('[data-section]'); if(!section)return;
+      e.preventDefault(); e.stopPropagation(); state.selectedSelector=selectorFor(el,section); markSelected(el); renderInspector();
+      const rec=record(); drag={el,section,rec,startX:e.clientX,startY:e.clientY,x:Number(rec.x)||0,y:Number(rec.y)||0}; el.setPointerCapture?.(e.pointerId);
+    },{capture:true,signal});
+    doc.addEventListener('pointermove',e=>{if(!drag)return;e.preventDefault();const maxX=Math.max(0,drag.section.clientWidth-drag.el.offsetWidth),maxY=Math.max(0,drag.section.clientHeight-drag.el.offsetHeight);drag.rec.x=Math.round(Math.max(0,Math.min(maxX,drag.x+e.clientX-drag.startX)));drag.rec.y=Math.round(Math.max(0,Math.min(maxY,drag.y+e.clientY-drag.startY)));applySelectedRecord();if($('pbxX'))$('pbxX').value=drag.rec.x;if($('pbxY'))$('pbxY').value=drag.rec.y;},{capture:true,signal});
+    const endDrag=()=>{drag=null;}; doc.addEventListener('pointerup',endDrag,{capture:true,signal});doc.addEventListener('pointercancel',endDrag,{capture:true,signal});
     applyAllToPreview();
   }
 

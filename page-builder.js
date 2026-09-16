@@ -203,8 +203,6 @@
       node.className = "cms-card";
       if (card.image) {
         const image = document.createElement("img");
-        image.loading = "lazy";
-        image.decoding = "async";
         image.src = card.image;
         image.alt = card.title || "";
         node.appendChild(image);

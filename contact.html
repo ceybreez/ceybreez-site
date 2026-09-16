@@ -24,22 +24,21 @@ content="Get in touch with CeyBreez to plan your villa stay, homestay, apartment
   gtag('config', 'G-3QG71CWHW2');
 </script>
   <link rel="stylesheet" href="ceybreez-language.css">
-<link rel="stylesheet" href="modern-theme.css">
-<script src="modern-gallery.js" defer></script>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="ceybreez-public-v3.css?v=20260916">
 </head>
 
 <body data-page="contact">
 
-<header>
-  <nav>
-    <a href="/">Home</a>
-     <a href="villas.html">Villas</a>
-    <a href="apartments.html">Apartments</a>
-    <a href="homestays.html">HomeStays</a>
-    <a href="tours.html">Tours</a>
-    <a href="services.html">Services</a>
-    <a href="contact.html">Contact</a>
-  </nav>
+<header class="site-header" id="siteHeader">
+  <div class="nav-shell">
+    <a class="brand" href="index.html" aria-label="CeyBreez home"><img src="logo.png" alt="CeyBreez"></a>
+    <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+      <a href="index.html">Home</a><a href="villas.html">Villas</a><a href="apartments.html">Apartments</a><a href="homestays.html">Homestays</a><a href="tours.html">Tours</a><a href="services.html">Services</a><a class="active" href="contact.html">Contact</a>
+    </nav>
+    <div class="nav-actions"><a class="nav-cta" href="contact.html">Plan my trip <i class="fa-solid fa-arrow-right"></i></a><button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button></div>
+  </div>
 </header>
 
 <section class="contact-page">
@@ -136,16 +135,16 @@ content="Get in touch with CeyBreez to plan your villa stay, homestay, apartment
   </div>
 </section>
 
-<footer data-section="footer">
-  <p id="footerText" data-field="content">
-    © 2026 CeyBreez. All rights reserved.
-  </p>
-
-  <div class="footer-links">
-    <a href="privacy.html">Privacy Policy</a>
-    <a href="terms.html">Terms & Conditions</a>
+<footer class="site-footer" data-section="footer">
+  <div class="footer-shell">
+    <div class="footer-brand"><img src="logo.png" alt="CeyBreez"><p>Handpicked stays, private tours and local experiences for memorable journeys across Sri Lanka.</p></div>
+    <div class="footer-column"><h3>Explore</h3><a href="tours.html">Private Tours</a><a href="villas.html">Villas</a><a href="apartments.html">Apartments</a><a href="homestays.html">Homestays</a></div>
+    <div class="footer-column"><h3>Travel</h3><a href="services.html">Local Services</a><a href="contact.html">Plan a Custom Trip</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms & Conditions</a></div>
+    <div class="footer-column"><h3>CeyBreez</h3><a href="contact.html">Contact Us</a><a href="index.html#aboutSection">About CeyBreez</a><a href="index.html#gallery">Travel Gallery</a></div>
   </div>
+  <div class="footer-bottom"><span id="footerText" data-field="content">© <span id="footerYear">2026</span> CeyBreez. All rights reserved.</span><span>Stay · Taste · Explore Sri Lanka</span></div>
 </footer>
+<a class="floating-whatsapp-v3" id="floatingWhatsAppV3" href="https://api.whatsapp.com/send?phone=94704620017" target="_blank" rel="noopener" aria-label="WhatsApp CeyBreez"><i class="fa-brands fa-whatsapp"></i></a>
 
 <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/js/intlTelInput.min.js"></script>
 
@@ -307,5 +306,6 @@ if(socialWA){
 
   <script src="page-builder.js?v=20260801-live-publish"></script>
   <script src="ceybreez-language.js" defer></script>
+  <script src="ceybreez-public-v3.js?v=20260916"></script>
 </body>
 </html>

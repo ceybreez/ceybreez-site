@@ -3,422 +3,746 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0c4f49">
   <title>CeyBreez | Stay. Taste. Explore Sri Lanka.</title>
-
- <meta name="description"
-content="Discover villas, homestays, apartments, tours, airport transfers and unforgettable travel experiences across Sri Lanka with CeyBreez.">
-
-<meta name="keywords"
-content="Sri Lanka villas, Sri Lanka homestays, Sri Lanka apartments, Sri Lanka tours, airport transfers Sri Lanka, holiday accommodation Sri Lanka, travel Sri Lanka, CeyBreez">
-
-<meta name="author" content="CeyBreez">
+  <meta name="description" content="Discover handpicked stays, private tours, local experiences and tailor-made journeys across Sri Lanka with CeyBreez.">
+  <meta name="keywords" content="Sri Lanka villas, Sri Lanka homestays, Sri Lanka apartments, Sri Lanka tours, airport transfers Sri Lanka, travel Sri Lanka, CeyBreez">
+  <meta name="author" content="CeyBreez">
 
   <link id="siteFavicon" rel="icon" type="image/png" href="logo.png">
-  <link rel="stylesheet" href="style.css">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- Open Graph -->
-
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://ceybreez.com/">
-<meta property="og:title" content="CeyBreez | A Peaceful Escape in Sri Lanka">
-<meta property="og:description" content="Discover villas, homestays, apartments, tours and unforgettable experiences across Sri Lanka with CeyBreez.">
-<meta property="og:image" content="https://ceybreez.com/og-image.jpg">
-
-<!-- Twitter -->
-
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="CeyBreez | A Peaceful Escape in Sri Lanka">
-<meta name="twitter:description" content="Discover villas, homestays, apartments, tours and unforgettable experiences across Sri Lanka with CeyBreez.">
-<meta name="twitter:image" content="https://ceybreez.com/og-image.jpg">
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-3QG71CWHW2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-3QG71CWHW2');
-</script>
   <link rel="stylesheet" href="reviews-showcase.css">
   <link rel="stylesheet" href="ceybreez-language.css">
-<link rel="stylesheet" href="modern-theme.css">
-<script src="modern-gallery.js" defer></script>
-<link rel="preload" as="image" href="images/cover.jpg">
+  <link rel="stylesheet" href="ceybreez-home-v3.css">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ceybreez.com/">
+  <meta property="og:title" content="CeyBreez | Stay. Taste. Explore Sri Lanka.">
+  <meta property="og:description" content="Handpicked stays, private tours and unforgettable Sri Lanka experiences.">
+  <meta property="og:image" content="https://ceybreez.com/images/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CeyBreez | Stay. Taste. Explore Sri Lanka.">
+  <meta name="twitter:description" content="Handpicked stays, private tours and unforgettable Sri Lanka experiences.">
+  <meta name="twitter:image" content="https://ceybreez.com/images/og-image.jpg">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-3QG71CWHW2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-3QG71CWHW2');
+  </script>
 </head>
 
 <body data-page="home">
+  <div class="welcome-screen" id="welcomeScreen" aria-hidden="true">
+    <div class="welcome-glow"></div>
+    <div class="welcome-content">
+      <span class="welcome-kicker">AYUBOWAN · WELCOME TO SRI LANKA</span>
+      <img id="welcomeLogo" src="logo.png" alt="CeyBreez">
+      <div class="welcome-line"><span></span></div>
+      <p>Stay · Taste · Explore</p>
+    </div>
+  </div>
 
+  <header class="site-header" id="siteHeader">
+    <div class="nav-shell">
+      <a class="brand" href="#home" aria-label="CeyBreez home">
+        <img id="navLogo" src="logo.png" alt="CeyBreez">
+      </a>
 
+      <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+        <a class="active" href="#home">Home</a>
+        <a href="villas.html">Villas</a>
+        <a href="apartments.html">Apartments</a>
+        <a href="homestays.html">Homestays</a>
+        <a href="tours.html">Tours</a>
+        <a href="services.html">Services</a>
+        <a href="contact.html">Contact</a>
+      </nav>
 
-<main id="mainSite">
-
-  <header>
-    <nav>
-      <a href="#home">Home</a>
-      <a href="villas.html">Villas</a>
-      <a href="apartments.html">Apartments</a>
-      <a href="homestays.html">HomeStays</a>
-      <a href="tours.html">Tours</a>
-      <a href="services.html">Services</a>
-      <a href="contact.html">Contact</a>
-    </nav>
+      <div class="nav-actions">
+        <a class="nav-cta" href="contact.html">Plan my trip <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+        <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span>
+        </button>
+      </div>
+    </div>
   </header>
 
-  <section class="hero" id="home" data-section="hero">
-    <div class="hero-content"><span class="modern-eyebrow">A little closer to paradise</span>
-      <img id="heroLogo" class="hero-logo-img" src="logo.png" alt="CeyBreez Logo">
+  <main id="mainSite">
+    <section class="hero" id="home" data-section="hero">
+      <img id="heroImage" class="hero-image" data-field="image" src="images/cover.jpg" alt="Sri Lankan tropical coast at sunset" fetchpriority="high">
+      <div class="hero-shade"></div>
+      <div class="hero-grain"></div>
 
-      <h1 id="homeHeroTitle" data-field="title">
-        Stay With Comfort, Taste The Island, Explore Sri Lanka
-      </h1>
+      <div class="hero-shell">
+        <div class="hero-copy">
+          <span class="eyebrow light">Curated island journeys</span>
+          <h1 id="homeHeroTitle" data-field="title">Stay With Comfort.<br>Taste The Island.<br><em>Explore Sri Lanka.</em></h1>
+          <p id="homeHeroSubtitle" class="hero-subtitle" data-field="subtitle">Handpicked stays, private tours and local experiences — shaped around the way you want to travel.</p>
+          <div class="hero-actions">
+            <a href="tours.html" class="button button-primary" id="heroButton" data-field="button">Explore Sri Lanka <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="contact.html" class="button button-ghost">Build a custom trip</a>
+          </div>
+          <div class="hero-notes">
+            <span><i class="fa-solid fa-location-dot"></i> Island-wide</span>
+            <span><i class="fa-solid fa-heart"></i> Local support</span>
+            <span><i class="fa-solid fa-route"></i> Tailor-made</span>
+          </div>
+        </div>
 
-      <p id="homeHeroSubtitle" class="hero-subtitle" data-field="subtitle">Beautiful stays. Unhurried journeys. Your own piece of Sri Lanka.</p>
+        <div class="hero-story-rail" aria-label="Sri Lanka highlights">
+          <a href="#discover" class="hero-story story-one">
+            <img src="images/train.jpg" alt="Scenic train journey through Sri Lanka" decoding="async">
+            <span>Hill Country</span>
+          </a>
+          <a href="#discover" class="hero-story story-two">
+            <img src="images/nature.jpg" alt="Waterfall and tropical nature in Sri Lanka" decoding="async">
+            <span>Wild Nature</span>
+          </a>
+          <a href="#discover" class="hero-story story-three">
+            <img src="images/temple.jpg" alt="Sri Lankan cultural heritage site" decoding="async">
+            <span>Living Culture</span>
+          </a>
+        </div>
+      </div>
 
-      <a href="#contact" class="btn" id="heroButton" data-field="button">Book Your Experience</a>
+      <a href="#aboutSection" class="scroll-cue" aria-label="Scroll to discover">
+        <span>Discover</span><i class="fa-solid fa-arrow-down"></i>
+      </a>
+    </section>
+
+    <section class="quick-paths" aria-label="Travel categories">
+      <div class="quick-paths-shell">
+        <a href="villas.html"><i class="fa-solid fa-house-chimney-window"></i><span><small>Stay your way</small>Villas & Stays</span><b>→</b></a>
+        <a href="tours.html"><i class="fa-solid fa-compass"></i><span><small>See more of the island</small>Private Tours</span><b>→</b></a>
+        <a href="services.html"><i class="fa-solid fa-car-side"></i><span><small>Travel with ease</small>Local Services</span><b>→</b></a>
+        <a href="contact.html"><i class="fa-solid fa-wand-magic-sparkles"></i><span><small>Made around you</small>Custom Journey</span><b>→</b></a>
+      </div>
+    </section>
+
+    <section class="about editorial-section" id="aboutSection" data-section="about">
+      <div class="section-shell about-grid">
+        <div class="about-copy">
+          <span class="eyebrow">More than a holiday</span>
+          <h2 id="homeAboutTitle" data-field="title">Experience the soul of Sri Lanka, not just the sights.</h2>
+          <p id="homeAboutText" data-field="content">CeyBreez brings together memorable stays, island journeys, authentic local food and thoughtful travel experiences across Sri Lanka.</p>
+          <div class="about-highlights">
+            <div><strong>01</strong><span>Handpicked stays</span></div>
+            <div><strong>02</strong><span>Flexible itineraries</span></div>
+            <div><strong>03</strong><span>Local experiences</span></div>
+          </div>
+          <a class="text-link" href="tours.html">See how we explore <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="about-collage" aria-label="Sri Lanka travel collage">
+          <figure class="collage-main"><img src="images/mountains.jpg" alt="Green mountain landscape in Sri Lanka" loading="lazy" decoding="async"></figure>
+          <figure class="collage-small top"><img src="images/food.jpg" alt="Sri Lankan spices and food culture" loading="lazy" decoding="async"></figure>
+          <figure class="collage-small bottom"><img src="images/temple.jpg" alt="Cultural heritage in Sri Lanka" loading="lazy" decoding="async"></figure>
+          <div class="collage-stamp"><span>Explore</span><strong>CEYLON</strong><small>with CeyBreez</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="things" id="discover" data-section="things">
+      <div class="section-shell">
+        <div class="section-head split-head">
+          <div>
+            <span class="eyebrow">One island, many worlds</span>
+            <h2 data-field="title">Find your Sri Lanka.</h2>
+          </div>
+          <p data-field="subtitle">From surf mornings and misty train rides to ancient cities and wild landscapes, every day can feel completely different.</p>
+        </div>
+
+        <div class="things-grid" data-field="cards">
+          <a class="thing-card thing-card-wide" href="tours.html">
+            <img src="images/beach.jpg" alt="Sri Lankan beach at sunset" loading="lazy" decoding="async">
+            <div class="image-overlay"></div>
+            <div class="thing-copy"><span>Coast</span><h3>Beach Escapes</h3><p>Slow mornings, warm water and golden-hour coastlines.</p></div>
+          </a>
+          <a class="thing-card" href="tours.html">
+            <img src="images/train.jpg" alt="Scenic railway through Sri Lanka" loading="lazy" decoding="async">
+            <div class="image-overlay"></div>
+            <div class="thing-copy"><span>Highlands</span><h3>Rail & Tea Country</h3></div>
+          </a>
+          <a class="thing-card" href="tours.html">
+            <img src="images/nature.jpg" alt="Waterfall in Sri Lanka" loading="lazy" decoding="async">
+            <div class="image-overlay"></div>
+            <div class="thing-copy"><span>Nature</span><h3>Wild Landscapes</h3></div>
+          </a>
+          <a class="thing-card" href="tours.html">
+            <img src="images/temple.jpg" alt="Sri Lankan temple and heritage" loading="lazy" decoding="async">
+            <div class="image-overlay"></div>
+            <div class="thing-copy"><span>Heritage</span><h3>Culture & History</h3></div>
+          </a>
+          <a class="thing-card thing-card-wide" href="services.html">
+            <img src="images/food.jpg" alt="Sri Lankan cinnamon and local food" loading="lazy" decoding="async">
+            <div class="image-overlay"></div>
+            <div class="thing-copy"><span>Taste</span><h3>Flavours of the Island</h3><p>Spice, tea, markets and meals worth travelling for.</p></div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="travel-gallery" id="gallery" data-section="gallery">
+      <div class="section-shell">
+        <div class="section-head split-head gallery-head">
+          <div>
+            <span class="eyebrow">Postcards from the island</span>
+            <h2>See Sri Lanka before you arrive.</h2>
+          </div>
+          <div class="head-action">
+            <p>A living gallery of coastlines, hill country, culture, stays and small moments collected across the island.</p>
+            <button class="gallery-view-all" id="galleryViewAll" type="button">Open gallery <i class="fa-solid fa-expand"></i></button>
+          </div>
+        </div>
+
+        <div class="gallery-mosaic" id="homeGalleryGrid" aria-live="polite">
+          <button class="gallery-tile gallery-tile-1" type="button" data-gallery-index="0">
+            <img src="images/beach.jpg" alt="Sri Lanka coastline" loading="lazy" decoding="async">
+            <span class="gallery-tile-shade"></span><span class="gallery-tile-copy"><small>Coast</small><strong>Golden shores</strong></span>
+          </button>
+          <button class="gallery-tile gallery-tile-2" type="button" data-gallery-index="1">
+            <img src="images/train.jpg" alt="Sri Lanka hill country train" loading="lazy" decoding="async">
+            <span class="gallery-tile-shade"></span><span class="gallery-tile-copy"><small>Highlands</small><strong>Slow rail journeys</strong></span>
+          </button>
+          <button class="gallery-tile gallery-tile-3" type="button" data-gallery-index="2">
+            <img src="images/food.jpg" alt="Sri Lankan food and spices" loading="lazy" decoding="async">
+            <span class="gallery-tile-shade"></span><span class="gallery-tile-copy"><small>Taste</small><strong>Island flavours</strong></span>
+          </button>
+          <button class="gallery-tile gallery-tile-4" type="button" data-gallery-index="3">
+            <img src="images/nature.jpg" alt="Sri Lanka tropical nature" loading="lazy" decoding="async">
+            <span class="gallery-tile-shade"></span><span class="gallery-tile-copy"><small>Nature</small><strong>Wild green places</strong></span>
+          </button>
+          <button class="gallery-tile gallery-tile-5" type="button" data-gallery-index="4">
+            <img src="images/temple.jpg" alt="Sri Lanka heritage and culture" loading="lazy" decoding="async">
+            <span class="gallery-tile-shade"></span><span class="gallery-tile-copy"><small>Culture</small><strong>Living heritage</strong></span>
+          </button>
+          <button class="gallery-tile gallery-tile-6" type="button" data-gallery-index="5">
+            <img src="images/mountains.jpg" alt="Sri Lanka mountain landscape" loading="lazy" decoding="async">
+            <span class="gallery-tile-shade"></span><span class="gallery-tile-copy"><small>Escape</small><strong>Misty mornings</strong></span>
+          </button>
+        </div>
+
+        <div class="gallery-strip" aria-hidden="true">
+          <span>COAST</span><i></i><span>HILL COUNTRY</span><i></i><span>WILDLIFE</span><i></i><span>CULTURE</span><i></i><span>LOCAL LIFE</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="experiences editorial-section" id="experiences" data-section="experiences">
+      <div class="section-shell">
+        <div class="section-head centered-head">
+          <span class="eyebrow">Travel your way</span>
+          <h2 data-field="title">Everything you need for an easier island escape.</h2>
+          <p>Choose one experience or let us bring the whole journey together.</p>
+        </div>
+        <div class="experience-grid" data-field="cards">
+          <a href="villas.html" class="experience-card"><span>01</span><i class="fa-solid fa-house"></i><h3>Beautiful Stays</h3><p>Villas, apartments and homestays selected for comfort and character.</p><b>Explore stays →</b></a>
+          <a href="tours.html" class="experience-card"><span>02</span><i class="fa-solid fa-map-location-dot"></i><h3>Private Tours</h3><p>Flexible routes, iconic highlights and hidden corners of Sri Lanka.</p><b>View tours →</b></a>
+          <a href="services.html" class="experience-card"><span>03</span><i class="fa-solid fa-car"></i><h3>Travel Services</h3><p>Transfers and useful local services that keep your trip moving.</p><b>See services →</b></a>
+          <a href="contact.html" class="experience-card accent"><span>04</span><i class="fa-solid fa-wand-magic-sparkles"></i><h3>Tailor-made Trips</h3><p>Tell us your dates and interests. We will shape the journey around you.</p><b>Start planning →</b></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="featured-block tours-block" data-section="tours">
+      <div class="section-shell">
+        <div class="section-head split-head compact">
+          <div><span class="eyebrow">Signature journeys</span><h2>Featured tours</h2></div>
+          <div class="head-action"><p>Curated routes built to show you more than a checklist.</p><a href="tours.html">All tours <i class="fa-solid fa-arrow-right"></i></a></div>
+        </div>
+        <div id="featuredToursGrid" class="tour-grid data-grid"><div class="loading-card">Loading featured tours…</div></div>
+      </div>
+    </section>
+
+    <section class="journey-banner">
+      <img src="images/train.jpg" alt="Nine Arch Bridge train route in Sri Lanka" loading="lazy" decoding="async">
+      <div class="journey-shade"></div>
+      <div class="journey-content">
+        <span class="eyebrow light">Your trip, your pace</span>
+        <h2>Build a Sri Lanka journey that feels like yours.</h2>
+        <p>Mix the coast, hill country, wildlife, culture and local food into one seamless route.</p>
+        <a class="button button-light" href="contact.html">Create my itinerary <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="journey-badge"><strong>Custom</strong><span>Island<br>Journeys</span></div>
+    </section>
+
+    <section class="featured-block stays-block" data-section="stays">
+      <div class="section-shell">
+        <div class="section-head split-head compact">
+          <div><span class="eyebrow">Sleep somewhere special</span><h2>Featured stays</h2></div>
+          <div class="head-action"><p>Handpicked places for slow mornings, quiet nights and memorable views.</p><a href="villas.html">Browse stays <i class="fa-solid fa-arrow-right"></i></a></div>
+        </div>
+        <div id="featuredStaysGrid" class="stay-grid data-grid"><div class="loading-card">Loading featured stays…</div></div>
+      </div>
+    </section>
+
+    <section class="featured-block destination-block" data-section="destinations">
+      <div class="section-shell">
+        <div class="section-head split-head compact">
+          <div><span class="eyebrow">Where next?</span><h2>Popular destinations</h2></div>
+          <div class="head-action"><p>Pick a place that matches your mood — or combine a few into one route.</p><a href="tours.html">Explore the island <i class="fa-solid fa-arrow-right"></i></a></div>
+        </div>
+        <div id="featuredDestinationsGrid" class="destination-grid data-grid"><div class="loading-card">Loading destinations…</div></div>
+      </div>
+    </section>
+
+    <section class="featured-block services-block" data-section="services">
+      <div class="section-shell">
+        <div class="section-head split-head compact">
+          <div><span class="eyebrow">Useful on the road</span><h2>Local services</h2></div>
+          <div class="head-action"><p>Helpful places and services to make the practical side of travel simple.</p><a href="services.html">View services <i class="fa-solid fa-arrow-right"></i></a></div>
+        </div>
+        <div id="featuredServicesGrid" class="service-grid data-grid"><div class="loading-card">Loading services…</div></div>
+      </div>
+    </section>
+
+    <section class="cb-social-proof" data-reviews-showcase data-review-type="all" data-featured="1" data-limit="6">
+      <div class="cb-section-head"><span class="eyebrow">Guest stories</span><h2>Good trips are remembered. Great ones are shared.</h2><p>Selected experiences from guests who stayed and explored Sri Lanka with CeyBreez.</p></div>
+      <div class="cb-proof-stats">
+        <div class="cb-proof-stat"><strong data-happy-customers>0</strong><span>Happy Customers</span></div>
+        <div class="cb-proof-stat"><strong data-completed-trips>0</strong><span>Stays & Trips Completed</span></div>
+        <div class="cb-proof-stat"><strong><span data-google-rating>5.0</span>★</strong><span>Guest Rating</span></div>
+      </div>
+      <div class="cb-review-toolbar"><a data-google-review-link href="#" target="_blank" rel="noopener"><i class="fa-brands fa-google"></i> Leave a Google Review</a></div>
+      <div class="cb-review-grid" data-review-grid></div>
+    </section>
+
+    <section class="travel-reels" id="reels" data-section="reels">
+      <div class="section-shell reels-shell">
+        <div class="section-head split-head reels-head">
+          <div>
+            <span class="eyebrow light">CeyBreez moments</span>
+            <h2>Press play.<br><em>Feel the island.</em></h2>
+          </div>
+          <div class="reels-head-side">
+            <p>Quick glimpses from real journeys — beaches, trains, stays, food, wildlife and the everyday moments in between.</p>
+            <div class="reel-arrows" aria-label="Reel controls">
+              <button id="reelsPrev" type="button" aria-label="Previous reels"><i class="fa-solid fa-arrow-left"></i></button>
+              <button id="reelsNext" type="button" aria-label="Next reels"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="reels-track" id="homeReelsTrack" aria-live="polite">
+          <article class="reel-card reel-placeholder"><img src="images/beach.jpg" alt="Sri Lanka beach travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>COAST</small><strong>Island days</strong><span>Reels load from CMS</span></div></article>
+          <article class="reel-card reel-placeholder"><img src="images/train.jpg" alt="Sri Lanka train travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>HILL COUNTRY</small><strong>Window-seat views</strong><span>Reels load from CMS</span></div></article>
+          <article class="reel-card reel-placeholder"><img src="images/nature.jpg" alt="Sri Lanka nature travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>NATURE</small><strong>Into the wild</strong><span>Reels load from CMS</span></div></article>
+          <article class="reel-card reel-placeholder"><img src="images/food.jpg" alt="Sri Lanka food travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>LOCAL LIFE</small><strong>Taste the island</strong><span>Reels load from CMS</span></div></article>
+        </div>
+
+        <div class="reels-footnote"><span><i class="fa-solid fa-volume-xmark"></i> Videos preview muted</span><span>Swipe to explore <i class="fa-solid fa-arrow-right"></i></span></div>
+      </div>
+    </section>
+
+
+    <div class="gallery-lightbox" id="galleryLightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="CeyBreez travel gallery">
+      <button class="gallery-lightbox-close" id="galleryLightboxClose" type="button" aria-label="Close gallery"><i class="fa-solid fa-xmark"></i></button>
+      <button class="gallery-lightbox-nav prev" id="galleryLightboxPrev" type="button" aria-label="Previous image"><i class="fa-solid fa-arrow-left"></i></button>
+      <figure class="gallery-lightbox-stage">
+        <img id="galleryLightboxImage" src="images/cover.jpg" alt="Sri Lanka travel gallery image">
+        <figcaption><span id="galleryLightboxKicker">Sri Lanka</span><strong id="galleryLightboxTitle">Explore the island</strong><p id="galleryLightboxCaption"></p></figcaption>
+      </figure>
+      <button class="gallery-lightbox-nav next" id="galleryLightboxNext" type="button" aria-label="Next image"><i class="fa-solid fa-arrow-right"></i></button>
+      <div class="gallery-lightbox-count" id="galleryLightboxCount">01 / 06</div>
     </div>
-  </section>
 
-<section class="modern-gallery" data-section="island-gallery"><span class="modern-eyebrow">The island, in moments</span><h2 data-field="title">Find your kind of escape</h2><p data-field="subtitle">A glimpse of the places, flavours and moments waiting for you.</p><div class="modern-gallery-grid" data-field="cards"><figure><img src="images/beach.jpg" loading="lazy" decoding="async" alt="Slow days by the ocean"><figcaption>Slow days by the ocean</figcaption></figure><figure><img src="images/mountains.jpg" loading="lazy" decoding="async" alt="Into the hill country"><figcaption>Into the hill country</figcaption></figure><figure><img src="images/train.jpg" loading="lazy" decoding="async" alt="The scenic route"><figcaption>The scenic route</figcaption></figure><figure><img src="images/temple.jpg" loading="lazy" decoding="async" alt="Stories in stone"><figcaption>Stories in stone</figcaption></figure><figure><img src="images/nature.jpg" loading="lazy" decoding="async" alt="Wild at heart"><figcaption>Wild at heart</figcaption></figure><figure><img src="images/food.jpg" loading="lazy" decoding="async" alt="Taste the island"><figcaption>Taste the island</figcaption></figure></div></section>
-  <section class="about" id="aboutSection" data-section="about">
-    <h2 id="homeAboutTitle" data-field="title">Experience the Soul of Sri Lanka</h2>
-    <p id="homeAboutText" data-field="content">
-      CeyBreez brings together unforgettable stays, breathtaking island tours,
-      authentic local food, and unique travel experiences across the heart of Sri Lanka.
-    </p>
-  </section>
-
-  <section class="things" id="thingsSection" data-section="things">
-    <h2 data-field="title">Things To Do In Sri Lanka</h2>
-    <p class="things-intro" data-field="subtitle">
-      Discover the beauty, culture, nature, and unforgettable moments that make Sri Lanka truly special.
-    </p>
-
-    <div class="things-grid" data-field="cards">
-      <div class="thing-card">
-        <img loading="lazy" decoding="async" src="images/beach.jpg">
-        <h3>Beach Escapes</h3>
-        <p>Relax on golden beaches, enjoy sunsets, and feel the island breeze.</p>
-      </div>
-
-      <div class="thing-card">
-        <img loading="lazy" decoding="async" src="images/mountains.jpg">
-        <h3>Mountain Adventures</h3>
-        <p>Explore misty hills, waterfalls, tea estates, and scenic viewpoints.</p>
-      </div>
-
-      <div class="thing-card">
-        <img loading="lazy" decoding="async" src="images/train.jpg">
-        <h3>Scenic Train Rides</h3>
-        <p>Experience one of the world’s most beautiful train journeys.</p>
-      </div>
-
-      <div class="thing-card">
-        <img loading="lazy" decoding="async" src="images/temple.jpg">
-        <h3>Cultural Heritage</h3>
-        <p>Visit ancient temples, sacred cities, and historical landmarks.</p>
-      </div>
-
-      <div class="thing-card">
-        <img loading="lazy" decoding="async" src="images/nature.jpg">
-        <h3>Wildlife & Nature</h3>
-        <p>Discover elephants, leopards, birds, forests, and national parks.</p>
-      </div>
-
-      <div class="thing-card">
-        <img loading="lazy" decoding="async" src="images/food.jpg">
-        <h3>Local Food Experiences</h3>
-        <p>Taste authentic Sri Lankan flavours, spices, tea, and local meals.</p>
-      </div>
-    </div>
-  </section>
-  
-  <section class="cards" id="experiences" data-section="experiences">
-    <h2 data-field="title">Our Experiences</h2>
-    <div class="grid" data-field="cards"></div>
-  </section>
- 
-  <section class="featured-home">
-    <h2>Featured Stays</h2>
-    <p>Handpicked villas, apartments, and homestays selected by CeyBreez.</p>
-    <div id="featuredStaysGrid" class="featured-grid"></div>
-  </section>
-
-  <section class="featured-home destinations-featured">
-    <h2>Popular Destinations</h2>
-    <p>Explore selected destinations and travel experiences across Sri Lanka.</p>
-    <div id="featuredDestinationsGrid" class="featured-grid"></div>
-  </section>
-
-  <section class="featured-home services-featured">
-    <h2>Featured Services</h2>
-    <p>Useful cafes, restaurants, rentals, shops, and local services for your stay.</p>
-    <div id="featuredServicesGrid" class="featured-grid"></div>
-  </section>
-
-
-  <section class="cb-social-proof" data-reviews-showcase data-review-type="all" data-featured="1" data-limit="6">
-    <div class="cb-section-head"><span class="eyebrow">Guest Stories</span><h2>Happy Travellers, Real Experiences</h2><p>Selected reviews from guests who stayed and explored Sri Lanka with CeyBreez.</p></div>
-    <div class="cb-proof-stats"><div class="cb-proof-stat"><strong data-happy-customers>0</strong><span>Happy Customers</span></div><div class="cb-proof-stat"><strong data-completed-trips>0</strong><span>Stays & Trips Completed</span></div><div class="cb-proof-stat"><strong><span data-google-rating>5.0</span>★</strong><span>Guest Rating</span></div></div>
-    <div class="cb-review-toolbar"><a data-google-review-link href="#" target="_blank" rel="noopener"><i class="fa-brands fa-google"></i> Leave a Google Review</a></div>
-    <div class="cb-review-grid" data-review-grid></div>
-  </section>
-  <section class="cb-reels-section"><div class="cb-section-head"><span class="eyebrow">CeyBreez Moments</span><h2>Travel Reels & Guest Moments</h2></div><div class="cb-reels-grid" data-reels-grid></div></section>
-  <section class="contact" id="contact" data-section="contact">
-    <h2 data-field="title">Start Your Journey</h2>
-    <p data-field="content">
-      Contact us for Villas, Tours, Airport pickup, or custom Sri Lanka Travel Plans.
-    </p>
-
-    <a href="contact.html" class="whatsapp" data-field="button">Contact Us</a>
-  </section>
-
- <footer data-section="footer">
-  <p id="footerText" data-field="content">
-    © 2026 CeyBreez. All rights reserved.
-  </p>
-
-  <div class="footer-links">
-    <a href="privacy.html">Privacy Policy</a>
-    <a href="terms.html">Terms & Conditions</a>
-  </div>
-</footer>
-
-</main>
-
-<a id="floatingWhatsApp"
-   href="https://api.whatsapp.com/send?phone=94704620017"
-   class="floating-whatsapp"
-   target="_blank"
-   rel="noopener noreferrer"
-   aria-label="Chat on WhatsApp">
-  <i class="fa-brands fa-whatsapp"></i>
-</a>
-
-<script>
-const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
-
-async function loadSiteContent(){
-  try{
-    const response = await fetch(API_BASE + "/api/site-content");
-    const data = await response.json();
-
-    if(data.site_logo){
-      document.getElementById("heroLogo").src = data.site_logo;
-    }
-
-    if(data.site_favicon){
-      document.getElementById("siteFavicon").href = data.site_favicon;
-    }
-
-    if(data.site_primary_color){
-      document.documentElement.style.setProperty("--primary-color", data.site_primary_color);
-    }
-
-    if(data.site_secondary_color){
-      document.documentElement.style.setProperty("--secondary-color", data.site_secondary_color);
-    }
-
-    if(data.site_background_color){
-      document.body.style.background = data.site_background_color;
-    }
-
-    if(data.site_text_color){
-      document.body.style.color = data.site_text_color;
-    }
-
-    if(data.contact_whatsapp){
-      document.getElementById("floatingWhatsApp").href =
-        "https://api.whatsapp.com/send?phone=" + data.contact_whatsapp;
-    }
-
-    if(data.home_hero_title){
-      document.getElementById("homeHeroTitle").textContent = data.home_hero_title;
-    }
-
-    if(data.home_hero_subtitle){
-      document.getElementById("homeHeroSubtitle").textContent = data.home_hero_subtitle;
-    }
-
-    if(data.home_hero_media){
-      const hero = document.querySelector(".hero");
-      hero.style.backgroundImage =
-        `linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)), url('${data.home_hero_media}')`;
-      hero.style.backgroundSize = "cover";
-      hero.style.backgroundPosition = "center";
-    }
-
-    if(data.home_hero_text_color){
-      document.querySelector(".hero-content").style.color = data.home_hero_text_color;
-    }
-
-    if(data.home_hero_button_color){
-      const heroButton = document.getElementById("heroButton");
-      heroButton.style.background = data.home_hero_button_color;
-    }
-
-    if(data.home_about_title){
-      document.getElementById("homeAboutTitle").textContent = data.home_about_title;
-    }
-
-    if(data.home_about_text){
-      document.getElementById("homeAboutText").textContent = data.home_about_text;
-    }
-
-    if(data.footer_text){
-      document.getElementById("footerText").textContent = data.footer_text;
-    }
-
-  }catch(error){
-    console.error("Site content load failed", error);
-  }
-}
-
-loadSiteContent();
-</script>
-
-<script>
-async function loadHomeFeatured(){
-  await loadFeaturedStays();
-  await loadFeaturedDestinations();
-  await loadFeaturedServices();
-}
-
-async function loadFeaturedStays(){
-  const box = document.getElementById("featuredStaysGrid");
-  if(!box) return;
-
-  try{
-    const res = await fetch(API_BASE + "/api/properties?featured=1");
-    const data = await res.json();
-
-    box.innerHTML = "";
-
-    if(!data.length){
-      box.innerHTML = "<p>No featured stays selected yet.</p>";
-      return;
-    }
-
-    data.forEach(item => {
-      const img = item.photos && item.photos.length ? item.photos[0] : "images/cover.jpg";
-
-      const page =
-        item.type === "villa" ? "villas.html" :
-        item.type === "apartment" ? "apartments.html" :
-        "homestays.html";
-
-      const card = document.createElement("a");
-      card.href = page;
-      card.className = "featured-card";
-
-      card.innerHTML = `
-        <img loading="lazy" decoding="async" src="${img}" alt="${item.name}">
-        <div>
-          <span>${item.type || "Stay"}</span>
-          <h3>${item.name}</h3>
-          <p>${item.location || "Sri Lanka"}</p>
-          <strong>${item.price || "Price on request"}</strong>
+    <section class="contact final-cta" id="contact" data-section="contact">
+      <img src="images/beach.jpg" alt="Sri Lanka beach at sunset" loading="lazy" decoding="async">
+      <div class="final-cta-shade"></div>
+      <div class="final-cta-content">
+        <span class="eyebrow light">Ready when you are</span>
+        <h2 data-field="title">Your Sri Lanka story can start here.</h2>
+        <p data-field="content">Tell us what kind of trip you have in mind. We can help with stays, tours, transfers and a complete custom travel plan.</p>
+        <div class="final-actions">
+          <a href="contact.html" class="button button-light" data-field="button">Plan my journey <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="https://api.whatsapp.com/send?phone=94704620017" id="contactWhatsApp" target="_blank" rel="noopener" class="button button-outline-light"><i class="fa-brands fa-whatsapp"></i> WhatsApp us</a>
         </div>
-      `;
+      </div>
+    </section>
 
-      box.appendChild(card);
+    <footer class="site-footer" data-section="footer">
+      <div class="footer-shell">
+        <div class="footer-brand">
+          <img id="footerLogo" src="logo.png" alt="CeyBreez">
+          <p>Thoughtful stays, island journeys and local experiences across Sri Lanka.</p>
+        </div>
+        <div class="footer-column"><h3>Stay</h3><a href="villas.html">Villas</a><a href="apartments.html">Apartments</a><a href="homestays.html">Homestays</a></div>
+        <div class="footer-column"><h3>Explore</h3><a href="tours.html">Tours</a><a href="services.html">Services</a><a href="contact.html">Custom trip</a></div>
+        <div class="footer-column"><h3>Info</h3><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms & Conditions</a><a href="contact.html">Contact</a></div>
+      </div>
+      <div class="footer-bottom">
+        <p id="footerText" data-field="content">© 2026 CeyBreez. All rights reserved.</p>
+        <span>Made for slow travel and big memories.</span>
+      </div>
+    </footer>
+  </main>
+
+  <a id="floatingWhatsApp" href="https://api.whatsapp.com/send?phone=94704620017" class="floating-whatsapp" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i><span>Chat</span></a>
+
+  <script>
+    const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
+
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+    const clean = value => String(value ?? "").trim();
+    const esc = value => clean(value).replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+    const uniq = values => [...new Set(values.filter(Boolean))];
+    let siteContentCache = {};
+    let homeMediaPool = [];
+    let activeGalleryItems = [];
+    let activeGalleryIndex = 0;
+
+    const GALLERY_FALLBACK = [
+      {src:'images/beach.jpg', kicker:'Coast', title:'Golden shores', caption:'Warm water, slow afternoons and long sunsets.'},
+      {src:'images/train.jpg', kicker:'Highlands', title:'Window-seat journeys', caption:'Tea country, mountain curves and one of the island’s most memorable rides.'},
+      {src:'images/food.jpg', kicker:'Taste', title:'Flavours worth travelling for', caption:'Markets, spices, tea and local tables.'},
+      {src:'images/nature.jpg', kicker:'Nature', title:'Wild green places', caption:'Waterfalls, rainforest trails and tropical landscapes.'},
+      {src:'images/temple.jpg', kicker:'Culture', title:'Living heritage', caption:'Ancient places, daily rituals and stories still alive today.'},
+      {src:'images/mountains.jpg', kicker:'Escape', title:'Misty mornings', caption:'Cool air, open views and a slower side of Sri Lanka.'}
+    ];
+
+    function toArray(value){
+      if(Array.isArray(value)) return value;
+      if(!value) return [];
+      try{ const parsed = JSON.parse(value); return Array.isArray(parsed) ? parsed : []; }
+      catch(error){ return String(value).split('\n').map(x => x.trim()).filter(Boolean); }
+    }
+
+    function youtubeId(url){
+      const match = clean(url).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([^?&/]+)/i);
+      return match ? match[1] : '';
+    }
+
+    function dismissWelcome(){
+      const screen = $("#welcomeScreen");
+      if(!screen || screen.classList.contains("hide")) return;
+      screen.classList.add("hide");
+      document.body.classList.add("entered");
+      sessionStorage.setItem("ceybreezEntered", "yes");
+      setTimeout(() => screen.remove(), 900);
+    }
+
+    if(sessionStorage.getItem("ceybreezEntered") === "yes"){
+      $("#welcomeScreen")?.remove();
+      document.body.classList.add("entered");
+    } else {
+      setTimeout(dismissWelcome, 1450);
+      ["click", "wheel", "keydown", "touchstart"].forEach(event => window.addEventListener(event, dismissWelcome, {once:true, passive:true}));
+    }
+
+    const header = $("#siteHeader");
+    const menuToggle = $("#menuToggle");
+    const mainNav = $("#mainNav");
+    const onScroll = () => header?.classList.toggle("scrolled", window.scrollY > 36);
+    onScroll();
+    window.addEventListener("scroll", onScroll, {passive:true});
+
+    menuToggle?.addEventListener("click", () => {
+      const open = document.body.classList.toggle("menu-open");
+      menuToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    $$("a", mainNav).forEach(a => a.addEventListener("click", () => {
+      document.body.classList.remove("menu-open");
+      menuToggle?.setAttribute("aria-expanded", "false");
+    }));
+
+    async function loadSiteContent(){
+      try{
+        const response = await fetch(API_BASE + "/api/site-content");
+        if(!response.ok) throw new Error("Site content request failed");
+        const data = await response.json();
+
+        if(data.site_logo){
+          ["welcomeLogo", "navLogo", "footerLogo"].forEach(id => { const el = document.getElementById(id); if(el) el.src = data.site_logo; });
+        }
+        if(data.site_favicon) $("#siteFavicon").href = data.site_favicon;
+        if(data.site_primary_color) document.documentElement.style.setProperty("--primary", data.site_primary_color);
+        if(data.site_secondary_color) document.documentElement.style.setProperty("--secondary", data.site_secondary_color);
+        if(data.site_background_color) document.documentElement.style.setProperty("--page-bg", data.site_background_color);
+        if(data.site_text_color) document.documentElement.style.setProperty("--ink", data.site_text_color);
+
+        if(data.contact_whatsapp){
+          const url = "https://api.whatsapp.com/send?phone=" + clean(data.contact_whatsapp);
+          $("#floatingWhatsApp").href = url;
+          $("#contactWhatsApp").href = url;
+        }
+        if(data.home_hero_title) $("#homeHeroTitle").textContent = data.home_hero_title;
+        if(data.home_hero_subtitle) $("#homeHeroSubtitle").textContent = data.home_hero_subtitle;
+        if(data.home_hero_media) $("#heroImage").src = data.home_hero_media;
+        if(data.home_hero_text_color) $(".hero-copy").style.color = data.home_hero_text_color;
+        if(data.home_hero_button_color) $("#heroButton").style.background = data.home_hero_button_color;
+        if(data.home_about_title) $("#homeAboutTitle").textContent = data.home_about_title;
+        if(data.home_about_text) $("#homeAboutText").textContent = data.home_about_text;
+        if(data.footer_text) $("#footerText").textContent = data.footer_text;
+        siteContentCache = data;
+        renderGallery();
+        renderReels(data.review_reels);
+      } catch(error){
+        console.warn("CeyBreez site content fallback in use", error);
+      }
+    }
+
+    function imageOf(item, fallback = "images/cover.jpg"){
+      if(clean(item?.mainImage)) return item.mainImage;
+      if(clean(item?.image)) return item.image;
+      if(Array.isArray(item?.photos) && item.photos.length) return item.photos[0];
+      return fallback;
+    }
+
+    function money(item){
+      const value = clean(item?.basePrice || item?.price);
+      if(!value) return "Price on request";
+      const currency = clean(item?.currency || "USD");
+      return `${currency} ${esc(value)}`;
+    }
+
+    function renderEmpty(box, text){
+      box.innerHTML = `<div class="empty-state"><i class="fa-regular fa-image"></i><p>${esc(text)}</p></div>`;
+    }
+
+    function renderTours(items){
+      const box = $("#featuredToursGrid");
+      if(!box) return;
+      const list = (Array.isArray(items) ? items : []).filter(x => x.active !== false && (x.featured === true || Number(x.featured) === 1));
+      const selected = (list.length ? list : (Array.isArray(items) ? items : [])).slice(0, 3);
+      if(!selected.length) return renderEmpty(box, "Featured tours will appear here from your CMS.");
+      box.innerHTML = selected.map((item, index) => `
+        <a class="tour-card ${index === 0 ? 'tour-card-featured' : ''}" href="tour-details.html?slug=${encodeURIComponent(item.slug || item.id || item.title || '')}">
+          <img src="${esc(imageOf(item, 'images/train.jpg'))}" alt="${esc(item.title || 'Sri Lanka tour')}" loading="lazy" decoding="async">
+          <div class="card-shade"></div>
+          <div class="tour-card-top"><span>${esc(item.category || 'Private Tour')}</span><b>${esc(item.duration || '')}</b></div>
+          <div class="tour-card-copy"><p>${esc(item.location || 'Sri Lanka')}</p><h3>${esc(item.title || 'Sri Lanka Journey')}</h3><div><strong>${money(item)}</strong><i class="fa-solid fa-arrow-right"></i></div></div>
+        </a>`).join("");
+    }
+
+    function renderStays(items){
+      const box = $("#featuredStaysGrid");
+      if(!box) return;
+      const active = (Array.isArray(items) ? items : []).filter(x => x.active !== false);
+      const featured = active.filter(x => x.featured === true || Number(x.featured) === 1);
+      const selected = (featured.length ? featured : active).slice(0, 4);
+      if(!selected.length) return renderEmpty(box, "Featured stays will appear here from your CMS.");
+      box.innerHTML = selected.map((item, index) => {
+        const page = item.type === "apartment" ? "apartments.html" : item.type === "homestay" ? "homestays.html" : "villas.html";
+        return `<a class="stay-card ${index === 0 ? 'stay-card-large' : ''}" href="${page}">
+          <div class="stay-image"><img src="${esc(imageOf(item))}" alt="${esc(item.name || 'Sri Lanka stay')}" loading="lazy" decoding="async"><span>${esc(item.type || 'Stay')}</span></div>
+          <div class="stay-copy"><div><p><i class="fa-solid fa-location-dot"></i> ${esc(item.location || 'Sri Lanka')}</p><h3>${esc(item.name || 'CeyBreez Stay')}</h3></div><strong>${money(item)}</strong></div>
+        </a>`;
+      }).join("");
+    }
+
+    function renderDestinations(items){
+      const box = $("#featuredDestinationsGrid");
+      if(!box) return;
+      const selected = (Array.isArray(items) ? items : []).slice(0, 5);
+      if(!selected.length) return renderEmpty(box, "Featured destinations will appear here from your CMS.");
+      box.innerHTML = selected.map((item, index) => `<a class="destination-card destination-${index + 1}" href="tours.html">
+        <img src="${esc(imageOf(item, index % 2 ? 'images/mountains.jpg' : 'images/nature.jpg'))}" alt="${esc(item.name || 'Sri Lanka destination')}" loading="lazy" decoding="async">
+        <div class="card-shade"></div>
+        <div class="destination-copy"><span>${esc(item.province || 'Sri Lanka')}</span><h3>${esc(item.name || 'Explore')}</h3><p>${esc(item.bestFor || item.timeNeeded || '')}</p></div>
+      </a>`).join("");
+    }
+
+    function renderServices(items){
+      const box = $("#featuredServicesGrid");
+      if(!box) return;
+      const active = (Array.isArray(items) ? items : []).filter(x => x.active !== false);
+      const featured = active.filter(x => x.featured === true || Number(x.featured) === 1);
+      const selected = (featured.length ? featured : active).slice(0, 4);
+      if(!selected.length) return renderEmpty(box, "Featured services will appear here from your CMS.");
+      box.innerHTML = selected.map(item => `<a class="service-card" href="services.html">
+        <div class="service-image"><img src="${esc(imageOf(item, 'images/food.jpg'))}" alt="${esc(item.name || 'Local service')}" loading="lazy" decoding="async"></div>
+        <div class="service-copy"><span>${esc(item.category || 'Local Service')}</span><h3>${esc(item.name || 'CeyBreez Service')}</h3><p><i class="fa-solid fa-location-dot"></i> ${esc(item.location || item.nearestCity || 'Sri Lanka')}</p></div><i class="service-arrow fa-solid fa-arrow-up-right-from-square"></i>
+      </a>`).join("");
+    }
+
+    function collectMedia(items, type){
+      const output = [];
+      (Array.isArray(items) ? items : []).forEach(item => {
+        const title = clean(item.title || item.name || 'Sri Lanka');
+        const kicker = clean(item.category || item.type || item.province || type || 'Explore');
+        const caption = clean(item.shortDescription || item.description || item.location || item.bestFor || '');
+        const urls = [];
+        if(clean(item.mainImage)) urls.push(item.mainImage);
+        if(clean(item.image)) urls.push(item.image);
+        if(clean(item.logoImage) && !urls.length) urls.push(item.logoImage);
+        toArray(item.photos).forEach(url => urls.push(typeof url === 'string' ? url : url?.url || url?.src || ''));
+        uniq(urls.map(clean)).forEach(src => output.push({src, kicker, title, caption}));
+      });
+      return output;
+    }
+
+    function normalizeGalleryEntry(entry, index){
+      if(typeof entry === 'string') return {src:clean(entry), kicker:'Sri Lanka', title:`Island moment ${index + 1}`, caption:''};
+      if(!entry || typeof entry !== 'object') return null;
+      const src = clean(entry.src || entry.url || entry.image || entry.mediaUrl);
+      if(!src) return null;
+      return {
+        src,
+        kicker: clean(entry.kicker || entry.category || entry.label || 'Sri Lanka'),
+        title: clean(entry.title || entry.name || `Island moment ${index + 1}`),
+        caption: clean(entry.caption || entry.description || entry.text || '')
+      };
+    }
+
+    function renderGallery(){
+      const grid = $('#homeGalleryGrid');
+      if(!grid) return;
+      const cmsItems = toArray(siteContentCache.home_gallery).map(normalizeGalleryEntry).filter(Boolean);
+      const combined = [...cmsItems, ...homeMediaPool, ...GALLERY_FALLBACK];
+      const seen = new Set();
+      activeGalleryItems = combined.filter(item => {
+        const key = clean(item?.src);
+        if(!key || seen.has(key)) return false;
+        seen.add(key); return true;
+      }).slice(0, 12);
+      if(!activeGalleryItems.length) activeGalleryItems = GALLERY_FALLBACK.slice();
+      const display = activeGalleryItems.slice(0, 8);
+      grid.innerHTML = display.map((item, index) => `
+        <button class="gallery-tile gallery-tile-${(index % 8) + 1}" type="button" data-gallery-index="${index}" aria-label="Open ${esc(item.title)}">
+          <img src="${esc(item.src)}" alt="${esc(item.title)}" loading="lazy" decoding="async">
+          <span class="gallery-tile-shade"></span>
+          <span class="gallery-tile-copy"><small>${esc(item.kicker)}</small><strong>${esc(item.title)}</strong></span>
+          <span class="gallery-expand"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></span>
+        </button>`).join('');
+    }
+
+    function updateLightbox(){
+      const item = activeGalleryItems[activeGalleryIndex];
+      if(!item) return;
+      $('#galleryLightboxImage').src = item.src;
+      $('#galleryLightboxImage').alt = item.title || 'Sri Lanka travel gallery image';
+      $('#galleryLightboxKicker').textContent = item.kicker || 'Sri Lanka';
+      $('#galleryLightboxTitle').textContent = item.title || 'Explore the island';
+      $('#galleryLightboxCaption').textContent = item.caption || '';
+      $('#galleryLightboxCaption').style.display = item.caption ? '' : 'none';
+      $('#galleryLightboxCount').textContent = `${String(activeGalleryIndex + 1).padStart(2,'0')} / ${String(activeGalleryItems.length).padStart(2,'0')}`;
+    }
+
+    function openGallery(index = 0){
+      if(!activeGalleryItems.length) renderGallery();
+      activeGalleryIndex = Math.max(0, Math.min(Number(index) || 0, activeGalleryItems.length - 1));
+      updateLightbox();
+      const box = $('#galleryLightbox');
+      box?.classList.add('open');
+      box?.setAttribute('aria-hidden','false');
+      document.body.classList.add('lightbox-open');
+    }
+
+    function closeGallery(){
+      $('#galleryLightbox')?.classList.remove('open');
+      $('#galleryLightbox')?.setAttribute('aria-hidden','true');
+      document.body.classList.remove('lightbox-open');
+    }
+
+    document.addEventListener('click', event => {
+      const tile = event.target.closest('[data-gallery-index]');
+      if(tile) openGallery(tile.dataset.galleryIndex);
+    });
+    $('#galleryViewAll')?.addEventListener('click', () => openGallery(0));
+    $('#galleryLightboxClose')?.addEventListener('click', closeGallery);
+    $('#galleryLightbox')?.addEventListener('click', event => { if(event.target === $('#galleryLightbox')) closeGallery(); });
+    $('#galleryLightboxPrev')?.addEventListener('click', () => { activeGalleryIndex = (activeGalleryIndex - 1 + activeGalleryItems.length) % activeGalleryItems.length; updateLightbox(); });
+    $('#galleryLightboxNext')?.addEventListener('click', () => { activeGalleryIndex = (activeGalleryIndex + 1) % activeGalleryItems.length; updateLightbox(); });
+    document.addEventListener('keydown', event => {
+      if(!$('#galleryLightbox')?.classList.contains('open')) return;
+      if(event.key === 'Escape') closeGallery();
+      if(event.key === 'ArrowLeft') $('#galleryLightboxPrev')?.click();
+      if(event.key === 'ArrowRight') $('#galleryLightboxNext')?.click();
     });
 
-  }catch(error){
-    box.innerHTML = "<p>Unable to load featured stays.</p>";
-  }
-}
-
-async function loadFeaturedDestinations(){
-  const box = document.getElementById("featuredDestinationsGrid");
-  if(!box) return;
-
-  try{
-    const res = await fetch(API_BASE + "/api/destinations?featured=1");
-    const data = await res.json();
-
-    box.innerHTML = "";
-
-    if(!data.length){
-      box.innerHTML = "<p>No featured destinations selected yet.</p>";
-      return;
+    function reelCard(url, index){
+      const cleanUrl = clean(typeof url === 'string' ? url : url?.url || url?.src || url?.video);
+      if(!cleanUrl) return '';
+      const title = clean(typeof url === 'object' ? (url.title || url.caption) : '') || `Island moment ${index + 1}`;
+      const label = clean(typeof url === 'object' ? (url.label || url.category) : '') || 'CEYBREEZ REEL';
+      const poster = clean(typeof url === 'object' ? (url.poster || url.image) : '');
+      const yid = youtubeId(cleanUrl);
+      if(yid){
+        return `<article class="reel-card reel-video-card">
+          <iframe src="https://www.youtube.com/embed/${esc(yid)}?rel=0&playsinline=1&modestbranding=1" title="${esc(title)}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          <div class="reel-meta"><span>${esc(label)}</span><strong>${esc(title)}</strong></div>
+        </article>`;
+      }
+      if(/\.(mp4|webm|ogg|mov)(\?|$)/i.test(cleanUrl)){
+        return `<article class="reel-card reel-video-card">
+          <video class="cms-reel-video" muted loop playsinline preload="metadata" ${poster ? `poster="${esc(poster)}"` : ''}>
+            <source src="${esc(cleanUrl)}">
+          </video>
+          <button class="reel-sound" type="button" aria-label="Toggle sound"><i class="fa-solid fa-volume-xmark"></i></button>
+          <div class="reel-meta"><span>${esc(label)}</span><strong>${esc(title)}</strong></div>
+        </article>`;
+      }
+      return `<a class="reel-card reel-link-card" href="${esc(cleanUrl)}" target="_blank" rel="noopener">
+        <img src="${esc(poster || 'images/cover.jpg')}" alt="${esc(title)}" loading="lazy">
+        <span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span>
+        <div class="reel-caption"><small>${esc(label)}</small><strong>${esc(title)}</strong><span>Watch reel <i class="fa-solid fa-arrow-up-right-from-square"></i></span></div>
+      </a>`;
     }
 
-    data.forEach(item => {
-      const img = item.photos && item.photos.length ? item.photos[0] : "images/cover.jpg";
-
-      const card = document.createElement("a");
-      card.href = "tours.html";
-      card.className = "featured-card";
-
-      card.innerHTML = `
-        <img loading="lazy" decoding="async" src="${img}" alt="${item.name}">
-        <div>
-          <span>${item.province || "Destination"}</span>
-          <h3>${item.name}</h3>
-          <p>${item.bestFor || ""}</p>
-          <strong>${item.timeNeeded || ""}</strong>
-        </div>
-      `;
-
-      box.appendChild(card);
-    });
-
-  }catch(error){
-    box.innerHTML = "<p>Unable to load featured destinations.</p>";
-  }
-}
-
-async function loadFeaturedServices(){
-  const box = document.getElementById("featuredServicesGrid");
-  if(!box) return;
-
-  try{
-    const res = await fetch(API_BASE + "/api/services?featured=1");
-    const data = await res.json();
-
-    box.innerHTML = "";
-
-    if(!data.length){
-      box.innerHTML = "<p>No featured services selected yet.</p>";
-      return;
+    function setupReelVideos(){
+      const videos = $$('.cms-reel-video');
+      if('IntersectionObserver' in window){
+        const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+          if(entry.isIntersecting && entry.intersectionRatio > .45) entry.target.play().catch(()=>{});
+          else entry.target.pause();
+        }), {threshold:[0,.45,.8]});
+        videos.forEach(video => observer.observe(video));
+      } else videos.forEach(video => video.play().catch(()=>{}));
+      $$('.reel-sound').forEach(button => button.addEventListener('click', () => {
+        const video = button.closest('.reel-card')?.querySelector('video');
+        if(!video) return;
+        video.muted = !video.muted;
+        button.innerHTML = video.muted ? '<i class="fa-solid fa-volume-xmark"></i>' : '<i class="fa-solid fa-volume-high"></i>';
+      }));
     }
 
-    data.forEach(item => {
-      const img = item.image || "images/cover.jpg";
+    function renderReels(value){
+      const track = $('#homeReelsTrack');
+      if(!track) return;
+      const reels = toArray(value).slice(0, 10);
+      if(!reels.length) return;
+      track.innerHTML = reels.map(reelCard).join('');
+      setupReelVideos();
+    }
 
-      const card = document.createElement("a");
-      card.href = "services.html";
-      card.className = "featured-card";
+    const reelsTrack = $('#homeReelsTrack');
+    $('#reelsPrev')?.addEventListener('click', () => reelsTrack?.scrollBy({left:-(reelsTrack.clientWidth * .72), behavior:'smooth'}));
+    $('#reelsNext')?.addEventListener('click', () => reelsTrack?.scrollBy({left:reelsTrack.clientWidth * .72, behavior:'smooth'}));
 
-      card.innerHTML = `
-        <img loading="lazy" decoding="async" src="${img}" alt="${item.name}">
-        <div>
-          <span>${item.category || "Service"}</span>
-          <h3>${item.name}</h3>
-          <p>${item.location || ""}</p>
-          <strong>${item.openingHours || ""}</strong>
-        </div>
-      `;
+    async function loadHomeData(){
+      const jobs = [
+        fetch(API_BASE + "/api/tour-packages?featured=1").then(r => r.ok ? r.json() : []).catch(() => []),
+        fetch(API_BASE + "/api/properties").then(r => r.ok ? r.json() : []).catch(() => []),
+        fetch(API_BASE + "/api/destinations?featured=1").then(r => r.ok ? r.json() : []).catch(() => []),
+        fetch(API_BASE + "/api/services").then(r => r.ok ? r.json() : []).catch(() => [])
+      ];
+      const [tours, stays, destinations, services] = await Promise.all(jobs);
+      renderTours(tours);
+      renderStays(stays);
+      renderDestinations(destinations);
+      renderServices(services);
+      homeMediaPool = [
+        ...collectMedia(tours, 'Tours'),
+        ...collectMedia(stays, 'Stays'),
+        ...collectMedia(destinations, 'Destinations'),
+        ...collectMedia(services, 'Local life')
+      ];
+      renderGallery();
+    }
 
-      box.appendChild(card);
-    });
+    loadSiteContent();
+    loadHomeData();
+  </script>
 
-  }catch(error){
-    box.innerHTML = "<p>Unable to load featured services.</p>";
-  }
-}
-
-loadHomeFeatured();
-</script>
-
-<script src="page-builder.js?v=20260801-live-publish"></script>
-
-<script src="reviews-showcase.js"></script>
+  <script src="page-builder.js?v=20260916-home-v3"></script>
+  <script src="reviews-showcase.js"></script>
   <script src="ceybreez-language.js" defer></script>
 </body>
 </html>

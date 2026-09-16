@@ -29,6 +29,8 @@ content="Discover Sri Lanka through curated tours, day trips, cultural experienc
   gtag('config', 'G-3QG71CWHW2');
 </script>
   <link rel="stylesheet" href="ceybreez-language.css">
+<link rel="stylesheet" href="modern-theme.css">
+<script src="modern-gallery.js" defer></script>
 </head>
 
 <body data-page="tours">
@@ -962,6 +964,14 @@ function buildProvinceGrid(data){
   }
 
   async function setupGooglePlaces(){
+    // The Maps script is asynchronous and can be delayed or blocked.
+    for(let attempt=0; attempt<20 && !window.google?.maps?.importLibrary; attempt++){
+      await new Promise(resolve=>setTimeout(resolve,250));
+    }
+    if(!window.google?.maps?.importLibrary){
+      document.querySelectorAll('.google-place-box').forEach(box=>{box.textContent='Location search is unavailable. Please include your pickup or drop-off address in the special notes.';});
+      return;
+    }
     const { PlaceAutocompleteElement } = await google.maps.importLibrary("places");
 
     createGooglePlaceBox("tourStartGoogleBox", "start", PlaceAutocompleteElement);
@@ -1376,7 +1386,9 @@ ${specialNotes || "None"}`;
 
   window.addEventListener("load", async function(){
   await loadDestinationsFromAPI();
-  await setupGooglePlaces();
+  setupGooglePlaces().catch(()=>{
+    document.querySelectorAll('.google-place-box').forEach(box=>{box.textContent='Location search is unavailable. Please include your address in the special notes.';});
+  });
   updateVehicleSuggestion();
   updateServiceType();
   renderProvinceSelectedList();

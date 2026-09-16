@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 
 Disallow: /admin.html
+Disallow: /admin/
 
 Sitemap: https://ceybreez.com/sitemap.xml

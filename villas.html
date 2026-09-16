@@ -24,6 +24,8 @@ content="Explore handpicked luxury villas in Sri Lanka. Beachfront villas, priva
   <link rel="stylesheet" href="js/vendor/flatpickr.min.css">
   <link rel="stylesheet" href="reviews-showcase.css">
   <link rel="stylesheet" href="ceybreez-language.css">
+<link rel="stylesheet" href="modern-theme.css">
+<script src="modern-gallery.js" defer></script>
 </head>
 <body data-page="villas">
 <header>
@@ -128,7 +130,7 @@ content="Explore handpicked luxury villas in Sri Lanka. Beachfront villas, priva
   <button class="modal-close" onclick="closePropertyModal()">×</button>
   <h2 id="modalTitle"></h2>
   <div class="modal-main-image-wrap">
-  <img id="modalMainImage" class="modal-main-image" src="" alt="">
+  <img loading="lazy" decoding="async" id="modalMainImage" class="modal-main-image" src="" alt="">
 </div>
 
 <div id="modalGallery" class="modal-gallery"></div>

@@ -46,17 +46,14 @@ content="Sri Lanka villas, Sri Lanka homestays, Sri Lanka apartments, Sri Lanka 
 </script>
   <link rel="stylesheet" href="reviews-showcase.css">
   <link rel="stylesheet" href="ceybreez-language.css">
+<link rel="stylesheet" href="modern-theme.css">
+<script src="modern-gallery.js" defer></script>
+<link rel="preload" as="image" href="images/cover.jpg">
 </head>
 
 <body data-page="home">
 
-<section class="welcome-screen" id="welcomeScreen">
-  <div class="welcome-content">
-    <h1>Welcome</h1>
-    <h1>To</h1>
-    <img id="welcomeLogo" src="logo.png" alt="CeyBreez Logo">
-  </div>
-</section>
+
 
 <main id="mainSite">
 
@@ -73,19 +70,20 @@ content="Sri Lanka villas, Sri Lanka homestays, Sri Lanka apartments, Sri Lanka 
   </header>
 
   <section class="hero" id="home" data-section="hero">
-    <div class="hero-content">
+    <div class="hero-content"><span class="modern-eyebrow">A little closer to paradise</span>
       <img id="heroLogo" class="hero-logo-img" src="logo.png" alt="CeyBreez Logo">
 
-      <h2 id="homeHeroTitle" data-field="title">
+      <h1 id="homeHeroTitle" data-field="title">
         Stay With Comfort, Taste The Island, Explore Sri Lanka
-      </h2>
+      </h1>
 
-      <p id="homeHeroSubtitle" class="hero-subtitle" data-field="subtitle"></p>
+      <p id="homeHeroSubtitle" class="hero-subtitle" data-field="subtitle">Beautiful stays. Unhurried journeys. Your own piece of Sri Lanka.</p>
 
       <a href="#contact" class="btn" id="heroButton" data-field="button">Book Your Experience</a>
     </div>
   </section>
 
+<section class="modern-gallery" data-section="island-gallery"><span class="modern-eyebrow">The island, in moments</span><h2 data-field="title">Find your kind of escape</h2><p data-field="subtitle">A glimpse of the places, flavours and moments waiting for you.</p><div class="modern-gallery-grid" data-field="cards"><figure><img src="images/beach.jpg" loading="lazy" decoding="async" alt="Slow days by the ocean"><figcaption>Slow days by the ocean</figcaption></figure><figure><img src="images/mountains.jpg" loading="lazy" decoding="async" alt="Into the hill country"><figcaption>Into the hill country</figcaption></figure><figure><img src="images/train.jpg" loading="lazy" decoding="async" alt="The scenic route"><figcaption>The scenic route</figcaption></figure><figure><img src="images/temple.jpg" loading="lazy" decoding="async" alt="Stories in stone"><figcaption>Stories in stone</figcaption></figure><figure><img src="images/nature.jpg" loading="lazy" decoding="async" alt="Wild at heart"><figcaption>Wild at heart</figcaption></figure><figure><img src="images/food.jpg" loading="lazy" decoding="async" alt="Taste the island"><figcaption>Taste the island</figcaption></figure></div></section>
   <section class="about" id="aboutSection" data-section="about">
     <h2 id="homeAboutTitle" data-field="title">Experience the Soul of Sri Lanka</h2>
     <p id="homeAboutText" data-field="content">
@@ -102,37 +100,37 @@ content="Sri Lanka villas, Sri Lanka homestays, Sri Lanka apartments, Sri Lanka 
 
     <div class="things-grid" data-field="cards">
       <div class="thing-card">
-        <img src="images/beach.jpg">
+        <img loading="lazy" decoding="async" src="images/beach.jpg">
         <h3>Beach Escapes</h3>
         <p>Relax on golden beaches, enjoy sunsets, and feel the island breeze.</p>
       </div>
 
       <div class="thing-card">
-        <img src="images/mountains.jpg">
+        <img loading="lazy" decoding="async" src="images/mountains.jpg">
         <h3>Mountain Adventures</h3>
         <p>Explore misty hills, waterfalls, tea estates, and scenic viewpoints.</p>
       </div>
 
       <div class="thing-card">
-        <img src="images/train.jpg">
+        <img loading="lazy" decoding="async" src="images/train.jpg">
         <h3>Scenic Train Rides</h3>
         <p>Experience one of the world’s most beautiful train journeys.</p>
       </div>
 
       <div class="thing-card">
-        <img src="images/temple.jpg">
+        <img loading="lazy" decoding="async" src="images/temple.jpg">
         <h3>Cultural Heritage</h3>
         <p>Visit ancient temples, sacred cities, and historical landmarks.</p>
       </div>
 
       <div class="thing-card">
-        <img src="images/nature.jpg">
+        <img loading="lazy" decoding="async" src="images/nature.jpg">
         <h3>Wildlife & Nature</h3>
         <p>Discover elephants, leopards, birds, forests, and national parks.</p>
       </div>
 
       <div class="thing-card">
-        <img src="images/food.jpg">
+        <img loading="lazy" decoding="async" src="images/food.jpg">
         <h3>Local Food Experiences</h3>
         <p>Taste authentic Sri Lankan flavours, spices, tea, and local meals.</p>
       </div>
@@ -196,7 +194,6 @@ content="Sri Lanka villas, Sri Lanka homestays, Sri Lanka apartments, Sri Lanka 
    href="https://api.whatsapp.com/send?phone=94704620017"
    class="floating-whatsapp"
    target="_blank"
-  id="floatingWhatsApp"
    rel="noopener noreferrer"
    aria-label="Chat on WhatsApp">
   <i class="fa-brands fa-whatsapp"></i>
@@ -205,35 +202,12 @@ content="Sri Lanka villas, Sri Lanka homestays, Sri Lanka apartments, Sri Lanka 
 <script>
 const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 
-const welcomeScreen = document.getElementById("welcomeScreen");
-
-if(sessionStorage.getItem("ceybreezEntered") === "yes"){
-  welcomeScreen.style.display = "none";
-  document.body.classList.add("entered");
-}
-
-function enterSite(){
-  sessionStorage.setItem("ceybreezEntered", "yes");
-  welcomeScreen.classList.add("hide");
-  document.body.classList.add("entered");
-
-  setTimeout(() => {
-    welcomeScreen.style.display = "none";
-  }, 900);
-}
-
-window.addEventListener("click", enterSite);
-window.addEventListener("wheel", enterSite);
-window.addEventListener("keydown", enterSite);
-window.addEventListener("touchstart", enterSite);
-
 async function loadSiteContent(){
   try{
     const response = await fetch(API_BASE + "/api/site-content");
     const data = await response.json();
 
     if(data.site_logo){
-      document.getElementById("welcomeLogo").src = data.site_logo;
       document.getElementById("heroLogo").src = data.site_logo;
     }
 
@@ -342,7 +316,7 @@ async function loadFeaturedStays(){
       card.className = "featured-card";
 
       card.innerHTML = `
-        <img src="${img}" alt="${item.name}">
+        <img loading="lazy" decoding="async" src="${img}" alt="${item.name}">
         <div>
           <span>${item.type || "Stay"}</span>
           <h3>${item.name}</h3>
@@ -382,7 +356,7 @@ async function loadFeaturedDestinations(){
       card.className = "featured-card";
 
       card.innerHTML = `
-        <img src="${img}" alt="${item.name}">
+        <img loading="lazy" decoding="async" src="${img}" alt="${item.name}">
         <div>
           <span>${item.province || "Destination"}</span>
           <h3>${item.name}</h3>
@@ -422,7 +396,7 @@ async function loadFeaturedServices(){
       card.className = "featured-card";
 
       card.innerHTML = `
-        <img src="${img}" alt="${item.name}">
+        <img loading="lazy" decoding="async" src="${img}" alt="${item.name}">
         <div>
           <span>${item.category || "Service"}</span>
           <h3>${item.name}</h3>

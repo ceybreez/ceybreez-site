@@ -26,7 +26,9 @@ content="Find comfortable holiday apartments across Sri Lanka. Ideal for couples
 
   gtag('config', 'G-3QG71CWHW2');
 </script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <link rel="stylesheet" href="js/vendor/flatpickr.min.css" />
+<link rel="stylesheet" href="modern-theme.css">
+<script src="modern-gallery.js" defer></script>
 </head>
 
 <body data-page="apartments">
@@ -195,7 +197,7 @@ content="Find comfortable holiday apartments across Sri Lanka. Ideal for couples
 
     <h2 id="modalTitle"></h2>
     <div class="modal-main-image-wrap">
-  <img id="modalMainImage" class="modal-main-image" src="" alt="">
+  <img loading="lazy" decoding="async" id="modalMainImage" class="modal-main-image" src="" alt="">
 </div>
 
 <div id="modalGallery" class="modal-gallery"></div>
@@ -246,7 +248,7 @@ content="Find comfortable holiday apartments across Sri Lanka. Ideal for couples
    <i class="fa-brands fa-whatsapp"></i>
 </a>
 
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="js/vendor/flatpickr.min.js"></script>
 <script>
 const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 const PROPERTY_TYPE = "apartment";

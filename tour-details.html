@@ -17,6 +17,8 @@
   <script src="tour-details.js" defer></script>
   <link rel="stylesheet" href="reviews-showcase.css">
   <link rel="stylesheet" href="ceybreez-language.css">
+<link rel="stylesheet" href="modern-theme.css">
+<script src="modern-gallery.js" defer></script>
 </head>
 <body data-page="tour-details">
 
@@ -85,7 +87,7 @@
 
     <section class="tour-gallery" aria-label="Tour photo gallery">
       <div class="gallery-main">
-        <img id="mainGalleryImage" src="images/cover.jpg" alt="Tour Image">
+        <img loading="lazy" decoding="async" id="mainGalleryImage" src="images/cover.jpg" alt="Tour Image">
       </div>
       <div id="galleryThumbs" class="gallery-thumbs"></div>
       <button id="viewAllPhotosBtn" class="view-all-photos" type="button" onclick="openGallery(0)">
@@ -174,7 +176,7 @@
   <button class="gallery-prev" type="button" onclick="prevGalleryImage()">‹</button>
   <div class="lightbox-stage">
     <div id="galleryCounter" class="gallery-counter">1 / 1</div>
-    <img id="lightboxImage" src="" alt="Tour Image">
+    <img loading="lazy" decoding="async" id="lightboxImage" src="" alt="Tour Image">
   </div>
   <button class="gallery-next" type="button" onclick="nextGalleryImage()">›</button>
 </div>

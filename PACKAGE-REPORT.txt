@@ -1,0 +1,29 @@
+CEYBREEZ V3 COMPLETE PACKAGE - 2026-09-16
+
+Included:
+- Home V3 premium tourism layout
+- CMS-driven Home image gallery + video reels
+- Villas / Apartments / Homestays redesigned with shared V3 visual system
+- Tours + trip planner and Tour Details redesigned
+- Services + Contact redesigned
+- Privacy / Terms / 404 redesigned
+- Shared mobile navigation/footer design
+- Existing inquiry / booking / property / tour / service / review functions preserved
+- Admin/CMS visual refresh
+- Home Gallery CMS manager added
+- Existing Reels CMS support preserved
+- Cloudflare Worker source included under /cloudflare
+- Cloudflare Pages _headers / _redirects included
+- robots.txt and sitemap.xml updated
+- Duplicate /admin/admin copy removed
+- Large static JPGs optimized
+
+Final QA:
+- Local missing CSS/JS/image references: 0
+- Duplicate HTML IDs: 0
+- JavaScript syntax failures: 0
+- Final file count: 132 before this report
+- Package size before ZIP: ~4.6 MB
+
+Deployment note:
+The live CMS depends on the existing Cloudflare Worker, D1/R2 bindings and secrets. Those production secrets are intentionally not included in this GitHub package.

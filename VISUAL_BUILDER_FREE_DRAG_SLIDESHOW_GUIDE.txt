@@ -1,0 +1,25 @@
+CeyBreez Visual Builder - Free Drag and Slideshow
+
+FREE DRAG
+1. Open Page Builder and select a page and section.
+2. Click the element in the preview.
+3. In Settings, change Position Mode to Free Position (Drag).
+4. Drag the selected element inside its section.
+5. Check Desktop, Tablet and Mobile tabs. Each device can have its own position.
+6. For automatic mobile stacking, select Mobile and choose Normal Responsive Flow.
+7. Save Draft / Save Section, then Publish.
+
+SLIDESHOW
+1. Select the section where the slideshow should appear.
+2. Click + Slideshow in the element buttons.
+3. Under Slideshow Settings, choose several images at once.
+4. Use the arrow buttons beside each slide to change order.
+5. Add optional title, text, button text and button link per slide.
+6. Choose autoplay, duration, fade/slide transition, cover/contain, arrows, dots and loop.
+7. Set width/height and choose Flow or Free Position like any other element.
+8. Check all three device previews, save and publish.
+
+IMPORTANT
+- Normal Responsive Flow is recommended for mobile.
+- Free Position is limited to the selected section so an element cannot be dragged outside it.
+- Uploaded slides and their settings are stored with the section and rendered on the live page.

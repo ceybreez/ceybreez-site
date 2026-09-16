@@ -3,6 +3,8 @@
 
   const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
   const BUILDER_MODE = new URLSearchParams(window.location.search).has("cbuilder");
+  const VISUAL_PUBLIC_MODE = new URLSearchParams(window.location.search).has("visual");
+  const allowVisualOverrides = () => BUILDER_MODE || VISUAL_PUBLIC_MODE || document.body?.dataset.cmsLayout === "legacy";
   let lastSections = [];
 
   const settingsOf = (value) => {
@@ -37,7 +39,7 @@
     if (isVisualSection(section)) {
       // The Visual Builder owns these records. Its iframe skips them and applies
       // the local draft after loading the normal CMS content.
-      if (!BUILDER_MODE) {
+      if (allowVisualOverrides()) {
         const settings = settingsOf(section.settings);
         applyVisualBuilderRecords(document.body, settings.visualBuilderRecords || []);
       }
@@ -69,13 +71,15 @@
     if (image && section.mediaUrl) image.src = section.mediaUrl;
 
     target.querySelector(":scope > .cms-bg-video")?.remove();
-    if (mode === "video" && settings.videoUrl) applyVideoBackground(target, settings.videoUrl);
-    if (Array.isArray(settings.cards)) renderCards(target, settings.cards);
 
-    applySectionStyles(target, section, settings);
-    renderCustom(target, section, settings);
-    applyElementStyles(target, settings.elementStyles || {});
-    applyVisualBuilderRecords(target, settings.visualBuilderRecords || []);
+    if (allowVisualOverrides()) {
+      if (mode === "video" && settings.videoUrl) applyVideoBackground(target, settings.videoUrl);
+      if (Array.isArray(settings.cards)) renderCards(target, settings.cards);
+      applySectionStyles(target, section, settings);
+      renderCustom(target, section, settings);
+      applyElementStyles(target, settings.elementStyles || {});
+      applyVisualBuilderRecords(target, settings.visualBuilderRecords || []);
+    }
   }
 
   function applySectionStyles(target, section, settings) {
@@ -265,7 +269,7 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true });
   else start();
 
-  if (!BUILDER_MODE) {
+  if (allowVisualOverrides() && !BUILDER_MODE) {
     let resizeTimer;
     addEventListener("resize", () => {
       clearTimeout(resizeTimer);

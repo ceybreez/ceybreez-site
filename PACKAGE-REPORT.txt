@@ -1,29 +1,36 @@
-CEYBREEZ V3 COMPLETE PACKAGE - 2026-09-16
+CEYBREEZ V3.1 COMPLETE PACKAGE - 2026-09-16
 
 Included:
-- Home V3 premium tourism layout
-- CMS-driven Home image gallery + video reels
-- Villas / Apartments / Homestays redesigned with shared V3 visual system
-- Tours + trip planner and Tour Details redesigned
-- Services + Contact redesigned
-- Privacy / Terms / 404 redesigned
-- Shared mobile navigation/footer design
-- Existing inquiry / booking / property / tour / service / review functions preserved
-- Admin/CMS visual refresh
-- Home Gallery CMS manager added
+- Home V3 premium tourism layout with CMS image gallery + video reels
+- Villas / Apartments / Homestays upgraded with matching photographic editorial sections
+- Tours upgraded with matching travel-gallery storytelling + existing trip planner
+- Tour Details retains dynamic gallery, booking and review flows with V3 design system
+- Services upgraded with matching photographic editorial section
+- Contact upgraded to a full photographic travel-planning landing page
+- Privacy / Terms / 404 use the shared V3 visual system
+- Shared responsive navigation, footer and mobile behavior
+- Existing inquiry / booking / payment / property / tour / service / review functions preserved
+- Admin/CMS visual refresh + Home Gallery manager
 - Existing Reels CMS support preserved
-- Cloudflare Worker source included under /cloudflare
-- Cloudflare Pages _headers / _redirects included
-- robots.txt and sitemap.xml updated
+- Duplicate legacy floating WhatsApp buttons removed
 - Duplicate /admin/admin copy removed
 - Large static JPGs optimized
+- Cloudflare Pages _headers / _redirects included
+- Cloudflare Worker reference source included under /cloudflare
+
+V3.1 CMS safety fix:
+- Public pages now run page-builder.js in content-safe mode by default.
+- CMS text, button links and designated images can update the new layout.
+- Old saved Visual Builder HTML/styles no longer overwrite the V3 public layout after page load.
+- Visual Builder overrides remain available in builder/preview mode, or explicitly with ?visual.
+- Legacy Services body background/text CMS overrides were removed to prevent delayed theme changes.
 
 Final QA:
 - Local missing CSS/JS/image references: 0
 - Duplicate HTML IDs: 0
-- JavaScript syntax failures: 0
-- Final file count: 132 before this report
-- Package size before ZIP: ~4.6 MB
+- External JavaScript syntax failures: 0
+- Inline JavaScript syntax failures: 0
+- Nested duplicate admin/admin folder: removed
 
 Deployment note:
-The live CMS depends on the existing Cloudflare Worker, D1/R2 bindings and secrets. Those production secrets are intentionally not included in this GitHub package.
+Upload the CONTENTS of this package to the GitHub repository root. Keep the existing Cloudflare Worker, D1/R2 bindings and secrets configured in Cloudflare. Production secrets are intentionally not included in this package.

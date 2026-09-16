@@ -184,9 +184,7 @@ function getBookingCategory(item){
   return "property";
 }
 
-function isTourInquiry(inquiry){
-  return getInquiryCategory(inquiry) === "tour";
-}
+
 
 function closeCmsForm(id){
   document.getElementById(id)?.classList.add("hidden");
@@ -469,21 +467,7 @@ function removePhoto(type, index) {
    CMS TABLE HELPERS
 ========================= */
 function toggleCmsForm(id){ const box=document.getElementById(id); if(!box) return; box.classList.toggle('hidden'); }
-function showCmsForm(id){
-  const titleMap = {
-    destinationFormBox: "Tour Location Details",
-    propertyFormBox: "Property Details",
-    serviceFormBox: "Cafe / Service Details"
-  };
 
-  if(["destinationFormBox","propertyFormBox","serviceFormBox"].includes(id)){
-    v6OpenCmsModal(id, titleMap[id] || "Edit Details");
-    return;
-  }
-
-  document.getElementById(id)?.classList.remove("hidden");
-  setTimeout(()=>document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"}),80);
-}
 function sortCmsTable(type,key){ if(!cmsSort[type]) cmsSort[type]={key,dir:1}; if(cmsSort[type].key===key) cmsSort[type].dir*=-1; else cmsSort[type]={key,dir:1}; if(type==="destinations") renderDestinationsTable(); if(type==="properties") renderPropertiesTable(); if(type==="services") renderServicesTable(); }
 function sortByCms(type,data){ const s=cmsSort[type]||{key:"name",dir:1}; return [...data].sort((a,b)=>String(a[s.key]||"").localeCompare(String(b[s.key]||""))*s.dir); }
 function statusFilterMatch(item,filter){ if(filter==="active") return !!item.active; if(filter==="hidden") return !item.active; if(filter==="featured") return !!item.featured; return true; }
@@ -1431,88 +1415,15 @@ function removeServicePhoto(index) {
 
 
 
-function setInquiryMode(mode, btn){
-  v6InquiryMode = mode || "all";
-  document.getElementById("v6InquiryMode") && (document.getElementById("v6InquiryMode").value = v6InquiryMode);
-  document.querySelectorAll("[data-inquiry-mode]").forEach(x => x.classList.remove("active"));
-  btn?.classList.add("active");
-  applyInquiryFilters();
-}
 
-function setBookingMode(mode, btn){
-  v6BookingMode = mode || "all";
-  document.getElementById("v6BookingMode") && (document.getElementById("v6BookingMode").value = v6BookingMode);
-  document.querySelectorAll("[data-booking-mode]").forEach(x => x.classList.remove("active"));
-  btn?.classList.add("active");
-  applyBookingFilters();
-}
 
-function v6WrapFormFields(formSelector){
-  const form = document.querySelector(formSelector);
-  if(!form || form.dataset.v6Wrapped === "1") return;
 
-  const labelMap = {
-    propType:"Property Type", propName:"Property Name", propLocation:"Location / Area", propLat:"Latitude", propLng:"Longitude",
-    propMapUrl:"Google Map / Directions URL", propPrice:"Price / Starting From", propGuests:"Maximum Guests", propBedrooms:"Bedrooms",
-    propBathrooms:"Bathrooms", propFacilities:"Facilities", propDescription:"Description", propMainImage:"Main Cover Image URL",
-    propLogo:"Logo / Badge Image URL", propPhotos:"Gallery Photo URLs",
 
-    destName:"Tour Location Name", destProvince:"Province", destArea:"Nearest City / Area", destLat:"Latitude", destLng:"Longitude",
-    destMapUrl:"Google Map / Directions URL", destBestFor:"Best For", destTime:"Time Needed", destNearby:"Nearby Places",
-    destDescription:"Description", destLogo:"Logo / Badge Image URL", destPhotos:"Gallery Photo URLs",
 
-    serviceName:"Business / Service Name", serviceCategory:"Category", serviceLocation:"Location", serviceNearestCity:"Nearest City / Area",
-    serviceLat:"Latitude", serviceLng:"Longitude", serviceShortDescription:"Short Description", serviceFullDescription:"Full Description",
-    servicePhone:"Phone", serviceWhatsapp:"WhatsApp", serviceWebsite:"Website", serviceMapUrl:"Google Map URL", serviceOpeningHours:"Opening Hours",
-    serviceLogo:"Logo / Brand Image URL", serviceImage:"Main Image URL", servicePhotos:"Gallery Photo URLs"
-  };
 
-  [...form.querySelectorAll("input,select,textarea")].forEach(el => {
-    if(el.type === "hidden" || el.closest(".v6-field-wrap") || el.closest(".upload-box")) return;
-    const text = labelMap[el.id];
-    if(!text) return;
 
-    const wrap = document.createElement("div");
-    wrap.className = "v6-field-wrap";
 
-    const label = document.createElement("label");
-    label.textContent = text;
 
-    el.parentNode.insertBefore(wrap, el);
-    wrap.appendChild(label);
-    wrap.appendChild(el);
-  });
-
-  form.dataset.v6Wrapped = "1";
-}
-
-function v6OpenCmsModal(formBoxId, title){
-  const box = document.getElementById(formBoxId);
-  if(!box) return;
-
-  box.classList.remove("hidden");
-  box.classList.add("v6-cms-modal-open");
-
-  if(!box.querySelector(".v6-cms-modal-head")){
-    const head = document.createElement("div");
-    head.className = "v6-cms-modal-head";
-    head.innerHTML = `<h3>${escapeHtml(title || "Edit Details")}</h3><button type="button" onclick="v6CloseCmsModal('${formBoxId}')">×</button>`;
-    box.insertBefore(head, box.firstChild);
-  }else{
-    box.querySelector(".v6-cms-modal-head h3").textContent = title || "Edit Details";
-  }
-
-  v6WrapFormFields("#propertyForm");
-  v6WrapFormFields("#destinationForm");
-  v6WrapFormFields("#serviceForm");
-}
-
-function v6CloseCmsModal(formBoxId){
-  const box = document.getElementById(formBoxId);
-  if(!box) return;
-  box.classList.add("hidden");
-  box.classList.remove("v6-cms-modal-open");
-}
 
 /* =========================
    REVIEWS MANAGEMENT
@@ -1842,24 +1753,7 @@ async function updateInquiryStatus(id, status, sendEmail = false) {
   }
 }
 
-async function deleteInquiry(id) {
-  if (!confirm("Delete this inquiry?")) return;
 
-  const res = await fetch(`${API_BASE}/api/admin/inquiries/${id}`, {
-    method: "DELETE",
-    headers: authHeaders()
-  });
-
-  const result = await res.json();
-
-  if (!res.ok) {
-    alert(result.error || "Delete failed");
-    return;
-  }
-
-  alert("Inquiry deleted");
-  loadInquiries();
-}
 
 
 function renderInquiryCards(data) {
@@ -1928,41 +1822,7 @@ function renderInquiryCards(data) {
   });
 }
 
-function renderInquiryTable(data) {
-  const tbody = document.getElementById("inquiryTableBody");
-  if (!tbody) return;
 
-  if (!data.length) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="8" class="empty-row">No inquiries found</td>
-      </tr>
-    `;
-    return;
-  }
-
-  tbody.innerHTML = data.map(item => {
-    const statusClass = normalizeStatus(item.status);
-    const displayStatus = item.status || "New";
-
-    return `
-      <tr onclick="openInquiryModal('${item.id}')" class="clickable-row">
-        <td>${escapeHtml(item.reference || item.id || "-")}</td>
-        <td>${formatDate(item.createdAt || item.created_at)}</td>
-        <td>${escapeHtml(item.serviceType || "-")}</td>
-        <td>${escapeHtml(item.itemName || getItemNameFromService(item.serviceType) || "-")}</td>
-        <td>${escapeHtml(item.guestName || "-")}</td>
-        <td>${escapeHtml(item.dateFrom || "-")}</td>
-        <td>${escapeHtml(item.dateTo || "-")}</td>
-        <td>
-          <span class="status-badge status-${statusClass}">
-            ${escapeHtml(displayStatus)}
-          </span>
-        </td>
-      </tr>
-    `;
-  }).join("");
-}
 
 function renderInquiryStats(data) {
   const box = document.getElementById("inquiryStats");
@@ -1981,43 +1841,7 @@ function renderInquiryStats(data) {
 }
 
 
-function renderInquiryTypeCards(data) {
-  const box = document.getElementById("inquiryTypeCards");
-  if (!box) return;
 
-  const countType = keyword =>
-    data.filter(x =>
-      (x.serviceType || "").toLowerCase().includes(keyword) ||
-      (x.itemName || "").toLowerCase().includes(keyword)
-    ).length;
-
-  box.innerHTML = `
-    <div class="dashboard-card">
-      <h3>🏡 Villas</h3>
-      <div class="value">${countType("villa")}</div>
-    </div>
-
-    <div class="dashboard-card">
-      <h3>🏢 Apartments</h3>
-      <div class="value">${countType("apartment")}</div>
-    </div>
-
-    <div class="dashboard-card">
-      <h3>🏠 Homestays</h3>
-      <div class="value">${countType("homestay")}</div>
-    </div>
-
-    <div class="dashboard-card">
-      <h3>🧭 Tours</h3>
-      <div class="value">${countType("tour")}</div>
-    </div>
-
-    <div class="dashboard-card">
-      <h3>📞 Contact</h3>
-      <div class="value">${countType("contact")}</div>
-    </div>
-  `;
-}
 
 function renderMonthlyInquiryChart(data) {
   const box = document.getElementById("monthlyInquiryChart");
@@ -2602,48 +2426,7 @@ async function loadBookings() {
 
 
 
-function renderBookingsTable(data) {
-  const tbody = document.getElementById("bookingTableBody");
-  if (!tbody) return;
 
-  if (!data.length) {
-    tbody.innerHTML = `<tr><td colspan="10" class="empty-row">No bookings found</td></tr>`;
-    return;
-  }
-
-  tbody.innerHTML = data.map(item => {
-    const status = item.status || "Booked";
-    const statusClass = normalizeStatus(status);
-
-    return `
-      <tr onclick="openBookingDetails('${escapeJs(item.id)}')" class="clickable-row">
-        <td>${escapeHtml(item.reference || item.id || "-")}</td>
-        <td>${formatDate(item.createdAt || item.created_at)}</td>
-        <td>${escapeHtml(item.serviceType || "-")}</td>
-        <td>${escapeHtml(item.itemName || "-")}</td>
-        <td>
-          <strong>${escapeHtml(item.guestName || "-")}</strong><br>
-          <small>${escapeHtml(item.guestEmail || "")}</small><br>
-          <small>${escapeHtml(item.guestMobile || "")}</small>
-        </td>
-        <td>${escapeHtml(item.dateFrom || "-")}</td>
-        <td>${escapeHtml(item.dateTo || "-")}</td>
-        <td><span class="status-badge status-${statusClass}">${escapeHtml(status)}</span></td>
-        <td onclick="event.stopPropagation();" class="booking-remark-cell">
-          <div class="booking-remark-box">
-            <input id="bookingRemark-${escapeHtml(item.id)}" placeholder="Add remark / note..." />
-            <button type="button" onclick="saveBookingRemark('${escapeJs(item.id)}')">Save Note</button>
-          </div>
-        </td>
-        <td onclick="event.stopPropagation();">
-          <button class="mini-btn" onclick="openInquiryFromBooking('${escapeJs(item.id)}')">
-            Manage in Inquiry
-          </button>
-        </td>
-      </tr>
-    `;
-  }).join("");
-}
 
 function changeBookingMonth(offset) {
   bookingCalendarDate.setMonth(bookingCalendarDate.getMonth() + offset);
@@ -3599,21 +3382,9 @@ function previewCurrentSectionV51(device){
 
 
 
-function datePlusOne(dateValue) {
-  if (!dateValue) return "";
-  const d = new Date(dateValue + "T00:00:00");
-  if (isNaN(d.getTime())) return "";
-  d.setDate(d.getDate() + 1);
-  return toDateInputValue(d);
-}
 
-function safeBookingDateTo(inquiry) {
-  const from = inquiry?.dateFrom || "";
-  const to = inquiry?.dateTo || "";
-  if (to && from && to > from) return to;
-  if (classifyInquiryItem(inquiry) === "tour" && from) return datePlusOne(from);
-  return to || from;
-}
+
+
 
 
 
@@ -3652,100 +3423,15 @@ async function loadV6Settings(){
 
 
 /* V6.2 override CMS modal open/close to prevent duplicate floating headers */
-function v6OpenCmsModal(formBoxId, title){
-  const box = document.getElementById(formBoxId);
-  if(!box) return;
 
-  box.querySelectorAll(".v6-cms-modal-head").forEach(h => h.remove());
 
-  const head = document.createElement("div");
-  head.className = "v6-cms-modal-head";
-  head.innerHTML = `<h3>${escapeHtml(title || "Edit Details")}</h3><button type="button" onclick="v6CloseCmsModal('${formBoxId}')">×</button>`;
-  box.insertBefore(head, box.firstChild);
 
-  box.classList.remove("hidden");
-  box.classList.add("v6-cms-modal-open");
-
-  v6WrapFormFields("#propertyForm");
-  v6WrapFormFields("#destinationForm");
-  v6WrapFormFields("#serviceForm");
-}
-
-function v6CloseCmsModal(formBoxId){
-  const box = document.getElementById(formBoxId);
-  if(!box) return;
-  box.classList.add("hidden");
-  box.classList.remove("v6-cms-modal-open");
-  box.querySelectorAll(".v6-cms-modal-head").forEach(h => h.remove());
-}
 
 
 /* V6.3 hard modal open/close - wraps header + form in one centered shell */
-function v6OpenCmsModal(formBoxId, title){
-  const box = document.getElementById(formBoxId);
-  if(!box) return;
 
-  const form = box.querySelector("form");
-  if(!form) return;
 
-  // Remove any old/double headers and shells from earlier patches
-  box.querySelectorAll(".v6-cms-modal-head").forEach(h => h.remove());
 
-  let shell = box.querySelector(".v6-cms-modal-shell");
-
-  if(!shell){
-    shell = document.createElement("div");
-    shell.className = "v6-cms-modal-shell";
-    box.insertBefore(shell, box.firstChild);
-  }
-
-  const head = document.createElement("div");
-  head.className = "v6-cms-modal-head";
-  head.innerHTML = `<h3>${escapeHtml(title || "Edit Details")}</h3><button type="button" onclick="v6CloseCmsModal('${formBoxId}')">×</button>`;
-
-  shell.innerHTML = "";
-  shell.appendChild(head);
-  shell.appendChild(form);
-
-  // Inline hard styles to beat older CSS conflicts
-  box.style.position = "fixed";
-  box.style.inset = "0";
-  box.style.width = "100vw";
-  box.style.height = "100vh";
-  box.style.margin = "0";
-  box.style.padding = "24px";
-  box.style.zIndex = "2147483000";
-  box.style.background = "rgba(0,0,0,.62)";
-  box.style.display = "block";
-
-  shell.style.position = "fixed";
-  shell.style.top = "50%";
-  shell.style.left = "50%";
-  shell.style.transform = "translate(-50%, -50%)";
-  shell.style.width = "min(980px, 96vw)";
-  shell.style.maxHeight = "92vh";
-  shell.style.background = "#fff";
-  shell.style.borderRadius = "22px";
-  shell.style.overflow = "hidden";
-  shell.style.boxShadow = "0 24px 70px rgba(0,0,0,.35)";
-
-  box.classList.remove("hidden");
-  box.classList.add("v6-cms-modal-open");
-
-  v6WrapFormFields("#propertyForm");
-  v6WrapFormFields("#destinationForm");
-  v6WrapFormFields("#serviceForm");
-}
-
-function v6CloseCmsModal(formBoxId){
-  const box = document.getElementById(formBoxId);
-  if(!box) return;
-  box.classList.add("hidden");
-  box.classList.remove("v6-cms-modal-open");
-
-  // Clear only overlay inline display. Keep form inside shell; it will reopen correctly.
-  box.style.display = "none";
-}
 
 
 /* =========================
@@ -3764,48 +3450,12 @@ function v64TextOf(item){
 function isTourInquiry(inquiry){ return classifyInquiryItem(inquiry) === "tour"; }
 function isPropertyInquiry(inquiry){ return classifyInquiryItem(inquiry) === "property"; }
 
-function setInquiryMode(mode, btn){
-  v6InquiryMode = mode || "all";
-  const hidden = document.getElementById("v6InquiryMode");
-  if(hidden) hidden.value = v6InquiryMode;
-  document.querySelectorAll("[data-inquiry-mode]").forEach(x => x.classList.remove("active"));
-  btn?.classList.add("active");
-  applyInquiryFilters();
-}
-
-function setBookingMode(mode, btn){
-  v6BookingMode = mode || "all";
-  const hidden = document.getElementById("v6BookingMode");
-  if(hidden) hidden.value = v6BookingMode;
-  document.querySelectorAll("[data-booking-mode]").forEach(x => x.classList.remove("active"));
-  btn?.classList.add("active");
-  applyBookingFilters();
-}
 
 
-function renderInquiryTypeCards(data) {
-  const box = document.getElementById("inquiryTypeCards");
-  if (!box) return;
 
-  const propertyCount = data.filter(x => classifyInquiryItem(x) === "property").length;
-  const tourCount = data.filter(x => classifyInquiryItem(x) === "tour").length;
-  const serviceCount = data.filter(x => classifyInquiryItem(x) === "service").length;
 
-  const countType = keyword =>
-    data.filter(x =>
-      (x.serviceType || "").toLowerCase().includes(keyword) ||
-      (x.itemName || "").toLowerCase().includes(keyword)
-    ).length;
 
-  box.innerHTML = `
-    <div class="dashboard-card"><h3>🏡 Properties</h3><div class="value">${propertyCount}</div></div>
-    <div class="dashboard-card"><h3>🧭 Tours</h3><div class="value">${tourCount}</div></div>
-    <div class="dashboard-card"><h3>☕ Services / Contact</h3><div class="value">${serviceCount}</div></div>
-    <div class="dashboard-card"><h3>🏡 Villas</h3><div class="value">${countType("villa")}</div></div>
-    <div class="dashboard-card"><h3>🏢 Apartments</h3><div class="value">${countType("apartment")}</div></div>
-    <div class="dashboard-card"><h3>🏠 Homestays</h3><div class="value">${countType("homestay")}</div></div>
-  `;
-}
+
 
 
 function datePlusOne(dateValue) {
@@ -3824,20 +3474,7 @@ function safeBookingDateTo(inquiry) {
   return to || from;
 }
 
-function getItemNameForBooking(inquiry){
-  let item = inquiry?.itemName || "";
-  if(!item){
-    item = String(inquiry?.serviceType || "")
-      .replace("Villa Inquiry - ", "")
-      .replace("Apartment Inquiry - ", "")
-      .replace("Homestay Inquiry - ", "")
-      .replace("Tour Inquiry - ", "")
-      .replace("Tours Inquiry - ", "")
-      .trim();
-  }
-  if(!item && classifyInquiryItem(inquiry) === "tour") item = inquiry?.serviceType || "Tour Booking";
-  return item || "CeyBreez Booking";
-}
+
 
 
 
@@ -4168,102 +3805,10 @@ function v65RecalcBalance(){
 }
 
 /* Override inquiry table with confirmation columns */
-function renderInquiryTable(data) {
-  const tbody = document.getElementById("inquiryTableBody");
-  if (!tbody) return;
 
-  const thead = tbody.closest("table")?.querySelector("thead tr");
-  if(thead && !thead.dataset.v65){
-    thead.innerHTML = `
-      <th>Reference</th>
-      <th>Date</th>
-      <th>Type</th>
-      <th>Property / Tour</th>
-      <th>Guest</th>
-      <th>Dates</th>
-      <th>Guest Confirm</th>
-      <th>Admin Confirm</th>
-      <th>Status</th>
-    `;
-    thead.dataset.v65 = "1";
-  }
-
-  if (!data.length) {
-    tbody.innerHTML = `<tr><td colspan="9" class="empty-row">No inquiries found</td></tr>`;
-    return;
-  }
-
-  tbody.innerHTML = data.map(item => {
-    const statusClass = normalizeStatus(item.status);
-    const displayStatus = item.status || "New";
-
-    return `
-      <tr onclick="openInquiryModal('${escapeJs(item.id)}')" class="clickable-row">
-        <td>${escapeHtml(item.reference || item.id || "-")}</td>
-        <td>${formatDate(item.createdAt || item.created_at)}</td>
-        <td>${escapeHtml(classifyInquiryItem(item).toUpperCase())}<br><small>${escapeHtml(item.serviceType || "-")}</small></td>
-        <td>${escapeHtml(item.itemName || getItemNameForBooking(item) || "-")}</td>
-        <td><strong>${escapeHtml(item.guestName || "-")}</strong><br><small>${escapeHtml(item.guestEmail || "")}</small></td>
-        <td>${escapeHtml(item.dateFrom || "-")} → ${escapeHtml(item.dateTo || (classifyInquiryItem(item)==="tour" ? item.dateFrom : "-"))}</td>
-        <td>${v65GuestBadge(item)}</td>
-        <td>${v65AdminBadge(item)}</td>
-        <td><span class="status-badge status-${statusClass}">${escapeHtml(displayStatus)}</span></td>
-      </tr>
-    `;
-  }).join("");
-}
 
 /* Override booking table with confirmation/payment columns */
-function renderBookingsTable(data) {
-  const tbody = document.getElementById("bookingTableBody");
-  if (!tbody) return;
 
-  const thead = tbody.closest("table")?.querySelector("thead tr");
-  if(thead && !thead.dataset.v65){
-    thead.innerHTML = `
-      <th>Reference</th>
-      <th>Created</th>
-      <th>Type</th>
-      <th>Property / Tour</th>
-      <th>Guest</th>
-      <th>Dates</th>
-      <th>Amount</th>
-      <th>Guest</th>
-      <th>Payment</th>
-      <th>Status</th>
-      <th>Action</th>
-    `;
-    thead.dataset.v65 = "1";
-  }
-
-  if (!data.length) {
-    tbody.innerHTML = `<tr><td colspan="11" class="empty-row">No bookings found</td></tr>`;
-    return;
-  }
-
-  tbody.innerHTML = data.map(item => {
-    const status = item.status || "Booked";
-    const statusClass = normalizeStatus(status);
-
-    return `
-      <tr onclick="openBookingDetails('${escapeJs(item.id)}')" class="clickable-row">
-        <td>${escapeHtml(item.reference || item.id || "-")}</td>
-        <td>${formatDate(item.createdAt || item.created_at)}</td>
-        <td>${escapeHtml(classifyBookingItem(item).toUpperCase())}<br><small>${escapeHtml(item.serviceType || "-")}</small></td>
-        <td>${escapeHtml(item.itemName || "-")}</td>
-        <td><strong>${escapeHtml(item.guestName || "-")}</strong><br><small>${escapeHtml(item.guestEmail || "")}</small><br><small>${escapeHtml(item.guestMobile || "")}</small></td>
-        <td>${escapeHtml(item.dateFrom || "-")} → ${escapeHtml(item.dateTo || "-")}</td>
-        <td>${escapeHtml(item.currency || item.quoteCurrency || "")} ${escapeHtml(item.totalAmount || item.quoteTotalAmount || "-")}</td>
-        <td>${v65GuestBadge(item)}</td>
-        <td>${v65PaymentBadge(item)}</td>
-        <td><span class="status-badge status-${statusClass}">${escapeHtml(status)}</span></td>
-        <td onclick="event.stopPropagation();">
-          <button class="mini-btn" onclick="openInquiryFromBooking('${escapeJs(item.id)}')">Manage</button>
-        </td>
-      </tr>
-    `;
-  }).join("");
-}
 
 /* Add quote panel into inquiry modal after original modal opens */
 const v65OriginalOpenInquiryModal = typeof openInquiryModal === "function" ? openInquiryModal : null;
@@ -4294,40 +3839,15 @@ function v66Text(item){
 
 
 
-function setInquiryMode(mode, btn){
-  v6InquiryMode = mode || "all";
-  const hidden = document.getElementById("v6InquiryMode");
-  if (hidden) hidden.value = v6InquiryMode;
-  document.querySelectorAll("[data-inquiry-mode]").forEach(x => x.classList.remove("active"));
-  btn?.classList.add("active");
-  applyInquiryFilters();
-}
-
-function setBookingMode(mode, btn){
-  v6BookingMode = mode || "all";
-  const hidden = document.getElementById("v6BookingMode");
-  if (hidden) hidden.value = v6BookingMode;
-  document.querySelectorAll("[data-booking-mode]").forEach(x => x.classList.remove("active"));
-  btn?.classList.add("active");
-  applyBookingFilters();
-}
 
 
 
 
 
-async function deleteInquiry(id) {
-  if (!confirm("Delete this inquiry? Related booking and notes will also be removed.")) return;
-  try {
-    const res = await fetch(`${API_BASE}/api/admin/inquiries/${id}`, { method:"DELETE", headers: authHeaders() });
-    const result = await res.json();
-    if (!res.ok) return alert(result.error || "Delete failed");
-    alert("Inquiry and related records deleted");
-    closeInquiryModal?.();
-    await loadInquiries();
-    await loadBookings();
-  } catch (err) { alert(err.message); }
-}
+
+
+
+
 
 
 setTimeout(() => {
@@ -4351,13 +3871,13 @@ function v7Bool(v){return v===1||v===true||String(v||'').toLowerCase()==='true'|
 function v7GuestBadge(i){return v7Bool(i?.guestConfirmed)?`<span class="status-badge status-booked">Guest Confirmed</span>`:`<span class="status-badge status-quoted">Guest Pending</span>`;}
 function v7AdminBadge(i){return v7Bool(i?.adminConfirmed)||normalizeStatus(i?.status)==='booked'?`<span class="status-badge status-booked">Admin Confirmed</span>`:`<span class="status-badge status-contacted">Admin Pending</span>`;}
 function v7PaymentBadge(i){const s=String(i?.paymentStatus||'Pending'); const cls=s.toLowerCase().includes('paid')?'status-booked':'status-contacted'; return `<span class="status-badge ${cls}">${escapeHtml(s)}</span>`;}
-function setInquiryMode(mode,btn){v6InquiryMode=mode||'all'; const h=document.getElementById('v6InquiryMode'); if(h)h.value=v6InquiryMode; document.querySelectorAll('[data-inquiry-mode]').forEach(x=>x.classList.remove('active')); btn?.classList.add('active'); applyInquiryFilters();}
-function setBookingMode(mode,btn){v6BookingMode=mode||'all'; const h=document.getElementById('v6BookingMode'); if(h)h.value=v6BookingMode; document.querySelectorAll('[data-booking-mode]').forEach(x=>x.classList.remove('active')); btn?.classList.add('active'); applyBookingFilters();}
+
+
 function renderInquiryTypeCards(data){const b=document.getElementById('inquiryTypeCards'); if(!b)return; b.innerHTML=`<div class="dashboard-card"><h3>🏡 Properties</h3><div class="value">${data.filter(x=>classifyInquiryItem(x)==='property').length}</div></div><div class="dashboard-card"><h3>🧭 Tours</h3><div class="value">${data.filter(x=>classifyInquiryItem(x)==='tour').length}</div></div><div class="dashboard-card"><h3>☕ Services / Contact</h3><div class="value">${data.filter(x=>classifyInquiryItem(x)==='service').length}</div></div><div class="dashboard-card"><h3>🏡 Villas</h3><div class="value">${data.filter(x=>v7Text(x).includes('villa')).length}</div></div><div class="dashboard-card"><h3>🏢 Apartments</h3><div class="value">${data.filter(x=>v7Text(x).includes('apartment')).length}</div></div><div class="dashboard-card"><h3>🏠 Homestays</h3><div class="value">${data.filter(x=>v7Text(x).includes('homestay')).length}</div></div>`;}
 function renderInquiryTable(data){const tb=document.getElementById('inquiryTableBody'); if(!tb)return; const th=tb.closest('table')?.querySelector('thead tr'); if(th)th.innerHTML='<th>Reference</th><th>Date</th><th>Type</th><th>Property / Tour</th><th>Guest</th><th>Dates</th><th>Guest</th><th>Admin</th><th>Status</th>'; if(!data.length){tb.innerHTML='<tr><td colspan="9" class="empty-row">No inquiries found</td></tr>';return;} tb.innerHTML=data.map(item=>`<tr onclick="openInquiryModal('${escapeJs(item.id)}')" class="clickable-row"><td>${escapeHtml(item.reference||item.id||'-')}</td><td>${formatDate(item.createdAt||item.created_at)}</td><td>${escapeHtml(classifyInquiryItem(item).toUpperCase())}<br><small>${escapeHtml(item.serviceType||'-')}</small></td><td>${escapeHtml(item.itemName||'-')}</td><td><strong>${escapeHtml(item.guestName||'-')}</strong><br><small>${escapeHtml(item.guestEmail||'')}</small></td><td>${escapeHtml(item.dateFrom||'-')} → ${escapeHtml(item.dateTo||(classifyInquiryItem(item)==='tour'?item.dateFrom:'-'))}</td><td>${v7GuestBadge(item)}</td><td>${v7AdminBadge(item)}</td><td><span class="status-badge status-${normalizeStatus(item.status)}">${escapeHtml(item.status||'New')}</span></td></tr>`).join('');}
 function renderBookingsTable(data){const tb=document.getElementById('bookingTableBody'); if(!tb)return; const th=tb.closest('table')?.querySelector('thead tr'); if(th)th.innerHTML='<th>Reference</th><th>Created</th><th>Type</th><th>Property / Tour</th><th>Guest</th><th>Dates</th><th>Amount</th><th>Guest</th><th>Payment</th><th>Status</th><th>Action</th>'; if(!data.length){tb.innerHTML='<tr><td colspan="11" class="empty-row">No bookings found</td></tr>';return;} tb.innerHTML=data.map(item=>`<tr onclick="openBookingDetails('${escapeJs(item.id)}')" class="clickable-row"><td>${escapeHtml(item.reference||item.id||'-')}</td><td>${formatDate(item.createdAt||item.created_at)}</td><td>${escapeHtml(classifyBookingItem(item).toUpperCase())}<br><small>${escapeHtml(item.serviceType||'-')}</small></td><td>${escapeHtml(item.itemName||'-')}</td><td><strong>${escapeHtml(item.guestName||'-')}</strong><br><small>${escapeHtml(item.guestEmail||'')}</small><br><small>${escapeHtml(item.guestMobile||'')}</small></td><td>${escapeHtml(item.dateFrom||'-')} → ${escapeHtml(item.dateTo||'-')}</td><td>${escapeHtml(item.currency||item.quoteCurrency||'')} ${escapeHtml(item.totalAmount||item.quoteTotalAmount||'-')}</td><td>${v7GuestBadge(item)}</td><td>${v7PaymentBadge(item)}</td><td><span class="status-badge status-${normalizeStatus(item.status||'Booked')}">${escapeHtml(item.status||'Booked')}</span></td><td onclick="event.stopPropagation();"><button class="mini-btn" onclick="openBookingDetails('${escapeJs(item.id)}')">Manage</button></td></tr>`).join('');}
 async function deleteInquiry(id){if(!confirm('Delete this inquiry? Related booking and notes will also be removed.'))return; try{const res=await fetch(`${API_BASE}/api/admin/inquiries/${id}`,{method:'DELETE',headers:authHeaders()}); const result=await res.json(); if(!res.ok)return alert(result.error||'Delete failed'); alert('Inquiry and related records deleted'); closeInquiryModal?.(); await loadInquiries(); await loadBookings();}catch(err){alert(err.message);}}
-async function syncBookingsFromInquiries(){const res=await fetch(`${API_BASE}/api/admin/bookings/sync-from-inquiries`,{method:'POST',headers:authHeaders()}); const result=await res.json(); if(!res.ok)return alert(result.error||'Sync failed'); alert('Booking sync completed'); await loadBookings(); await loadInquiries();}
+
 setTimeout(()=>{const tools=document.querySelector('.booking-tools'); if(tools&&!document.getElementById('cleanupOrphansBtn')){const b=document.createElement('button'); b.id='cleanupOrphansBtn'; b.type='button'; b.textContent='Clean Orphans'; b.onclick=cleanupOrphanBookings; tools.appendChild(b);} if(tools&&!document.getElementById('syncBookingsBtn')){const b=document.createElement('button'); b.id='syncBookingsBtn'; b.type='button'; b.textContent='Sync Bookings'; b.onclick=syncBookingsFromInquiries; tools.appendChild(b);}},1200);
 
 
@@ -4396,19 +3916,9 @@ function v71InjectUnifiedFilters(){
   document.querySelectorAll(".v6-mode-tabs").forEach(x => { x.style.display = "none"; });
 }
 
-function setInquiryMode(mode, btn){
-  v71InquiryCategoryFilter = mode || "all";
-  const s = document.getElementById("v71InquiryCategoryFilter");
-  if(s) s.value = v71InquiryCategoryFilter;
-  applyInquiryFilters();
-}
 
-function setBookingMode(mode, btn){
-  v71BookingCategoryFilter = mode || "all";
-  const s = document.getElementById("v71BookingCategoryFilter");
-  if(s) s.value = v71BookingCategoryFilter;
-  applyBookingFilters();
-}
+
+
 
 
 
@@ -4443,48 +3953,7 @@ function v72PaymentPayloadFromModal(){
   };
 }
 
-async function savePaymentStatus(sendEmail = false){
-  const inquiry = currentInquiry || {};
-  const id = inquiry.id;
 
-  if(!id){
-    alert("Inquiry not selected");
-    return;
-  }
-
-  const payload = v72PaymentPayloadFromModal();
-  payload.sendEmail = !!sendEmail;
-
-  const msg = sendEmail
-    ? "Save payment status and send invoice/payment email to guest?"
-    : "Save payment status and sync with booking?";
-
-  if(!confirm(msg)) return;
-
-  const res = await fetch(`${API_BASE}/api/admin/inquiries/${id}/payment-sync`, {
-    method: "POST",
-    headers: authHeaders(),
-    body: JSON.stringify(payload)
-  });
-
-  const result = await res.json();
-
-  if(!res.ok){
-    alert(result.error || "Payment sync failed");
-    return;
-  }
-
-  alert(sendEmail ? (result.emailSent ? "Payment saved and email sent" : "Payment saved, but email was not sent") : "Payment status saved");
-
-  await loadInquiries();
-  await loadBookings();
-
-  const refreshed = allInquiries.find(x => String(x.id) === String(id));
-  if(refreshed){
-    currentInquiry = refreshed;
-    openInquiryModal(id);
-  }
-}
 
 function v72InjectPaymentButtons(){
   const panel = document.querySelector(".v65-quote-panel, .booking-confirm-panel");
@@ -4524,11 +3993,11 @@ function v8FinalBool(v){return v===1||v===true||String(v||"").toLowerCase()==="t
 function v8FinalGuestBadge(i){return v8FinalBool(i?.guestConfirmed)?`<span class="status-badge status-booked">Guest Confirmed</span>`:`<span class="status-badge status-quoted">Guest Pending</span>`;}
 function v8FinalAdminBadge(i){return v8FinalBool(i?.adminConfirmed)||normalizeStatus(i?.status)==="booked"?`<span class="status-badge status-booked">Admin Confirmed</span>`:`<span class="status-badge status-contacted">Admin Pending</span>`;}
 function v8FinalPaymentBadge(i){const s=String(i?.paymentStatus||"Pending");return `<span class="status-badge ${s.toLowerCase().includes("paid")?"status-booked":"status-contacted"}">${escapeHtml(s)}</span>`;}
-function getItemNameForBooking(i){return i?.itemName||String(i?.serviceType||"").replace("Villa Inquiry - ","").replace("Apartment Inquiry - ","").replace("Homestay Inquiry - ","").replace("Tour Inquiry - ","").replace("Tours Inquiry - ","").trim()||"CeyBreez Booking";}
+
 function v8FinalInjectFilters(){const it=document.querySelector("#inquiriesTab .inquiry-tools");if(it&&!document.getElementById("v8FinalInquiryFilter")){const s=document.createElement("select");s.id="v8FinalInquiryFilter";s.innerHTML=`<option value="all">All Inquiry Types</option><option value="property">Property Only</option><option value="tour">Tour Only</option><option value="service">Cafe / Service Only</option>`;s.onchange=()=>{v8FinalInquiryFilter=s.value||"all";applyInquiryFilters();};it.prepend(s);}const bt=document.querySelector(".booking-tools");if(bt&&!document.getElementById("v8FinalBookingFilter")){const s=document.createElement("select");s.id="v8FinalBookingFilter";s.innerHTML=`<option value="all">All Booking Types</option><option value="property">Property Only</option><option value="tour">Tour Only</option><option value="manual">Manual Only</option>`;s.onchange=()=>{v8FinalBookingFilter=s.value||"all";applyBookingFilters();};bt.prepend(s);const c=document.createElement("button");c.id="v8FinalCleanBtn";c.type="button";c.textContent="Clean Orphans";c.onclick=cleanupOrphanBookings;bt.appendChild(c);const y=document.createElement("button");y.id="v8FinalSyncBtn";y.type="button";y.textContent="Sync Bookings";y.onclick=syncBookingsFromInquiries;bt.appendChild(y);}document.querySelectorAll(".v6-mode-tabs").forEach(x=>x.style.display="none");}
-function setInquiryMode(m,b){v8FinalInquiryFilter=m||"all";const s=document.getElementById("v8FinalInquiryFilter");if(s)s.value=v8FinalInquiryFilter;applyInquiryFilters();}
-function setBookingMode(m,b){v8FinalBookingFilter=m||"all";const s=document.getElementById("v8FinalBookingFilter");if(s)s.value=v8FinalBookingFilter;applyBookingFilters();}
-async function syncBookingsFromInquiries(){const r=await fetch(`${API_BASE}/api/admin/bookings/sync-from-inquiries`,{method:"POST",headers:authHeaders()});const j=await r.json();if(!r.ok)return alert(j.error||"Sync failed");alert("Booking sync completed");await loadBookings();await loadInquiries();}
+
+
+
 const v8FinalOldShowTab=typeof showTab==="function"?showTab:null;if(v8FinalOldShowTab){showTab=function(tab){v8FinalOldShowTab(tab);setTimeout(v8FinalInjectFilters,80);};}document.addEventListener("DOMContentLoaded",()=>setTimeout(v8FinalInjectFilters,600));
 
 
@@ -4567,7 +4036,7 @@ function applyBookingFilters(){v9InjectFilters(); const search=(document.getElem
 async function cleanupOrphanBookings(){if(!confirm('Clean orphan bookings?'))return; const res=await fetch(`${API_BASE}/api/admin/bookings/cleanup-orphans`,{method:'POST',headers:authHeaders()}); const result=await res.json(); if(!res.ok)return alert(result.error||'Cleanup failed'); alert(`Removed ${result.deleted||0} orphan booking(s).`); await loadBookings(); await loadInquiries();}
 async function syncBookingsFromInquiries(){const res=await fetch(`${API_BASE}/api/admin/bookings/sync-from-inquiries`,{method:'POST',headers:authHeaders()}); const result=await res.json(); if(!res.ok)return alert(result.error||'Sync failed'); alert('Booking sync completed'); await loadBookings(); await loadInquiries();}
 function v9PaymentPayload(){return {currency:document.getElementById('bookingConfirmCurrency')?.value||'USD',unitRate:document.getElementById('bookingConfirmDayRate')?.value||'',discountPercent:document.getElementById('quoteDiscountPercent')?.value||'0',discountAmount:document.getElementById('quoteDiscountAmount')?.value||'0',totalAmount:document.getElementById('bookingConfirmTotalAmount')?.value||'',validUntil:document.getElementById('quoteValidUntil')?.value||'',paymentStatus:document.getElementById('quotePaymentStatus')?.value||'Pending',advanceAmount:document.getElementById('quoteAdvanceAmount')?.value||'',balanceAmount:document.getElementById('quoteBalanceAmount')?.value||'',adminMessage:document.getElementById('bookingConfirmAdminMessage')?.value||''};}
-async function savePaymentStatus(sendEmail=false){const id=currentInquiry?.id; if(!id)return alert('Inquiry not selected'); if(!confirm(sendEmail?'Save payment and send invoice/payment email to guest?':'Save payment status and sync with booking?'))return; const payload=v9PaymentPayload(); payload.sendEmail=!!sendEmail; const res=await fetch(`${API_BASE}/api/admin/inquiries/${id}/payment-sync`,{method:'POST',headers:authHeaders(),body:JSON.stringify(payload)}); const result=await res.json(); if(!res.ok)return alert(result.error||'Payment sync failed'); alert(sendEmail?(result.emailSent?'Payment saved and email sent':'Payment saved, but email was not sent'):'Payment status saved'); await loadInquiries(); await loadBookings(); const refreshed=allInquiries.find(x=>String(x.id)===String(id)); if(refreshed){currentInquiry=refreshed; openInquiryModal(id);}}
+
 function v9InjectPaymentButtons(){const panel=document.querySelector('.v65-quote-panel, .booking-confirm-panel'); if(!panel||document.getElementById('v9SavePaymentBtn'))return; const row=panel.querySelector('.v65-action-row')||panel; const save=document.createElement('button'); save.id='v9SavePaymentBtn'; save.type='button'; save.textContent='Save Payment Status'; save.onclick=()=>savePaymentStatus(false); const mail=document.createElement('button'); mail.id='v9SendPaymentBtn'; mail.type='button'; mail.textContent='Send Payment / Invoice Email'; mail.onclick=()=>savePaymentStatus(true); row.appendChild(save); row.appendChild(mail);}
 const v9OldOpenInquiryModal=typeof openInquiryModal==='function'?openInquiryModal:null; if(v9OldOpenInquiryModal){openInquiryModal=function(id){v9OldOpenInquiryModal(id); setTimeout(v9InjectPaymentButtons,150);};}
 const v9OldShowTab=typeof showTab==='function'?showTab:null; if(v9OldShowTab){showTab=function(tab){v9OldShowTab(tab); setTimeout(v9InjectFilters,80);};}

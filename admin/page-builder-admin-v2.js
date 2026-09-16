@@ -331,7 +331,7 @@
       const image=node.querySelector('[data-field="image"],img');
       return {id:`local:${key}`,__virtual:true,page:currentPage(),sectionKey:key,sectionType:'existing',title,subtitle,content,
         buttonText:button?.textContent?.trim()||'',buttonUrl:button?.getAttribute('href')||'',mediaUrl:image?.getAttribute('src')||'',
-        backgroundColor:'#ffffff',textColor:'#222222',headingColor:'#17324d',buttonColor:'#0f766e',sortOrder:index,active:true,settings:{}};
+        backgroundColor:'#ffffff',textColor:'#222222',headingColor:'#17324d',buttonColor:'#0f766e',sortOrder:index,active:true,settings:{cards:[...node.querySelectorAll('[data-field="cards"] > *')].map(card=>({image:card.querySelector('img')?.getAttribute('src')||'',title:card.querySelector('figcaption,h3,h2')?.textContent?.trim()||'',description:card.querySelector('p')?.textContent?.trim()||'',buttonText:card.querySelector('a')?.textContent?.trim()||'',buttonUrl:card.querySelector('a')?.getAttribute('href')||''}))}};
     });
     state.items=[...state.items.filter(x=>!x.__virtual),...virtual]; renderList();
   }

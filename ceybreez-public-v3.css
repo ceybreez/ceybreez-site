@@ -108,3 +108,121 @@ body[data-page="contact"] .contact-logo{filter:brightness(0) invert(1);max-width
   body[data-page="contact"] .contact-info,body[data-page="contact"] .contact-form-box{padding:30px 20px!important;border-radius:24px!important}
 }
 @media(prefers-reduced-motion:reduce){.v31-js .v31-reveal{opacity:1;transform:none;transition:none!important}}
+
+/* =========================================================
+   CeyBreez V3.2 — Contact + inquiry readability patch
+   ========================================================= */
+
+/* Contact: old contact.css left each grid child at width:48%.
+   In the V3 grid this made both cards appear unnaturally narrow. */
+body[data-page="contact"] .contact-page{
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:100px max(24px,calc((100% - 1320px)/2))!important;
+  background-position:center!important;
+  background-size:cover!important;
+}
+body[data-page="contact"] .contact-container{
+  width:100%!important;
+  max-width:1320px!important;
+  grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr)!important;
+  gap:30px!important;
+  margin:0 auto!important;
+}
+body[data-page="contact"] .contact-info,
+body[data-page="contact"] .contact-form-box{
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  align-self:stretch!important;
+}
+body[data-page="contact"] .contact-form-box label{
+  color:#17332f!important;
+}
+body[data-page="contact"] .contact-form-box input,
+body[data-page="contact"] .contact-form-box select,
+body[data-page="contact"] .contact-form-box textarea{
+  color:#17332f!important;
+  -webkit-text-fill-color:#17332f!important;
+  caret-color:#0c4f49;
+}
+body[data-page="contact"] .contact-form-box input::placeholder,
+body[data-page="contact"] .contact-form-box textarea::placeholder{
+  color:#74817d!important;
+  -webkit-text-fill-color:#74817d!important;
+  opacity:1!important;
+}
+body[data-page="contact"] .contact-form-box select option{
+  color:#17332f!important;
+  background:#fff!important;
+}
+
+/* Property / tour inquiry panels: use a clean light form surface with
+   dark text so labels, entered values and placeholders remain readable. */
+body:not([data-page="home"]) .villa-inquiry-box,
+body:not([data-page="home"]) .property-inquiry-box,
+body:not([data-page="home"]) .planner-box{
+  background:rgba(255,255,255,.97)!important;
+  border:1px solid rgba(255,255,255,.75)!important;
+  box-shadow:0 20px 55px rgba(0,0,0,.16)!important;
+}
+body:not([data-page="home"]) .villa-inquiry-box label,
+body:not([data-page="home"]) .property-inquiry-box label,
+body:not([data-page="home"]) .planner-box label,
+body:not([data-page="home"]) .planner-box .field-label{
+  color:#17332f!important;
+}
+body:not([data-page="home"]) .villa-inquiry-section input,
+body:not([data-page="home"]) .villa-inquiry-section select,
+body:not([data-page="home"]) .villa-inquiry-section textarea,
+body:not([data-page="home"]) .property-inquiry-section input,
+body:not([data-page="home"]) .property-inquiry-section select,
+body:not([data-page="home"]) .property-inquiry-section textarea,
+body:not([data-page="home"]) .trip-planner input,
+body:not([data-page="home"]) .trip-planner select,
+body:not([data-page="home"]) .trip-planner textarea{
+  background:#f7f5ef!important;
+  color:#17332f!important;
+  -webkit-text-fill-color:#17332f!important;
+  border:1px solid rgba(12,79,73,.16)!important;
+  caret-color:#0c4f49!important;
+}
+body:not([data-page="home"]) .villa-inquiry-section input::placeholder,
+body:not([data-page="home"]) .villa-inquiry-section textarea::placeholder,
+body:not([data-page="home"]) .property-inquiry-section input::placeholder,
+body:not([data-page="home"]) .property-inquiry-section textarea::placeholder,
+body:not([data-page="home"]) .trip-planner input::placeholder,
+body:not([data-page="home"]) .trip-planner textarea::placeholder{
+  color:#74817d!important;
+  -webkit-text-fill-color:#74817d!important;
+  opacity:1!important;
+}
+body:not([data-page="home"]) .villa-inquiry-section select option,
+body:not([data-page="home"]) .property-inquiry-section select option,
+body:not([data-page="home"]) .trip-planner select option{
+  color:#17332f!important;
+  background:#fff!important;
+}
+body:not([data-page="home"]) .villa-inquiry-section input:focus,
+body:not([data-page="home"]) .villa-inquiry-section select:focus,
+body:not([data-page="home"]) .villa-inquiry-section textarea:focus,
+body:not([data-page="home"]) .property-inquiry-section input:focus,
+body:not([data-page="home"]) .property-inquiry-section select:focus,
+body:not([data-page="home"]) .property-inquiry-section textarea:focus,
+body:not([data-page="home"]) .trip-planner input:focus,
+body:not([data-page="home"]) .trip-planner select:focus,
+body:not([data-page="home"]) .trip-planner textarea:focus{
+  background:#fff!important;
+  color:#17332f!important;
+  -webkit-text-fill-color:#17332f!important;
+  border-color:#0c4f49!important;
+  box-shadow:0 0 0 3px rgba(12,79,73,.12)!important;
+}
+
+@media(max-width:1000px){
+  body[data-page="contact"] .contact-container{grid-template-columns:1fr!important}
+}
+@media(max-width:700px){
+  body[data-page="contact"] .contact-page{padding:54px 14px!important}
+}

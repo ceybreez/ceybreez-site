@@ -34,3 +34,5 @@ Final QA:
 
 Deployment note:
 Upload the CONTENTS of this package to the GitHub repository root. Keep the existing Cloudflare Worker, D1/R2 bindings and secrets configured in Cloudflare. Production secrets are intentionally not included in this package.
+
+V3.2 PATCH: Contact card width conflict fixed; inquiry/contact form text contrast improved.

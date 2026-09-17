@@ -578,11 +578,13 @@
       if(!screen || screen.classList.contains("hide")) return;
       screen.classList.add("hide");
       document.body.classList.add("entered");
-      sessionStorage.setItem("ceybreezEntered", "yes");
+      try { sessionStorage.setItem("ceybreezEntered", "yes"); } catch (e) {}
       setTimeout(() => screen.remove(), 900);
     }
 
-    if(sessionStorage.getItem("ceybreezEntered") === "yes"){
+    let alreadyEntered = false;
+    try { alreadyEntered = sessionStorage.getItem("ceybreezEntered") === "yes"; } catch (e) {}
+    if(alreadyEntered){
       $("#welcomeScreen")?.remove();
       document.body.classList.add("entered");
     } else {
@@ -668,7 +670,7 @@
       if(!selected.length) return renderEmpty(box, "Featured tours will appear here from your CMS.");
       box.innerHTML = selected.map((item, index) => `
         <a class="tour-card ${index === 0 ? 'tour-card-featured' : ''}" href="tour-details.html?slug=${encodeURIComponent(item.slug || item.id || item.title || '')}">
-          <!-- IMAGE SOURCE: ${esc(imageOf(item,  | ROLE: ${esc(item.title || | To change this picture, change the src value below. -->
+          <!-- DYNAMIC IMAGE: Tour main image comes from the Tours CMS/API. -->
 <img src="${esc(imageOf(item, 'images/train.jpg'))}" alt="${esc(item.title || 'Sri Lanka tour')}" loading="lazy" decoding="async">
           <div class="card-shade"></div>
           <div class="tour-card-top"><span>${esc(item.category || 'Private Tour')}</span><b>${esc(item.duration || '')}</b></div>
@@ -686,7 +688,7 @@
       box.innerHTML = selected.map((item, index) => {
         const page = item.type === "apartment" ? "apartments.html" : item.type === "homestay" ? "homestays.html" : "villas.html";
         return `<a class="stay-card ${index === 0 ? 'stay-card-large' : ''}" href="${page}">
-          <div class="stay-image"><!-- IMAGE SOURCE: ${esc(imageOf(item))} | ROLE: ${esc(item.name || | To change this picture, change the src value below. -->
+          <div class="stay-image"><!-- DYNAMIC IMAGE: Stay main image comes from the Properties CMS/API. -->
 <img src="${esc(imageOf(item))}" alt="${esc(item.name || 'Sri Lanka stay')}" loading="lazy" decoding="async"><span>${esc(item.type || 'Stay')}</span></div>
           <div class="stay-copy"><div><p><i class="fa-solid fa-location-dot"></i> ${esc(item.location || 'Sri Lanka')}</p><h3>${esc(item.name || 'CeyBreez Stay')}</h3></div><strong>${money(item)}</strong></div>
         </a>`;
@@ -699,7 +701,7 @@
       const selected = (Array.isArray(items) ? items : []).slice(0, 5);
       if(!selected.length) return renderEmpty(box, "Featured destinations will appear here from your CMS.");
       box.innerHTML = selected.map((item, index) => `<a class="destination-card destination-${index + 1}" href="tours.html">
-        <!-- IMAGE SOURCE: ${esc(imageOf(item, index % 2 ?  | ROLE: ${esc(item.name || | To change this picture, change the src value below. -->
+        <!-- DYNAMIC IMAGE: Destination image comes from the Destinations CMS/API. -->
 <img src="${esc(imageOf(item, index % 2 ? 'images/mountains.jpg' : 'images/nature.jpg'))}" alt="${esc(item.name || 'Sri Lanka destination')}" loading="lazy" decoding="async">
         <div class="card-shade"></div>
         <div class="destination-copy"><span>${esc(item.province || 'Sri Lanka')}</span><h3>${esc(item.name || 'Explore')}</h3><p>${esc(item.bestFor || item.timeNeeded || '')}</p></div>
@@ -714,7 +716,7 @@
       const selected = (featured.length ? featured : active).slice(0, 4);
       if(!selected.length) return renderEmpty(box, "Featured services will appear here from your CMS.");
       box.innerHTML = selected.map(item => `<a class="service-card" href="services.html">
-        <div class="service-image"><!-- IMAGE SOURCE: ${esc(imageOf(item,  | ROLE: ${esc(item.name || | To change this picture, change the src value below. -->
+        <div class="service-image"><!-- DYNAMIC IMAGE: Service image comes from the Services CMS/API. -->
 <img src="${esc(imageOf(item, 'images/food.jpg'))}" alt="${esc(item.name || 'Local service')}" loading="lazy" decoding="async"></div>
         <div class="service-copy"><span>${esc(item.category || 'Local Service')}</span><h3>${esc(item.name || 'CeyBreez Service')}</h3><p><i class="fa-solid fa-location-dot"></i> ${esc(item.location || item.nearestCity || 'Sri Lanka')}</p></div><i class="service-arrow fa-solid fa-arrow-up-right-from-square"></i>
       </a>`).join("");
@@ -764,7 +766,7 @@
       const display = activeGalleryItems.slice(0, 8);
       grid.innerHTML = display.map((item, index) => `
         <button class="gallery-tile gallery-tile-${(index % 8) + 1}" type="button" data-gallery-index="${index}" aria-label="Open ${esc(item.title)}">
-          <!-- IMAGE SOURCE: ${esc(item.src)} | ROLE: ${esc(item.title)} | To change this picture, change the src value below. -->
+          <!-- DYNAMIC IMAGE: Gallery image comes from home_gallery CMS or fallback media. -->
 <img src="${esc(item.src)}" alt="${esc(item.title)}" loading="lazy" decoding="async">
           <span class="gallery-tile-shade"></span>
           <span class="gallery-tile-copy"><small>${esc(item.kicker)}</small><strong>${esc(item.title)}</strong></span>
@@ -839,7 +841,7 @@
         </article>`;
       }
       return `<a class="reel-card reel-link-card" href="${esc(cleanUrl)}" target="_blank" rel="noopener">
-        <!-- IMAGE SOURCE: ${esc(poster ||  | ROLE: ${esc(title)} | To change this picture, change the src value below. -->
+        <!-- DYNAMIC IMAGE: Reel poster comes from the Reels CMS entry or fallback image. -->
 <img src="${esc(poster || 'images/cover.jpg')}" alt="${esc(title)}" loading="lazy">
         <span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span>
         <div class="reel-caption"><small>${esc(label)}</small><strong>${esc(title)}</strong><span>Watch reel <i class="fa-solid fa-arrow-up-right-from-square"></i></span></div>

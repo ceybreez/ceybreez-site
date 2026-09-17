@@ -62,3 +62,75 @@
 @media(max-width:1050px){.td4-hero-grid{grid-template-columns:1fr;gap:34px}.td4-price-card{max-width:430px}.td4-gallery-main{height:520px!important}.td4-quick-grid{grid-template-columns:repeat(2,1fr)}.td4-layout{grid-template-columns:1fr!important}.td4-booking-panel{position:static!important}.td4-note-card{grid-template-columns:1fr 1fr}.td4-related-grid{grid-template-columns:repeat(2,1fr)!important}}
 @media(max-width:720px){.td4-section-shell,.td4-hero-shell,.td4-final-content,.td4-status{width:min(100% - 28px,1240px)}.td4-hero{padding:110px 0 58px}.td4-topline{margin-bottom:24px}.td4-topline button{padding:9px 12px;font-size:11px}.td4-breadcrumb{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-bottom:26px}.td4-hero-copy h1{font-size:48px}.td4-hero-copy>p{font-size:14px}.td4-meta{gap:7px}.td4-meta span{font-size:10px;padding:8px 10px}.td4-price-card{padding:22px;border-radius:22px}.td4-gallery-wrap{padding:58px 0 36px}.td4-gallery-head,.td4-related-head{display:block;margin-bottom:20px}.td4-gallery-head>p{margin-top:13px}.td4-gallery-head h2,.td4-related-head h2{font-size:42px}.td4-gallery{display:block!important}.td4-gallery-main{height:430px!important;border-radius:24px!important}.td4-gallery-thumbs{grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-rows:auto!important;gap:7px!important;margin-top:7px}.td4-gallery-thumbs img{height:78px!important;border-radius:12px!important}.td4-view-all{right:12px!important;bottom:97px!important;padding:10px 12px!important;font-size:10px!important}.td4-quick-strip{padding-bottom:55px}.td4-quick-grid{grid-template-columns:1fr 1fr}.td4-quick-grid article{padding:18px 14px}.td4-quick-grid article>span{font-size:20px}.td4-content-zone{padding:18px 0 75px}.td4-card{padding:24px!important;border-radius:22px!important}.td4-card-heading h2{font-size:39px}.td4-promise-grid{grid-template-columns:1fr}.td4-itinerary>div{padding-left:65px!important}.td4-split-card{grid-template-columns:1fr!important}.td4-split-card>div+div{border-left:0;border-top:1px solid var(--td4-line);padding-left:10px;padding-top:26px}.td4-note-card{grid-template-columns:1fr;border-radius:22px}.td4-note-image{min-height:250px}.td4-note-copy{padding:27px}.td4-note-copy h2{font-size:42px}.td4-booking-card{padding:23px!important;border-radius:22px!important}.td4-booking-card .two-col{grid-template-columns:1fr}.td4-related{padding:68px 0}.td4-related-head a{display:inline-block;margin-top:12px}.td4-related-grid{grid-template-columns:1fr!important}.td4-related-grid .related-card img{height:230px!important}.td4-final-cta{min-height:520px}.td4-final-content h2{font-size:52px}.td4-mobile-book{display:flex!important;position:fixed!important;z-index:3500!important}.floating-whatsapp-v3{bottom:84px!important}}
 @media(max-width:460px){.td4-quick-grid{grid-template-columns:1fr}.td4-gallery-main{height:360px!important}.td4-gallery-thumbs img{height:64px!important}.td4-view-all{bottom:83px!important}.td4-hero-copy h1{font-size:43px}.td4-note-copy h2,.td4-final-content h2{font-size:44px}}
+
+
+/* ================================================================
+   V4.6 TOUR DETAILS CONFLICT FIX
+   Fixes old public-v3 layout overrides + hero text contrast.
+   ================================================================ */
+body[data-page="tour-details"] main{
+  padding-top:0 !important;
+  background:var(--td4-cream) !important;
+}
+
+body[data-page="tour-details"] .td4-hero{
+  padding-top:150px !important;
+  color:#fff !important;
+}
+
+body[data-page="tour-details"] .td4-hero-copy h1,
+body[data-page="tour-details"] #tourTitle{
+  color:#fff !important;
+  text-shadow:0 3px 24px rgba(0,0,0,.18);
+}
+
+body[data-page="tour-details"] .td4-hero-copy > p,
+body[data-page="tour-details"] #tourSummary{
+  color:rgba(255,255,255,.82) !important;
+}
+
+body[data-page="tour-details"] .td4-price-card strong,
+body[data-page="tour-details"] #tourPrice{
+  color:#fff !important;
+}
+
+body[data-page="tour-details"] .td4-price-label,
+body[data-page="tour-details"] .td4-price-card p{
+  color:rgba(255,255,255,.72) !important;
+}
+
+body[data-page="tour-details"] .td4-breadcrumb,
+body[data-page="tour-details"] .td4-breadcrumb span{
+  color:rgba(255,255,255,.62) !important;
+}
+body[data-page="tour-details"] .td4-breadcrumb a{color:rgba(255,255,255,.78) !important;}
+body[data-page="tour-details"] .td4-breadcrumb strong{color:#fff !important;}
+
+body[data-page="tour-details"] .td4-gallery-wrap{
+  margin:0 !important;
+  background:var(--td4-cream) !important;
+}
+
+body[data-page="tour-details"] .td4-gallery{
+  width:100% !important;
+  max-width:none !important;
+  overflow:visible !important;
+  border-radius:0 !important;
+}
+
+body[data-page="tour-details"] .td4-related{
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+}
+
+body[data-page="tour-details"] .td4-gallery-head h2,
+body[data-page="tour-details"] .td4-card-heading h2,
+body[data-page="tour-details"] .td4-related-head h2,
+body[data-page="tour-details"] .td4-note-copy h2{
+  color:var(--td4-forest) !important;
+}
+
+@media(max-width:720px){
+  body[data-page="tour-details"] .td4-hero{padding-top:112px !important;}
+}

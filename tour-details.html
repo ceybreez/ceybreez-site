@@ -4,11 +4,7 @@
      PAGE: TOUR DETAILS
      FILE: tour-details.html
      PURPOSE: Dynamic detail page for one tour package, gallery, itinerary, inclusions, related tours and inquiry.
-     CSS LOADED: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css, tour-details.css, reviews-showcase.css, ceybreez-language.css, ceybreez-public-v3.css?v=20260916-3, tour-details-v4.css?v=20260917-1
-     JS LOADED: tour-details.js, reviews-showcase.js, page-builder.js?v=20260916-safe-cms, ceybreez-language.js, ceybreez-public-v3.js?v=20260916-2
-
-     EDITING TIP:
-     Search this file for "SECTION:" to jump between visible page sections.
+     CSS LOADED: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css, tour-details.css, reviews-showcase.css, ceybreez-language.css, ceybreez-public-v3.css?v=20260916-3, tour-details-v4.css?v=20260917-6"SECTION:" to jump between visible page sections.
      Search for "IMAGE SOURCE:" to find hard-coded images.
      Dynamic CMS/API images are noted in the section comments.
      ================================================================ -->
@@ -30,7 +26,7 @@
   <link rel="stylesheet" href="reviews-showcase.css">
   <link rel="stylesheet" href="ceybreez-language.css">
   <link rel="stylesheet" href="ceybreez-public-v3.css?v=20260916-3">
-  <link rel="stylesheet" href="tour-details-v4.css?v=20260917-1">
+  <link rel="stylesheet" href="tour-details-v4.css?v=20260917-6">
 
   <script src="tour-details.js" defer></script>
 </head>
@@ -64,14 +60,14 @@
 </header>
 
 <main>
-  <section <!-- ================================================================
+  <!-- ================================================================
      SECTION: TOUR DETAIL HERO
      WHAT YOU SEE: Tour title, meta, price summary, share/back controls.
      MAIN CSS: tour-details-v4.css
      DATA / JS: tour-details.js fills dynamic values.
      MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
      ================================================================ -->
-class="td4-hero">
+<section class="td4-hero">
     <div class="td4-hero-glow td4-glow-one"></div>
     <div class="td4-hero-glow td4-glow-two"></div>
     <div class="td4-hero-shell">
@@ -116,14 +112,14 @@ class="td4-hero">
 
   <div id="detailStatus" class="status-box td4-status">Loading tour details...</div>
 
-  <section <!-- ================================================================
+  <!-- ================================================================
      SECTION: TOUR PHOTO GALLERY
      WHAT YOU SEE: Main image + thumbnails + lightbox.
      MAIN CSS: tour-details-v4.css
      DATA / JS: tour-details.js uses mainImage/photos.
      MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
      ================================================================ -->
-class="td4-gallery-wrap">
+<section class="td4-gallery-wrap">
     <div class="td4-section-shell">
       <div class="td4-gallery-head">
         <div><span class="td4-eyebrow">See the journey</span><h2>A glimpse of what awaits.</h2></div>
@@ -142,14 +138,14 @@ class="td4-gallery-wrap">
     </div>
   </section>
 
-  <section <!-- ================================================================
+  <!-- ================================================================
      SECTION: QUICK TOUR FACTS
      WHAT YOU SEE: Duration/location/pickup/price facts.
      MAIN CSS: tour-details-v4.css
      DATA / JS: tour-details.js.
      MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
      ================================================================ -->
-class="td4-quick-strip">
+<section class="td4-quick-strip">
     <div class="td4-section-shell td4-quick-grid">
       <article><span>01</span><div><strong>Private & flexible</strong><p>Your route can move with you.</p></div></article>
       <article><span>02</span><div><strong>Local planning</strong><p>Built with Sri Lanka knowledge.</p></div></article>
@@ -158,14 +154,14 @@ class="td4-quick-strip">
     </div>
   </section>
 
-  <section <!-- ================================================================
+  <!-- ================================================================
      SECTION: OVERVIEW + ITINERARY + INCLUSIONS
      WHAT YOU SEE: Main tour description and itinerary content cards.
      MAIN CSS: tour-details-v4.css
      DATA / JS: tour-details.js.
      MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
      ================================================================ -->
-class="td4-content-zone">
+<section class="td4-content-zone">
     <div class="td4-section-shell detail-layout td4-layout">
       <div class="detail-main td4-main">
         <section class="content-card td4-card td4-overview-card">
@@ -263,14 +259,14 @@ class="td4-content-zone">
     </div>
   </section>
 
-  <section <!-- ================================================================
+  <!-- ================================================================
      SECTION: FINAL TOUR CTA
      WHAT YOU SEE: Large background image CTA.
      MAIN CSS: tour-details-v4.css
      DATA / JS: Static HTML/image.
      MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
      ================================================================ -->
-class="td4-final-cta">
+<section class="td4-final-cta">
     <div class="td4-final-bg"><!-- IMAGE SOURCE: images/beach.jpg | ROLE: Sri Lanka coast | To change this picture, change the src value below. -->
 <img src="images/beach.jpg" alt="Sri Lanka coast" loading="lazy"></div>
     <div class="td4-final-overlay"></div>
@@ -290,14 +286,14 @@ class="td4-final-cta">
   <a href="#tourInquiryForm">Request Tour</a>
 </div>
 
-<section <!-- ================================================================
+<!-- ================================================================
      SECTION: TOUR REVIEWS
      WHAT YOU SEE: Guest reviews/social proof.
      MAIN CSS: reviews-showcase.css
      DATA / JS: reviews-showcase.js.
      MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
      ================================================================ -->
-class="cb-social-proof" data-page-reviews="1" data-reviews-showcase data-review-type="tour" data-limit="9">
+<section class="cb-social-proof" data-page-reviews="1" data-reviews-showcase data-review-type="tour" data-limit="9">
   <div class="cb-section-head"><span class="eyebrow">Guest Reviews</span><h2>What Our Guests Say</h2><p>Real feedback from guests who explored Sri Lanka with CeyBreez.</p></div>
   <div class="cb-review-toolbar"><select data-review-item-filter><option value="">All reviews</option></select><a data-google-review-link href="#" target="_blank" rel="noopener">Leave a Google Review</a></div>
   <div class="cb-review-grid" data-review-grid></div>

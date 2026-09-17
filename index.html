@@ -464,13 +464,13 @@
 
         <div class="reels-track" id="homeReelsTrack" aria-live="polite">
           <article class="reel-card reel-placeholder"><!-- IMAGE SOURCE: images/beach.jpg | ROLE: Sri Lanka beach travel reel preview | To change this picture, change the src value below. -->
-<img src="images/beach.jpg" alt="Sri Lanka beach travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>COAST</small><strong>Island days</strong><span>Reels load from CMS</span></div></article>
+<img src="images/beach.jpg" alt="Sri Lanka beach travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>COAST</small><strong>Island days</strong><span>Slow moments, island stories</span></div></article>
           <article class="reel-card reel-placeholder"><!-- IMAGE SOURCE: images/train.jpg | ROLE: Sri Lanka train travel reel preview | To change this picture, change the src value below. -->
-<img src="images/train.jpg" alt="Sri Lanka train travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>HILL COUNTRY</small><strong>Window-seat views</strong><span>Reels load from CMS</span></div></article>
+<img src="images/train.jpg" alt="Sri Lanka train travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>HILL COUNTRY</small><strong>Window-seat views</strong><span>Slow moments, island stories</span></div></article>
           <article class="reel-card reel-placeholder"><!-- IMAGE SOURCE: images/nature.jpg | ROLE: Sri Lanka nature travel reel preview | To change this picture, change the src value below. -->
-<img src="images/nature.jpg" alt="Sri Lanka nature travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>NATURE</small><strong>Into the wild</strong><span>Reels load from CMS</span></div></article>
+<img src="images/nature.jpg" alt="Sri Lanka nature travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>NATURE</small><strong>Into the wild</strong><span>Slow moments, island stories</span></div></article>
           <article class="reel-card reel-placeholder"><!-- IMAGE SOURCE: images/food.jpg | ROLE: Sri Lanka food travel reel preview | To change this picture, change the src value below. -->
-<img src="images/food.jpg" alt="Sri Lanka food travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>LOCAL LIFE</small><strong>Taste the island</strong><span>Reels load from CMS</span></div></article>
+<img src="images/food.jpg" alt="Sri Lanka food travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>LOCAL LIFE</small><strong>Taste the island</strong><span>Slow moments, island stories</span></div></article>
         </div>
 
         <div class="reels-footnote"><span><i class="fa-solid fa-volume-xmark"></i> Videos preview muted</span><span>Swipe to explore <i class="fa-solid fa-arrow-right"></i></span></div>
@@ -667,7 +667,7 @@
       if(!box) return;
       const list = (Array.isArray(items) ? items : []).filter(x => x.active !== false && (x.featured === true || Number(x.featured) === 1));
       const selected = (list.length ? list : (Array.isArray(items) ? items : [])).slice(0, 3);
-      if(!selected.length) return renderEmpty(box, "Featured tours will appear here from your CMS.");
+      if(!selected.length){ const section = box.closest("section"); if(section) section.style.display = "none"; return; }
       box.innerHTML = selected.map((item, index) => `
         <a class="tour-card ${index === 0 ? 'tour-card-featured' : ''}" href="tour-details.html?slug=${encodeURIComponent(item.slug || item.id || item.title || '')}">
           <!-- DYNAMIC IMAGE: Tour main image comes from the Tours CMS/API. -->
@@ -684,7 +684,7 @@
       const active = (Array.isArray(items) ? items : []).filter(x => x.active !== false);
       const featured = active.filter(x => x.featured === true || Number(x.featured) === 1);
       const selected = (featured.length ? featured : active).slice(0, 4);
-      if(!selected.length) return renderEmpty(box, "Featured stays will appear here from your CMS.");
+      if(!selected.length){ const section = box.closest("section"); if(section) section.style.display = "none"; return; }
       box.innerHTML = selected.map((item, index) => {
         const page = item.type === "apartment" ? "apartments.html" : item.type === "homestay" ? "homestays.html" : "villas.html";
         return `<a class="stay-card ${index === 0 ? 'stay-card-large' : ''}" href="${page}">
@@ -699,7 +699,7 @@
       const box = $("#featuredDestinationsGrid");
       if(!box) return;
       const selected = (Array.isArray(items) ? items : []).slice(0, 5);
-      if(!selected.length) return renderEmpty(box, "Featured destinations will appear here from your CMS.");
+      if(!selected.length){ const section = box.closest("section"); if(section) section.style.display = "none"; return; }
       box.innerHTML = selected.map((item, index) => `<a class="destination-card destination-${index + 1}" href="tours.html">
         <!-- DYNAMIC IMAGE: Destination image comes from the Destinations CMS/API. -->
 <img src="${esc(imageOf(item, index % 2 ? 'images/mountains.jpg' : 'images/nature.jpg'))}" alt="${esc(item.name || 'Sri Lanka destination')}" loading="lazy" decoding="async">
@@ -714,7 +714,7 @@
       const active = (Array.isArray(items) ? items : []).filter(x => x.active !== false);
       const featured = active.filter(x => x.featured === true || Number(x.featured) === 1);
       const selected = (featured.length ? featured : active).slice(0, 4);
-      if(!selected.length) return renderEmpty(box, "Featured services will appear here from your CMS.");
+      if(!selected.length){ const section = box.closest("section"); if(section) section.style.display = "none"; return; }
       box.innerHTML = selected.map(item => `<a class="service-card" href="services.html">
         <div class="service-image"><!-- DYNAMIC IMAGE: Service image comes from the Services CMS/API. -->
 <img src="${esc(imageOf(item, 'images/food.jpg'))}" alt="${esc(item.name || 'Local service')}" loading="lazy" decoding="async"></div>

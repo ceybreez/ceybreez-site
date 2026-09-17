@@ -1,18 +1,4 @@
 <!DOCTYPE html>
-<!-- ================================================================
-     CEYBREEZ DEVELOPER NOTE
-     PAGE: APARTMENTS
-     FILE: apartments.html
-     PURPOSE: Apartment listing, filters, property cards, editorial content and apartment inquiry form.
-     CSS LOADED: apartments.css, ceybreez-language.css, https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css, https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css, ceybreez-public-v3.css?v=20260916-3, stays-v4.css?v=20260917-1
-     JS LOADED: https://cdn.jsdelivr.net/npm/flatpickr, page-builder.js?v=20260916-safe-cms, ceybreez-language.js, ceybreez-public-v3.js?v=20260916-2
-
-     EDITING TIP:
-     Search this file for "SECTION:" to jump between visible page sections.
-     Search for "IMAGE SOURCE:" to find hard-coded images.
-     Dynamic CMS/API images are noted in the section comments.
-     ================================================================ -->
-
 
 <html lang="en">
 <head>
@@ -42,31 +28,16 @@
 <link href="ceybreez-public-v3.css?v=20260916-3" rel="stylesheet"/><link href="stays-v4.css?v=20260917-1" rel="stylesheet"/>
 </head>
 <body data-page="apartments">
-<!-- ================================================================
-     SECTION: GLOBAL HEADER / NAVIGATION
-     WHAT YOU SEE: Site navigation.
-     MAIN CSS: ceybreez-public-v3.css
-     DATA / JS: Common JS.
-     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
-     ================================================================ -->
 <header class="site-header" id="siteHeader">
 <div class="nav-shell">
-<a aria-label="CeyBreez home" class="brand" href="index.html"><!-- IMAGE SOURCE: logo.png | ROLE: CeyBreez | To change this picture, change the src value below. -->
-<img alt="CeyBreez" src="logo.png"/></a>
+<a aria-label="CeyBreez home" class="brand" href="index.html"><img alt="CeyBreez" src="logo.png"/></a>
 <nav aria-label="Main navigation" class="main-nav" id="mainNav">
 <a href="index.html">Home</a><a href="villas.html">Villas</a><a class="active" href="apartments.html">Apartments</a><a href="homestays.html">Homestays</a><a href="tours.html">Tours</a><a href="services.html">Services</a><a href="contact.html">Contact</a>
 </nav>
 <div class="nav-actions"><a class="nav-cta" href="contact.html">Plan my trip <i class="fa-solid fa-arrow-right"></i></a><button aria-expanded="false" aria-label="Open menu" class="menu-toggle" id="menuToggle" type="button"><span></span><span></span></button></div>
 </div>
 </header>
-<section class="<!-- ================================================================
-     SECTION: APARTMENTS HERO
-     WHAT YOU SEE: Large apartment hero image, headline and CTAs.
-     MAIN CSS: stays-v4.css
-     DATA / JS: Hero image via CSS/HTML.
-     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
-     ================================================================ -->
-stay-v4-hero stay-v4-hero-apartment" style="--stay-hero:url('images/beach.jpg')">
+<section class="stay-v4-hero stay-v4-hero-apartment" style="--stay-hero:url('images/beach.jpg')">
 <div class="stay-v4-hero-inner">
 <div class="stay-v4-copy">
 <span class="stay-v4-eyebrow">FLEXIBLE STAYS · SRI LANKA</span>
@@ -78,52 +49,18 @@ stay-v4-hero stay-v4-hero-apartment" style="--stay-hero:url('images/beach.jpg')"
 <aside class="stay-v4-note"><span>THE CEYBREEZ WAY</span><strong>Less searching.<br/>More feeling.</strong><p>Tell us what kind of stay you want and we’ll help narrow the choice around the trip.</p></aside>
 </div>
 </section>
-<section class="<!-- ================================================================
-     SECTION: APARTMENT INTRO
-     WHAT YOU SEE: Editorial intro.
-     MAIN CSS: stays-v4.css
-     DATA / JS: Static HTML.
-     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
-     ================================================================ -->
-stay-v4-intro v31-reveal">
+<section class="stay-v4-intro v31-reveal">
 <div class="stay-v4-intro-copy"><span class="stay-v4-eyebrow dark">SETTLE IN, THEN EXPLORE</span><h2>More freedom between the plans.</h2><p>A comfortable base can make the whole trip easier. Choose an apartment when you want your own rhythm, practical space and the flexibility to come and go.</p></div>
 <div class="stay-v4-intro-grid"><div><strong>01</strong><span>Pick the place</span><p>Choose the area and stay style that fits your route.</p></div><div><strong>02</strong><span>Share the details</span><p>Dates, guests and the little things that matter to you.</p></div><div><strong>03</strong><span>Build the trip</span><p>Add transfers, tours and local experiences when you need them.</p></div></div>
-</section><section aria-label="City comfort, island rhythm" class="<!-- ================================================================
-     SECTION: APARTMENT PHOTO STORY
-     WHAT YOU SEE: Editorial image grid.
-     MAIN CSS: stays-v4.css
-     DATA / JS: Static images.
-     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
-     ================================================================ -->
-editorial-gallery v31-reveal">
+</section><section aria-label="City comfort, island rhythm" class="editorial-gallery v31-reveal">
 <div class="editorial-gallery-head"><div><span class="v31-eyebrow">Stay your way</span><h2>City comfort, island rhythm</h2></div><p>Flexible apartment stays with room to settle in, work, relax and explore.</p></div>
 <div class="editorial-gallery-grid">
-<figure class="editorial-gallery-main"><!-- IMAGE SOURCE: images/beach.jpg | ROLE: Sri Lanka travel inspiration | To change this picture, change the src value below. -->
-<img alt="Sri Lanka travel inspiration" decoding="async" loading="lazy" src="images/beach.jpg"/><figcaption>Stay · Explore · Feel Sri Lanka</figcaption></figure>
-<figure><!-- IMAGE SOURCE: images/food.jpg | ROLE: CeyBreez Sri Lanka experience | To change this picture, change the src value below. -->
-<img alt="CeyBreez Sri Lanka experience" decoding="async" loading="lazy" src="images/food.jpg"/></figure>
-<figure><!-- IMAGE SOURCE: images/cover.jpg | ROLE: Sri Lanka holiday inspiration | To change this picture, change the src value below. -->
-<img alt="Sri Lanka holiday inspiration" decoding="async" loading="lazy" src="images/cover.jpg"/></figure>
+<figure class="editorial-gallery-main"><img alt="Sri Lanka travel inspiration" decoding="async" loading="lazy" src="images/beach.jpg"/><figcaption>Stay · Explore · Feel Sri Lanka</figcaption></figure>
+<figure><img alt="CeyBreez Sri Lanka experience" decoding="async" loading="lazy" src="images/food.jpg"/></figure>
+<figure><img alt="Sri Lanka holiday inspiration" decoding="async" loading="lazy" src="images/cover.jpg"/></figure>
 </div>
-</section><section class="<!-- ================================================================
-     SECTION: APARTMENT TRAVEL MOODS
-     WHAT YOU SEE: Image cards / reasons to stay.
-     MAIN CSS: stays-v4.css
-     DATA / JS: Static images.
-     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
-     ================================================================ -->
-stay-v4-moods v31-reveal"><div class="stay-v4-section-head"><span class="stay-v4-eyebrow dark">FIND YOUR PACE</span><h2>Made for real travel days.</h2><p>Different trips need different kinds of space. Start with the feeling you want.</p></div><div class="stay-v4-mood-grid"><article class="stay-v4-mood"><!-- IMAGE SOURCE: images/food.jpg | ROLE: City ease | To change this picture, change the src value below. -->
-<img alt="City ease" decoding="async" loading="lazy" src="images/food.jpg"/><div><span>CEYBREEZ STAY</span><h3>City ease</h3><p>A practical base for short stays, work trips and exploring.</p></div></article><article class="stay-v4-mood"><!-- IMAGE SOURCE: images/cover.jpg | ROLE: Family room | To change this picture, change the src value below. -->
-<img alt="Family room" decoding="async" loading="lazy" src="images/cover.jpg"/><div><span>CEYBREEZ STAY</span><h3>Family room</h3><p>More usable space when everyone is travelling together.</p></div></article><article class="stay-v4-mood"><!-- IMAGE SOURCE: images/beach.jpg | ROLE: Stay longer | To change this picture, change the src value below. -->
-<img alt="Stay longer" decoding="async" loading="lazy" src="images/beach.jpg"/><div><span>CEYBREEZ STAY</span><h3>Stay longer</h3><p>A flexible home base for slower, extended Sri Lanka visits.</p></div></article></div></section>
-<section class="properties-section" <!-- ================================================================
-     SECTION: APARTMENT LISTING
-     WHAT YOU SEE: CMS/API apartment cards + filters.
-     MAIN CSS: apartments.css + stays-v4.css
-     DATA / JS: Inline JS -> /api/properties?type=apartment
-     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
-     ================================================================ -->
-id="properties"><div class="stay-v4-property-head"><span class="stay-v4-eyebrow dark">HANDPICKED FOR THE JOURNEY</span><h2>Featured Apartments</h2><p>These apartments are managed from the CeyBreez admin panel.</p></div>
+</section><section class="stay-v4-moods v31-reveal"><div class="stay-v4-section-head"><span class="stay-v4-eyebrow dark">FIND YOUR PACE</span><h2>Made for real travel days.</h2><p>Different trips need different kinds of space. Start with the feeling you want.</p></div><div class="stay-v4-mood-grid"><article class="stay-v4-mood"><img alt="City ease" decoding="async" loading="lazy" src="images/food.jpg"/><div><span>CEYBREEZ STAY</span><h3>City ease</h3><p>A practical base for short stays, work trips and exploring.</p></div></article><article class="stay-v4-mood"><img alt="Family room" decoding="async" loading="lazy" src="images/cover.jpg"/><div><span>CEYBREEZ STAY</span><h3>Family room</h3><p>More usable space when everyone is travelling together.</p></div></article><article class="stay-v4-mood"><img alt="Stay longer" decoding="async" loading="lazy" src="images/beach.jpg"/><div><span>CEYBREEZ STAY</span><h3>Stay longer</h3><p>A flexible home base for slower, extended Sri Lanka visits.</p></div></article></div></section>
+<section class="properties-section" id="properties"><div class="stay-v4-property-head"><span class="stay-v4-eyebrow dark">HANDPICKED FOR THE JOURNEY</span><h2>Featured Apartments</h2><p>Flexible stays selected for comfort, convenience and easy exploring.</p></div>
 
 
 <div class="property-filters">
@@ -148,21 +85,7 @@ id="properties"><div class="stay-v4-property-head"><span class="stay-v4-eyebrow 
 <p class="loading-text">Loading apartments...</p>
 </div>
 </section>
-<section class="<!-- ================================================================
-     SECTION: WHY BOOK AN APARTMENT
-     WHAT YOU SEE: Benefits/trust cards.
-     MAIN CSS: stays-v4.css
-     DATA / JS: Static HTML.
-     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
-     ================================================================ -->
-stay-v4-why"><div class="stay-v4-section-head light"><span class="stay-v4-eyebrow">STAY WITH SUPPORT</span><h2>Why book a CeyBreez apartment?</h2><p>The accommodation is only one part of the journey. We help connect the pieces around it.</p></div><div class="stay-v4-why-grid"><article><i class="fa-solid fa-key"></i><h3>Simple, flexible stays</h3><p>Useful options for short visits, longer stays and changing plans.</p></article><article><i class="fa-solid fa-location-dot"></i><h3>Location matters</h3><p>Choose a base that makes the places on your itinerary easier to reach.</p></article><article><i class="fa-solid fa-headset"></i><h3>Local trip support</h3><p>Need a transfer, route idea or nearby service? We can help connect it.</p></article></div></section><section class="property-inquiry-section" <!-- ================================================================
-     SECTION: APARTMENT INQUIRY FORM
-     WHAT YOU SEE: Guest inquiry form.
-     MAIN CSS: apartments.css + stays-v4.css
-     DATA / JS: Inline JS -> inquiry API.
-     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
-     ================================================================ -->
-id="propertyInquiry">
+<section class="stay-v4-why"><div class="stay-v4-section-head light"><span class="stay-v4-eyebrow">STAY WITH SUPPORT</span><h2>Why book a CeyBreez apartment?</h2><p>The accommodation is only one part of the journey. We help connect the pieces around it.</p></div><div class="stay-v4-why-grid"><article><i class="fa-solid fa-key"></i><h3>Simple, flexible stays</h3><p>Useful options for short visits, longer stays and changing plans.</p></article><article><i class="fa-solid fa-location-dot"></i><h3>Location matters</h3><p>Choose a base that makes the places on your itinerary easier to reach.</p></article><article><i class="fa-solid fa-headset"></i><h3>Local trip support</h3><p>Need a transfer, route idea or nearby service? We can help connect it.</p></article></div></section><section class="property-inquiry-section" id="propertyInquiry">
 <span class="stay-v4-eyebrow dark stay-v4-inquiry-eye">READY WHEN YOU ARE</span><h2>Send Apartment Inquiry</h2>
 <p class="section-intro">Select an apartment, add your travel details, and send your inquiry to CeyBreez.</p>
 <div class="property-inquiry-box">
@@ -228,17 +151,9 @@ id="propertyInquiry">
 <p>Tell us your dates, guest count and preferred location. We’ll help you find a suitable stay.</p>
 <a href="#propertyInquiry">Send Inquiry</a>
 </section>
-<!-- ================================================================
-     SECTION: GLOBAL FOOTER
-     WHAT YOU SEE: Footer.
-     MAIN CSS: ceybreez-public-v3.css
-     DATA / JS: Common JS.
-     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
-     ================================================================ -->
 <footer class="site-footer" data-section="footer">
 <div class="footer-shell">
-<div class="footer-brand"><!-- IMAGE SOURCE: logo.png | ROLE: CeyBreez | To change this picture, change the src value below. -->
-<img alt="CeyBreez" src="logo.png"/><p>Handpicked stays, private tours and local experiences for memorable journeys across Sri Lanka.</p></div>
+<div class="footer-brand"><img alt="CeyBreez" src="logo.png"/><p>Handpicked stays, private tours and local experiences for memorable journeys across Sri Lanka.</p></div>
 <div class="footer-column"><h3>Explore</h3><a href="tours.html">Private Tours</a><a href="villas.html">Villas</a><a href="apartments.html">Apartments</a><a href="homestays.html">Homestays</a></div>
 <div class="footer-column"><h3>Travel</h3><a href="services.html">Local Services</a><a href="contact.html">Plan a Custom Trip</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms &amp; Conditions</a></div>
 <div class="footer-column"><h3>CeyBreez</h3><a href="contact.html">Contact Us</a><a href="index.html#aboutSection">About CeyBreez</a><a href="index.html#gallery">Travel Gallery</a></div>
@@ -392,8 +307,7 @@ function renderPropertyCards(){
     const photo = item.photos && item.photos.length ? item.photos[0] : "images/cover.jpg";
 
     card.innerHTML = `
-      <!-- IMAGE SOURCE: ${photo} | ROLE: ${escapeHtml(item.name)} | To change this picture, change the src value below. -->
-<img src="${photo}" alt="${escapeHtml(item.name)}" loading="lazy">
+      <img src="${photo}" alt="${escapeHtml(item.name)}" loading="lazy">
 
       <div class="property-content">
         <h3>${escapeHtml(item.name)}</h3>

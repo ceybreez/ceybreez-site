@@ -1,0 +1,151 @@
+/* ================================================================
+   CEYBREEZ VILLAS V4.3 — PAGE-SPECIFIC POLISH LAYER
+   Load order: villas.css -> ceybreez-public-v3.css -> stays-v4.css -> villas-v4.css
+   This file only controls the Villas page. It does not replace villas.css.
+   ================================================================ */
+
+body[data-page="villas"]{--villa-ink:#083f37;--villa-green:#07584d;--villa-gold:#bd8b35;--villa-paper:#fbf8f2;--villa-sand:#eee5d8;--villa-line:rgba(8,63,55,.12)}
+
+/* SECTION: HERO */
+body[data-page="villas"] .stay-v4-hero{min-height:88vh;background:linear-gradient(90deg,rgba(4,34,30,.9) 0%,rgba(4,34,30,.64) 43%,rgba(4,34,30,.16) 78%),var(--stay-hero) center 46%/cover no-repeat}
+body[data-page="villas"] .stay-v4-copy{max-width:820px}
+body[data-page="villas"] .stay-v4-copy h1{max-width:820px;text-wrap:balance}
+body[data-page="villas"] .stay-v4-note{padding-left:34px}
+
+/* SECTION: QUICK VALUE STRIP */
+.villa-v4-value-strip{width:min(1380px,calc(100% - 48px));margin:-1px auto 0;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border:1px solid var(--villa-line);border-top:0;border-radius:0 0 22px 22px;overflow:hidden;position:relative;z-index:3;box-shadow:0 18px 42px rgba(20,55,47,.07)}
+.villa-v4-value-strip>div{padding:20px 24px;border-right:1px solid var(--villa-line)}
+.villa-v4-value-strip>div:last-child{border-right:0}
+.villa-v4-value-strip strong{display:block;font:600 20px/1.1 'Cormorant Garamond',serif;color:var(--villa-ink);margin-bottom:5px}
+.villa-v4-value-strip span{display:block;font:500 11.5px/1.5 'DM Sans',sans-serif;color:#6a7772}
+
+/* SECTION: INTRO */
+body[data-page="villas"] .stay-v4-intro{padding-top:84px;padding-bottom:64px}
+body[data-page="villas"] .stay-v4-intro-grid>div{padding-right:28px}
+body[data-page="villas"] .stay-v4-intro-grid span{font-size:25px}
+
+/* SECTION: PHOTO STORY */
+body[data-page="villas"] .editorial-gallery-grid{display:grid!important;grid-template-columns:1.35fr .72fr .72fr;grid-template-rows:215px 215px!important}
+body[data-page="villas"] .editorial-gallery-grid figure{min-height:0!important;margin:0!important}
+body[data-page="villas"] .editorial-gallery-main{grid-row:1/3!important}
+body[data-page="villas"] .editorial-gallery-grid img{width:100%;height:100%!important;min-height:0!important;object-fit:cover}
+body[data-page="villas"] .editorial-gallery-main figcaption{font:600 12px 'DM Sans',sans-serif;letter-spacing:.06em}
+
+/* SECTION: MOOD CARDS */
+body[data-page="villas"] .stay-v4-moods{padding-top:10px}
+body[data-page="villas"] .stay-v4-mood{min-height:430px}
+body[data-page="villas"] .stay-v4-mood>div{bottom:28px}
+body[data-page="villas"] .stay-v4-mood h3{font-size:34px}
+
+/* SECTION: CMS VILLA LISTING */
+body[data-page="villas"] .properties-section{padding-top:94px!important;background:linear-gradient(180deg,#eee5d8 0%,#f4eee5 100%)!important}
+body[data-page="villas"] .stay-v4-property-head{display:flex;justify-content:space-between;align-items:end;gap:34px;margin-bottom:24px}
+body[data-page="villas"] .stay-v4-property-head>div{max-width:760px}
+body[data-page="villas"] .stay-v4-property-head h2{font-size:clamp(46px,4.5vw,68px)!important;letter-spacing:-.025em}
+.villa-v4-cms-note{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;padding:9px 13px;border:1px solid rgba(8,63,55,.12);border-radius:999px;background:rgba(255,255,255,.56);font:700 10px 'DM Sans',sans-serif;letter-spacing:.04em;color:#557069;margin-bottom:4px}
+.villa-v4-cms-note i{color:var(--villa-gold)}
+
+body[data-page="villas"] .property-filters{padding:12px;background:rgba(255,255,255,.68);border:1px solid rgba(8,63,55,.09);border-radius:18px;box-shadow:0 10px 30px rgba(20,55,47,.045)}
+body[data-page="villas"] .property-filters input,body[data-page="villas"] .property-filters select{height:46px!important;padding:0 14px!important;border-radius:11px!important;background:#fff!important}
+body[data-page="villas"] .property-filters input::placeholder{color:#89938f}
+
+body[data-page="villas"] .property-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px!important}
+body[data-page="villas"] .property-card{border-radius:24px!important;overflow:hidden;background:#fff!important;border:1px solid rgba(8,63,55,.08)!important;box-shadow:0 12px 32px rgba(23,58,50,.07)!important}
+body[data-page="villas"] .property-card:hover{transform:translateY(-5px)!important;box-shadow:0 22px 48px rgba(23,58,50,.12)!important}
+.villa-v4-card-media{height:285px;position:relative;overflow:hidden;background:#d9ddd8}
+body[data-page="villas"] .property-card .villa-v4-card-media img{width:100%;height:100%!important;object-fit:cover;display:block;transition:transform .7s ease}
+body[data-page="villas"] .property-card:hover .villa-v4-card-media img{transform:scale(1.035)}
+.villa-v4-card-media:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,34,30,.04),rgba(4,34,30,.24));pointer-events:none}
+.villa-v4-card-badge{position:absolute;z-index:2;top:16px;left:16px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.9);backdrop-filter:blur(9px);font:700 9px 'DM Sans',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--villa-ink)}
+.villa-v4-photo-action{position:absolute;z-index:3;right:14px;bottom:14px!important;margin:0!important;padding:8px 11px!important;border:1px solid rgba(255,255,255,.5)!important;border-radius:999px!important;background:rgba(4,34,30,.56)!important;backdrop-filter:blur(8px);font:700 10px 'DM Sans',sans-serif!important;color:#fff!important}
+body[data-page="villas"] .property-content{padding:22px 22px 23px!important}
+.villa-v4-title-row{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:12px}
+.villa-v4-title-row>div{min-width:0}
+body[data-page="villas"] .property-content .location{margin:0 0 6px!important;font:700 10px 'DM Sans',sans-serif!important;letter-spacing:.04em;text-transform:uppercase;color:#8c6b31!important}
+body[data-page="villas"] .property-content .location i{margin-right:4px}
+body[data-page="villas"] .property-content h3{margin:0!important;font:600 31px/1.03 'Cormorant Garamond',serif!important;color:var(--villa-ink)!important}
+body[data-page="villas"] .price{flex:0 0 auto;max-width:120px;text-align:right;font:700 12px/1.35 'DM Sans',sans-serif!important;color:#a27124!important}
+.villa-v4-description{min-height:66px;margin:0 0 16px!important;font:400 13px/1.65 'DM Sans',sans-serif!important;color:#66736f!important;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+body[data-page="villas"] .property-meta{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 18px!important}
+body[data-page="villas"] .property-meta span{display:inline-flex;align-items:center;gap:6px;padding:7px 9px!important;border-radius:999px!important;background:#f6f1e8!important;color:#31594e!important;font:600 10.5px 'DM Sans',sans-serif!important}
+body[data-page="villas"] .property-meta i{font-size:10px;color:#b17e2d}
+.villa-v4-card-actions{display:grid;grid-template-columns:.9fr 1.1fr;gap:8px;padding-top:16px;border-top:1px solid rgba(8,63,55,.09)}
+body[data-page="villas"] .villa-v4-card-actions button{width:100%;margin:0!important;min-height:41px;padding:0 12px!important;font-size:10.5px!important}
+body[data-page="villas"] .villa-v4-card-actions .quick-inquiry-btn{background:#ead6a8!important;color:#173c35!important}
+body[data-page="villas"] .villa-v4-card-actions .quick-inquiry-btn:hover{background:#dfc68e!important}
+
+/* SECTION: WHY CEYBREEZ */
+body[data-page="villas"] .stay-v4-why-grid article{min-height:220px;display:flex;flex-direction:column;justify-content:flex-end;transition:transform .25s ease,background .25s ease}
+body[data-page="villas"] .stay-v4-why-grid article:hover{transform:translateY(-3px);background:rgba(255,255,255,.07)}
+body[data-page="villas"] .stay-v4-why-grid i{margin-bottom:auto;padding-bottom:34px}
+
+/* SECTION: VILLA INQUIRY */
+body[data-page="villas"] .villa-inquiry-section{padding-top:96px!important;padding-bottom:105px!important;background:var(--villa-paper)!important}
+.villa-v4-inquiry-head{width:min(1100px,100%);margin:0 auto 28px;display:grid;grid-template-columns:1.25fr .75fr;gap:70px;align-items:end}
+body[data-page="villas"] .villa-v4-inquiry-head .stay-v4-inquiry-eye,body[data-page="villas"] .villa-v4-inquiry-head h2,body[data-page="villas"] .villa-v4-inquiry-head .section-intro{width:auto!important;margin-left:0!important;margin-right:0!important}
+body[data-page="villas"] .villa-v4-inquiry-head h2{font:600 clamp(46px,4.4vw,64px)/.98 'Cormorant Garamond',serif!important;color:var(--villa-ink)!important;margin:0 0 13px!important}
+body[data-page="villas"] .villa-v4-inquiry-head .section-intro{margin-bottom:0!important;max-width:650px}
+.villa-v4-inquiry-promise{border-left:1px solid var(--villa-line);padding-left:26px;display:grid;grid-template-columns:30px 1fr;gap:8px 10px;align-items:start}
+.villa-v4-inquiry-promise span{font:700 9px 'DM Sans',sans-serif;color:#b27b20;padding-top:3px}
+.villa-v4-inquiry-promise p{margin:0;font:600 11.5px/1.45 'DM Sans',sans-serif;color:#49615a}
+body[data-page="villas"] .villa-inquiry-box{padding:34px!important;border-radius:24px!important;box-shadow:0 22px 60px rgba(25,57,50,.09)!important}
+body[data-page="villas"] .form-grid{gap:16px!important}
+body[data-page="villas"] .field-group label{margin-bottom:7px!important;color:#31594e!important;font-size:11px!important;letter-spacing:.01em}
+body[data-page="villas"] .villa-inquiry-box input,body[data-page="villas"] .villa-inquiry-box textarea,body[data-page="villas"] .villa-inquiry-box select{background:#fbfaf7!important;color:#173c35!important;border-color:#ddd8cf!important}
+body[data-page="villas"] .villa-inquiry-box input::placeholder,body[data-page="villas"] .villa-inquiry-box textarea::placeholder{color:#959b98!important}
+body[data-page="villas"] .villa-inquiry-box input:focus,body[data-page="villas"] .villa-inquiry-box textarea:focus,body[data-page="villas"] .villa-inquiry-box select:focus{border-color:#7aa99d!important;box-shadow:0 0 0 3px rgba(7,88,77,.08)!important}
+body[data-page="villas"] .send-inquiry-btn{max-width:260px;margin-left:auto;display:block;background:var(--villa-green)!important}
+
+/* SECTION: PROPERTY MODAL */
+body[data-page="villas"] .property-modal{background:rgba(3,28,25,.76)!important;backdrop-filter:blur(4px)}
+body[data-page="villas"] .property-modal-card{border-radius:26px!important;border:1px solid rgba(255,255,255,.3);padding:28px!important}
+body[data-page="villas"] .property-modal-card h2{font:600 44px/1 'Cormorant Garamond',serif!important;color:var(--villa-ink)!important}
+body[data-page="villas"] .modal-main-image{border-radius:18px!important}
+body[data-page="villas"] .modal-gallery img{border-radius:13px!important}
+body[data-page="villas"] .modal-info-grid>div{background:#f6f1e8!important;border-radius:13px!important}
+
+/* SECTION: FINAL CTA */
+body[data-page="villas"] .villa-v4-final-cta{padding:100px 24px!important;text-align:center!important;background:linear-gradient(135deg,#ead7ac 0%,#f0e5cb 100%)!important}
+body[data-page="villas"] .villa-v4-final-cta .stay-v4-eyebrow{justify-content:center}
+body[data-page="villas"] .villa-v4-final-cta h2{max-width:850px;margin-left:auto!important;margin-right:auto!important;font-size:clamp(44px,5vw,72px)!important;line-height:.98!important;letter-spacing:-.025em}
+body[data-page="villas"] .villa-v4-final-cta p{max-width:680px!important}
+body[data-page="villas"] .villa-v4-final-cta a{display:inline-flex!important;align-items:center;gap:10px}
+
+@media(max-width:1050px){
+  .villa-v4-value-strip{grid-template-columns:repeat(2,1fr)}
+  .villa-v4-value-strip>div:nth-child(2){border-right:0}
+  .villa-v4-value-strip>div:nth-child(-n+2){border-bottom:1px solid var(--villa-line)}
+  body[data-page="villas"] .property-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .villa-v4-inquiry-head{grid-template-columns:1fr;gap:26px}
+  .villa-v4-inquiry-promise{grid-template-columns:30px 1fr;max-width:520px}
+}
+
+@media(max-width:700px){
+  body[data-page="villas"] .stay-v4-hero{min-height:auto;background-position:58% center}
+  .villa-v4-value-strip{width:calc(100% - 30px);grid-template-columns:1fr 1fr;border-radius:0 0 18px 18px}
+  .villa-v4-value-strip>div{padding:16px 15px}
+  .villa-v4-value-strip strong{font-size:17px}
+  .villa-v4-value-strip span{font-size:10.5px}
+  body[data-page="villas"] .editorial-gallery-grid{grid-template-columns:1fr 1fr;grid-template-rows:300px 170px!important}
+  body[data-page="villas"] .editorial-gallery-main{grid-column:1/-1;grid-row:auto!important}
+  body[data-page="villas"] .properties-section{padding-top:68px!important}
+  body[data-page="villas"] .stay-v4-property-head{display:block}
+  .villa-v4-cms-note{margin-top:13px}
+  body[data-page="villas"] .property-filters{display:grid!important;grid-template-columns:1fr 1fr}
+  body[data-page="villas"] .property-filters input,body[data-page="villas"] .property-filters select{width:100%!important;max-width:none!important;min-width:0!important}
+  body[data-page="villas"] .property-grid{grid-template-columns:1fr}
+  .villa-v4-card-media{height:250px}
+  .villa-v4-title-row{display:block}
+  body[data-page="villas"] .price{display:block;max-width:none;text-align:left;margin-top:9px}
+  .villa-v4-description{min-height:0}
+  body[data-page="villas"] .villa-inquiry-box{padding:20px!important}
+  body[data-page="villas"] .send-inquiry-btn{max-width:none;width:100%}
+}
+
+@media(max-width:460px){
+  body[data-page="villas"] .property-filters{grid-template-columns:1fr}
+  .villa-v4-value-strip{grid-template-columns:1fr 1fr}
+  .villa-v4-card-actions{grid-template-columns:1fr}
+  body[data-page="villas"] .editorial-gallery-grid{grid-template-columns:1fr;grid-template-rows:280px 180px 180px!important}
+  body[data-page="villas"] .editorial-gallery-main{grid-column:auto}
+}

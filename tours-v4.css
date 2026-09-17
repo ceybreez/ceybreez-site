@@ -282,3 +282,90 @@ body[data-page="tours"] .trip-planner-v4 .field-label{
   body[data-page="tours"] .trip-planner-v4 .service-card{min-height:108px;padding:16px 10px!important}
   body[data-page="tours"] .trip-planner-v4 .airport-grid{grid-template-columns:1fr!important}
 }
+
+/* =========================================================
+   TOURS V4.2 — planner visibility + compact controls
+   ========================================================= */
+
+/* Step labels: force readable text on the white planner panel. */
+body[data-page="tours"] .trip-planner-v4 .planner-box .planner-steps .step > p,
+body[data-page="tours"] .trip-planner-v4 .planner-box .planner-steps .step > p *{
+  color:#35534c!important;
+  -webkit-text-fill-color:#35534c!important;
+  opacity:1!important;
+  visibility:visible!important;
+  text-shadow:none!important;
+  background:transparent!important;
+}
+body[data-page="tours"] .trip-planner-v4 .planner-box .planner-steps .step.active > p,
+body[data-page="tours"] .trip-planner-v4 .planner-box .planner-steps .step.active > p *{
+  color:#0a6255!important;
+  -webkit-text-fill-color:#0a6255!important;
+}
+
+/* Keep planner section copy readable even if a global light-text rule is injected. */
+body[data-page="tours"] .trip-planner-v4 .planner-box .planner-section,
+body[data-page="tours"] .trip-planner-v4 .planner-box .planner-section p,
+body[data-page="tours"] .trip-planner-v4 .planner-box .planner-section label,
+body[data-page="tours"] .trip-planner-v4 .planner-box .planner-section strong{
+  -webkit-text-fill-color:currentColor;
+}
+
+/* Compact top trip feature pills. */
+body[data-page="tours"] .trip-planner-v4 .trust-badges{
+  gap:6px!important;
+  margin-bottom:24px!important;
+}
+body[data-page="tours"] .trip-planner-v4 .trust-badges span{
+  padding:6px 10px!important;
+  min-height:0!important;
+  font-size:9.5px!important;
+  line-height:1.1!important;
+  border-radius:999px!important;
+}
+
+/* Compact service choice buttons/cards. */
+body[data-page="tours"] .trip-planner-v4 .service-grid{
+  gap:10px!important;
+}
+body[data-page="tours"] .trip-planner-v4 .service-card{
+  min-height:88px!important;
+  padding:13px 12px!important;
+  gap:5px!important;
+  border-radius:14px!important;
+}
+body[data-page="tours"] .trip-planner-v4 .service-card input[type="radio"]{
+  top:11px!important;
+  left:11px!important;
+  width:14px!important;
+  height:14px!important;
+  min-width:14px!important;
+  min-height:14px!important;
+}
+body[data-page="tours"] .trip-planner-v4 .service-card .service-icon{
+  width:25px!important;
+  height:25px!important;
+}
+body[data-page="tours"] .trip-planner-v4 .service-card .service-icon svg{
+  width:23px!important;
+  height:23px!important;
+}
+body[data-page="tours"] .trip-planner-v4 .service-card strong{
+  font-size:11.5px!important;
+  line-height:1.25!important;
+  max-width:138px!important;
+}
+
+@media(max-width:700px){
+  body[data-page="tours"] .trip-planner-v4 .trust-badges span{
+    padding:6px 8px!important;
+    font-size:9px!important;
+  }
+  body[data-page="tours"] .trip-planner-v4 .service-card{
+    min-height:82px!important;
+    padding:12px 9px!important;
+  }
+  body[data-page="tours"] .trip-planner-v4 .service-card strong{
+    font-size:10.5px!important;
+  }
+}

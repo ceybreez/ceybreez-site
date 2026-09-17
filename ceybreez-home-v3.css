@@ -298,3 +298,44 @@ button,a{-webkit-tap-highlight-color:transparent}
   .travel-gallery,.travel-reels{padding-top:68px;padding-bottom:68px}.gallery-head{align-items:start}.gallery-mosaic{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;margin-right:-14px;padding-bottom:8px;scrollbar-width:none}.gallery-mosaic::-webkit-scrollbar{display:none}.gallery-tile,.gallery-tile-1,.gallery-tile-2,.gallery-tile-3,.gallery-tile-4,.gallery-tile-5,.gallery-tile-6,.gallery-tile-7,.gallery-tile-8{display:block;flex:0 0 78vw;height:470px;scroll-snap-align:start}.gallery-tile-copy{left:20px;bottom:19px}.gallery-tile-copy strong{font-size:33px}.gallery-expand{display:none}.gallery-strip{justify-content:flex-start;overflow:hidden;white-space:nowrap;margin-top:20px}.gallery-lightbox-stage{width:100vw;height:100vh}.gallery-lightbox-stage>img{object-fit:contain}.gallery-lightbox-stage figcaption{left:14px;right:14px;bottom:16px;width:auto;padding:64px 14px 16px}.gallery-lightbox-stage figcaption strong{font-size:32px}.gallery-lightbox-close{right:14px;top:14px}.gallery-lightbox-count{left:16px;top:25px}.gallery-lightbox-nav{top:auto;bottom:34px;width:44px;height:44px;z-index:5}.gallery-lightbox-nav.prev{left:auto;right:68px}.gallery-lightbox-nav.next{right:14px}
   .reels-head{gap:24px}.reels-head h2{font-size:52px}.reels-head-side{gap:15px}.reel-arrows{display:none}.reels-track{margin-right:-14px;gap:10px}.reel-card{flex-basis:74vw;max-width:290px}.reels-footnote{margin-right:0}.reels-footnote span:first-child{display:none}
 }
+
+/* ================================================================
+   CSS SECTION: HOME EXPERIENCES — UNIFIED CARD COLOUR
+   WHAT YOU SEE: Our Experiences cards (Beautiful Stays / Private Tours /
+   Travel Services / Tailor-made Trips).
+   CHANGE HERE: card background, text, icon and hover colours.
+   ================================================================ */
+.experience-card,
+.experience-card.accent{
+  background:#ffffff !important;
+  color:#173d35 !important;
+  border:1px solid rgba(23,61,53,.09) !important;
+  box-shadow:0 8px 28px rgba(24,56,48,.045);
+}
+.experience-card>span,
+.experience-card.accent>span{
+  color:#9a9f9c !important;
+}
+.experience-card>i,
+.experience-card.accent>i{
+  background:#e8f1ee !important;
+  color:var(--primary) !important;
+}
+.experience-card h3,
+.experience-card.accent h3{
+  color:#183f36 !important;
+}
+.experience-card p,
+.experience-card.accent p{
+  color:#64716c !important;
+}
+.experience-card b,
+.experience-card.accent b{
+  color:var(--primary) !important;
+}
+.experience-card:hover,
+.experience-card.accent:hover{
+  transform:translateY(-7px);
+  box-shadow:0 20px 50px rgba(20,55,47,.12) !important;
+  border-color:rgba(15,118,110,.16) !important;
+}

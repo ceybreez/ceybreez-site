@@ -25,9 +25,260 @@ body[data-page="tours"] .destinations-v4{background:transparent!important;text-a
 
 body[data-page="tours"] .why-v4{background:#efe8da!important;text-align:left!important}.why-v4 .why-grid{max-width:none!important;grid-template-columns:repeat(3,1fr)!important;gap:14px!important}.why-v4 .why-grid>div{background:#fff!important;border-radius:22px!important;padding:30px!important;box-shadow:none!important;border:1px solid rgba(7,62,55,.08)!important}.why-v4 .why-grid h3{font-size:32px!important;color:var(--tour-deep)!important}.why-v4 .why-grid p{color:var(--tour-muted)!important}
 
-body[data-page="tours"] .trip-planner-v4{width:min(100% - 48px,1320px)!important;margin:45px auto 110px!important;padding:78px!important;background:var(--tour-deep)!important;border-radius:36px!important}.planner-eyebrow-v4{margin-bottom:18px}.trip-planner-v4>h2{max-width:800px;font-size:clamp(50px,5vw,76px)!important;line-height:.95!important;margin-left:auto!important;margin-right:auto!important}.trip-planner-v4 .planner-intro{max-width:760px!important}.trip-planner-v4 .trust-badges{margin-bottom:30px}.trip-planner-v4 .planner-box{background:#fff!important;border:0!important;padding:34px!important}.trip-planner-v4 .planner-section h3,.trip-planner-v4 .planner-section h4{color:var(--tour-deep)!important}.trip-planner-v4 .planner-section label,.trip-planner-v4 .field-label{color:#243d39!important}.trip-planner-v4 input,.trip-planner-v4 select,.trip-planner-v4 textarea{background:#f7f5ef!important;color:#172825!important;border:1px solid #dedbd0!important}.trip-planner-v4 input::placeholder,.trip-planner-v4 textarea::placeholder{color:#87918e!important}.trip-planner-v4 select option{background:#fff!important;color:#111!important}
+body[data-page="tours"] .trip-planner-v4{width:min(100% - 48px,1320px)!important;margin:45px auto 110px!important;padding:78px!important;background:var(--tour-deep)!important;border-radius:36px!important}.planner-eyebrow-v4{margin-bottom:18px}.trip-planner-v4>h2{max-width:800px;font-size:clamp(50px,5vw,76px)!important;line-height:.95!important;margin-left:auto!important;margin-right:auto!important}.trip-planner-v4 .planner-intro{max-width:760px!important}.trip-planner-v4 .trust-badges{margin-bottom:30px}.trip-planner-v4 .planner-box{background:#fff!important;border:0!important;padding:34px!important}.trip-planner-v4 .planner-section h3,.trip-planner-v4 .planner-section h4{color:var(--tour-deep)!important}.trip-planner-v4 .planner-section label,.trip-planner-v4 .field-label{color:#243d39!important}.trip-planner-v4 input:not([type="radio"]):not([type="checkbox"]),.trip-planner-v4 select,.trip-planner-v4 textarea{background:#f7f5ef!important;color:#172825!important;border:1px solid #dedbd0!important}.trip-planner-v4 input::placeholder,.trip-planner-v4 textarea::placeholder{color:#87918e!important}.trip-planner-v4 select option{background:#fff!important;color:#111!important}
 
 body[data-page="tours"] .cta-v4{width:min(100% - 48px,1320px)!important;margin:0 auto 100px!important;padding:90px!important;border-radius:34px!important;background:linear-gradient(90deg,rgba(4,42,37,.94),rgba(4,42,37,.72)),url('images/cover.jpg') center/cover!important;text-align:left!important}.cta-v4 h2{max-width:800px!important;font-size:clamp(50px,6vw,80px)!important;line-height:.92!important;color:#fff!important;margin:20px 0!important}.cta-v4 p{max-width:640px!important;color:rgba(255,255,255,.7)!important;margin:0 0 30px!important}.cta-v4-actions{display:flex;flex-wrap:wrap;gap:10px}.cta-v4-actions>a{display:inline-flex!important;align-items:center;gap:9px;padding:14px 20px!important;border-radius:999px!important;background:#fff!important;color:var(--tour-deep)!important;text-decoration:none;font-weight:800!important}.cta-v4-actions .cta-secondary-v4{background:rgba(255,255,255,.1)!important;color:#fff!important;border:1px solid rgba(255,255,255,.28)!important}
 
 @media(max-width:1100px){.tour-hero-note{display:none}.journey-intro-v4{grid-template-columns:1fr;gap:50px}.journey-collage-v4{min-height:570px}.type-card-v4:nth-child(n){grid-column:span 6}.route-grid-v4{grid-template-columns:1fr 1fr}.route-card-featured{margin-top:0}.route-card-v4:last-child{grid-column:1/-1;min-height:420px}.destinations-v4 .province-grid{grid-template-columns:repeat(2,1fr)!important}.v4-section-head{align-items:flex-start;flex-direction:column}.tour-filter-bar{grid-template-columns:1fr 1fr!important}.tour-filter-bar input{grid-column:1/-1}.trip-planner-v4{padding:54px!important}.cta-v4{padding:64px!important}}
 @media(max-width:700px){body[data-page="tours"] .tour-hero-v4{min-height:82vh!important;padding-top:126px!important}.tour-hero-trust{display:none}.tour-hero-actions{flex-direction:column;align-items:flex-start}.journey-intro-v4,.tour-types-v4,.route-ideas-v4,.destinations-v4,.why-v4{width:calc(100% - 28px);padding:72px 0}.journey-copy-v4 h2,.v4-section-head h2{font-size:48px}.journey-collage-v4{min-height:470px}.jc-main{width:76%;height:82%}.jc-top{width:45%;height:34%}.jc-bottom{width:48%;height:38%}.tour-filter-bar{grid-template-columns:1fr!important}.tour-filter-bar input{grid-column:auto}.tour-packages-grid{grid-template-columns:1fr!important}.type-card-v4:nth-child(n){grid-column:1/-1;min-height:320px}.route-grid-v4{grid-template-columns:1fr}.route-card-v4,.route-card-v4:last-child{grid-column:auto;min-height:430px}.destinations-v4 .province-grid{grid-template-columns:1fr!important}.why-v4 .why-grid{grid-template-columns:1fr!important}.trip-planner-v4{width:calc(100% - 24px)!important;padding:38px 14px!important}.trip-planner-v4 .planner-box{padding:20px!important}.cta-v4{width:calc(100% - 24px)!important;padding:50px 24px!important}.cta-v4 h2{font-size:48px!important}}
+
+
+/* =========================================================
+   TOURS V4.1 POLISH — contrast, spacing & planner controls
+   ========================================================= */
+
+/* CeyBreez way section: tighter rhythm + stronger readability */
+body[data-page="tours"] .why-v4{
+  box-sizing:border-box;
+  padding:72px 34px!important;
+  border-radius:30px;
+}
+body[data-page="tours"] .why-v4 .v4-section-head{
+  margin-bottom:30px;
+  gap:54px;
+}
+body[data-page="tours"] .why-v4 .v4-section-head>p{
+  color:#50635d!important;
+  font-size:14px!important;
+  line-height:1.75!important;
+  max-width:390px;
+}
+body[data-page="tours"] .why-v4 .why-grid{
+  gap:16px!important;
+}
+body[data-page="tours"] .why-v4 .why-grid>div{
+  min-height:150px;
+  padding:28px 28px 26px!important;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  box-shadow:0 10px 34px rgba(7,62,55,.045)!important;
+}
+body[data-page="tours"] .why-v4 .why-grid h3{
+  margin:0 0 10px!important;
+  font-size:29px!important;
+  line-height:1.04!important;
+}
+body[data-page="tours"] .why-v4 .why-grid p{
+  margin:0!important;
+  color:#536660!important;
+  font-size:13.5px!important;
+  line-height:1.68!important;
+}
+
+/* Planner header */
+body[data-page="tours"] .trip-planner-v4{
+  padding:70px 68px!important;
+}
+body[data-page="tours"] .trip-planner-v4 .planner-intro{
+  color:rgba(255,255,255,.76)!important;
+  font-size:15px!important;
+  line-height:1.7!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+body[data-page="tours"] .trip-planner-v4 .trust-badges{
+  gap:10px!important;
+  justify-content:center!important;
+}
+body[data-page="tours"] .trip-planner-v4 .trust-badges span{
+  padding:9px 14px!important;
+  font-size:11px!important;
+  color:#174c43!important;
+  box-shadow:none!important;
+  border:1px solid rgba(255,255,255,.35)!important;
+}
+
+/* Planner white panel */
+body[data-page="tours"] .trip-planner-v4 .planner-box{
+  padding:36px 34px 40px!important;
+  border-radius:22px!important;
+  box-shadow:0 20px 54px rgba(1,29,25,.18)!important;
+}
+
+/* Stepper: labels were being washed out by public page styles */
+body[data-page="tours"] .trip-planner-v4 .planner-steps{
+  margin-bottom:34px!important;
+  gap:14px!important;
+  flex-wrap:nowrap!important;
+}
+body[data-page="tours"] .trip-planner-v4 .step{
+  min-width:82px;
+  gap:8px!important;
+}
+body[data-page="tours"] .trip-planner-v4 .step>span{
+  width:38px!important;
+  height:38px!important;
+  background:#0f766e!important;
+  color:#fff!important;
+  border:2px solid #0f766e!important;
+  box-shadow:0 5px 14px rgba(15,118,110,.17)!important;
+}
+body[data-page="tours"] .trip-planner-v4 .step>p{
+  margin:0!important;
+  color:#536660!important;
+  font-family:'DM Sans',sans-serif!important;
+  font-size:11px!important;
+  line-height:1.25!important;
+  font-weight:700!important;
+  white-space:nowrap;
+}
+body[data-page="tours"] .trip-planner-v4 .step.active>p{
+  color:#0b554a!important;
+}
+body[data-page="tours"] .trip-planner-v4 .step-line{
+  width:48px!important;
+  background:#9ec9c1!important;
+  opacity:.72!important;
+}
+
+/* Planner headings */
+body[data-page="tours"] .trip-planner-v4 .planner-section{
+  margin-top:30px!important;
+}
+body[data-page="tours"] .trip-planner-v4 .planner-section h3{
+  margin:0 0 18px!important;
+  color:#103f37!important;
+  font-size:22px!important;
+  line-height:1.15!important;
+}
+body[data-page="tours"] .trip-planner-v4 .planner-section h4{
+  color:#174c43!important;
+}
+
+/* Service choices */
+body[data-page="tours"] .trip-planner-v4 .service-grid{
+  gap:12px!important;
+}
+body[data-page="tours"] .trip-planner-v4 .service-card{
+  position:relative;
+  min-height:112px;
+  padding:18px 14px!important;
+  gap:8px!important;
+  justify-content:center;
+  background:#fbfaf6!important;
+  border:1px solid #e3e0d6!important;
+  border-radius:16px!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+body[data-page="tours"] .trip-planner-v4 .service-card:hover{
+  border-color:#9bc8bf!important;
+  background:#f4faf7!important;
+  transform:translateY(-2px)!important;
+}
+body[data-page="tours"] .trip-planner-v4 .service-card:has(input:checked){
+  background:#eef7f3!important;
+  border-color:#0f766e!important;
+  box-shadow:inset 0 0 0 1px #0f766e!important;
+}
+body[data-page="tours"] .trip-planner-v4 .service-card input[type="radio"]{
+  position:absolute!important;
+  top:14px!important;
+  left:14px!important;
+  width:16px!important;
+  height:16px!important;
+  min-width:16px!important;
+  min-height:16px!important;
+  margin:0!important;
+  padding:0!important;
+  accent-color:#0f766e!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+body[data-page="tours"] .trip-planner-v4 .service-card .service-icon{
+  width:32px!important;
+  height:32px!important;
+  display:grid!important;
+  place-items:center!important;
+  color:#0f766e!important;
+  font-size:0!important;
+}
+body[data-page="tours"] .trip-planner-v4 .service-card .service-icon svg{
+  width:28px;
+  height:28px;
+  stroke:currentColor;
+  stroke-width:1.7;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+body[data-page="tours"] .trip-planner-v4 .service-card strong{
+  color:#174c43!important;
+  font-family:'DM Sans',sans-serif!important;
+  font-size:12.5px!important;
+  line-height:1.35!important;
+  font-weight:750!important;
+  max-width:150px;
+}
+
+/* Do not let generic field styling touch radios / checkboxes */
+body[data-page="tours"] .trip-planner-v4 input:not([type="radio"]):not([type="checkbox"]),
+body[data-page="tours"] .trip-planner-v4 select,
+body[data-page="tours"] .trip-planner-v4 textarea{
+  background:#f7f5ef!important;
+  color:#172825!important;
+  border:1px solid #d9d7ce!important;
+  border-radius:11px!important;
+}
+body[data-page="tours"] .trip-planner-v4 input:not([type="radio"]):not([type="checkbox"]):focus,
+body[data-page="tours"] .trip-planner-v4 select:focus,
+body[data-page="tours"] .trip-planner-v4 textarea:focus{
+  outline:none!important;
+  border-color:#4c9b8e!important;
+  box-shadow:0 0 0 3px rgba(15,118,110,.10)!important;
+}
+
+/* Pickup/drop cards */
+body[data-page="tours"] .trip-planner-v4 .airport-grid{
+  gap:14px!important;
+}
+body[data-page="tours"] .trip-planner-v4 .airport-card{
+  padding:24px!important;
+  border-radius:18px!important;
+  background:#f5eee4!important;
+  border:1px solid #eadfce!important;
+}
+body[data-page="tours"] .trip-planner-v4 .airport-card h4{
+  font-size:20px!important;
+  margin-bottom:18px!important;
+}
+body[data-page="tours"] .trip-planner-v4 .planner-section label,
+body[data-page="tours"] .trip-planner-v4 .field-label{
+  color:#304b45!important;
+  font-size:12px!important;
+  line-height:1.45!important;
+  font-weight:700!important;
+}
+
+@media(max-width:1100px){
+  body[data-page="tours"] .why-v4{padding:64px 28px!important}
+  body[data-page="tours"] .trip-planner-v4{padding:54px 34px!important}
+  body[data-page="tours"] .trip-planner-v4 .planner-steps{gap:9px!important}
+  body[data-page="tours"] .trip-planner-v4 .step-line{width:34px!important}
+}
+
+@media(max-width:700px){
+  body[data-page="tours"] .why-v4{padding:56px 20px!important;border-radius:22px}
+  body[data-page="tours"] .why-v4 .why-grid>div{min-height:auto;padding:24px!important}
+  body[data-page="tours"] .trip-planner-v4{padding:40px 14px!important}
+  body[data-page="tours"] .trip-planner-v4 .planner-box{padding:24px 16px 28px!important}
+  body[data-page="tours"] .trip-planner-v4 .planner-steps{justify-content:space-between!important;gap:4px!important}
+  body[data-page="tours"] .trip-planner-v4 .step{min-width:54px}
+  body[data-page="tours"] .trip-planner-v4 .step>span{width:34px!important;height:34px!important}
+  body[data-page="tours"] .trip-planner-v4 .step>p{font-size:9px!important;white-space:normal;text-align:center}
+  body[data-page="tours"] .trip-planner-v4 .step-line{width:18px!important;flex:0 0 18px}
+  body[data-page="tours"] .trip-planner-v4 .service-grid{grid-template-columns:1fr 1fr!important;gap:10px!important}
+  body[data-page="tours"] .trip-planner-v4 .service-card{min-height:108px;padding:16px 10px!important}
+  body[data-page="tours"] .trip-planner-v4 .airport-grid{grid-template-columns:1fr!important}
+}

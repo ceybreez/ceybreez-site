@@ -1,0 +1,101 @@
+/* ================================================================
+   CEYBREEZ HOMESTAYS V4.8 — POLISH LAYER
+   Load order: base page CSS -> ceybreez-public-v3.css -> stays-v4.css -> this file
+   Purpose: spacing, property-grid balance, inquiry form rhythm and CTA contrast.
+   ================================================================ */
+
+body[data-page="homestays"]{--stay48-ink:#083f37;--stay48-green:#07584d;--stay48-accent:#7c7d3c;--stay48-paper:#fbf8f2;--stay48-sand:#eee5d8;--stay48-line:rgba(8,63,55,.12)}
+
+/* CSS SECTION: HERO */
+body[data-page="homestays"] .stay-v4-hero{min-height:86vh;background:linear-gradient(90deg,rgba(4,34,30,.88) 0%,rgba(4,34,30,.61) 44%,rgba(4,34,30,.15) 80%),var(--stay-hero) center 48%/cover no-repeat;scroll-margin-top:88px}
+body[data-page="homestays"] .stay-v4-copy{max-width:820px}
+body[data-page="homestays"] .stay-v4-copy h1{max-width:830px;text-wrap:balance}
+body[data-page="homestays"] .stay-v4-note{padding-left:32px}
+
+/* CSS SECTION: QUICK VALUE STRIP */
+body[data-page="homestays"] .stay-v48-value-strip{width:min(1380px,calc(100% - 48px));margin:-1px auto 0;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border:1px solid var(--stay48-line);border-top:0;border-radius:0 0 22px 22px;overflow:hidden;position:relative;z-index:3;box-shadow:0 18px 42px rgba(20,55,47,.07)}
+body[data-page="homestays"] .stay-v48-value-strip>div{padding:20px 24px;border-right:1px solid var(--stay48-line)}
+body[data-page="homestays"] .stay-v48-value-strip>div:last-child{border-right:0}
+body[data-page="homestays"] .stay-v48-value-strip strong{display:block;font:600 20px/1.1 'Cormorant Garamond',serif;color:var(--stay48-ink);margin-bottom:5px}
+body[data-page="homestays"] .stay-v48-value-strip span{display:block;font:500 11.5px/1.5 'DM Sans',sans-serif;color:#66756f}
+
+/* CSS SECTION: INTRO / PHOTO STORY / MOOD CARDS */
+body[data-page="homestays"] .stay-v4-intro{padding-top:82px!important;padding-bottom:62px!important}
+body[data-page="homestays"] .editorial-gallery{padding-top:68px!important;padding-bottom:70px!important}
+body[data-page="homestays"] .editorial-gallery-grid{display:grid!important;grid-template-columns:1.35fr .72fr .72fr;grid-template-rows:215px 215px!important}
+body[data-page="homestays"] .editorial-gallery-grid figure{min-height:0!important;margin:0!important}
+body[data-page="homestays"] .editorial-gallery-main{grid-row:1/3!important}
+body[data-page="homestays"] .editorial-gallery-grid img{width:100%;height:100%!important;min-height:0!important;object-fit:cover}
+body[data-page="homestays"] .stay-v4-moods{padding-top:68px!important;padding-bottom:82px!important;scroll-margin-top:92px}
+body[data-page="homestays"] .stay-v4-mood{min-height:400px}
+body[data-page="homestays"] .stay-v4-mood>div{bottom:26px}
+body[data-page="homestays"] .stay-v4-mood h3{font-size:32px}
+
+/* CSS SECTION: CMS PROPERTY LISTING */
+body[data-page="homestays"] .properties-section{padding-top:82px!important;padding-bottom:88px!important;background:linear-gradient(180deg,#eee5d8 0%,#f4eee5 100%)!important;scroll-margin-top:92px}
+body[data-page="homestays"] .stay-v4-property-head{max-width:780px;margin:0 0 26px!important;text-align:left!important}
+body[data-page="homestays"] .stay-v4-property-head h2{font-size:clamp(44px,4.4vw,66px)!important;line-height:.98!important;letter-spacing:-.025em;margin:8px 0 12px!important;color:var(--stay48-ink)!important}
+body[data-page="homestays"] .stay-v4-property-head p{color:#5e6b66!important;max-width:720px!important;line-height:1.7!important}
+body[data-page="homestays"] .property-filters{padding:12px!important;background:rgba(255,255,255,.74)!important;border:1px solid rgba(8,63,55,.09)!important;border-radius:18px!important;box-shadow:0 10px 30px rgba(20,55,47,.045)!important;margin-bottom:26px!important}
+body[data-page="homestays"] .property-filters input,body[data-page="homestays"] .property-filters select{min-height:48px!important;background:#fff!important;border:1px solid rgba(8,63,55,.10)!important;color:#183d36!important;border-radius:12px!important}
+body[data-page="homestays"] .property-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;align-items:stretch}
+body[data-page="homestays"] .property-card{border-radius:24px!important;background:#fff!important;border:1px solid rgba(8,63,55,.09)!important;box-shadow:0 14px 36px rgba(20,55,47,.075)!important;overflow:hidden!important;min-width:0}
+body[data-page="homestays"] .property-card img{height:285px!important}
+body[data-page="homestays"] .property-content{padding:24px!important}
+body[data-page="homestays"] .property-content h3{color:var(--stay48-ink)!important;font-size:31px!important;line-height:1.02!important}
+body[data-page="homestays"] .property-meta span{background:#f4efe7!important;color:#31544c!important}
+body[data-page="homestays"] .price{color:var(--stay48-green)!important;font-weight:700!important}
+body[data-page="homestays"] .property-card button{min-height:42px!important;padding:11px 16px!important;background:var(--stay48-green)!important}
+body[data-page="homestays"] .property-card .quick-inquiry-btn{background:#d9bd7a!important;color:#173e36!important}
+/* One CMS item: avoid a tiny card floating in a large empty grid. */
+body[data-page="homestays"] .property-grid:has(.property-card:only-child){grid-template-columns:minmax(0,1fr)!important}
+body[data-page="homestays"] .property-grid:has(.property-card:only-child) .property-card{display:grid;grid-template-columns:minmax(340px,.9fr) minmax(0,1.1fr);max-width:980px;width:100%;margin:0 auto}
+body[data-page="homestays"] .property-grid:has(.property-card:only-child) .property-card img{height:100%!important;min-height:360px!important}
+body[data-page="homestays"] .property-grid:has(.property-card:only-child) .property-content{padding:38px!important;display:flex;flex-direction:column;justify-content:center}
+
+/* CSS SECTION: WHY / SUPPORT */
+body[data-page="homestays"] .stay-v4-why{padding-top:78px!important;padding-bottom:78px!important}
+body[data-page="homestays"] .stay-v4-why-grid article{padding:28px!important}
+
+/* CSS SECTION: INQUIRY FORM */
+body[data-page="homestays"] .property-inquiry-section{padding-top:82px!important;padding-bottom:88px!important;scroll-margin-top:92px}
+body[data-page="homestays"] .property-inquiry-section>h2{font-size:clamp(42px,4vw,60px)!important;line-height:1!important;color:var(--stay48-ink)!important;margin:10px 0 12px!important}
+body[data-page="homestays"] .property-inquiry-section .section-intro{max-width:700px!important;color:#61706a!important;font-size:15px!important;margin-bottom:28px!important}
+body[data-page="homestays"] .property-inquiry-box{max-width:1140px!important;padding:32px!important;background:rgba(255,255,255,.90)!important;border:1px solid rgba(8,63,55,.10)!important;border-radius:24px!important;box-shadow:0 20px 50px rgba(20,55,47,.08)!important}
+body[data-page="homestays"] .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px 16px!important}
+body[data-page="homestays"] .field-group label{font:700 11px/1.35 'DM Sans',sans-serif!important;color:#294c44!important;margin-bottom:7px!important}
+body[data-page="homestays"] .property-inquiry-box input,body[data-page="homestays"] .property-inquiry-box select,body[data-page="homestays"] .property-inquiry-box textarea{min-height:50px!important;padding:13px 14px!important;background:#fbfaf7!important;border:1px solid rgba(8,63,55,.12)!important;border-radius:12px!important;color:#173e36!important;font-size:13.5px!important}
+body[data-page="homestays"] .property-inquiry-box textarea{min-height:120px!important}
+body[data-page="homestays"] .send-inquiry-btn{min-height:52px!important;margin-top:18px!important;background:var(--stay48-green)!important;border-radius:999px!important;font-size:13px!important;letter-spacing:.02em!important}
+
+/* CSS SECTION: FINAL CTA */
+body[data-page="homestays"] .stay-v48-cta{width:min(1380px,calc(100% - 48px));margin:0 auto 78px!important;padding:62px 48px!important;border-radius:24px!important;background:linear-gradient(135deg,#ead5a0 0%,#f4e8c7 100%)!important;color:var(--stay48-ink)!important;text-align:center!important}
+body[data-page="homestays"] .stay-v48-cta h2{max-width:830px;margin:9px auto 12px!important;color:var(--stay48-ink)!important;font-size:clamp(42px,4.2vw,62px)!important;line-height:.98!important;text-wrap:balance}
+body[data-page="homestays"] .stay-v48-cta p{max-width:720px;margin:0 auto 24px!important;color:#56685f!important;font-size:14px!important;line-height:1.75!important}
+body[data-page="homestays"] .stay-v48-cta a{display:inline-flex!important;align-items:center!important;gap:9px!important;min-height:44px!important;padding:11px 20px!important;border-radius:999px!important;background:var(--stay48-green)!important;color:#fff!important;font-size:12px!important}
+
+@media(max-width:980px){
+ body[data-page="homestays"] .stay-v48-value-strip{grid-template-columns:repeat(2,1fr)}
+ body[data-page="homestays"] .stay-v48-value-strip>div:nth-child(2){border-right:0}
+ body[data-page="homestays"] .stay-v48-value-strip>div:nth-child(-n+2){border-bottom:1px solid var(--stay48-line)}
+ body[data-page="homestays"] .editorial-gallery-grid{grid-template-columns:1fr 1fr!important;grid-template-rows:320px 210px!important}
+ body[data-page="homestays"] .editorial-gallery-main{grid-column:1/3!important;grid-row:auto!important}
+ body[data-page="homestays"] .property-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body[data-page="homestays"] .property-grid:has(.property-card:only-child) .property-card{grid-template-columns:1fr}
+ body[data-page="homestays"] .property-grid:has(.property-card:only-child) .property-card img{min-height:0!important;height:330px!important}
+}
+@media(max-width:680px){
+ body[data-page="homestays"] .stay-v4-hero{min-height:78vh}
+ body[data-page="homestays"] .stay-v48-value-strip{width:calc(100% - 28px);grid-template-columns:1fr 1fr;border-radius:0 0 18px 18px}
+ body[data-page="homestays"] .stay-v48-value-strip>div{padding:16px}
+ body[data-page="homestays"] .stay-v48-value-strip strong{font-size:18px}
+ body[data-page="homestays"] .stay-v48-value-strip span{font-size:10.5px}
+ body[data-page="homestays"] .stay-v4-intro,body[data-page="homestays"] .editorial-gallery,body[data-page="homestays"] .stay-v4-moods,body[data-page="homestays"] .properties-section,body[data-page="homestays"] .property-inquiry-section{padding-top:58px!important;padding-bottom:60px!important}
+ body[data-page="homestays"] .editorial-gallery-grid{grid-template-columns:1fr!important;grid-template-rows:270px 190px 190px!important}
+ body[data-page="homestays"] .editorial-gallery-main{grid-column:auto!important}
+ body[data-page="homestays"] .property-grid{grid-template-columns:1fr}
+ body[data-page="homestays"] .property-card img{height:250px!important}
+ body[data-page="homestays"] .property-inquiry-box{padding:20px!important;border-radius:20px!important}
+ body[data-page="homestays"] .form-grid{grid-template-columns:1fr!important;gap:14px!important}
+ body[data-page="homestays"] .stay-v48-cta{width:calc(100% - 28px);padding:44px 20px!important;margin-bottom:56px!important}
+}

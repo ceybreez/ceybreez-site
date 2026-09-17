@@ -27,6 +27,7 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="ceybreez-public-v3.css?v=20260916-3" rel="stylesheet"/><link href="stays-v4.css?v=20260917-1" rel="stylesheet"/>
+<link href="homestays-v4.css?v=20260917-8" rel="stylesheet"/>
 </head>
 <body data-page="homestays">
 <header class="site-header" id="siteHeader">
@@ -50,6 +51,8 @@
 <aside class="stay-v4-note"><span>THE CEYBREEZ WAY</span><strong>Less searching.<br/>More feeling.</strong><p>Tell us what kind of stay you want and we’ll help narrow the choice around the trip.</p></aside>
 </div>
 </section>
+<!-- SECTION: QUICK VALUE STRIP | Compact trust points below hero -->
+<section class="stay-v48-value-strip" aria-label="CeyBreez stay highlights"><div><strong>Local</strong><span>Stay closer to place</span></div><div><strong>Warm</strong><span>More personal hosting</span></div><div><strong>Simple</strong><span>Comfort without fuss</span></div><div><strong>Supported</strong><span>Local help when needed</span></div></section>
 <section class="stay-v4-intro v31-reveal">
 <div class="stay-v4-intro-copy"><span class="stay-v4-eyebrow dark">LIVE A LITTLE CLOSER</span><h2>The stories are often just outside the room.</h2><p>Homestays can bring a trip closer to local food, everyday life and the landscapes around you. We keep the focus on warmth, comfort and a genuine sense of place.</p></div>
 <div class="stay-v4-intro-grid"><div><strong>01</strong><span>Pick the place</span><p>Choose the area and stay style that fits your route.</p></div><div><strong>02</strong><span>Share the details</span><p>Dates, guests and the little things that matter to you.</p></div><div><strong>03</strong><span>Build the trip</span><p>Add transfers, tours and local experiences when you need them.</p></div></div>
@@ -61,6 +64,7 @@
 <figure><img alt="Sri Lanka holiday inspiration" decoding="async" loading="lazy" src="images/temple.jpg"/></figure>
 </div>
 </section><section class="stay-v4-moods v31-reveal"><div class="stay-v4-section-head"><span class="stay-v4-eyebrow dark">FIND YOUR PACE</span><h2>Closer to place, people and pace.</h2><p>Different trips need different kinds of space. Start with the feeling you want.</p></div><div class="stay-v4-mood-grid"><article class="stay-v4-mood"><img alt="Hill-country calm" decoding="async" loading="lazy" src="images/mountains.jpg"/><div><span>CEYBREEZ STAY</span><h3>Hill-country calm</h3><p>Cool air, green views and slower mountain mornings.</p></div></article><article class="stay-v4-mood"><img alt="Nature nearby" decoding="async" loading="lazy" src="images/nature.jpg"/><div><span>CEYBREEZ STAY</span><h3>Nature nearby</h3><p>Wake up closer to the landscapes you came to see.</p></div></article><article class="stay-v4-mood"><img alt="Local culture" decoding="async" loading="lazy" src="images/temple.jpg"/><div><span>CEYBREEZ STAY</span><h3>Local culture</h3><p>A more personal route into Sri Lankan traditions and daily life.</p></div></article></div></section>
+<!-- SECTION: CMS PROPERTY LISTING | Data comes from /api/properties; visual styling in page V4 CSS -->
 <section class="properties-section" id="properties"><div class="stay-v4-property-head"><span class="stay-v4-eyebrow dark">HANDPICKED FOR THE JOURNEY</span><h2>Featured Homestays</h2><p>Warm local stays selected for character, comfort and a closer connection to place.</p></div>
 
 
@@ -86,7 +90,8 @@
 <p class="loading-text">Loading homestays...</p>
 </div>
 </section>
-<section class="stay-v4-why"><div class="stay-v4-section-head light"><span class="stay-v4-eyebrow">STAY WITH SUPPORT</span><h2>Why choose a CeyBreez homestay?</h2><p>The accommodation is only one part of the journey. We help connect the pieces around it.</p></div><div class="stay-v4-why-grid"><article><i class="fa-solid fa-heart"></i><h3>Warm, personal stays</h3><p>A more human experience for travellers who value connection.</p></article><article><i class="fa-solid fa-leaf"></i><h3>Closer to the setting</h3><p>Places that make the surrounding landscape part of the stay.</p></article><article><i class="fa-solid fa-map-location-dot"></i><h3>Better route context</h3><p>We can help fit the homestay naturally into the rest of your journey.</p></article></div></section><section class="property-inquiry-section" id="propertyInquiry">
+<section class="stay-v4-why"><div class="stay-v4-section-head light"><span class="stay-v4-eyebrow">STAY WITH SUPPORT</span><h2>Why choose a CeyBreez homestay?</h2><p>The accommodation is only one part of the journey. We help connect the pieces around it.</p></div><div class="stay-v4-why-grid"><article><i class="fa-solid fa-heart"></i><h3>Warm, personal stays</h3><p>A more human experience for travellers who value connection.</p></article><article><i class="fa-solid fa-leaf"></i><h3>Closer to the setting</h3><p>Places that make the surrounding landscape part of the stay.</p></article><article><i class="fa-solid fa-map-location-dot"></i><h3>Better route context</h3><p>We can help fit the homestay naturally into the rest of your journey.</p></article></div></section><!-- SECTION: INQUIRY FORM | Keep field IDs unchanged; styling in page V4 CSS -->
+<section class="property-inquiry-section" id="propertyInquiry">
 <span class="stay-v4-eyebrow dark stay-v4-inquiry-eye">READY WHEN YOU ARE</span><h2>Send Homestay Inquiry</h2>
 <p class="section-intro">Select a homestay, add your travel details, and send your inquiry to CeyBreez.</p>
 <div class="property-inquiry-box">
@@ -122,6 +127,10 @@
 <input id="inqGuests" min="1" placeholder="Number of guests" required="" type="number"/>
 </div>
 <div class="field-group">
+<label>🌙 Number of Nights</label>
+<input id="inqDays" placeholder="Auto calculated" readonly="" type="text"/>
+</div>
+<div class="field-group">
 <label>📅 Check-In Date *</label>
 <input id="inqCheckIn" required="" type="text"/>
 </div>
@@ -135,10 +144,7 @@
 <div class="field-group full-width">
 <div class="booked-dates-list" id="bookedDatesList"></div>
 </div>
-<div class="field-group">
-<label>🌙 Number of Nights</label>
-<input id="inqDays" placeholder="Auto calculated" readonly="" type="text"/>
-</div>
+
 </div>
 <div class="field-group full-width">
 <label>📝 Special Notes / Requests</label>
@@ -147,10 +153,11 @@
 <button class="send-inquiry-btn" onclick="sendPropertyInquiry()" type="button">Send Inquiry</button>
 </div>
 </section>
-<section class="cta">
-<h2>Need Help Choosing a Homestay?</h2>
-<p>Tell us your dates, guest count and preferred location. We’ll help you find a suitable stay.</p>
-<a href="#propertyInquiry">Send Inquiry</a>
+<section class="cta stay-v48-cta">
+<span class="stay-v4-eyebrow dark">NOT SURE WHICH ONE?</span>
+<h2>Tell us the route. We’ll find the right homestay.</h2>
+<p>Share your dates, guest count and the kind of place you want to experience. We’ll help narrow the options.</p>
+<a href="#propertyInquiry">Start a stay request <span>→</span></a>
 </section>
 <section class="cb-social-proof" data-limit="9" data-page-reviews="1" data-review-type="homestay" data-reviews-showcase="">
 <div class="cb-section-head"><span class="eyebrow">Guest Reviews</span><h2>What Our Guests Say</h2><p>Choose a property or tour to see its own selected reviews.</p></div>

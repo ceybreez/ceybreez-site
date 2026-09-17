@@ -26,7 +26,7 @@
 <link href="ceybreez-language.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="ceybreez-public-v3.css?v=20260916-3" rel="stylesheet"/>
+<link href="ceybreez-public-v3.css?v=20260916-3" rel="stylesheet"/><link href="stays-v4.css?v=20260917-1" rel="stylesheet"/>
 </head>
 <body data-page="homestays">
 <header class="site-header" id="siteHeader">
@@ -38,17 +38,21 @@
 <div class="nav-actions"><a class="nav-cta" href="contact.html">Plan my trip <i class="fa-solid fa-arrow-right"></i></a><button aria-expanded="false" aria-label="Open menu" class="menu-toggle" id="menuToggle" type="button"><span></span><span></span></button></div>
 </div>
 </header>
-<section class="page-hero">
-<div class="hero-content">
-<img alt="CeyBreez Logo" class="hero-logo" src="logo.png"/>
-<h1>Authentic Homestays in Sri Lanka</h1>
-<p>Warm local homes, peaceful surroundings and meaningful Sri Lankan hospitality.</p>
-<a class="hero-btn" href="#properties">Explore Homestays</a>
+<section class="stay-v4-hero stay-v4-hero-homestay" style="--stay-hero:url('images/mountains.jpg')">
+<div class="stay-v4-hero-inner">
+<div class="stay-v4-copy">
+<span class="stay-v4-eyebrow">LOCAL STAYS · SRI LANKA</span>
+<h1>Stay closer to the Sri Lanka people remember.</h1>
+<p>Warm homestays, local surroundings and everyday island life — for travellers who want more than a place to sleep.</p>
+<div class="stay-v4-actions"><a class="stay-v4-primary" href="#properties">Explore Homestays <span>→</span></a><a class="stay-v4-secondary" href="#propertyInquiry">Check a stay</a></div>
+<div class="stay-v4-tags"><span><i class="fa-regular fa-circle-check"></i>Local warmth</span><span><i class="fa-regular fa-circle-check"></i>Authentic places</span><span><i class="fa-regular fa-circle-check"></i>Personal support</span></div>
+</div>
+<aside class="stay-v4-note"><span>THE CEYBREEZ WAY</span><strong>Less searching.<br/>More feeling.</strong><p>Tell us what kind of stay you want and we’ll help narrow the choice around the trip.</p></aside>
 </div>
 </section>
-<section class="intro">
-<h2>Feel Sri Lanka Like Home</h2>
-<p>Discover handpicked homestays across Sri Lanka with CeyBreez. Perfect for travelers who love local culture, comfort and friendly hospitality.</p>
+<section class="stay-v4-intro v31-reveal">
+<div class="stay-v4-intro-copy"><span class="stay-v4-eyebrow dark">LIVE A LITTLE CLOSER</span><h2>The stories are often just outside the room.</h2><p>Homestays can bring a trip closer to local food, everyday life and the landscapes around you. We keep the focus on warmth, comfort and a genuine sense of place.</p></div>
+<div class="stay-v4-intro-grid"><div><strong>01</strong><span>Pick the place</span><p>Choose the area and stay style that fits your route.</p></div><div><strong>02</strong><span>Share the details</span><p>Dates, guests and the little things that matter to you.</p></div><div><strong>03</strong><span>Build the trip</span><p>Add transfers, tours and local experiences when you need them.</p></div></div>
 </section><section aria-label="Local places, real stories" class="editorial-gallery v31-reveal">
 <div class="editorial-gallery-head"><div><span class="v31-eyebrow">Live closer</span><h2>Local places, real stories</h2></div><p>Homestays that bring you closer to Sri Lanka’s landscapes, people and everyday warmth.</p></div>
 <div class="editorial-gallery-grid">
@@ -56,10 +60,10 @@
 <figure><img alt="CeyBreez Sri Lanka experience" decoding="async" loading="lazy" src="images/nature.jpg"/></figure>
 <figure><img alt="Sri Lanka holiday inspiration" decoding="async" loading="lazy" src="images/temple.jpg"/></figure>
 </div>
-</section>
-<section class="properties-section" id="properties">
-<h2>Featured Homestays</h2>
-<p class="section-intro">These homestays are managed from the CeyBreez admin panel.</p>
+</section><section class="stay-v4-moods v31-reveal"><div class="stay-v4-section-head"><span class="stay-v4-eyebrow dark">FIND YOUR PACE</span><h2>Closer to place, people and pace.</h2><p>Different trips need different kinds of space. Start with the feeling you want.</p></div><div class="stay-v4-mood-grid"><article class="stay-v4-mood"><img alt="Hill-country calm" decoding="async" loading="lazy" src="images/mountains.jpg"/><div><span>CEYBREEZ STAY</span><h3>Hill-country calm</h3><p>Cool air, green views and slower mountain mornings.</p></div></article><article class="stay-v4-mood"><img alt="Nature nearby" decoding="async" loading="lazy" src="images/nature.jpg"/><div><span>CEYBREEZ STAY</span><h3>Nature nearby</h3><p>Wake up closer to the landscapes you came to see.</p></div></article><article class="stay-v4-mood"><img alt="Local culture" decoding="async" loading="lazy" src="images/temple.jpg"/><div><span>CEYBREEZ STAY</span><h3>Local culture</h3><p>A more personal route into Sri Lankan traditions and daily life.</p></div></article></div></section>
+<section class="properties-section" id="properties"><div class="stay-v4-property-head"><span class="stay-v4-eyebrow dark">HANDPICKED FOR THE JOURNEY</span><h2>Featured Homestays</h2><p>These homestays are managed from the CeyBreez admin panel.</p></div>
+
+
 <div class="property-filters">
 <input id="propertySearch" placeholder="Search homestays..." type="text"/>
 <input id="propertyLocationFilter" placeholder="Location" type="text"/>
@@ -82,8 +86,8 @@
 <p class="loading-text">Loading homestays...</p>
 </div>
 </section>
-<section class="property-inquiry-section" id="propertyInquiry">
-<h2>Send Homestay Inquiry</h2>
+<section class="stay-v4-why"><div class="stay-v4-section-head light"><span class="stay-v4-eyebrow">STAY WITH SUPPORT</span><h2>Why choose a CeyBreez homestay?</h2><p>The accommodation is only one part of the journey. We help connect the pieces around it.</p></div><div class="stay-v4-why-grid"><article><i class="fa-solid fa-heart"></i><h3>Warm, personal stays</h3><p>A more human experience for travellers who value connection.</p></article><article><i class="fa-solid fa-leaf"></i><h3>Closer to the setting</h3><p>Places that make the surrounding landscape part of the stay.</p></article><article><i class="fa-solid fa-map-location-dot"></i><h3>Better route context</h3><p>We can help fit the homestay naturally into the rest of your journey.</p></article></div></section><section class="property-inquiry-section" id="propertyInquiry">
+<span class="stay-v4-eyebrow dark stay-v4-inquiry-eye">READY WHEN YOU ARE</span><h2>Send Homestay Inquiry</h2>
 <p class="section-intro">Select a homestay, add your travel details, and send your inquiry to CeyBreez.</p>
 <div class="property-inquiry-box">
 <div class="form-grid">
@@ -202,7 +206,6 @@
 <p class="thankyou-small">Our team will contact you shortly.</p>
 </div>
 </div>
-
 <script src="js/vendor/flatpickr.min.js"></script>
 <script>
 const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";

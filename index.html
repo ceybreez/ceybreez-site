@@ -1,4 +1,18 @@
 <!DOCTYPE html>
+<!-- ================================================================
+     CEYBREEZ DEVELOPER NOTE
+     PAGE: HOME
+     FILE: index.html
+     PURPOSE: Main landing page: hero, gallery, tours, stays, destinations, services, reviews, reels and final CTA.
+     CSS LOADED: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css, reviews-showcase.css, ceybreez-language.css, ceybreez-home-v3.css
+     JS LOADED: page-builder.js?v=20260916-safe-cms, reviews-showcase.js, ceybreez-language.js
+
+     EDITING TIP:
+     Search this file for "SECTION:" to jump between visible page sections.
+     Search for "IMAGE SOURCE:" to find hard-coded images.
+     Dynamic CMS/API images are noted in the section comments.
+     ================================================================ -->
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -42,16 +56,25 @@
     <div class="welcome-glow"></div>
     <div class="welcome-content">
       <span class="welcome-kicker">AYUBOWAN · WELCOME TO SRI LANKA</span>
-      <img id="welcomeLogo" src="logo.png" alt="CeyBreez">
+      <!-- IMAGE SOURCE: logo.png | ROLE: CeyBreez | To change this picture, change the src value below. -->
+<img id="welcomeLogo" src="logo.png" alt="CeyBreez">
       <div class="welcome-line"><span></span></div>
       <p>Stay · Taste · Explore</p>
     </div>
   </div>
 
-  <header class="site-header" id="siteHeader">
+  <!-- ================================================================
+     SECTION: GLOBAL HEADER / NAVIGATION
+     WHAT YOU SEE: Logo, desktop/mobile navigation, Plan My Trip and language switcher.
+     MAIN CSS: ceybreez-public-v3.css
+     DATA / JS: ceybreez-public-v3.js + ceybreez-language.js
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<header class="site-header" id="siteHeader">
     <div class="nav-shell">
       <a class="brand" href="#home" aria-label="CeyBreez home">
-        <img id="navLogo" src="logo.png" alt="CeyBreez">
+        <!-- IMAGE SOURCE: logo.png | ROLE: CeyBreez | To change this picture, change the src value below. -->
+<img id="navLogo" src="logo.png" alt="CeyBreez">
       </a>
 
       <nav class="main-nav" id="mainNav" aria-label="Main navigation">
@@ -74,8 +97,16 @@
   </header>
 
   <main id="mainSite">
-    <section class="hero" id="home" data-section="hero">
-      <img id="heroImage" class="hero-image" data-field="image" src="images/cover.jpg" alt="Sri Lankan tropical coast at sunset" fetchpriority="high">
+    <!-- ================================================================
+     SECTION: HOME HERO
+     WHAT YOU SEE: First large visual and main headline/buttons.
+     MAIN CSS: ceybreez-home-v3.css
+     DATA / JS: CMS / site-content can replace selected text/images.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<section class="hero" id="home" data-section="hero">
+      <!-- IMAGE SOURCE: images/cover.jpg | ROLE: Sri Lankan tropical coast at sunset | To change this picture, change the src value below. -->
+<img id="heroImage" class="hero-image" data-field="image" src="images/cover.jpg" alt="Sri Lankan tropical coast at sunset" fetchpriority="high">
       <div class="hero-shade"></div>
       <div class="hero-grain"></div>
 
@@ -97,15 +128,18 @@
 
         <div class="hero-story-rail" aria-label="Sri Lanka highlights">
           <a href="#discover" class="hero-story story-one">
-            <img src="images/train.jpg" alt="Scenic train journey through Sri Lanka" decoding="async">
+            <!-- IMAGE SOURCE: images/train.jpg | ROLE: Scenic train journey through Sri Lanka | To change this picture, change the src value below. -->
+<img src="images/train.jpg" alt="Scenic train journey through Sri Lanka" decoding="async">
             <span>Hill Country</span>
           </a>
           <a href="#discover" class="hero-story story-two">
-            <img src="images/nature.jpg" alt="Waterfall and tropical nature in Sri Lanka" decoding="async">
+            <!-- IMAGE SOURCE: images/nature.jpg | ROLE: Waterfall and tropical nature in Sri Lanka | To change this picture, change the src value below. -->
+<img src="images/nature.jpg" alt="Waterfall and tropical nature in Sri Lanka" decoding="async">
             <span>Wild Nature</span>
           </a>
           <a href="#discover" class="hero-story story-three">
-            <img src="images/temple.jpg" alt="Sri Lankan cultural heritage site" decoding="async">
+            <!-- IMAGE SOURCE: images/temple.jpg | ROLE: Sri Lankan cultural heritage site | To change this picture, change the src value below. -->
+<img src="images/temple.jpg" alt="Sri Lankan cultural heritage site" decoding="async">
             <span>Living Culture</span>
           </a>
         </div>
@@ -116,7 +150,14 @@
       </a>
     </section>
 
-    <section class="quick-paths" aria-label="Travel categories">
+    <!-- ================================================================
+     SECTION: QUICK PATHS
+     WHAT YOU SEE: Small shortcuts immediately below hero.
+     MAIN CSS: ceybreez-home-v3.css
+     DATA / JS: Static HTML links.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<section class="quick-paths" aria-label="Travel categories">
       <div class="quick-paths-shell">
         <a href="villas.html"><i class="fa-solid fa-house-chimney-window"></i><span><small>Stay your way</small>Villas & Stays</span><b>→</b></a>
         <a href="tours.html"><i class="fa-solid fa-compass"></i><span><small>See more of the island</small>Private Tours</span><b>→</b></a>
@@ -125,7 +166,14 @@
       </div>
     </section>
 
-    <section class="about editorial-section" id="aboutSection" data-section="about">
+    <!-- ================================================================
+     SECTION: ABOUT / EDITORIAL
+     WHAT YOU SEE: Brand story + supporting image/text.
+     MAIN CSS: ceybreez-home-v3.css
+     DATA / JS: Static HTML + optional CMS text.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<section class="about editorial-section" id="aboutSection" data-section="about">
       <div class="section-shell about-grid">
         <div class="about-copy">
           <span class="eyebrow">More than a holiday</span>
@@ -140,15 +188,25 @@
         </div>
 
         <div class="about-collage" aria-label="Sri Lanka travel collage">
-          <figure class="collage-main"><img src="images/mountains.jpg" alt="Green mountain landscape in Sri Lanka" loading="lazy" decoding="async"></figure>
-          <figure class="collage-small top"><img src="images/food.jpg" alt="Sri Lankan spices and food culture" loading="lazy" decoding="async"></figure>
-          <figure class="collage-small bottom"><img src="images/temple.jpg" alt="Cultural heritage in Sri Lanka" loading="lazy" decoding="async"></figure>
+          <figure class="collage-main"><!-- IMAGE SOURCE: images/mountains.jpg | ROLE: Green mountain landscape in Sri Lanka | To change this picture, change the src value below. -->
+<img src="images/mountains.jpg" alt="Green mountain landscape in Sri Lanka" loading="lazy" decoding="async"></figure>
+          <figure class="collage-small top"><!-- IMAGE SOURCE: images/food.jpg | ROLE: Sri Lankan spices and food culture | To change this picture, change the src value below. -->
+<img src="images/food.jpg" alt="Sri Lankan spices and food culture" loading="lazy" decoding="async"></figure>
+          <figure class="collage-small bottom"><!-- IMAGE SOURCE: images/temple.jpg | ROLE: Cultural heritage in Sri Lanka | To change this picture, change the src value below. -->
+<img src="images/temple.jpg" alt="Cultural heritage in Sri Lanka" loading="lazy" decoding="async"></figure>
           <div class="collage-stamp"><span>Explore</span><strong>CEYLON</strong><small>with CeyBreez</small></div>
         </div>
       </div>
     </section>
 
-    <section class="things" id="discover" data-section="things">
+    <!-- ================================================================
+     SECTION: THINGS TO DO
+     WHAT YOU SEE: Travel category cards / discovery images.
+     MAIN CSS: ceybreez-home-v3.css
+     DATA / JS: Static images/links.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<section class="things" id="discover" data-section="things">
       <div class="section-shell">
         <div class="section-head split-head">
           <div>
@@ -160,27 +218,32 @@
 
         <div class="things-grid" data-field="cards">
           <a class="thing-card thing-card-wide" href="tours.html">
-            <img src="images/beach.jpg" alt="Sri Lankan beach at sunset" loading="lazy" decoding="async">
+            <!-- IMAGE SOURCE: images/beach.jpg | ROLE: Sri Lankan beach at sunset | To change this picture, change the src value below. -->
+<img src="images/beach.jpg" alt="Sri Lankan beach at sunset" loading="lazy" decoding="async">
             <div class="image-overlay"></div>
             <div class="thing-copy"><span>Coast</span><h3>Beach Escapes</h3><p>Slow mornings, warm water and golden-hour coastlines.</p></div>
           </a>
           <a class="thing-card" href="tours.html">
-            <img src="images/train.jpg" alt="Scenic railway through Sri Lanka" loading="lazy" decoding="async">
+            <!-- IMAGE SOURCE: images/train.jpg | ROLE: Scenic railway through Sri Lanka | To change this picture, change the src value below. -->
+<img src="images/train.jpg" alt="Scenic railway through Sri Lanka" loading="lazy" decoding="async">
             <div class="image-overlay"></div>
             <div class="thing-copy"><span>Highlands</span><h3>Rail & Tea Country</h3></div>
           </a>
           <a class="thing-card" href="tours.html">
-            <img src="images/nature.jpg" alt="Waterfall in Sri Lanka" loading="lazy" decoding="async">
+            <!-- IMAGE SOURCE: images/nature.jpg | ROLE: Waterfall in Sri Lanka | To change this picture, change the src value below. -->
+<img src="images/nature.jpg" alt="Waterfall in Sri Lanka" loading="lazy" decoding="async">
             <div class="image-overlay"></div>
             <div class="thing-copy"><span>Nature</span><h3>Wild Landscapes</h3></div>
           </a>
           <a class="thing-card" href="tours.html">
-            <img src="images/temple.jpg" alt="Sri Lankan temple and heritage" loading="lazy" decoding="async">
+            <!-- IMAGE SOURCE: images/temple.jpg | ROLE: Sri Lankan temple and heritage | To change this picture, change the src value below. -->
+<img src="images/temple.jpg" alt="Sri Lankan temple and heritage" loading="lazy" decoding="async">
             <div class="image-overlay"></div>
             <div class="thing-copy"><span>Heritage</span><h3>Culture & History</h3></div>
           </a>
           <a class="thing-card thing-card-wide" href="services.html">
-            <img src="images/food.jpg" alt="Sri Lankan cinnamon and local food" loading="lazy" decoding="async">
+            <!-- IMAGE SOURCE: images/food.jpg | ROLE: Sri Lankan cinnamon and local food | To change this picture, change the src value below. -->
+<img src="images/food.jpg" alt="Sri Lankan cinnamon and local food" loading="lazy" decoding="async">
             <div class="image-overlay"></div>
             <div class="thing-copy"><span>Taste</span><h3>Flavours of the Island</h3><p>Spice, tea, markets and meals worth travelling for.</p></div>
           </a>
@@ -188,7 +251,14 @@
       </div>
     </section>
 
-    <section class="travel-gallery" id="gallery" data-section="gallery">
+    <!-- ================================================================
+     SECTION: HOME IMAGE GALLERY
+     WHAT YOU SEE: Masonry image gallery + lightbox.
+     MAIN CSS: ceybreez-home-v3.css
+     DATA / JS: home_gallery CMS value or fallback images.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<section class="travel-gallery" id="gallery" data-section="gallery">
       <div class="section-shell">
         <div class="section-head split-head gallery-head">
           <div>
@@ -203,27 +273,33 @@
 
         <div class="gallery-mosaic" id="homeGalleryGrid" aria-live="polite">
           <button class="gallery-tile gallery-tile-1" type="button" data-gallery-index="0">
-            <img src="images/beach.jpg" alt="Sri Lanka coastline" loading="lazy" decoding="async">
+            <!-- IMAGE SOURCE: images/beach.jpg | ROLE: Sri Lanka coastline | To change this picture, change the src value below. -->
+<img src="images/beach.jpg" alt="Sri Lanka coastline" loading="lazy" decoding="async">
             <span class="gallery-tile-shade"></span><span class="gallery-tile-copy"><small>Coast</small><strong>Golden shores</strong></span>
           </button>
           <button class="gallery-tile gallery-tile-2" type="button" data-gallery-index="1">
-            <img src="images/train.jpg" alt="Sri Lanka hill country train" loading="lazy" decoding="async">
+            <!-- IMAGE SOURCE: images/train.jpg | ROLE: Sri Lanka hill country train | To change this picture, change the src value below. -->
+<img src="images/train.jpg" alt="Sri Lanka hill country train" loading="lazy" decoding="async">
             <span class="gallery-tile-shade"></span><span class="gallery-tile-copy"><small>Highlands</small><strong>Slow rail journeys</strong></span>
           </button>
           <button class="gallery-tile gallery-tile-3" type="button" data-gallery-index="2">
-            <img src="images/food.jpg" alt="Sri Lankan food and spices" loading="lazy" decoding="async">
+            <!-- IMAGE SOURCE: images/food.jpg | ROLE: Sri Lankan food and spices | To change this picture, change the src value below. -->
+<img src="images/food.jpg" alt="Sri Lankan food and spices" loading="lazy" decoding="async">
             <span class="gallery-tile-shade"></span><span class="gallery-tile-copy"><small>Taste</small><strong>Island flavours</strong></span>
           </button>
           <button class="gallery-tile gallery-tile-4" type="button" data-gallery-index="3">
-            <img src="images/nature.jpg" alt="Sri Lanka tropical nature" loading="lazy" decoding="async">
+            <!-- IMAGE SOURCE: images/nature.jpg | ROLE: Sri Lanka tropical nature | To change this picture, change the src value below. -->
+<img src="images/nature.jpg" alt="Sri Lanka tropical nature" loading="lazy" decoding="async">
             <span class="gallery-tile-shade"></span><span class="gallery-tile-copy"><small>Nature</small><strong>Wild green places</strong></span>
           </button>
           <button class="gallery-tile gallery-tile-5" type="button" data-gallery-index="4">
-            <img src="images/temple.jpg" alt="Sri Lanka heritage and culture" loading="lazy" decoding="async">
+            <!-- IMAGE SOURCE: images/temple.jpg | ROLE: Sri Lanka heritage and culture | To change this picture, change the src value below. -->
+<img src="images/temple.jpg" alt="Sri Lanka heritage and culture" loading="lazy" decoding="async">
             <span class="gallery-tile-shade"></span><span class="gallery-tile-copy"><small>Culture</small><strong>Living heritage</strong></span>
           </button>
           <button class="gallery-tile gallery-tile-6" type="button" data-gallery-index="5">
-            <img src="images/mountains.jpg" alt="Sri Lanka mountain landscape" loading="lazy" decoding="async">
+            <!-- IMAGE SOURCE: images/mountains.jpg | ROLE: Sri Lanka mountain landscape | To change this picture, change the src value below. -->
+<img src="images/mountains.jpg" alt="Sri Lanka mountain landscape" loading="lazy" decoding="async">
             <span class="gallery-tile-shade"></span><span class="gallery-tile-copy"><small>Escape</small><strong>Misty mornings</strong></span>
           </button>
         </div>
@@ -234,7 +310,14 @@
       </div>
     </section>
 
-    <section class="experiences editorial-section" id="experiences" data-section="experiences">
+    <!-- ================================================================
+     SECTION: EXPERIENCES
+     WHAT YOU SEE: Experience/service story cards.
+     MAIN CSS: ceybreez-home-v3.css
+     DATA / JS: Static content.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<section class="experiences editorial-section" id="experiences" data-section="experiences">
       <div class="section-shell">
         <div class="section-head centered-head">
           <span class="eyebrow">Travel your way</span>
@@ -250,7 +333,14 @@
       </div>
     </section>
 
-    <section class="featured-block tours-block" data-section="tours">
+    <!-- ================================================================
+     SECTION: FEATURED TOURS
+     WHAT YOU SEE: Tour cards loaded from CMS/API.
+     MAIN CSS: ceybreez-home-v3.css
+     DATA / JS: /api/tour-packages?featured=1
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<section class="featured-block tours-block" data-section="tours">
       <div class="section-shell">
         <div class="section-head split-head compact">
           <div><span class="eyebrow">Signature journeys</span><h2>Featured tours</h2></div>
@@ -260,8 +350,16 @@
       </div>
     </section>
 
-    <section class="journey-banner">
-      <img src="images/train.jpg" alt="Nine Arch Bridge train route in Sri Lanka" loading="lazy" decoding="async">
+    <!-- ================================================================
+     SECTION: CUSTOM JOURNEY CTA
+     WHAT YOU SEE: Banner linking visitors to trip planner.
+     MAIN CSS: ceybreez-home-v3.css
+     DATA / JS: Static HTML.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<section class="journey-banner">
+      <!-- IMAGE SOURCE: images/train.jpg | ROLE: Nine Arch Bridge train route in Sri Lanka | To change this picture, change the src value below. -->
+<img src="images/train.jpg" alt="Nine Arch Bridge train route in Sri Lanka" loading="lazy" decoding="async">
       <div class="journey-shade"></div>
       <div class="journey-content">
         <span class="eyebrow light">Your trip, your pace</span>
@@ -272,7 +370,14 @@
       <div class="journey-badge"><strong>Custom</strong><span>Island<br>Journeys</span></div>
     </section>
 
-    <section class="featured-block stays-block" data-section="stays">
+    <!-- ================================================================
+     SECTION: FEATURED STAYS
+     WHAT YOU SEE: Featured properties from CMS/API.
+     MAIN CSS: ceybreez-home-v3.css
+     DATA / JS: /api/properties
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<section class="featured-block stays-block" data-section="stays">
       <div class="section-shell">
         <div class="section-head split-head compact">
           <div><span class="eyebrow">Sleep somewhere special</span><h2>Featured stays</h2></div>
@@ -282,7 +387,14 @@
       </div>
     </section>
 
-    <section class="featured-block destination-block" data-section="destinations">
+    <!-- ================================================================
+     SECTION: POPULAR DESTINATIONS
+     WHAT YOU SEE: Destination cards from CMS/API.
+     MAIN CSS: ceybreez-home-v3.css
+     DATA / JS: /api/destinations
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<section class="featured-block destination-block" data-section="destinations">
       <div class="section-shell">
         <div class="section-head split-head compact">
           <div><span class="eyebrow">Where next?</span><h2>Popular destinations</h2></div>
@@ -292,7 +404,14 @@
       </div>
     </section>
 
-    <section class="featured-block services-block" data-section="services">
+    <!-- ================================================================
+     SECTION: LOCAL SERVICES
+     WHAT YOU SEE: Services cards from CMS/API.
+     MAIN CSS: ceybreez-home-v3.css
+     DATA / JS: /api/services
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<section class="featured-block services-block" data-section="services">
       <div class="section-shell">
         <div class="section-head split-head compact">
           <div><span class="eyebrow">Useful on the road</span><h2>Local services</h2></div>
@@ -302,7 +421,14 @@
       </div>
     </section>
 
-    <section class="cb-social-proof" data-reviews-showcase data-review-type="all" data-featured="1" data-limit="6">
+    <!-- ================================================================
+     SECTION: REVIEWS / SOCIAL PROOF
+     WHAT YOU SEE: Guest review cards and stats.
+     MAIN CSS: reviews-showcase.css + ceybreez-home-v3.css
+     DATA / JS: reviews-showcase.js /api/reviews
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<section class="cb-social-proof" data-reviews-showcase data-review-type="all" data-featured="1" data-limit="6">
       <div class="cb-section-head"><span class="eyebrow">Guest stories</span><h2>Good trips are remembered. Great ones are shared.</h2><p>Selected experiences from guests who stayed and explored Sri Lanka with CeyBreez.</p></div>
       <div class="cb-proof-stats">
         <div class="cb-proof-stat"><strong data-happy-customers>0</strong><span>Happy Customers</span></div>
@@ -313,7 +439,14 @@
       <div class="cb-review-grid" data-review-grid></div>
     </section>
 
-    <section class="travel-reels" id="reels" data-section="reels">
+    <!-- ================================================================
+     SECTION: VIDEO REELS
+     WHAT YOU SEE: Vertical travel reels / short videos.
+     MAIN CSS: ceybreez-home-v3.css
+     DATA / JS: review_reels CMS field.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<section class="travel-reels" id="reels" data-section="reels">
       <div class="section-shell reels-shell">
         <div class="section-head split-head reels-head">
           <div>
@@ -330,10 +463,14 @@
         </div>
 
         <div class="reels-track" id="homeReelsTrack" aria-live="polite">
-          <article class="reel-card reel-placeholder"><img src="images/beach.jpg" alt="Sri Lanka beach travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>COAST</small><strong>Island days</strong><span>Reels load from CMS</span></div></article>
-          <article class="reel-card reel-placeholder"><img src="images/train.jpg" alt="Sri Lanka train travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>HILL COUNTRY</small><strong>Window-seat views</strong><span>Reels load from CMS</span></div></article>
-          <article class="reel-card reel-placeholder"><img src="images/nature.jpg" alt="Sri Lanka nature travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>NATURE</small><strong>Into the wild</strong><span>Reels load from CMS</span></div></article>
-          <article class="reel-card reel-placeholder"><img src="images/food.jpg" alt="Sri Lanka food travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>LOCAL LIFE</small><strong>Taste the island</strong><span>Reels load from CMS</span></div></article>
+          <article class="reel-card reel-placeholder"><!-- IMAGE SOURCE: images/beach.jpg | ROLE: Sri Lanka beach travel reel preview | To change this picture, change the src value below. -->
+<img src="images/beach.jpg" alt="Sri Lanka beach travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>COAST</small><strong>Island days</strong><span>Reels load from CMS</span></div></article>
+          <article class="reel-card reel-placeholder"><!-- IMAGE SOURCE: images/train.jpg | ROLE: Sri Lanka train travel reel preview | To change this picture, change the src value below. -->
+<img src="images/train.jpg" alt="Sri Lanka train travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>HILL COUNTRY</small><strong>Window-seat views</strong><span>Reels load from CMS</span></div></article>
+          <article class="reel-card reel-placeholder"><!-- IMAGE SOURCE: images/nature.jpg | ROLE: Sri Lanka nature travel reel preview | To change this picture, change the src value below. -->
+<img src="images/nature.jpg" alt="Sri Lanka nature travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>NATURE</small><strong>Into the wild</strong><span>Reels load from CMS</span></div></article>
+          <article class="reel-card reel-placeholder"><!-- IMAGE SOURCE: images/food.jpg | ROLE: Sri Lanka food travel reel preview | To change this picture, change the src value below. -->
+<img src="images/food.jpg" alt="Sri Lanka food travel reel preview" loading="lazy"><span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span><div class="reel-caption"><small>LOCAL LIFE</small><strong>Taste the island</strong><span>Reels load from CMS</span></div></article>
         </div>
 
         <div class="reels-footnote"><span><i class="fa-solid fa-volume-xmark"></i> Videos preview muted</span><span>Swipe to explore <i class="fa-solid fa-arrow-right"></i></span></div>
@@ -345,15 +482,24 @@
       <button class="gallery-lightbox-close" id="galleryLightboxClose" type="button" aria-label="Close gallery"><i class="fa-solid fa-xmark"></i></button>
       <button class="gallery-lightbox-nav prev" id="galleryLightboxPrev" type="button" aria-label="Previous image"><i class="fa-solid fa-arrow-left"></i></button>
       <figure class="gallery-lightbox-stage">
-        <img id="galleryLightboxImage" src="images/cover.jpg" alt="Sri Lanka travel gallery image">
+        <!-- IMAGE SOURCE: images/cover.jpg | ROLE: Sri Lanka travel gallery image | To change this picture, change the src value below. -->
+<img id="galleryLightboxImage" src="images/cover.jpg" alt="Sri Lanka travel gallery image">
         <figcaption><span id="galleryLightboxKicker">Sri Lanka</span><strong id="galleryLightboxTitle">Explore the island</strong><p id="galleryLightboxCaption"></p></figcaption>
       </figure>
       <button class="gallery-lightbox-nav next" id="galleryLightboxNext" type="button" aria-label="Next image"><i class="fa-solid fa-arrow-right"></i></button>
       <div class="gallery-lightbox-count" id="galleryLightboxCount">01 / 06</div>
     </div>
 
-    <section class="contact final-cta" id="contact" data-section="contact">
-      <img src="images/beach.jpg" alt="Sri Lanka beach at sunset" loading="lazy" decoding="async">
+    <!-- ================================================================
+     SECTION: FINAL CTA / CONTACT
+     WHAT YOU SEE: Final conversion section before footer.
+     MAIN CSS: ceybreez-home-v3.css
+     DATA / JS: Static CTA links.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<section class="contact final-cta" id="contact" data-section="contact">
+      <!-- IMAGE SOURCE: images/beach.jpg | ROLE: Sri Lanka beach at sunset | To change this picture, change the src value below. -->
+<img src="images/beach.jpg" alt="Sri Lanka beach at sunset" loading="lazy" decoding="async">
       <div class="final-cta-shade"></div>
       <div class="final-cta-content">
         <span class="eyebrow light">Ready when you are</span>
@@ -366,10 +512,18 @@
       </div>
     </section>
 
-    <footer class="site-footer" data-section="footer">
+    <!-- ================================================================
+     SECTION: GLOBAL FOOTER
+     WHAT YOU SEE: Footer navigation, contact links and brand information.
+     MAIN CSS: ceybreez-public-v3.css
+     DATA / JS: Static HTML + common JS.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<footer class="site-footer" data-section="footer">
       <div class="footer-shell">
         <div class="footer-brand">
-          <img id="footerLogo" src="logo.png" alt="CeyBreez">
+          <!-- IMAGE SOURCE: logo.png | ROLE: CeyBreez | To change this picture, change the src value below. -->
+<img id="footerLogo" src="logo.png" alt="CeyBreez">
           <p>Thoughtful stays, island journeys and local experiences across Sri Lanka.</p>
         </div>
         <div class="footer-column"><h3>Stay</h3><a href="villas.html">Villas</a><a href="apartments.html">Apartments</a><a href="homestays.html">Homestays</a></div>
@@ -514,7 +668,8 @@
       if(!selected.length) return renderEmpty(box, "Featured tours will appear here from your CMS.");
       box.innerHTML = selected.map((item, index) => `
         <a class="tour-card ${index === 0 ? 'tour-card-featured' : ''}" href="tour-details.html?slug=${encodeURIComponent(item.slug || item.id || item.title || '')}">
-          <img src="${esc(imageOf(item, 'images/train.jpg'))}" alt="${esc(item.title || 'Sri Lanka tour')}" loading="lazy" decoding="async">
+          <!-- IMAGE SOURCE: ${esc(imageOf(item,  | ROLE: ${esc(item.title || | To change this picture, change the src value below. -->
+<img src="${esc(imageOf(item, 'images/train.jpg'))}" alt="${esc(item.title || 'Sri Lanka tour')}" loading="lazy" decoding="async">
           <div class="card-shade"></div>
           <div class="tour-card-top"><span>${esc(item.category || 'Private Tour')}</span><b>${esc(item.duration || '')}</b></div>
           <div class="tour-card-copy"><p>${esc(item.location || 'Sri Lanka')}</p><h3>${esc(item.title || 'Sri Lanka Journey')}</h3><div><strong>${money(item)}</strong><i class="fa-solid fa-arrow-right"></i></div></div>
@@ -531,7 +686,8 @@
       box.innerHTML = selected.map((item, index) => {
         const page = item.type === "apartment" ? "apartments.html" : item.type === "homestay" ? "homestays.html" : "villas.html";
         return `<a class="stay-card ${index === 0 ? 'stay-card-large' : ''}" href="${page}">
-          <div class="stay-image"><img src="${esc(imageOf(item))}" alt="${esc(item.name || 'Sri Lanka stay')}" loading="lazy" decoding="async"><span>${esc(item.type || 'Stay')}</span></div>
+          <div class="stay-image"><!-- IMAGE SOURCE: ${esc(imageOf(item))} | ROLE: ${esc(item.name || | To change this picture, change the src value below. -->
+<img src="${esc(imageOf(item))}" alt="${esc(item.name || 'Sri Lanka stay')}" loading="lazy" decoding="async"><span>${esc(item.type || 'Stay')}</span></div>
           <div class="stay-copy"><div><p><i class="fa-solid fa-location-dot"></i> ${esc(item.location || 'Sri Lanka')}</p><h3>${esc(item.name || 'CeyBreez Stay')}</h3></div><strong>${money(item)}</strong></div>
         </a>`;
       }).join("");
@@ -543,7 +699,8 @@
       const selected = (Array.isArray(items) ? items : []).slice(0, 5);
       if(!selected.length) return renderEmpty(box, "Featured destinations will appear here from your CMS.");
       box.innerHTML = selected.map((item, index) => `<a class="destination-card destination-${index + 1}" href="tours.html">
-        <img src="${esc(imageOf(item, index % 2 ? 'images/mountains.jpg' : 'images/nature.jpg'))}" alt="${esc(item.name || 'Sri Lanka destination')}" loading="lazy" decoding="async">
+        <!-- IMAGE SOURCE: ${esc(imageOf(item, index % 2 ?  | ROLE: ${esc(item.name || | To change this picture, change the src value below. -->
+<img src="${esc(imageOf(item, index % 2 ? 'images/mountains.jpg' : 'images/nature.jpg'))}" alt="${esc(item.name || 'Sri Lanka destination')}" loading="lazy" decoding="async">
         <div class="card-shade"></div>
         <div class="destination-copy"><span>${esc(item.province || 'Sri Lanka')}</span><h3>${esc(item.name || 'Explore')}</h3><p>${esc(item.bestFor || item.timeNeeded || '')}</p></div>
       </a>`).join("");
@@ -557,7 +714,8 @@
       const selected = (featured.length ? featured : active).slice(0, 4);
       if(!selected.length) return renderEmpty(box, "Featured services will appear here from your CMS.");
       box.innerHTML = selected.map(item => `<a class="service-card" href="services.html">
-        <div class="service-image"><img src="${esc(imageOf(item, 'images/food.jpg'))}" alt="${esc(item.name || 'Local service')}" loading="lazy" decoding="async"></div>
+        <div class="service-image"><!-- IMAGE SOURCE: ${esc(imageOf(item,  | ROLE: ${esc(item.name || | To change this picture, change the src value below. -->
+<img src="${esc(imageOf(item, 'images/food.jpg'))}" alt="${esc(item.name || 'Local service')}" loading="lazy" decoding="async"></div>
         <div class="service-copy"><span>${esc(item.category || 'Local Service')}</span><h3>${esc(item.name || 'CeyBreez Service')}</h3><p><i class="fa-solid fa-location-dot"></i> ${esc(item.location || item.nearestCity || 'Sri Lanka')}</p></div><i class="service-arrow fa-solid fa-arrow-up-right-from-square"></i>
       </a>`).join("");
     }
@@ -606,7 +764,8 @@
       const display = activeGalleryItems.slice(0, 8);
       grid.innerHTML = display.map((item, index) => `
         <button class="gallery-tile gallery-tile-${(index % 8) + 1}" type="button" data-gallery-index="${index}" aria-label="Open ${esc(item.title)}">
-          <img src="${esc(item.src)}" alt="${esc(item.title)}" loading="lazy" decoding="async">
+          <!-- IMAGE SOURCE: ${esc(item.src)} | ROLE: ${esc(item.title)} | To change this picture, change the src value below. -->
+<img src="${esc(item.src)}" alt="${esc(item.title)}" loading="lazy" decoding="async">
           <span class="gallery-tile-shade"></span>
           <span class="gallery-tile-copy"><small>${esc(item.kicker)}</small><strong>${esc(item.title)}</strong></span>
           <span class="gallery-expand"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></span>
@@ -680,7 +839,8 @@
         </article>`;
       }
       return `<a class="reel-card reel-link-card" href="${esc(cleanUrl)}" target="_blank" rel="noopener">
-        <img src="${esc(poster || 'images/cover.jpg')}" alt="${esc(title)}" loading="lazy">
+        <!-- IMAGE SOURCE: ${esc(poster ||  | ROLE: ${esc(title)} | To change this picture, change the src value below. -->
+<img src="${esc(poster || 'images/cover.jpg')}" alt="${esc(title)}" loading="lazy">
         <span class="reel-vignette"></span><span class="reel-play"><i class="fa-solid fa-play"></i></span>
         <div class="reel-caption"><small>${esc(label)}</small><strong>${esc(title)}</strong><span>Watch reel <i class="fa-solid fa-arrow-up-right-from-square"></i></span></div>
       </a>`;

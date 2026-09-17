@@ -1,3 +1,12 @@
+/* ================================================================
+   CEYBREEZ JAVASCRIPT DEVELOPER NOTE
+   FILE: ceybreez-language.js
+   PURPOSE: Front-end behavior / API integration.
+   API REFERENCES FOUND: No direct /api/... string found in this file
+   EDITING TIP: Search for "JS FUNCTION:" to find documented functions.
+   WARNING: Change DOM ids/classes only if you also update the matching HTML/CSS.
+   ================================================================ */
+
 (()=>{
   'use strict';
   const LANGS={
@@ -20,9 +29,13 @@
   const skipTag=el=>!el||['SCRIPT','STYLE','NOSCRIPT','CODE','PRE','TEXTAREA','SVG','PATH'].includes(el.tagName)||el.closest('.notranslate,.cb-lang-switcher,.cb-lang-loading,[data-no-translate]');
   const meaningful=s=>{const t=(s||'').trim();return t.length>1&&/[A-Za-z]/.test(t)&&!/^https?:\/\//i.test(t)&&!/^\S+@\S+\.\S+$/.test(t)};
   const cacheKey=(lang,text)=>CACHE_PREFIX+lang+'_'+hash(text);
+  /* JS FUNCTION: hash — Creates a small cache key for translated strings. */
   function hash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)}
+  /* JS FUNCTION: getCache — Reads a cached translation from localStorage. */
   function getCache(lang,text){try{return localStorage.getItem(cacheKey(lang,text))||''}catch{return ''}}
+  /* JS FUNCTION: setCache — Stores a translated string in localStorage. */
   function setCache(lang,text,value){try{localStorage.setItem(cacheKey(lang,text),value)}catch{}}
+  /* JS FUNCTION: translateText — Requests translation for one text string. */
   async function translateText(text,lang){
     if(lang==='en'||!meaningful(text))return text;
     const cached=getCache(lang,text);if(cached)return cached;
@@ -34,6 +47,7 @@
     const out=(data?.[0]||[]).map(x=>x?.[0]||'').join('')||text;
     setCache(lang,text,out);return out;
   }
+  /* JS FUNCTION: collect — Collects visible text/attributes that can be translated. */
   function collect(root=document.body){
     const texts=[],attrs=[];
     const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(node){
@@ -47,14 +61,17 @@
     });
     return {texts,attrs};
   }
+  /* JS FUNCTION: pool — Runs translation jobs with limited concurrency. */
   async function pool(items,worker,limit=5){
     let i=0;const runners=Array.from({length:Math.min(limit,items.length)},async()=>{while(i<items.length){const item=items[i++];await worker(item)}});await Promise.all(runners);
   }
+  /* JS FUNCTION: restoreEnglish — Restores original English text. */
   function restoreEnglish(root=document.body){
     const {texts,attrs}=collect(root);
     texts.forEach(node=>{if(originalText.has(node))node.nodeValue=originalText.get(node)});
     attrs.forEach(([el,a])=>{const map=originalAttrs.get(el);if(map&&a in map)el.setAttribute(a,map[a])});
   }
+  /* JS FUNCTION: applyLanguage — Applies the selected language to a page/section. */
   async function applyLanguage(lang,root=document.body){
     if(!LANGS[lang])lang='en';current=lang;localStorage.setItem(STORAGE_KEY,lang);
     document.documentElement.lang=LANGS[lang].code;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
@@ -74,12 +91,15 @@
     });
     setLoading(false);
   }
+  /* JS FUNCTION: setLoading — Shows/hides translation loading UI. */
   function setLoading(on){document.querySelector('.cb-lang-loading')?.classList.toggle('show',!!on)}
+  /* JS FUNCTION: updateButton — Updates language switcher label/state. */
   function updateButton(){
     const b=document.querySelector('.cb-lang-button');if(!b)return;
     const l=LANGS[current];b.innerHTML=`<span class="cb-lang-flag">${l.flag}</span><span>${l.name}</span><span>▾</span>`;
     document.querySelectorAll('.cb-lang-option').forEach(x=>x.classList.toggle('active',x.dataset.lang===current));
   }
+  /* JS FUNCTION: buildSwitcher — Creates the language dropdown. */
   function buildSwitcher(){
     const wrap=document.createElement('div');wrap.className='cb-lang-switcher notranslate';wrap.setAttribute('data-no-translate','');
     wrap.innerHTML='<button class="cb-lang-button" type="button" aria-label="Select language"></button><div class="cb-lang-menu"></div>';
@@ -91,6 +111,7 @@
     const load=document.createElement('div');load.className='cb-lang-loading notranslate';load.textContent='Translating website…';load.setAttribute('data-no-translate','');document.body.appendChild(load);
     updateButton();
   }
+  /* JS FUNCTION: startObserver — Translates dynamically inserted DOM content. */
   function startObserver(){
     observer=new MutationObserver(muts=>{
       if(current==='en'||busy)return;
@@ -99,6 +120,7 @@
     });
     observer.observe(document.body,{childList:true,subtree:true});
   }
+  /* JS FUNCTION: init — Initializes language support. */
   async function init(){
     buildSwitcher();
     current=localStorage.getItem(STORAGE_KEY)||'en';

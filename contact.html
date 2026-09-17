@@ -1,4 +1,18 @@
 <!DOCTYPE html>
+<!-- ================================================================
+     CEYBREEZ DEVELOPER NOTE
+     PAGE: CONTACT
+     FILE: contact.html
+     PURPOSE: Contact / trip inquiry page with contact information and booking inquiry form.
+     CSS LOADED: contact.css, https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/css/intlTelInput.css, ceybreez-language.css, ceybreez-public-v3.css?v=20260916-3, contact-v4.css?v=20260917-1
+     JS LOADED: https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/js/intlTelInput.min.js, page-builder.js?v=20260916-safe-cms, ceybreez-language.js, ceybreez-public-v3.js?v=20260916-2
+
+     EDITING TIP:
+     Search this file for "SECTION:" to jump between visible page sections.
+     Search for "IMAGE SOURCE:" to find hard-coded images.
+     Dynamic CMS/API images are noted in the section comments.
+     ================================================================ -->
+
 
 <html lang="en">
 <head>
@@ -26,18 +40,48 @@
 <link href="ceybreez-public-v3.css?v=20260916-3" rel="stylesheet"/><link href="contact-v4.css?v=20260917-1" rel="stylesheet"/>
 </head>
 <body data-page="contact">
+<!-- ================================================================
+     SECTION: GLOBAL HEADER / NAVIGATION
+     WHAT YOU SEE: Site navigation.
+     MAIN CSS: ceybreez-public-v3.css
+     DATA / JS: Common JS.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
 <header class="site-header" id="siteHeader">
 <div class="nav-shell">
-<a aria-label="CeyBreez home" class="brand" href="index.html"><img alt="CeyBreez" src="logo.png"/></a>
+<a aria-label="CeyBreez home" class="brand" href="index.html"><!-- IMAGE SOURCE: logo.png | ROLE: CeyBreez | To change this picture, change the src value below. -->
+<img alt="CeyBreez" src="logo.png"/></a>
 <nav aria-label="Main navigation" class="main-nav" id="mainNav">
 <a href="index.html">Home</a><a href="villas.html">Villas</a><a href="apartments.html">Apartments</a><a href="homestays.html">Homestays</a><a href="tours.html">Tours</a><a href="services.html">Services</a><a class="active" href="contact.html">Contact</a>
 </nav>
 <div class="nav-actions"><a class="nav-cta" href="contact.html">Plan my trip <i class="fa-solid fa-arrow-right"></i></a><button aria-expanded="false" aria-label="Open menu" class="menu-toggle" id="menuToggle" type="button"><span></span><span></span></button></div>
 </div>
 </header>
-<section class="contact-v4-hero"><div class="contact-v4-hero-inner"><div><span class="contact-v4-eyebrow">PLAN IT WITH US</span><h1>Start with the feeling you want from Sri Lanka.</h1><p>Share the dates, the pace and the places on your mind. We’ll help shape the stay, route and local experiences around you.</p><div class="contact-v4-actions"><a href="#contactForm">Start planning <span>→</span></a><a class="ghost" href="tours.html">Explore tours</a></div></div><aside><span>ONE CONVERSATION</span><strong>Stay.<br/>Route.<br/>Experience.</strong><p>Bring the pieces together without juggling separate plans.</p></aside></div></section><section class="contact-v4-flow"><article><strong>01</strong><span>Tell us the basics</span><p>Dates, guests and the type of trip you have in mind.</p></article><article><strong>02</strong><span>We shape the options</span><p>Stays, routes and experiences that make sense together.</p></article><article><strong>03</strong><span>You choose the pace</span><p>Keep it simple or build a fuller Sri Lanka journey.</p></article></section><section class="contact-page">
+<section class="<!-- ================================================================
+     SECTION: CONTACT HERO
+     WHAT YOU SEE: Large hero with headline, CTAs and travel planning note.
+     MAIN CSS: contact-v4.css
+     DATA / JS: Static HTML/background.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+contact-v4-hero"><div class="contact-v4-hero-inner"><div><span class="contact-v4-eyebrow">PLAN IT WITH US</span><h1>Start with the feeling you want from Sri Lanka.</h1><p>Share the dates, the pace and the places on your mind. We’ll help shape the stay, route and local experiences around you.</p><div class="contact-v4-actions"><a href="#contactForm">Start planning <span>→</span></a><a class="ghost" href="tours.html">Explore tours</a></div></div><aside><span>ONE CONVERSATION</span><strong>Stay.<br/>Route.<br/>Experience.</strong><p>Bring the pieces together without juggling separate plans.</p></aside></div></section><section class="<!-- ================================================================
+     SECTION: HOW IT WORKS
+     WHAT YOU SEE: Three quick planning steps.
+     MAIN CSS: contact-v4.css
+     DATA / JS: Static HTML.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+contact-v4-flow"><article><strong>01</strong><span>Tell us the basics</span><p>Dates, guests and the type of trip you have in mind.</p></article><article><strong>02</strong><span>We shape the options</span><p>Stays, routes and experiences that make sense together.</p></article><article><strong>03</strong><span>You choose the pace</span><p>Keep it simple or build a fuller Sri Lanka journey.</p></article></section><section class="<!-- ================================================================
+     SECTION: CONTACT + INQUIRY FORM
+     WHAT YOU SEE: Left contact details + right Book Your Escape form.
+     MAIN CSS: contact.css + contact-v4.css
+     DATA / JS: Inline JS -> inquiry API.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+contact-page">
 <div class="contact-container">
 <div class="contact-info">
+<!-- IMAGE SOURCE: logo.png | ROLE: CeyBreez Logo | To change this picture, change the src value below. -->
 <img alt="CeyBreez Logo" class="contact-logo" src="logo.png"/>
 <h1>Let’s plan something memorable.</h1>
 <p>CeyBreez – A Peaceful Escape in Sri Lanka 🌿</p>
@@ -98,9 +142,17 @@
 </div>
 </div>
 </section>
+<!-- ================================================================
+     SECTION: GLOBAL FOOTER
+     WHAT YOU SEE: Footer.
+     MAIN CSS: ceybreez-public-v3.css
+     DATA / JS: Common JS.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
 <footer class="site-footer" data-section="footer">
 <div class="footer-shell">
-<div class="footer-brand"><img alt="CeyBreez" src="logo.png"/><p>Handpicked stays, private tours and local experiences for memorable journeys across Sri Lanka.</p></div>
+<div class="footer-brand"><!-- IMAGE SOURCE: logo.png | ROLE: CeyBreez | To change this picture, change the src value below. -->
+<img alt="CeyBreez" src="logo.png"/><p>Handpicked stays, private tours and local experiences for memorable journeys across Sri Lanka.</p></div>
 <div class="footer-column"><h3>Explore</h3><a href="tours.html">Private Tours</a><a href="villas.html">Villas</a><a href="apartments.html">Apartments</a><a href="homestays.html">Homestays</a></div>
 <div class="footer-column"><h3>Travel</h3><a href="services.html">Local Services</a><a href="contact.html">Plan a Custom Trip</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms &amp; Conditions</a></div>
 <div class="footer-column"><h3>CeyBreez</h3><a href="contact.html">Contact Us</a><a href="index.html#aboutSection">About CeyBreez</a><a href="index.html#gallery">Travel Gallery</a></div>

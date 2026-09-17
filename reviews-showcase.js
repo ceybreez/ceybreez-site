@@ -1,3 +1,12 @@
+/* ================================================================
+   CEYBREEZ JAVASCRIPT DEVELOPER NOTE
+   FILE: reviews-showcase.js
+   PURPOSE: Front-end behavior / API integration.
+   API REFERENCES FOUND: No direct /api/... string found in this file
+   EDITING TIP: Search for "JS FUNCTION:" to find documented functions.
+   WARNING: Change DOM ids/classes only if you also update the matching HTML/CSS.
+   ================================================================ */
+
 (function(){
   const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
   const state = { reviews: [], content: {} };
@@ -7,6 +16,8 @@
   const stars = (n) => "★".repeat(Math.max(1,Math.min(5,Number(n)||5))) + "☆".repeat(Math.max(0,5-(Number(n)||5)));
   const initials = (name) => String(name||"Guest").split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase();
   const norm = (v) => String(v||"").trim().toLowerCase();
+
+  /* JS FUNCTION: reviewCard — Builds one review card. */
 
   function reviewCard(r){
     const source = r.source || "Guest";
@@ -20,6 +31,8 @@
       <div class="cb-review-foot"><span>${esc(r.itemName||"")}</span>${sourceLink}</div>
     </article>`;
   }
+
+  /* JS FUNCTION: renderReviewSections — Populates review sections and filters. */
 
   function renderReviewSections(){
     document.querySelectorAll("[data-reviews-showcase]").forEach(section => {
@@ -49,7 +62,10 @@
     });
   }
 
+  /* JS FUNCTION: youtubeId — Extracts a YouTube video ID from common URL formats. */
+
   function youtubeId(url){ const m=String(url||"").match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([^?&/]+)/); return m?m[1]:""; }
+  /* JS FUNCTION: renderStatsAndReels — Updates stats and video reels from CMS site-content. */
   function renderStatsAndReels(){
     const happy = state.content.happy_customer_count || "0";
     const trips = state.content.completed_trip_count || "0";
@@ -70,6 +86,8 @@
       }).join('');
     });
   }
+
+  /* JS FUNCTION: init — Loads reviews/site content and starts the showcase. */
 
   async function init(){
     try{

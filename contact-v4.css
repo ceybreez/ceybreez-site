@@ -1,11 +1,49 @@
+/* ================================================================
+   CEYBREEZ CSS DEVELOPER NOTE
+   FILE: contact-v4.css
+   PURPOSE: Styles used by the CeyBreez public website.
+   EDITING TIP: Search for "CSS SECTION:" to jump to major visual areas.
+   IMPORTANT: V4 files are override layers and should load AFTER the base CSS.
+   ================================================================ */
+
 
 /* Contact V4 visual layer — load after fixed contact.css + ceybreez-public-v3.css */
 :root{--cv4-ink:#083f37;--cv4-green:#07584d;--cv4-cream:#f7f2e9;--cv4-gold:#dfbd6b;--cv4-muted:#60706a}
 body[data-page="contact"]{background:var(--cv4-cream)!important;color:#173c35!important}
+
+/* ----------------------------------------------------------------
+   CSS SECTION: CONTACT HERO
+   CONTROLS: Hero section.
+   HTML: Search the matching page for "SECTION: CONTACT HERO" or the selector below.
+   ---------------------------------------------------------------- */
 .contact-v4-hero{min-height:73vh;padding:150px 6vw 70px;display:flex;align-items:flex-end;color:#fff;background:linear-gradient(90deg,rgba(4,40,35,.91),rgba(4,40,35,.57) 54%,rgba(4,40,35,.18)),url('images/nature.jpg') center/cover no-repeat}
 .contact-v4-hero-inner{width:min(1380px,100%);margin:auto;display:grid;grid-template-columns:1.35fr .55fr;gap:70px;align-items:end}.contact-v4-eyebrow{display:inline-flex;gap:10px;align-items:center;font:700 10px 'DM Sans',sans-serif;letter-spacing:.18em;color:#f0cf83;margin-bottom:18px}.contact-v4-eyebrow:before{content:"";width:28px;height:1px;background:currentColor}.contact-v4-hero h1{font:600 clamp(52px,6vw,88px)/.95 'Cormorant Garamond',serif;letter-spacing:-.035em;margin:0 0 23px;color:#fff}.contact-v4-hero p{font:400 16px/1.75 'DM Sans',sans-serif;color:rgba(255,255,255,.8);max-width:710px}.contact-v4-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.contact-v4-actions a{min-height:49px;padding:0 21px;border-radius:999px;display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--cv4-ink);font:700 12px 'DM Sans',sans-serif;text-decoration:none}.contact-v4-actions a.ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.34)}.contact-v4-hero aside{border-left:1px solid rgba(255,255,255,.25);padding-left:28px}.contact-v4-hero aside>span{font:700 9px 'DM Sans',sans-serif;letter-spacing:.18em;color:#f0cf83}.contact-v4-hero aside strong{display:block;font:600 36px/1.03 'Cormorant Garamond',serif;margin:14px 0}.contact-v4-hero aside p{font-size:12.5px;max-width:280px;color:rgba(255,255,255,.68)}
+
+/* ----------------------------------------------------------------
+   CSS SECTION: CONTACT PROCESS
+   CONTROLS: Three planning steps.
+   HTML: Search the matching page for "SECTION: CONTACT PROCESS" or the selector below.
+   ---------------------------------------------------------------- */
 .contact-v4-flow{width:min(1180px,calc(100% - 48px));margin:74px auto 0;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(8,63,55,.13);padding-bottom:60px}.contact-v4-flow article{padding:23px 30px 0 0}.contact-v4-flow strong{display:block;font:700 10px 'DM Sans',sans-serif;color:#b47d26;margin-bottom:18px}.contact-v4-flow span{display:block;font:600 24px 'Cormorant Garamond',serif;color:var(--cv4-ink);margin-bottom:7px}.contact-v4-flow p{font:400 12.5px/1.65 'DM Sans',sans-serif;color:#697671}
+
+/* ----------------------------------------------------------------
+   CSS SECTION: CONTACT FORM AREA
+   CONTROLS: Main two-column contact + form layout.
+   HTML: Search the matching page for "SECTION: CONTACT FORM AREA" or the selector below.
+   ---------------------------------------------------------------- */
 .contact-page{min-height:auto!important;padding:34px 24px 90px!important;background:var(--cv4-cream)!important}.contact-container{width:min(1180px,100%)!important;max-width:none!important;margin:auto!important;display:grid!important;grid-template-columns:.92fr 1.08fr!important;gap:18px!important;align-items:stretch!important}.contact-info,.contact-form-box{width:auto!important;margin:0!important;border-radius:24px!important}.contact-info{padding:42px!important;background:var(--cv4-ink)!important;color:#fff!important}.contact-logo{width:150px!important;margin-bottom:34px!important}.contact-info h1{font:600 45px/1 'Cormorant Garamond',serif!important;color:#fff!important;letter-spacing:-.02em!important}.contact-info>p{font:400 13px/1.72 'DM Sans',sans-serif!important;color:rgba(255,255,255,.74)!important;margin:0 0 16px!important;max-width:520px!important}.info-box{display:inline-flex!important;vertical-align:top;min-width:calc(50% - 8px);margin:20px 6px 0 0!important;padding:16px!important;border:1px solid rgba(255,255,255,.13)!important;border-radius:14px!important}.info-box h2{font-size:17px!important;margin:0 9px 0 0!important}.info-box a{font:500 12px 'DM Sans',sans-serif!important;color:#fff!important}.social-links{margin-top:25px!important}.social-btn{width:40px!important;height:40px!important;font-size:17px!important;background:rgba(255,255,255,.10)!important;border:1px solid rgba(255,255,255,.14)!important}
-.contact-form-box{padding:42px!important;background:#fff!important;border:1px solid rgba(8,63,55,.08)!important;box-shadow:0 18px 50px rgba(25,57,50,.08)!important;color:#173c35!important}.contact-form-box h2{font:600 44px/1 'Cormorant Garamond',serif!important;color:var(--cv4-ink)!important;letter-spacing:-.025em!important;margin-bottom:29px!important}.contact-form-box label{font:700 10.5px 'DM Sans',sans-serif!important;color:#294e45!important;letter-spacing:.01em!important}.contact-form-box input:not([type="checkbox"]):not([type="radio"]),.contact-form-box select,.contact-form-box textarea{background:#faf8f4!important;color:#173c35!important;border:1px solid #dedbd4!important;border-radius:11px!important;min-height:46px!important;font:500 12px 'DM Sans',sans-serif!important;box-shadow:none!important}.contact-form-box input::placeholder,.contact-form-box textarea::placeholder{color:#8a928f!important;opacity:1!important}.contact-form-box input:focus,.contact-form-box select:focus,.contact-form-box textarea:focus{border-color:#0b7566!important;box-shadow:0 0 0 3px rgba(11,117,102,.08)!important}.checkbox-group{gap:8px 12px!important}.checkbox-group label{background:#f6f2eb!important;border:1px solid #e6e0d7!important;border-radius:10px!important;padding:10px 11px!important;color:#31564d!important}.checkbox-group input[type="checkbox"]{width:15px!important;height:15px!important;min-height:15px!important;accent-color:#0b7566!important}.date-row{gap:10px!important}.contact-form-box button{min-height:49px!important;border-radius:999px!important;background:var(--cv4-green)!important;color:#fff!important;font:700 12px 'DM Sans',sans-serif!important}
+.contact-form-box{padding:42px!important;background:#fff!important;border:1px solid rgba(8,63,55,.08)!important;box-shadow:0 18px 50px rgba(25,57,50,.08)!important;color:#173c35!important}.contact-form-box h2{font:600 44px/1 'Cormorant Garamond',serif!important;color:var(--cv4-ink)!important;letter-spacing:-.025em!important;margin-bottom:29px!important}.contact-form-box label{font:700 10.5px 'DM Sans',sans-serif!important;color:#294e45!important;letter-spacing:.01em!important}.contact-form-box input:not([type="checkbox"]):not([type="radio"]),.contact-form-box select,.contact-form-box textarea{background:#faf8f4!important;color:#173c35!important;border:1px solid #dedbd4!important;border-radius:11px!important;min-height:46px!important;font:500 12px 'DM Sans',sans-serif!important;box-shadow:none!important}.contact-form-box input::placeholder,.contact-form-box textarea::placeholder{color:#8a928f!important;opacity:1!important}.contact-form-box input:focus,.contact-form-box select:focus,.contact-form-box textarea:focus{border-color:#0b7566!important;box-shadow:0 0 0 3px rgba(11,117,102,.08)!important}
+/* ----------------------------------------------------------------
+   CSS SECTION: EXPERIENCE CHECKBOXES
+   CONTROLS: Villas/Homestays/Apartments/Tours choices.
+   HTML: Search the matching page for "SECTION: EXPERIENCE CHECKBOXES" or the selector below.
+   ---------------------------------------------------------------- */
+.checkbox-group{gap:8px 12px!important}.checkbox-group label{background:#f6f2eb!important;border:1px solid #e6e0d7!important;border-radius:10px!important;padding:10px 11px!important;color:#31564d!important}.checkbox-group input[type="checkbox"]{width:15px!important;height:15px!important;min-height:15px!important;accent-color:#0b7566!important}
+/* ----------------------------------------------------------------
+   CSS SECTION: EXPECTED DATES
+   CONTROLS: From/to date fields.
+   HTML: Search the matching page for "SECTION: EXPECTED DATES" or the selector below.
+   ---------------------------------------------------------------- */
+.date-row{gap:10px!important}.contact-form-box button{min-height:49px!important;border-radius:999px!important;background:var(--cv4-green)!important;color:#fff!important;font:700 12px 'DM Sans',sans-serif!important}
 @media(max-width:900px){.contact-v4-hero{min-height:auto;padding:130px 24px 58px}.contact-v4-hero-inner{grid-template-columns:1fr}.contact-v4-hero aside{max-width:420px}.contact-v4-flow{grid-template-columns:1fr}.contact-container{grid-template-columns:1fr!important}.contact-info,.contact-form-box{padding:30px!important}}
 @media(max-width:640px){.contact-v4-hero{padding:116px 17px 45px}.contact-v4-hero h1{font-size:49px}.contact-v4-actions a{width:100%;justify-content:center}.contact-v4-flow{width:calc(100% - 30px);margin-top:52px}.contact-page{padding-left:15px!important;padding-right:15px!important}.contact-info,.contact-form-box{padding:24px!important}.info-box{display:flex!important;width:100%!important;min-width:0!important}.date-row{grid-template-columns:1fr!important}}

@@ -1,3 +1,11 @@
+/* ================================================================
+   CEYBREEZ CSS DEVELOPER NOTE
+   FILE: contact.css
+   PURPOSE: Styles used by the CeyBreez public website.
+   EDITING TIP: Search for "CSS SECTION:" to jump to major visual areas.
+   IMPORTANT: V4 files are override layers and should load AFTER the base CSS.
+   ================================================================ */
+
 /* =========================================================
    CeyBreez — Contact Page CSS (V3.3)
    Full replacement for contact.css
@@ -81,6 +89,12 @@ body[data-page="contact"] .contact-page {
     url("images/cover.jpg") center / cover no-repeat !important;
 }
 
+
+/* ----------------------------------------------------------------
+   CSS SECTION: CONTACT TWO-COLUMN LAYOUT
+   CONTROLS: Controls Contact Us card + Book Your Escape card widths.
+   HTML: Search the matching page for "SECTION: CONTACT TWO-COLUMN LAYOUT" or the selector below.
+   ---------------------------------------------------------------- */
 body[data-page="contact"] .contact-container {
   width: 100% !important;
   max-width: 1320px !important;
@@ -208,6 +222,12 @@ body[data-page="contact"] .contact-form-box h2 {
   color: #083d38 !important;
 }
 
+
+/* ----------------------------------------------------------------
+   CSS SECTION: CONTACT FORM
+   CONTROLS: Base form layout.
+   HTML: Search the matching page for "SECTION: CONTACT FORM" or the selector below.
+   ---------------------------------------------------------------- */
 body[data-page="contact"] .contact-form-box form {
   margin: 0 !important;
   padding: 0 !important;
@@ -295,6 +315,12 @@ body[data-page="contact"] .iti__dropdown-content {
 }
 
 /* ---------- Experience checkboxes ---------- */
+
+/* ----------------------------------------------------------------
+   CSS SECTION: CONTACT CHECKBOXES
+   CONTROLS: Experience options sizing/alignment.
+   HTML: Search the matching page for "SECTION: CONTACT CHECKBOXES" or the selector below.
+   ---------------------------------------------------------------- */
 body[data-page="contact"] .contact-form-box .checkbox-group {
   display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -355,6 +381,12 @@ body[data-page="contact"] .contact-form-box .checkbox-group input[type="checkbox
 }
 
 /* ---------- Date row ---------- */
+
+/* ----------------------------------------------------------------
+   CSS SECTION: CONTACT DATES
+   CONTROLS: Two date fields.
+   HTML: Search the matching page for "SECTION: CONTACT DATES" or the selector below.
+   ---------------------------------------------------------------- */
 body[data-page="contact"] .date-row {
   display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;

@@ -1,3 +1,12 @@
+/* ================================================================
+   CEYBREEZ JAVASCRIPT DEVELOPER NOTE
+   FILE: ceybreez-public-v3.js
+   PURPOSE: Front-end behavior / API integration.
+   API REFERENCES FOUND: /api/site-content
+   EDITING TIP: Search for "JS FUNCTION:" to find documented functions.
+   WARNING: Change DOM ids/classes only if you also update the matching HTML/CSS.
+   ================================================================ */
+
 (()=>{
   document.documentElement.classList.add('v31-js');
   const header=document.querySelector('.site-header');

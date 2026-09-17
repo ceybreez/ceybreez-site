@@ -1,14 +1,27 @@
+/* ================================================================
+   CEYBREEZ JAVASCRIPT DEVELOPER NOTE
+   FILE: tours.js
+   PURPOSE: Front-end behavior / API integration.
+   API REFERENCES FOUND: No direct /api/... string found in this file
+   EDITING TIP: Search for "JS FUNCTION:" to find documented functions.
+   WARNING: Change DOM ids/classes only if you also update the matching HTML/CSS.
+   ================================================================ */
+
 (function(){
   const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
   const PLACEHOLDER_IMAGE = "images/cover.jpg";
 
   let allTours = [];
 
+  /* JS FUNCTION: clean — Normalizes text values before rendering/filtering. */
+
   function clean(value){ return String(value || "").trim(); }
+  /* JS FUNCTION: moneyNumber — Converts stored price values into a numeric value for sorting/display. */
   function moneyNumber(value){
     const n = Number(String(value || "0").replace(/[^0-9.\-]/g,""));
     return Number.isFinite(n) ? n : 0;
   }
+  /* JS FUNCTION: escapeHtml — Escapes CMS/API text before inserting it into HTML. */
   function escapeHtml(value){
     return String(value || "")
       .replaceAll("&","&amp;")
@@ -17,25 +30,31 @@
       .replaceAll('"',"&quot;")
       .replaceAll("'","&#039;");
   }
+  /* JS FUNCTION: firstImage — Chooses the first usable tour image (main image/photos/fallback). */
   function firstImage(tour){
     if(tour.mainImage) return tour.mainImage;
     if(Array.isArray(tour.photos) && tour.photos.length) return tour.photos[0];
     return PLACEHOLDER_IMAGE;
   }
+  /* JS FUNCTION: priceText — Builds the human-readable tour price label. */
   function priceText(tour){
     const currency = tour.currency || "USD";
     const base = clean(tour.basePrice);
     if(!base) return "Price on request";
     return `${currency} ${base}`;
   }
+  /* JS FUNCTION: detailsUrl — Builds the tour-details page URL/slug. */
   function detailsUrl(tour){
     const key = tour.slug || tour.id || tour.title || "";
     return `tour-details.html?slug=${encodeURIComponent(key)}`;
   }
+  /* JS FUNCTION: setStatus — Updates the tour loading/error/status message. */
   function setStatus(text){
     const el = document.getElementById("tourPackageStatus");
     if(el) el.textContent = text || "";
   }
+
+  /* JS FUNCTION: renderCategories — Builds the tour category dropdown from API data. */
 
   function renderCategories(){
     const select = document.getElementById("tourCategoryFilter");
@@ -45,6 +64,8 @@
     select.innerHTML = `<option value="all">All Categories</option>` + categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
     select.value = categories.includes(current) ? current : "all";
   }
+
+  /* JS FUNCTION: filteredTours — Applies search/category/sort filters to loaded tour packages. */
 
   function filteredTours(){
     const q = clean(document.getElementById("tourSearch")?.value).toLowerCase();
@@ -69,6 +90,8 @@
 
     return rows;
   }
+
+  /* JS FUNCTION: renderTours — Builds the visible Featured Tour Packages cards. */
 
   function renderTours(){
     const grid = document.getElementById("tourPackagesGrid");
@@ -104,6 +127,8 @@
       </article>
     `).join("");
   }
+
+  /* JS FUNCTION: loadTours — Fetches tour packages from the public API and starts rendering. */
 
   async function loadTours(){
     const grid = document.getElementById("tourPackagesGrid");

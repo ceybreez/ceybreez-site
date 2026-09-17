@@ -1,3 +1,12 @@
+/* ================================================================
+   CEYBREEZ JAVASCRIPT DEVELOPER NOTE
+   FILE: page-builder.js
+   PURPOSE: Front-end behavior / API integration.
+   API REFERENCES FOUND: No direct /api/... string found in this file
+   EDITING TIP: Search for "JS FUNCTION:" to find documented functions.
+   WARNING: Change DOM ids/classes only if you also update the matching HTML/CSS.
+   ================================================================ */
+
 (() => {
   "use strict";
 
@@ -18,6 +27,8 @@
   const pageKey = () => document.body?.dataset.page || "home";
   const isVisualSection = (section) => String(section?.sectionKey || "").startsWith("__visual_");
 
+  /* JS FUNCTION: loadCeyBreezSections — Loads CMS page sections for the current page. */
+
   async function loadCeyBreezSections(page = pageKey()) {
     try {
       const url = `${API_BASE}/api/page-sections?page=${encodeURIComponent(page)}&v=${Date.now()}`;
@@ -34,6 +45,8 @@
       return [];
     }
   }
+
+  /* JS FUNCTION: applySection — Applies CMS content fields to matching HTML targets. */
 
   function applySection(section) {
     if (isVisualSection(section)) {
@@ -82,6 +95,8 @@
     }
   }
 
+  /* JS FUNCTION: applySectionStyles — Applies permitted CMS styling when visual override mode is enabled. */
+
   function applySectionStyles(target, section, settings) {
     const mode = settings.backgroundMode || section.backgroundType || "color";
     target.style.background = "";
@@ -120,10 +135,14 @@
 
   const device = () => (innerWidth <= 600 ? "mobile" : innerWidth <= 900 ? "tablet" : "desktop");
 
+  /* JS FUNCTION: merged — Merges desktop/tablet/mobile visual-builder settings. */
+
   function merged(byDevice) {
     const current = device();
     return Object.assign({}, byDevice?.desktop || {}, current !== "desktop" ? (byDevice?.[current] || {}) : {});
   }
+
+  /* JS FUNCTION: applyRecord — Applies one visual-builder style record to an element. */
 
   function applyRecord(element, record) {
     if (!element || !record) return;
@@ -146,6 +165,8 @@
     element.style.transform = `translate(${Number(record.x) || 0}px,${Number(record.y) || 0}px)`;
   }
 
+  /* JS FUNCTION: applyElementStyles — Applies element-level visual styles. */
+
   function applyElementStyles(section, styles) {
     Object.entries(styles).forEach(([selector, byDevice]) => {
       let nodes = [];
@@ -158,6 +179,8 @@
       nodes.forEach((node) => applyRecord(node, record));
     });
   }
+
+  /* JS FUNCTION: renderCustom — Renders custom visual-builder elements. */
 
   function renderCustom(target, section, settings) {
     target.querySelectorAll('[data-pb-custom="1"]').forEach((node) => node.remove());
@@ -184,6 +207,8 @@
     });
   }
 
+  /* JS FUNCTION: applyVideoBackground — Creates/removes a section video background. */
+
   function applyVideoBackground(target, url) {
     let video = target.querySelector(".cms-bg-video");
     if (!video) {
@@ -197,6 +222,8 @@
     }
     video.src = url;
   }
+
+  /* JS FUNCTION: renderCards — Renders CMS card collections. */
 
   function renderCards(target, cards) {
     const box = target.querySelector('[data-field="cards"]');
@@ -226,6 +253,8 @@
       box.appendChild(node);
     });
   }
+
+  /* JS FUNCTION: applyVisualBuilderRecords — Applies saved visual-builder DOM records. */
 
   function applyVisualBuilderRecords(root, records) {
     (Array.isArray(records) ? records : []).forEach((record) => {
@@ -259,6 +288,8 @@
   window.CEYBREEZ_PAGE_BUILDER_READY = new Promise((resolve) => {
     readyResolve = resolve;
   });
+
+  /* JS FUNCTION: start — Initializes CMS page-builder behavior safely. */
 
   async function start() {
     const sections = await loadCeyBreezSections(pageKey());

@@ -1,3 +1,11 @@
+/* ================================================================
+   CEYBREEZ CSS DEVELOPER NOTE
+   FILE: tour-details.css
+   PURPOSE: Styles used by the CeyBreez public website.
+   EDITING TIP: Search for "CSS SECTION:" to jump to major visual areas.
+   IMPORTANT: V4 files are override layers and should load AFTER the base CSS.
+   ================================================================ */
+
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:'Poppins',sans-serif;background:#f8f3eb;color:#222;overflow-x:hidden}

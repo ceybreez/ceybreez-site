@@ -1,3 +1,12 @@
+/* ================================================================
+   CEYBREEZ JAVASCRIPT DEVELOPER NOTE
+   FILE: tour-details.js
+   PURPOSE: Front-end behavior / API integration.
+   API REFERENCES FOUND: No direct /api/... string found in this file
+   EDITING TIP: Search for "JS FUNCTION:" to find documented functions.
+   WARNING: Change DOM ids/classes only if you also update the matching HTML/CSS.
+   ================================================================ */
+
 const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 const PLACEHOLDER_IMAGE = "images/cover.jpg";
 
@@ -6,14 +15,25 @@ let galleryImages = [];
 let currentGalleryIndex = 0;
 let touchStartX = 0;
 
+/* JS FUNCTION: qs — Small querySelector helper. */
+
 function qs(name){ return new URLSearchParams(window.location.search).get(name) || ""; }
+/* JS FUNCTION: clean — Normalizes values. */
 function clean(v){ return String(v || "").trim(); }
+/* JS FUNCTION: escapeHtml — Escapes dynamic text. */
 function escapeHtml(value){ return String(value || "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;"); }
+/* JS FUNCTION: array — Converts stored JSON/newline lists into arrays. */
 function array(value){ if(Array.isArray(value)) return value; if(!value) return []; return String(value).split("\n").map(x=>x.trim()).filter(Boolean); }
+/* JS FUNCTION: firstImage — Chooses a usable tour image. */
 function firstImage(tour){ if(tour.mainImage) return tour.mainImage; if(Array.isArray(tour.photos) && tour.photos.length) return tour.photos[0]; return PLACEHOLDER_IMAGE; }
+/* JS FUNCTION: priceText — Formats tour price. */
 function priceText(tour){ return tour.basePrice ? `${tour.currency || "USD"} ${tour.basePrice}` : "Price on request"; }
+/* JS FUNCTION: setText — Writes text into a DOM target. */
 function setText(id, text){ const el=document.getElementById(id); if(el) el.textContent=text || ""; }
+/* JS FUNCTION: setStatus — Shows loading/error state. */
 function setStatus(text){ setText("detailStatus", text); }
+
+/* JS FUNCTION: renderList — Renders itinerary/inclusion/exclusion list items. */
 
 function renderList(id, items, emptyText){
   const el = document.getElementById(id);
@@ -21,6 +41,8 @@ function renderList(id, items, emptyText){
   const rows = array(items);
   el.innerHTML = rows.length ? rows.map(x => `<div>${escapeHtml(x)}</div>`).join("") : `<div>${escapeHtml(emptyText)}</div>`;
 }
+
+/* JS FUNCTION: renderTour — Populates the full tour-details page from one API record. */
 
 function renderTour(tour){
   currentTour = tour;
@@ -50,6 +72,8 @@ function renderTour(tour){
   setStatus("");
 }
 
+/* JS FUNCTION: loadTour — Loads the selected tour from /api/tour-packages/:slug. */
+
 async function loadTour(){
   const key = qs("slug") || qs("id");
   if(!key){ setStatus("Tour reference missing."); return; }
@@ -73,6 +97,8 @@ async function loadTour(){
     setStatus("This tour package could not be loaded.");
   }
 }
+
+/* JS FUNCTION: renderTourGallery — Builds main photo + thumbnails. */
 
 function renderTourGallery(tour){
   const mainImage = firstImage(tour);
@@ -107,9 +133,13 @@ function renderTourGallery(tour){
   }
 }
 
+/* JS FUNCTION: updateGalleryCounter — Updates lightbox image counter. */
+
 function updateGalleryCounter(){
   setText("galleryCounter", `${currentGalleryIndex + 1} / ${galleryImages.length}`);
 }
+
+/* JS FUNCTION: openGallery — Opens tour photo lightbox. */
 
 function openGallery(index){
   if(!galleryImages.length) return;
@@ -123,12 +153,16 @@ function openGallery(index){
   updateGalleryCounter();
 }
 
+/* JS FUNCTION: closeGallery — Closes tour photo lightbox. */
+
 function closeGallery(){
   const box = document.getElementById("galleryLightbox");
   if(!box) return;
   box.classList.remove("show");
   box.setAttribute("aria-hidden", "true");
 }
+
+/* JS FUNCTION: nextGalleryImage — Moves to next lightbox image. */
 
 function nextGalleryImage(){
   if(!galleryImages.length) return;
@@ -137,12 +171,16 @@ function nextGalleryImage(){
   updateGalleryCounter();
 }
 
+/* JS FUNCTION: prevGalleryImage — Moves to previous lightbox image. */
+
 function prevGalleryImage(){
   if(!galleryImages.length) return;
   currentGalleryIndex = (currentGalleryIndex - 1 + galleryImages.length) % galleryImages.length;
   document.getElementById("lightboxImage").src = galleryImages[currentGalleryIndex];
   updateGalleryCounter();
 }
+
+/* JS FUNCTION: loadRelated — Loads related tours. */
 
 async function loadRelated(activeTour){
   try{
@@ -159,6 +197,8 @@ async function loadRelated(activeTour){
     `).join("");
   }catch(e){}
 }
+
+/* JS FUNCTION: submitInquiry — Submits the tour inquiry form. */
 
 async function submitInquiry(event){
   event.preventDefault();
@@ -204,33 +244,47 @@ async function submitInquiry(event){
   }
 }
 
+/* JS FUNCTION: backToTours — Returns to tours listing. */
+
 function backToTours(){
   if(document.referrer && document.referrer.includes("tours")) history.back();
   else window.location.href = "tours.html";
 }
 
+/* JS FUNCTION: toggleShareBox — Shows/hides sharing options. */
+
 function toggleShareBox(){
   document.getElementById("shareBox")?.classList.toggle("show");
 }
+
+/* JS FUNCTION: shareTour — Uses native share when supported. */
 
 function shareTour(){
   if(navigator.share){ navigator.share({ title:document.title, url:window.location.href }); }
   else copyTourLink();
 }
 
+/* JS FUNCTION: shareWhatsApp — Shares current tour to WhatsApp. */
+
 function shareWhatsApp(){
   const text = encodeURIComponent(`${document.title}\n${window.location.href}`);
   window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
 }
 
+/* JS FUNCTION: shareFacebook — Shares current tour to Facebook. */
+
 function shareFacebook(){
   window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, "_blank");
 }
+
+/* JS FUNCTION: copyTourLink — Copies the current tour URL. */
 
 function copyTourLink(){
   navigator.clipboard.writeText(window.location.href);
   alert("Tour link copied.");
 }
+
+/* JS FUNCTION: saveTour — Stores/saves tour reference locally. */
 
 function saveTour(){
   const key = currentTour?.id || currentTour?.slug || window.location.href;

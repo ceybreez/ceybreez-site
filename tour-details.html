@@ -1,4 +1,18 @@
 <!DOCTYPE html>
+<!-- ================================================================
+     CEYBREEZ DEVELOPER NOTE
+     PAGE: TOUR DETAILS
+     FILE: tour-details.html
+     PURPOSE: Dynamic detail page for one tour package, gallery, itinerary, inclusions, related tours and inquiry.
+     CSS LOADED: https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css, tour-details.css, reviews-showcase.css, ceybreez-language.css, ceybreez-public-v3.css?v=20260916-3, tour-details-v4.css?v=20260917-1
+     JS LOADED: tour-details.js, reviews-showcase.js, page-builder.js?v=20260916-safe-cms, ceybreez-language.js, ceybreez-public-v3.js?v=20260916-2
+
+     EDITING TIP:
+     Search this file for "SECTION:" to jump between visible page sections.
+     Search for "IMAGE SOURCE:" to find hard-coded images.
+     Dynamic CMS/API images are noted in the section comments.
+     ================================================================ -->
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -15,16 +29,24 @@
   <link rel="stylesheet" href="tour-details.css">
   <link rel="stylesheet" href="reviews-showcase.css">
   <link rel="stylesheet" href="ceybreez-language.css">
-  <link rel="stylesheet" href="ceybreez-public-v3.css?v=20260917-5">
-  <link rel="stylesheet" href="tour-details-v4.css?v=20260917-5">
+  <link rel="stylesheet" href="ceybreez-public-v3.css?v=20260916-3">
+  <link rel="stylesheet" href="tour-details-v4.css?v=20260917-1">
 
   <script src="tour-details.js" defer></script>
 </head>
 <body data-page="tour-details">
 
+<!-- ================================================================
+     SECTION: GLOBAL HEADER / NAVIGATION
+     WHAT YOU SEE: Site navigation.
+     MAIN CSS: ceybreez-public-v3.css
+     DATA / JS: Common JS.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
 <header class="site-header" id="siteHeader">
   <div class="nav-shell">
-    <a class="brand" href="index.html" aria-label="CeyBreez home"><img src="logo.png" alt="CeyBreez"></a>
+    <a class="brand" href="index.html" aria-label="CeyBreez home"><!-- IMAGE SOURCE: logo.png | ROLE: CeyBreez | To change this picture, change the src value below. -->
+<img src="logo.png" alt="CeyBreez"></a>
     <nav class="main-nav" id="mainNav" aria-label="Main navigation">
       <a href="index.html">Home</a>
       <a href="villas.html">Villas</a>
@@ -42,7 +64,14 @@
 </header>
 
 <main>
-  <section class="td4-hero">
+  <section <!-- ================================================================
+     SECTION: TOUR DETAIL HERO
+     WHAT YOU SEE: Tour title, meta, price summary, share/back controls.
+     MAIN CSS: tour-details-v4.css
+     DATA / JS: tour-details.js fills dynamic values.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+class="td4-hero">
     <div class="td4-hero-glow td4-glow-one"></div>
     <div class="td4-hero-glow td4-glow-two"></div>
     <div class="td4-hero-shell">
@@ -87,7 +116,14 @@
 
   <div id="detailStatus" class="status-box td4-status">Loading tour details...</div>
 
-  <section class="td4-gallery-wrap">
+  <section <!-- ================================================================
+     SECTION: TOUR PHOTO GALLERY
+     WHAT YOU SEE: Main image + thumbnails + lightbox.
+     MAIN CSS: tour-details-v4.css
+     DATA / JS: tour-details.js uses mainImage/photos.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+class="td4-gallery-wrap">
     <div class="td4-section-shell">
       <div class="td4-gallery-head">
         <div><span class="td4-eyebrow">See the journey</span><h2>A glimpse of what awaits.</h2></div>
@@ -96,7 +132,8 @@
 
       <section class="tour-gallery td4-gallery" aria-label="Tour photo gallery">
         <div class="gallery-main td4-gallery-main">
-          <img id="mainGalleryImage" src="images/cover.jpg" alt="Tour Image">
+          <!-- IMAGE SOURCE: images/cover.jpg | ROLE: Tour Image | To change this picture, change the src value below. -->
+<img id="mainGalleryImage" src="images/cover.jpg" alt="Tour Image">
           <div class="td4-image-badge"><i class="fa-solid fa-camera"></i> Travel gallery</div>
         </div>
         <div id="galleryThumbs" class="gallery-thumbs td4-gallery-thumbs"></div>
@@ -105,7 +142,14 @@
     </div>
   </section>
 
-  <section class="td4-quick-strip">
+  <section <!-- ================================================================
+     SECTION: QUICK TOUR FACTS
+     WHAT YOU SEE: Duration/location/pickup/price facts.
+     MAIN CSS: tour-details-v4.css
+     DATA / JS: tour-details.js.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+class="td4-quick-strip">
     <div class="td4-section-shell td4-quick-grid">
       <article><span>01</span><div><strong>Private & flexible</strong><p>Your route can move with you.</p></div></article>
       <article><span>02</span><div><strong>Local planning</strong><p>Built with Sri Lanka knowledge.</p></div></article>
@@ -114,7 +158,14 @@
     </div>
   </section>
 
-  <section class="td4-content-zone">
+  <section <!-- ================================================================
+     SECTION: OVERVIEW + ITINERARY + INCLUSIONS
+     WHAT YOU SEE: Main tour description and itinerary content cards.
+     MAIN CSS: tour-details-v4.css
+     DATA / JS: tour-details.js.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+class="td4-content-zone">
     <div class="td4-section-shell detail-layout td4-layout">
       <div class="detail-main td4-main">
         <section class="content-card td4-card td4-overview-card">
@@ -146,12 +197,20 @@
         </section>
 
         <section class="td4-note-card">
-          <div class="td4-note-image"><img src="images/train.jpg" alt="Sri Lanka scenic journey" loading="lazy"></div>
+          <div class="td4-note-image"><!-- IMAGE SOURCE: images/train.jpg | ROLE: Sri Lanka scenic journey | To change this picture, change the src value below. -->
+<img src="images/train.jpg" alt="Sri Lanka scenic journey" loading="lazy"></div>
           <div class="td4-note-copy"><span class="td4-eyebrow">Make it yours</span><h2>See something you’d change?</h2><p>Stay longer in the hills, add a beach break, change the hotel style or slow the route down. This tour is a starting point, not a fixed script.</p><a href="#tourInquiryForm">Tell us what you want <i class="fa-solid fa-arrow-right"></i></a></div>
         </section>
       </div>
 
-      <aside class="booking-panel td4-booking-panel">
+      <!-- ================================================================
+     SECTION: STICKY BOOKING / INQUIRY PANEL
+     WHAT YOU SEE: Right-side inquiry form; sticky on desktop.
+     MAIN CSS: tour-details-v4.css
+     DATA / JS: tour-details.js -> inquiry API.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<aside class="booking-panel td4-booking-panel">
         <div class="booking-card td4-booking-card">
           <span class="td4-book-kicker">Plan this journey</span>
           <div class="booking-price-line td4-book-price"><span>Starting from</span><strong id="bookingPrice">Price on request</strong></div>
@@ -190,15 +249,30 @@
     </div>
   </section>
 
-  <section class="related-section td4-related">
+  <!-- ================================================================
+     SECTION: RELATED TOURS
+     WHAT YOU SEE: Related tour package cards.
+     MAIN CSS: tour-details-v4.css
+     DATA / JS: tour-details.js -> /api/tour-packages.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+<section class="related-section td4-related">
     <div class="td4-section-shell">
       <div class="td4-related-head"><div><span class="td4-eyebrow">Keep exploring</span><h2>More journeys to consider.</h2></div><a href="tours.html">View all tours <i class="fa-solid fa-arrow-right"></i></a></div>
       <div id="relatedTours" class="related-grid td4-related-grid"></div>
     </div>
   </section>
 
-  <section class="td4-final-cta">
-    <div class="td4-final-bg"><img src="images/beach.jpg" alt="Sri Lanka coast" loading="lazy"></div>
+  <section <!-- ================================================================
+     SECTION: FINAL TOUR CTA
+     WHAT YOU SEE: Large background image CTA.
+     MAIN CSS: tour-details-v4.css
+     DATA / JS: Static HTML/image.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+class="td4-final-cta">
+    <div class="td4-final-bg"><!-- IMAGE SOURCE: images/beach.jpg | ROLE: Sri Lanka coast | To change this picture, change the src value below. -->
+<img src="images/beach.jpg" alt="Sri Lanka coast" loading="lazy"></div>
     <div class="td4-final-overlay"></div>
     <div class="td4-final-content"><span>Not seeing your exact trip?</span><h2>We can build Sri Lanka around you.</h2><p>Share your dates, interests and travel style. We’ll shape a route that feels personal from day one.</p><a href="tours.html#tripPlanner">Create a custom trip <i class="fa-solid fa-arrow-right"></i></a></div>
   </section>
@@ -216,15 +290,30 @@
   <a href="#tourInquiryForm">Request Tour</a>
 </div>
 
-<section class="cb-social-proof" data-page-reviews="1" data-reviews-showcase data-review-type="tour" data-limit="9">
+<section <!-- ================================================================
+     SECTION: TOUR REVIEWS
+     WHAT YOU SEE: Guest reviews/social proof.
+     MAIN CSS: reviews-showcase.css
+     DATA / JS: reviews-showcase.js.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+class="cb-social-proof" data-page-reviews="1" data-reviews-showcase data-review-type="tour" data-limit="9">
   <div class="cb-section-head"><span class="eyebrow">Guest Reviews</span><h2>What Our Guests Say</h2><p>Real feedback from guests who explored Sri Lanka with CeyBreez.</p></div>
   <div class="cb-review-toolbar"><select data-review-item-filter><option value="">All reviews</option></select><a data-google-review-link href="#" target="_blank" rel="noopener">Leave a Google Review</a></div>
   <div class="cb-review-grid" data-review-grid></div>
 </section>
 
+<!-- ================================================================
+     SECTION: GLOBAL FOOTER
+     WHAT YOU SEE: Footer.
+     MAIN CSS: ceybreez-public-v3.css
+     DATA / JS: Common JS.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
 <footer class="site-footer" data-section="footer">
   <div class="footer-shell">
-    <div class="footer-brand"><img src="logo.png" alt="CeyBreez"><p>Handpicked stays, private tours and local experiences for memorable journeys across Sri Lanka.</p></div>
+    <div class="footer-brand"><!-- IMAGE SOURCE: logo.png | ROLE: CeyBreez | To change this picture, change the src value below. -->
+<img src="logo.png" alt="CeyBreez"><p>Handpicked stays, private tours and local experiences for memorable journeys across Sri Lanka.</p></div>
     <div class="footer-column"><h3>Explore</h3><a href="tours.html">Private Tours</a><a href="villas.html">Villas</a><a href="apartments.html">Apartments</a><a href="homestays.html">Homestays</a></div>
     <div class="footer-column"><h3>Travel</h3><a href="services.html">Local Services</a><a href="contact.html">Plan a Custom Trip</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms & Conditions</a></div>
     <div class="footer-column"><h3>CeyBreez</h3><a href="contact.html">Contact Us</a><a href="index.html#aboutSection">About CeyBreez</a><a href="index.html#gallery">Travel Gallery</a></div>

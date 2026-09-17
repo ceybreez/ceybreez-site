@@ -1,4 +1,18 @@
 <!DOCTYPE html>
+<!-- ================================================================
+     CEYBREEZ DEVELOPER NOTE
+     PAGE: SERVICES
+     FILE: services.html
+     PURPOSE: Local services directory, categories, featured services, gallery and listing CTA.
+     CSS LOADED: services.css, https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css, ceybreez-language.css, ceybreez-public-v3.css?v=20260916-3, services-v4.css?v=20260917-1
+     JS LOADED: page-builder.js?v=20260916-safe-cms, ceybreez-language.js, ceybreez-public-v3.js?v=20260916-2
+
+     EDITING TIP:
+     Search this file for "SECTION:" to jump between visible page sections.
+     Search for "IMAGE SOURCE:" to find hard-coded images.
+     Dynamic CMS/API images are noted in the section comments.
+     ================================================================ -->
+
 
 <html lang="en">
 <head>
@@ -34,27 +48,76 @@
 <link href="ceybreez-public-v3.css?v=20260916-3" rel="stylesheet"/><link href="services-v4.css?v=20260917-1" rel="stylesheet"/>
 </head>
 <body data-page="services">
+<!-- ================================================================
+     SECTION: GLOBAL HEADER / NAVIGATION
+     WHAT YOU SEE: Site navigation.
+     MAIN CSS: ceybreez-public-v3.css
+     DATA / JS: Common JS.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
 <header class="site-header" id="siteHeader">
 <div class="nav-shell">
-<a aria-label="CeyBreez home" class="brand" href="index.html"><img alt="CeyBreez" src="logo.png"/></a>
+<a aria-label="CeyBreez home" class="brand" href="index.html"><!-- IMAGE SOURCE: logo.png | ROLE: CeyBreez | To change this picture, change the src value below. -->
+<img alt="CeyBreez" src="logo.png"/></a>
 <nav aria-label="Main navigation" class="main-nav" id="mainNav">
 <a href="index.html">Home</a><a href="villas.html">Villas</a><a href="apartments.html">Apartments</a><a href="homestays.html">Homestays</a><a href="tours.html">Tours</a><a class="active" href="services.html">Services</a><a href="contact.html">Contact</a>
 </nav>
 <div class="nav-actions"><a class="nav-cta" href="contact.html">Plan my trip <i class="fa-solid fa-arrow-right"></i></a><button aria-expanded="false" aria-label="Open menu" class="menu-toggle" id="menuToggle" type="button"><span></span><span></span></button></div>
 </div>
 </header>
-<section class="services-v4-hero">
+<section class="<!-- ================================================================
+     SECTION: SERVICES HERO
+     WHAT YOU SEE: Large services hero + CTAs.
+     MAIN CSS: services-v4.css
+     DATA / JS: Static HTML/image.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+services-v4-hero">
 <div class="services-v4-hero-inner"><div class="services-v4-copy"><span class="services-v4-eyebrow">LOCAL KNOW-HOW · SRI LANKA</span><h1>Good trips run on the little things.</h1><p>Food, coffee, transport, rentals and useful local services — curated around the places you stay and explore.</p><div class="services-v4-actions"><a href="#services-list">Explore local services <span>→</span></a><a class="ghost" href="contact.html">Ask CeyBreez</a></div><div class="services-v4-tags"><span>Eat</span><span>Move</span><span>Shop</span><span>Get help</span></div></div><aside class="services-v4-note"><span>TRAVEL, MADE EASIER</span><strong>Less searching.<br/>More enjoying.</strong><p>Useful places and practical help, in one easy layer around your trip.</p></aside></div>
 </section>
-<section class="services-v4-intro"><div><span class="services-v4-eyebrow dark">THE USEFUL SIDE OF TRAVEL</span><h2>Everything around the itinerary matters too.</h2></div><p>A great day can depend on a good coffee stop, an easy transfer, a nearby supermarket or the right rental. CeyBreez brings those practical local options closer to the rest of your trip.</p><div class="services-v4-mini"><article><strong>01</strong><span>Find nearby</span><p>Browse services around the places you are actually visiting.</p></article><article><strong>02</strong><span>See the details</span><p>Check location, hours, contact details and useful photos.</p></article><article><strong>03</strong><span>Keep moving</span><p>Use local support to make each travel day easier.</p></article></div></section><section aria-label="Local help along the way" class="editorial-gallery v31-reveal">
+<section class="<!-- ================================================================
+     SECTION: SERVICES INTRO
+     WHAT YOU SEE: Editorial intro and quick points.
+     MAIN CSS: services-v4.css
+     DATA / JS: Static HTML.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+services-v4-intro"><div><span class="services-v4-eyebrow dark">THE USEFUL SIDE OF TRAVEL</span><h2>Everything around the itinerary matters too.</h2></div><p>A great day can depend on a good coffee stop, an easy transfer, a nearby supermarket or the right rental. CeyBreez brings those practical local options closer to the rest of your trip.</p><div class="services-v4-mini"><article><strong>01</strong><span>Find nearby</span><p>Browse services around the places you are actually visiting.</p></article><article><strong>02</strong><span>See the details</span><p>Check location, hours, contact details and useful photos.</p></article><article><strong>03</strong><span>Keep moving</span><p>Use local support to make each travel day easier.</p></article></div></section><section aria-label="Local help along the way" class="<!-- ================================================================
+     SECTION: SERVICES PHOTO GALLERY
+     WHAT YOU SEE: Image collage.
+     MAIN CSS: services-v4.css
+     DATA / JS: Static images.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+editorial-gallery v31-reveal">
 <div class="editorial-gallery-head"><div><span class="v31-eyebrow">Travel, made easier</span><h2>Local help along the way</h2></div><p>Useful travel services, food, experiences and practical support in one place.</p></div>
 <div class="editorial-gallery-grid">
-<figure class="editorial-gallery-main"><img alt="Sri Lanka travel inspiration" decoding="async" loading="lazy" src="images/food.jpg"/><figcaption>Stay · Explore · Feel Sri Lanka</figcaption></figure>
-<figure><img alt="CeyBreez Sri Lanka experience" decoding="async" loading="lazy" src="images/nature.jpg"/></figure>
-<figure><img alt="Sri Lanka holiday inspiration" decoding="async" loading="lazy" src="images/temple.jpg"/></figure>
+<figure class="editorial-gallery-main"><!-- IMAGE SOURCE: images/food.jpg | ROLE: Sri Lanka travel inspiration | To change this picture, change the src value below. -->
+<img alt="Sri Lanka travel inspiration" decoding="async" loading="lazy" src="images/food.jpg"/><figcaption>Stay · Explore · Feel Sri Lanka</figcaption></figure>
+<figure><!-- IMAGE SOURCE: images/nature.jpg | ROLE: CeyBreez Sri Lanka experience | To change this picture, change the src value below. -->
+<img alt="CeyBreez Sri Lanka experience" decoding="async" loading="lazy" src="images/nature.jpg"/></figure>
+<figure><!-- IMAGE SOURCE: images/temple.jpg | ROLE: Sri Lanka holiday inspiration | To change this picture, change the src value below. -->
+<img alt="Sri Lanka holiday inspiration" decoding="async" loading="lazy" src="images/temple.jpg"/></figure>
 </div>
-</section><section class="services-v4-story"><div class="services-v4-story-card big"><img alt="Local food in Sri Lanka" loading="lazy" src="images/food.jpg"/><div><span>TASTE THE PLACE</span><h3>From a quick coffee to the meal you remember.</h3><p>Food and everyday stops can become part of the travel story.</p></div></div><div class="services-v4-story-card"><img alt="Sri Lanka travel transport" loading="lazy" src="images/train.jpg"/><div><span>MOVE EASILY</span><h3>Make the in-between moments simpler.</h3></div></div><div class="services-v4-story-card"><img alt="Sri Lanka local travel" loading="lazy" src="images/nature.jpg"/><div><span>LOCAL HELP</span><h3>Useful support, close to where you are.</h3></div></div></section>
-<section class="services-categories" data-section="categories" id="services-list"><div class="services-v4-section-head"><span class="services-v4-eyebrow dark">BROWSE BY NEED</span><h2>Service Categories</h2><p>Browse useful services and places for your Sri Lanka stay.</p></div>
+</section><section class="<!-- ================================================================
+     SECTION: SERVICES STORY CARDS
+     WHAT YOU SEE: Large image-led local experience cards.
+     MAIN CSS: services-v4.css
+     DATA / JS: Static images.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+services-v4-story"><div class="services-v4-story-card big"><!-- IMAGE SOURCE: images/food.jpg | ROLE: Local food in Sri Lanka | To change this picture, change the src value below. -->
+<img alt="Local food in Sri Lanka" loading="lazy" src="images/food.jpg"/><div><span>TASTE THE PLACE</span><h3>From a quick coffee to the meal you remember.</h3><p>Food and everyday stops can become part of the travel story.</p></div></div><div class="services-v4-story-card"><!-- IMAGE SOURCE: images/train.jpg | ROLE: Sri Lanka travel transport | To change this picture, change the src value below. -->
+<img alt="Sri Lanka travel transport" loading="lazy" src="images/train.jpg"/><div><span>MOVE EASILY</span><h3>Make the in-between moments simpler.</h3></div></div><div class="services-v4-story-card"><!-- IMAGE SOURCE: images/nature.jpg | ROLE: Sri Lanka local travel | To change this picture, change the src value below. -->
+<img alt="Sri Lanka local travel" loading="lazy" src="images/nature.jpg"/><div><span>LOCAL HELP</span><h3>Useful support, close to where you are.</h3></div></div></section>
+<section class="services-categories" data-section="categories" <!-- ================================================================
+     SECTION: SERVICE CATEGORIES
+     WHAT YOU SEE: Category cards/filters.
+     MAIN CSS: services.css + services-v4.css
+     DATA / JS: Inline JS -> /api/services.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+id="services-list"><div class="services-v4-section-head"><span class="services-v4-eyebrow dark">BROWSE BY NEED</span><h2>Service Categories</h2><p>Browse useful services and places for your Sri Lanka stay.</p></div>
 
 
 <div class="services-grid" data-field="cards">
@@ -84,28 +147,57 @@
 </div>
 </div>
 </section>
-<section class="featured-services" data-section="featured">
+<section class="<!-- ================================================================
+     SECTION: FEATURED SERVICES
+     WHAT YOU SEE: Featured CMS service cards.
+     MAIN CSS: services.css + services-v4.css
+     DATA / JS: Inline JS -> /api/services.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+featured-services" data-section="featured">
 <h2 data-field="title">Featured Services</h2>
 <p data-field="content">
     Recommended cafes, shops, rentals, and local services selected for CeyBreez guests.
   </p>
 <div class="services-grid" data-field="cards"></div>
 </section>
-<section class="services-gallery" data-section="gallery">
+<section class="<!-- ================================================================
+     SECTION: SERVICES GALLERY
+     WHAT YOU SEE: Service images.
+     MAIN CSS: services.css + services-v4.css
+     DATA / JS: CMS/API images.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+services-gallery" data-section="gallery">
 <h2 data-field="title">Services Gallery</h2>
 <p data-field="content">A glimpse of places to relax, eat, shop, and enjoy.</p>
 <div class="gallery-grid" data-field="gallery"></div>
 </section>
-<section class="services-contact" data-section="contact">
+<section class="<!-- ================================================================
+     SECTION: LIST YOUR SERVICE CTA
+     WHAT YOU SEE: Provider contact CTA.
+     MAIN CSS: services-v4.css
+     DATA / JS: Static HTML.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
+services-contact" data-section="contact">
 <h2 data-field="title">Want to list a service?</h2>
 <p data-field="content">
     Contact CeyBreez to suggest or list a cafe, restaurant, grocery, rental service, laundry, salon, or local business.
   </p>
 <a class="btn contact-btn" data-field="button" href="contact.html">Contact Us</a>
 </section>
+<!-- ================================================================
+     SECTION: GLOBAL FOOTER
+     WHAT YOU SEE: Footer.
+     MAIN CSS: ceybreez-public-v3.css
+     DATA / JS: Common JS.
+     MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
+     ================================================================ -->
 <footer class="site-footer" data-section="footer">
 <div class="footer-shell">
-<div class="footer-brand"><img alt="CeyBreez" src="logo.png"/><p>Handpicked stays, private tours and local experiences for memorable journeys across Sri Lanka.</p></div>
+<div class="footer-brand"><!-- IMAGE SOURCE: logo.png | ROLE: CeyBreez | To change this picture, change the src value below. -->
+<img alt="CeyBreez" src="logo.png"/><p>Handpicked stays, private tours and local experiences for memorable journeys across Sri Lanka.</p></div>
 <div class="footer-column"><h3>Explore</h3><a href="tours.html">Private Tours</a><a href="villas.html">Villas</a><a href="apartments.html">Apartments</a><a href="homestays.html">Homestays</a></div>
 <div class="footer-column"><h3>Travel</h3><a href="services.html">Local Services</a><a href="contact.html">Plan a Custom Trip</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms &amp; Conditions</a></div>
 <div class="footer-column"><h3>CeyBreez</h3><a href="contact.html">Contact Us</a><a href="index.html#aboutSection">About CeyBreez</a><a href="index.html#gallery">Travel Gallery</a></div>
@@ -251,7 +343,8 @@ function renderServices(data) {
     card.className = "cms-card";
 
     card.innerHTML = `
-      ${service.image ? `<img src="${service.image}" alt="${service.name}">` : ""}
+      ${service.image ? `<!-- IMAGE SOURCE: ${service.image} | ROLE: ${service.name} | To change this picture, change the src value below. -->
+<img src="${service.image}" alt="${service.name}">` : ""}
       <h3>${service.name}</h3>
       <p>${service.shortDescription || ""}</p>
       <p><strong>${service.location || ""}</strong></p>

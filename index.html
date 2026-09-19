@@ -658,8 +658,16 @@
       return `${currency} ${esc(value)}`;
     }
 
-    function renderEmpty(box, text){
-      box.innerHTML = `<div class="empty-state"><i class="fa-regular fa-image"></i><p>${esc(text)}</p></div>`;
+    function renderEmpty(box){
+      if(!box) return;
+      box.innerHTML = "";
+      const section = box.closest(".featured-block");
+      if(section) section.hidden = true;
+    }
+
+    function revealDataSection(box){
+      const section = box?.closest(".featured-block");
+      if(section) section.hidden = false;
     }
 
     function renderTours(items){
@@ -667,7 +675,8 @@
       if(!box) return;
       const list = (Array.isArray(items) ? items : []).filter(x => x.active !== false && (x.featured === true || Number(x.featured) === 1));
       const selected = (list.length ? list : (Array.isArray(items) ? items : [])).slice(0, 3);
-      if(!selected.length) return renderEmpty(box, "Featured tours will appear here from your CMS.");
+      if(!selected.length) return renderEmpty(box);
+      revealDataSection(box);
       box.innerHTML = selected.map((item, index) => `
         <a class="tour-card ${index === 0 ? 'tour-card-featured' : ''}" href="tour-details.html?slug=${encodeURIComponent(item.slug || item.id || item.title || '')}">
           <!-- DYNAMIC IMAGE: Tour main image comes from the Tours CMS/API. -->
@@ -684,7 +693,8 @@
       const active = (Array.isArray(items) ? items : []).filter(x => x.active !== false);
       const featured = active.filter(x => x.featured === true || Number(x.featured) === 1);
       const selected = (featured.length ? featured : active).slice(0, 4);
-      if(!selected.length) return renderEmpty(box, "Featured stays will appear here from your CMS.");
+      if(!selected.length) return renderEmpty(box);
+      revealDataSection(box);
       box.innerHTML = selected.map((item, index) => {
         const page = item.type === "apartment" ? "apartments.html" : item.type === "homestay" ? "homestays.html" : "villas.html";
         return `<a class="stay-card ${index === 0 ? 'stay-card-large' : ''}" href="${page}">
@@ -699,7 +709,8 @@
       const box = $("#featuredDestinationsGrid");
       if(!box) return;
       const selected = (Array.isArray(items) ? items : []).slice(0, 5);
-      if(!selected.length) return renderEmpty(box, "Featured destinations will appear here from your CMS.");
+      if(!selected.length) return renderEmpty(box);
+      revealDataSection(box);
       box.innerHTML = selected.map((item, index) => `<a class="destination-card destination-${index + 1}" href="tours.html">
         <!-- DYNAMIC IMAGE: Destination image comes from the Destinations CMS/API. -->
 <img src="${esc(imageOf(item, index % 2 ? 'images/mountains.jpg' : 'images/nature.jpg'))}" alt="${esc(item.name || 'Sri Lanka destination')}" loading="lazy" decoding="async">
@@ -714,7 +725,8 @@
       const active = (Array.isArray(items) ? items : []).filter(x => x.active !== false);
       const featured = active.filter(x => x.featured === true || Number(x.featured) === 1);
       const selected = (featured.length ? featured : active).slice(0, 4);
-      if(!selected.length) return renderEmpty(box, "Featured services will appear here from your CMS.");
+      if(!selected.length) return renderEmpty(box);
+      revealDataSection(box);
       box.innerHTML = selected.map(item => `<a class="service-card" href="services.html">
         <div class="service-image"><!-- DYNAMIC IMAGE: Service image comes from the Services CMS/API. -->
 <img src="${esc(imageOf(item, 'images/food.jpg'))}" alt="${esc(item.name || 'Local service')}" loading="lazy" decoding="async"></div>

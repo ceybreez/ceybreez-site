@@ -1,38 +1,46 @@
-CEYBREEZ V3.1 COMPLETE PACKAGE - 2026-09-16
+CEYBREEZ FINAL QA PACKAGE — 2026-09-19
+========================================
 
-Included:
-- Home V3 premium tourism layout with CMS image gallery + video reels
-- Villas / Apartments / Homestays upgraded with matching photographic editorial sections
-- Tours upgraded with matching travel-gallery storytelling + existing trip planner
-- Tour Details retains dynamic gallery, booking and review flows with V3 design system
-- Services upgraded with matching photographic editorial section
-- Contact upgraded to a full photographic travel-planning landing page
-- Privacy / Terms / 404 use the shared V3 visual system
-- Shared responsive navigation, footer and mobile behavior
-- Existing inquiry / booking / payment / property / tour / service / review functions preserved
-- Admin/CMS visual refresh + Home Gallery manager
-- Existing Reels CMS support preserved
-- Duplicate legacy floating WhatsApp buttons removed
-- Duplicate /admin/admin copy removed
-- Large static JPGs optimized
-- Cloudflare Pages _headers / _redirects included
-- Cloudflare Worker reference source included under /cloudflare
+BASELINE
+- Built from the user's uploaded current-final package: ceybreez-site-main (13).zip
+- Existing CMS/Admin, inquiry, booking, tour planner, language, gallery/reels and Cloudflare Pages files preserved.
 
-V3.1 CMS safety fix:
-- Public pages now run page-builder.js in content-safe mode by default.
-- CMS text, button links and designated images can update the new layout.
-- Old saved Visual Builder HTML/styles no longer overwrite the V3 public layout after page load.
-- Visual Builder overrides remain available in builder/preview mode, or explicitly with ?visual.
-- Legacy Services body background/text CMS overrides were removed to prevent delayed theme changes.
+FINAL FIXES APPLIED DURING QA
+1. Contact page: replaced the older malformed developer-comment build with the latest V4.11 Contact HTML/CSS.
+   - Removed HTML comments accidentally embedded inside class attributes.
+   - Restored the final 2-column contact/inquiry layout and readable form styling.
+2. Home CMS empty states: removed public-facing internal phrases such as “Featured ... will appear here from your CMS.”
+   - Empty CMS-driven sections now hide cleanly when no records exist.
+3. Developer editing guide and quick-edit cheat sheet regenerated from the actual final files.
 
-Final QA:
-- Local missing CSS/JS/image references: 0
+CURRENT DESIGN / PATCH LEVEL
+- Home: V4.7 visual/card/language refinements
+- Tours: V4.2 compact planner polish + public wording cleanup
+- Tour Details: V4.6 layout/contrast fix
+- Villas: V4.4 polish
+- Apartments: V4.8
+- Homestays: V4.8
+- Services: V4.10 contrast/public CTA fix
+- Contact: V4.11 final polish
+
+AUTOMATED QA RESULT
+- Public HTML pages checked: 11
+- Missing local CSS/JS/image references: 0
 - Duplicate HTML IDs: 0
-- External JavaScript syntax failures: 0
+- External/local JavaScript syntax failures: 0
 - Inline JavaScript syntax failures: 0
-- Nested duplicate admin/admin folder: removed
+- CSS parser errors: 0
+- Malformed comment-inside-class patterns: 0
+- Public CMS/Admin internal wording matches: 0
+- Nested duplicate admin/admin folder: 0 / removed
 
-Deployment note:
-Upload the CONTENTS of this package to the GitHub repository root. Keep the existing Cloudflare Worker, D1/R2 bindings and secrets configured in Cloudflare. Production secrets are intentionally not included in this package.
+PACKAGE STATS
+- Files: 141
+- Total uncompressed size: 4.22 MB
+- Static /images size: 2.66 MB
 
-V3.2 PATCH: Contact card width conflict fixed; inquiry/contact form text contrast improved.
+DEPLOYMENT
+- Upload the CONTENTS of this package to the GitHub repository root.
+- Keep production Cloudflare Worker/D1/R2 bindings and secrets unchanged.
+- Push to GitHub, wait for Cloudflare Pages deployment, then hard refresh with Ctrl + F5.
+- Do not merge V4 CSS into base CSS; keep both files in the load order already defined in HTML.

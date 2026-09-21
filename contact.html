@@ -7,7 +7,6 @@
   <meta name="description" content="Get in touch with CeyBreez to plan your villa stay, homestay, apartment booking, tour or travel experience in Sri Lanka."/>
 
   <link rel="stylesheet" href="contact.css"/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/css/intlTelInput.css"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap"/>
@@ -24,6 +23,7 @@
     gtag('js', new Date());
     gtag('config', 'G-3QG71CWHW2');
   </script>
+  <link rel="stylesheet" href="inquiry-common.css?v=20260921-1"/>
 </head>
 <body data-page="contact">
 
@@ -115,7 +115,7 @@
         <h2>Tell us about your trip</h2>
         <p class="contact-form-intro">A few details are enough to start. We’ll use them to understand what fits your journey.</p>
 
-        <form id="contactForm">
+        <form id="contactForm" class="cb-inquiry-form">
           <div class="contact-form-grid">
             <div class="contact-field">
               <label for="name">Your Name *</label>
@@ -197,82 +197,49 @@
   </footer>
 
   <a class="floating-whatsapp-v3" href="https://api.whatsapp.com/send?phone=94704620017" id="floatingWhatsAppV3" target="_blank" rel="noopener" aria-label="WhatsApp CeyBreez"><i class="fa-brands fa-whatsapp"></i></a>
-
-  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/js/intlTelInput.min.js"></script>
   <script>
-    const phoneInput = document.querySelector("#mobile");
-    const countryInput = document.querySelector("#country");
-
-    const iti = window.intlTelInput(phoneInput, {
-      initialCountry: "lk",
-      separateDialCode: true,
-      preferredCountries: ["lk", "om", "in", "ae", "qa", "sa", "gb", "us"],
-      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/js/utils.js"
-    });
-
-    const countryData = window.intlTelInputGlobals.getCountryData();
-    countryData.forEach(country => {
-      const option = document.createElement("option");
-      option.value = country.name;
-      option.textContent = country.name;
-      countryInput.appendChild(option);
-    });
-
-    countryInput.addEventListener("change", function(){
-      const matchedCountry = countryData.find(country => country.name === countryInput.value);
-      if(matchedCountry){ iti.setCountry(matchedCountry.iso2); }
-    });
-
     async function sendInquiry(){
-      const name = document.getElementById("name").value;
-      const country = document.getElementById("country").value;
-      const mobile = phoneInput.value;
-      const email = document.getElementById("email").value;
-      const dateFrom = document.getElementById("dateFrom").value;
-      const dateTo = document.getElementById("dateTo").value;
-      const guests = document.getElementById("guests").value;
-      const message = document.getElementById("message").value;
+      const form=document.getElementById("contactForm");
+      const button=form?.querySelector(".contact-submit");
+      const originalText=button?.innerHTML || "Send my trip request";
+      const name=document.getElementById("name").value.trim();
+      const country=window.CeyBreezInquiry?.getCountry("country") || document.getElementById("country").value.trim();
+      const mobile=window.CeyBreezInquiry?.getPhone("mobile") || document.getElementById("mobile").value.trim();
+      const email=document.getElementById("email").value.trim();
+      const dateFrom=document.getElementById("dateFrom").value;
+      const dateTo=document.getElementById("dateTo").value;
+      const guests=document.getElementById("guests").value;
+      const message=document.getElementById("message").value.trim();
+      const experiences=Array.from(document.querySelectorAll('.checkbox-group input:checked')).map(x=>x.value).join(", ");
+      if(!name || !country || !mobile || !email || !dateFrom || !dateTo || !guests || !experiences){ alert("Please fill all required fields."); return; }
+      const inquiryData={name,country,mobile,email,countryCode:"",experiences:`Contact / Custom Trip - ${experiences}`,itemName:"Custom Trip / Contact Inquiry",dateFrom,dateTo,guests,message};
+      const whatsappText=`Hello CeyBreez!
 
-      const selectedCountry = iti.getSelectedCountryData();
-      const countryCode = "+" + selectedCountry.dialCode;
-      const fullMobile = iti.getNumber();
+Travel Inquiry
 
-      const experiences = Array.from(document.querySelectorAll('.checkbox-group input:checked'))
-        .map(item => item.value).join(", ");
+Name: ${name}
+Country: ${country}
+Mobile: ${mobile}
+Email: ${email}
 
-      if(!name || !country || !mobile || !email || !dateFrom || !dateTo || !guests || !experiences){
-        alert("Please fill all required fields.");
-        return;
-      }
+Experience: ${experiences}
+Dates: ${dateFrom} to ${dateTo}
+Guests: ${guests}
 
-      const inquiryData = { name, country, mobile: fullMobile, email, countryCode, experiences, dateFrom, dateTo, guests, message };
-
-      const whatsappText = `Hello CeyBreez!\n\nNew Travel Inquiry\n\nName: ${name}\nCountry: ${country}\nMobile: ${fullMobile}\nEmail: ${email}\n\nType of Experience:\n${experiences}\n\nExpecting Dates:\n${dateFrom} to ${dateTo}\n\nGuests:\n${guests}\n\nMessage:\n${message}`;
-
-      window.open("https://api.whatsapp.com/send?phone=94704620017&text=" + encodeURIComponent(whatsappText), "_blank");
-
+Message:
+${message || "None"}`;
       try{
-        const response = await fetch("https://ceybreez-contact-api.ceybreez.workers.dev", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify(inquiryData)
-        });
-
-        if(response.ok){
-          if(typeof gtag !== "undefined"){
-            gtag("event", "generate_lead", { inquiry_type: "contact" });
-          }
-          alert("Inquiry sent successfully!");
-          document.getElementById("contactForm").reset();
-          iti.setCountry("lk");
-          countryInput.value = "";
-        } else {
-          alert("WhatsApp opened, but email sending failed.");
-        }
-      }catch(error){
-        alert("WhatsApp opened, but email sending failed.");
-        console.log(error);
-      }
+        if(button){button.disabled=true;button.innerHTML="Sending inquiry…";}
+        const response=await fetch(window.CeyBreezInquiry?.API_BASE || "https://ceybreez-contact-api.ceybreez.workers.dev",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(inquiryData)});
+        const result=await response.json().catch(()=>({}));
+        if(!response.ok || !result.success) throw new Error(result.error || "Inquiry could not be sent.");
+        if(typeof gtag!=="undefined") gtag("event","generate_lead",{inquiry_type:"contact",reference:result.reference||""});
+        window.CeyBreezInquiry?.showSuccess(result.reference,result,{title:"Your trip request is in.",copy:"We’ve saved your details and will help shape the next steps."});
+        form.reset();
+        window.CeyBreezInquiry?.resetPair("country","mobile");
+        window.open("https://api.whatsapp.com/send?phone=94704620017&text="+encodeURIComponent(whatsappText),"_blank");
+      }catch(error){ console.error(error); alert(error.message || "Inquiry could not be sent. Please try again."); }
+      finally{ if(button){button.disabled=false;button.innerHTML=originalText;} }
     }
 
     const contactWA = document.getElementById("contactWhatsApp");
@@ -293,7 +260,8 @@
       });
     }
   </script>
-  <script src="page-builder.js?v=20260916-safe-cms"></script>
+  <script src="inquiry-common.js?v=20260921-1"></script>
+<script src="page-builder.js?v=20260916-safe-cms"></script>
   <script defer src="ceybreez-language.js"></script>
   <script src="ceybreez-public-v3.js?v=20260916-2"></script>
 </body>

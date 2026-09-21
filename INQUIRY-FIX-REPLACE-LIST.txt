@@ -1,0 +1,24 @@
+CEYBREEZ INQUIRY SYSTEM V5 - WEBSITE FILES
+
+NEW FILES (add to GitHub root):
+- inquiry-common.js
+- inquiry-common.css
+
+REPLACE THESE FILES:
+- contact.html
+- villas.html
+- apartments.html
+- homestays.html
+- tours.html
+- tour-details.html
+- tour-details.js
+
+DO NOT DELETE:
+- Existing page CSS files
+- Existing CMS/admin files
+- Images
+- Cloudflare D1/R2 bindings
+
+CLOUDFLARE WORKER:
+Update the existing Worker separately with CeyBreez-Cloudflare-Worker-Inquiry-V5.js.
+Do not upload the Worker JS as a Pages website file.

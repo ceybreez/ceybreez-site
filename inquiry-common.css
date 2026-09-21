@@ -1,0 +1,38 @@
+/* ================================================================
+   CEYBREEZ COMMON INQUIRY FORM THEME
+   FILE: inquiry-common.css
+   PURPOSE: One visual language for inquiry controls on every public page.
+   ================================================================ */
+:root{--cb-inquiry-green:#0d5a4d;--cb-inquiry-green-2:#137866;--cb-inquiry-ink:#17352f;--cb-inquiry-muted:#68766f;--cb-inquiry-line:#dcded8;--cb-inquiry-field:#fbfaf7;--cb-inquiry-gold:#c89d49}
+.cb-inquiry-form{font-family:"DM Sans",Arial,sans-serif!important;color:var(--cb-inquiry-ink)}
+.cb-inquiry-form label{color:var(--cb-inquiry-ink)!important;font-size:12px!important;font-weight:700!important;letter-spacing:.01em;line-height:1.35}
+.cb-inquiry-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+.cb-inquiry-form select,.cb-inquiry-form textarea{width:100%;box-sizing:border-box;background:var(--cb-inquiry-field)!important;color:#203d36!important;border:1px solid var(--cb-inquiry-line)!important;border-radius:12px!important;box-shadow:none!important;font-family:"DM Sans",Arial,sans-serif!important;font-size:14px!important;outline:none;transition:border-color .2s ease,box-shadow .2s ease,background .2s ease}
+.cb-inquiry-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),.cb-inquiry-form select{min-height:48px!important;padding:0 14px!important}
+.cb-inquiry-form textarea{min-height:112px!important;padding:13px 14px!important;line-height:1.55;resize:vertical}
+.cb-inquiry-form input::placeholder,.cb-inquiry-form textarea::placeholder{color:#8c9893!important;opacity:1}
+.cb-inquiry-form input:focus,.cb-inquiry-form select:focus,.cb-inquiry-form textarea:focus{border-color:var(--cb-inquiry-green-2)!important;box-shadow:0 0 0 3px rgba(19,120,102,.12)!important;background:#fff!important}
+.cb-inquiry-form select[data-cb-country="1"]{cursor:pointer;padding-right:38px!important}
+.cb-inquiry-form [data-cb-phone="1"]{font-variant-numeric:tabular-nums}
+.cb-inquiry-form button[type="submit"],.cb-inquiry-form .send-inquiry-btn,.cb-inquiry-form .send-plan-btn,.cb-inquiry-form .contact-submit{background:var(--cb-inquiry-green)!important;color:#fff!important;border:0!important;border-radius:999px!important;min-height:48px!important;padding:0 22px!important;font-family:"DM Sans",Arial,sans-serif!important;font-size:13px!important;font-weight:800!important;letter-spacing:.01em;box-shadow:none!important;cursor:pointer;transition:transform .2s ease,background .2s ease}
+.cb-inquiry-form button[type="submit"]:hover,.cb-inquiry-form .send-inquiry-btn:hover,.cb-inquiry-form .send-plan-btn:hover,.cb-inquiry-form .contact-submit:hover{background:#09483e!important;transform:translateY(-1px)}
+.cb-inquiry-form button:disabled{opacity:.58;cursor:wait;transform:none!important}
+.cb-inquiry-form input[type="checkbox"],.cb-inquiry-form input[type="radio"]{accent-color:var(--cb-inquiry-green-2)}
+
+.cb-inquiry-success-backdrop{position:fixed;inset:0;z-index:100000;background:rgba(3,24,21,.66);display:none;align-items:center;justify-content:center;padding:22px;backdrop-filter:blur(8px)}
+.cb-inquiry-success-backdrop.show{display:flex}
+.cb-inquiry-success-card{position:relative;width:min(520px,100%);background:#fffdf9;border-radius:24px;padding:34px;box-shadow:0 30px 90px rgba(0,0,0,.28);text-align:center;color:var(--cb-inquiry-ink);border:1px solid rgba(13,90,77,.08)}
+.cb-inquiry-success-close{position:absolute;top:13px;right:14px;width:36px;height:36px;border:0;border-radius:50%;background:#eff4f1;color:var(--cb-inquiry-green);font-size:23px;line-height:1;cursor:pointer}
+.cb-inquiry-success-icon{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;margin:0 auto 16px;background:#e5f4ed;color:var(--cb-inquiry-green);font-size:28px;font-weight:900}
+.cb-inquiry-success-kicker{display:block;color:var(--cb-inquiry-gold);font-size:10px;font-weight:900;letter-spacing:.19em;margin-bottom:8px}
+.cb-inquiry-success-card h2{margin:0;color:var(--cb-inquiry-green);font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(30px,5vw,42px);line-height:1.05}
+.cb-inquiry-success-copy{color:var(--cb-inquiry-muted);font-size:14px;line-height:1.65;margin:12px auto 20px;max-width:400px}
+.cb-inquiry-success-reference{background:#f2eee5;border:1px solid #e7dfd1;border-radius:16px;padding:16px;margin:0 0 14px}
+.cb-inquiry-success-reference span{display:block;color:#7b7c74;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;margin-bottom:5px}
+.cb-inquiry-success-reference strong{display:block;color:var(--cb-inquiry-green);font-size:20px;letter-spacing:.04em}
+.cb-inquiry-success-email{min-height:20px;color:#596a64;font-size:12px;line-height:1.55;margin:0 0 18px}
+.cb-inquiry-success-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.cb-inquiry-success-actions button,.cb-inquiry-success-actions a{border:0;border-radius:999px;min-height:44px;padding:0 18px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;font:800 12px/1 "DM Sans",Arial,sans-serif;cursor:pointer}
+.cb-inquiry-success-actions button{background:var(--cb-inquiry-green);color:#fff}.cb-inquiry-success-actions a{background:#eef4f1;color:var(--cb-inquiry-green)}
+html.cb-inquiry-modal-open{overflow:hidden}
+@media(max-width:700px){.cb-inquiry-success-card{padding:28px 20px;border-radius:20px}.cb-inquiry-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),.cb-inquiry-form select{min-height:46px!important}.cb-inquiry-success-actions>*{flex:1 1 160px}}

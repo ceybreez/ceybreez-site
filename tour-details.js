@@ -206,8 +206,8 @@ async function submitInquiry(event){
 
   const guestName = clean(document.getElementById("guestName").value);
   const guestEmail = clean(document.getElementById("guestEmail").value);
-  const guestMobile = clean(document.getElementById("guestMobile").value);
-  const guestCountry = clean(document.getElementById("guestCountry").value);
+  const guestMobile = window.CeyBreezInquiry?.getPhone("guestMobile") || clean(document.getElementById("guestMobile").value);
+  const guestCountry = window.CeyBreezInquiry?.getCountry("guestCountry") || clean(document.getElementById("guestCountry").value);
   const travelDate = clean(document.getElementById("travelDate").value);
   const guestCount = clean(document.getElementById("guestCount").value);
   const msg = clean(document.getElementById("guestMessage").value);
@@ -233,11 +233,13 @@ async function submitInquiry(event){
   try{
     const res = await fetch(API_BASE, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) });
     const data = await res.json();
-    if(!res.ok) throw new Error(data.error || "Failed to send inquiry");
+    if(!res.ok || !data.success) throw new Error(data.error || "Failed to send inquiry");
     resultEl.innerHTML = `Inquiry sent successfully.<br>Reference: <strong>${escapeHtml(data.reference || "")}</strong>`;
+    window.CeyBreezInquiry?.showSuccess(data.reference, data, {title:"Your tour request is in.", copy:"We’ve saved this tour request and will confirm the plan with you shortly."});
     const whatsappText = `CeyBreez Tour Inquiry%0AReference: ${encodeURIComponent(data.reference || "")}%0ATour: ${encodeURIComponent(currentTour.title || "")}%0AName: ${encodeURIComponent(guestName)}%0AMobile: ${encodeURIComponent(guestMobile)}`;
     window.open(`https://api.whatsapp.com/send?phone=94704620017&text=${whatsappText}`, "_blank");
     event.target.reset();
+    window.CeyBreezInquiry?.resetPair("guestCountry","guestMobile");
   }catch(error){
     console.error(error);
     resultEl.textContent = "Inquiry sending failed. Please contact us on WhatsApp.";

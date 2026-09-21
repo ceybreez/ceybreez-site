@@ -29,6 +29,7 @@
   <link rel="stylesheet" href="tour-details-v4.css?v=20260917-6">
 
   <script src="tour-details.js" defer></script>
+  <link rel="stylesheet" href="inquiry-common.css?v=20260921-1"/>
 </head>
 <body data-page="tour-details">
 
@@ -212,7 +213,7 @@
           <div class="booking-price-line td4-book-price"><span>Starting from</span><strong id="bookingPrice">Price on request</strong></div>
           <p class="small td4-book-intro">Send a few details. We’ll confirm availability, refine the route and prepare your quote.</p>
 
-          <form id="tourInquiryForm">
+          <form id="tourInquiryForm" class="cb-inquiry-form">
             <input type="hidden" id="tourNameField">
             <input type="hidden" id="tourIdField">
 
@@ -226,7 +227,7 @@
             <input type="tel" id="guestMobile" placeholder="+94..." required>
 
             <label for="guestCountry">Country</label>
-            <input type="text" id="guestCountry" placeholder="Your country" required>
+            <select id="guestCountry" required><option value="">Select your country</option></select>
 
             <div class="two-col">
               <div><label for="travelDate">Travel Date</label><input type="date" id="travelDate" required></div>
@@ -320,6 +321,7 @@
 <a class="floating-whatsapp-v3" id="floatingWhatsAppV3" href="https://api.whatsapp.com/send?phone=94704620017" target="_blank" rel="noopener" aria-label="WhatsApp CeyBreez"><i class="fa-brands fa-whatsapp"></i></a>
 
 <script src="reviews-showcase.js"></script>
+<script src="inquiry-common.js?v=20260921-1"></script>
 <script src="page-builder.js?v=20260916-safe-cms"></script>
 <script src="ceybreez-language.js" defer></script>
 <script src="ceybreez-public-v3.js?v=20260916-2"></script>

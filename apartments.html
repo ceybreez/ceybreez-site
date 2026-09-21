@@ -27,6 +27,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="ceybreez-public-v3.css?v=20260916-3" rel="stylesheet"/><link href="stays-v4.css?v=20260917-1" rel="stylesheet"/>
 <link href="apartments-v4.css?v=20260917-8" rel="stylesheet"/>
+  <link rel="stylesheet" href="inquiry-common.css?v=20260921-1"/>
 </head>
 <body data-page="apartments">
 <header class="site-header" id="siteHeader">
@@ -93,7 +94,7 @@
 <section class="property-inquiry-section" id="propertyInquiry">
 <span class="stay-v4-eyebrow dark stay-v4-inquiry-eye">READY WHEN YOU ARE</span><h2>Send Apartment Inquiry</h2>
 <p class="section-intro">Select an apartment, add your travel details, and send your inquiry to CeyBreez.</p>
-<div class="property-inquiry-box">
+<div class="property-inquiry-box cb-inquiry-form">
 <div class="form-grid">
 <div class="field-group">
 <label>🏡 Select Apartment *</label>
@@ -119,7 +120,7 @@
 </div>
 <div class="field-group">
 <label>🌍 Country *</label>
-<input id="inqCountry" placeholder="Your country" required="" type="text"/>
+<select id="inqCountry" required><option value="">Select your country</option></select>
 </div>
 <div class="field-group">
 <label>👥 Number of Guests *</label>
@@ -586,8 +587,8 @@ async function sendPropertyInquiry(){
 
   const name = document.getElementById("inqName").value.trim();
   const email = document.getElementById("inqEmail").value.trim();
-  const mobile = document.getElementById("inqMobile").value.trim();
-  const country = document.getElementById("inqCountry").value.trim();
+  const mobile = window.CeyBreezInquiry?.getPhone("inqMobile") || document.getElementById("inqMobile").value.trim();
+  const country = window.CeyBreezInquiry?.getCountry("inqCountry") || document.getElementById("inqCountry").value.trim();
   const guests = document.getElementById("inqGuests").value.trim();
   const checkIn = document.getElementById("inqCheckIn").value;
   const checkOut = document.getElementById("inqCheckOut").value;
@@ -656,14 +657,15 @@ ${notes || "None"}`;
 
     const result = await response.json();
 
-    if(response.ok){
-      showThankYouModal(result.reference || "CB-000000");
+    if(response.ok && result.success){
+      window.CeyBreezInquiry?.showSuccess(result.reference, result, {title:"Your stay request is in.", copy:"We’ve saved the stay details and will confirm availability with you shortly."});
       resetInquiryForm();
     }else{
-      alert("WhatsApp opened, but email sending failed.");
+      alert(result.error || "Inquiry could not be sent. Please try again.");
     }
   }catch(error){
-    alert("WhatsApp opened, but email sending failed.");
+    console.error(error);
+    alert("Inquiry could not be sent. Please try again.");
   }
 }
 
@@ -676,6 +678,7 @@ function resetInquiryForm(){
   if(checkInPicker) checkInPicker.clear();
   if(checkOutPicker) checkOutPicker.clear();
   document.getElementById("inqDays").value = "";
+  window.CeyBreezInquiry?.resetPair("inqCountry","inqMobile");
   checkAvailabilityLive();
 }
 
@@ -762,6 +765,7 @@ if(waBtn){
   });
 }
 </script>
+<script src="inquiry-common.js?v=20260921-1"></script>
 <script src="page-builder.js?v=20260916-safe-cms"></script>
 <script src="ceybreez-language.js"></script>
 <script src="ceybreez-public-v3.js?v=20260916-2"></script>

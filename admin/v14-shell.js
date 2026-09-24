@@ -1,5 +1,5 @@
 (function(){
-  const TOKEN_KEY = "CEYBREEZ_ADMIN_TOKEN";
+  const TOKEN_KEY = "CEYBREEZ_SESSION_TOKEN";
   const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 
   const modules = {
@@ -14,6 +14,8 @@
     finance: "financeTab",
     reports: "reportsTab",
     pageBuilder: "pageControlTab",
+    users: "usersTab",
+    approvals: "approvalsTab",
     settings: "settingsTab"
   };
 
@@ -29,6 +31,8 @@
     finance: "financeTab",
     reports: "reportsTab",
     pageBuilder: "pageControl",
+    users: "usersTab",
+    approvals: "approvalsTab",
     settings: "settingsTab"
   };
 
@@ -44,6 +48,8 @@
     finance:["Finance","Booking payments, advances, balances and refunds"],
     reports:["Reports","Revenue, occupancy and performance reports"],
     pageBuilder:["Page Builder","Global website content and page sections"],
+    users:["User Management","Create staff accounts, roles and module access"],
+    approvals:["Approval Queue","Review and apply staff changes before they go live"],
     settings:["Settings","Business settings and future integrations"]
   };
 
@@ -52,7 +58,7 @@
   let shellReady = false;
 
   function authHeaders(){
-    return {"Content-Type":"application/json","Authorization":"Bearer " + (localStorage.getItem(TOKEN_KEY)||"")};
+    return {"Content-Type":"application/json","Authorization":"Bearer " + (sessionStorage.getItem(TOKEN_KEY)||"")};
   }
   function escapeHtml(value){
     return String(value||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
@@ -494,7 +500,7 @@ function initV18BlockDatePickers(bookings){
 
   function ensureShell(){
     // Never construct the application shell while logged out.
-    if(!localStorage.getItem(TOKEN_KEY)) return;
+    if(!sessionStorage.getItem(TOKEN_KEY) || sessionStorage.getItem("CEYBREEZ_SESSION_VALIDATED") !== "1") return;
     if(shellReady) return;
     const panel=document.getElementById("adminPanel");
     if(!panel) return;
@@ -521,7 +527,9 @@ function initV18BlockDatePickers(bookings){
         <button data-v14-tab="finance">💰 Finance</button>
         <button data-v14-tab="reports">📈 Reports</button>
         <button data-v14-tab="pageBuilder">📄 Page Builder</button>
-        <button type="button" onclick="window.open('visual-builder/index.html','_blank','noopener')">🎨 Visual Designer</button>
+        <button type="button" data-security-module="pageBuilder" onclick="window.location.href='visual-builder/index.html'">🎨 Visual Designer</button>
+        <button data-v14-tab="users" data-super-admin-only="1">👥 User Management</button>
+        <button data-v14-tab="approvals" data-super-admin-only="1">✅ Approval Queue</button>
         <button data-v14-tab="settings">⚙ Settings</button>
       </nav>
       <button class="v14-logout" type="button" onclick="logoutAdmin()">Logout</button>`;
@@ -655,6 +663,8 @@ function initV18BlockDatePickers(bookings){
         if(typeof loadSiteContent==="function") loadSiteContent();
         if(typeof loadPageSections==="function") loadPageSections();
       }
+      else if(logical==="users" && typeof window.loadSecurityUsers==="function") window.loadSecurityUsers();
+      else if(logical==="approvals" && typeof window.loadSecurityApprovals==="function") window.loadSecurityApprovals();
     }catch(e){ console.warn("V15 refresh warning", e); }
   }
 
@@ -674,6 +684,10 @@ function initV18BlockDatePickers(bookings){
     } else if(logical==="reports"){
       if(typeof window.renderReportsModule==="function") window.renderReportsModule();
       else if(typeof renderReports==="function") renderReports();
+    } else if(logical==="users"){
+      if(typeof window.loadSecurityUsers==="function") window.loadSecurityUsers();
+    } else if(logical==="approvals"){
+      if(typeof window.loadSecurityApprovals==="function") window.loadSecurityApprovals();
     } else if(logical==="reviews"){
       // Legacy showTab changes the visible legacy panel but does not load review data.
       if(typeof originalShowTab==="function"){
@@ -693,18 +707,15 @@ function initV18BlockDatePickers(bookings){
 
   const originalLogin=window.loginAdmin;
   if(typeof originalLogin==="function"){
-    window.loginAdmin=function(){
-      originalLogin();
-      document.documentElement.classList.remove("v15-logged-out");
-      document.documentElement.classList.add("v15-authenticated");
-      document.body.classList.remove("v15-logged-out");
-      document.body.classList.add("v15-authenticated", "v15-booting");
-      setTimeout(()=>{ ensureShell(); window.showTab("dashboard"); },120);
+    window.loginAdmin=async function(){
+      await originalLogin();
+      if(sessionStorage.getItem("CEYBREEZ_SESSION_VALIDATED") !== "1") return;
+      setTimeout(()=>{ ensureShell(); window.showTab("dashboard"); window.applySecurityUi?.(); },60);
     };
   }
 
   document.addEventListener("DOMContentLoaded",()=>{
-    const hasToken = !!localStorage.getItem(TOKEN_KEY);
+    const hasToken = !!sessionStorage.getItem(TOKEN_KEY) && sessionStorage.getItem("CEYBREEZ_SESSION_VALIDATED") === "1";
     const panel = document.getElementById("adminPanel");
 
     if(hasToken){

@@ -1,7 +1,7 @@
 const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 
 function getAdminToken() {
-  return localStorage.getItem("CEYBREEZ_ADMIN_TOKEN") || localStorage.getItem("adminToken") || "";
+  return sessionStorage.getItem("CEYBREEZ_SESSION_TOKEN") || "";
 }
 
 function authHeaders() {

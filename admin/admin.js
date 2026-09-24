@@ -1,5 +1,5 @@
 const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
-let ADMIN_TOKEN = localStorage.getItem("CEYBREEZ_ADMIN_TOKEN") || "";
+let ADMIN_TOKEN = sessionStorage.getItem("CEYBREEZ_SESSION_TOKEN") || "";
 let allInquiries = [];
 let allBookings = [];
 let allDestinations = [];
@@ -15,10 +15,9 @@ let currentBookingView = 'property';
 document.addEventListener("DOMContentLoaded", () => {
   setTimeout(initV51ProfessionalUI, 250);
   renderPropertyFacilityChecklist();
-  if (ADMIN_TOKEN) {
-    document.getElementById("loginBox").classList.add("hidden");
-    document.getElementById("adminPanel").classList.remove("hidden");
-    loadAll();
+  // Security V5.3 validates the server-side session before opening the panel.
+  if (ADMIN_TOKEN && typeof window.restoreCeyBreezSession === "function") {
+    setTimeout(() => window.restoreCeyBreezSession(), 0);
   }
 
   document.getElementById("destinationForm").addEventListener("submit", saveDestination);
@@ -96,14 +95,14 @@ function loginAdmin() {
   ADMIN_TOKEN = document.getElementById("adminToken").value.trim();
   if (!ADMIN_TOKEN) return alert("Enter admin token");
 
-  localStorage.setItem("CEYBREEZ_ADMIN_TOKEN", ADMIN_TOKEN);
+  sessionStorage.setItem("CEYBREEZ_SESSION_TOKEN", ADMIN_TOKEN);
   document.getElementById("loginBox").classList.add("hidden");
   document.getElementById("adminPanel").classList.remove("hidden");
   loadAll();
 }
 
 function logoutAdmin() {
-  localStorage.removeItem("CEYBREEZ_ADMIN_TOKEN");
+  sessionStorage.removeItem("CEYBREEZ_SESSION_TOKEN");
   ADMIN_TOKEN = "";
   location.reload();
 }

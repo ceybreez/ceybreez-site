@@ -1,7 +1,7 @@
 const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 
 function getAdminToken() {
-  return localStorage.getItem("CEYBREEZ_ADMIN_TOKEN") || localStorage.getItem("adminToken") || "";
+  return sessionStorage.getItem("CEYBREEZ_SESSION_TOKEN") || "";
 }
 
 function authHeaders() {
@@ -29,5 +29,5 @@ export function loadReports(filters = {}) {
 }
 
 export function reportsCsvUrl(filters = {}) {
-  return API_BASE + "/api/admin/reports/export/csv" + queryString({ ...filters, token: getAdminToken() });
+  return "/api/admin/reports/export/csv" + queryString(filters);
 }

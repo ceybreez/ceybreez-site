@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="admin.css" />
   <link rel="stylesheet" href="page-builder-v2.css" />
   <link rel="stylesheet" href="v3-admin-theme.css?v=20260916" />
+  <link rel="stylesheet" href="css/security-rbac.css?v=20260924" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <style id="v15BootStyle">
@@ -29,7 +30,7 @@
   <script>
     // Apply the correct auth state before the page paints.
     document.documentElement.classList.add(
-      localStorage.getItem("CEYBREEZ_ADMIN_TOKEN") ? "v15-authenticated" : "v15-logged-out"
+      sessionStorage.getItem("CEYBREEZ_SESSION_TOKEN") ? "v15-authenticated" : "v15-logged-out"
     );
   </script>
 </head>
@@ -46,10 +47,37 @@
 <div class="admin-wrap">
   <h1>CeyBreez Admin V10 Professional Stable</h1>
 
-  <section class="login-box" id="loginBox">
-    <h2>Admin Login</h2>
-    <input type="password" id="adminToken" placeholder="Enter ADMIN_TOKEN" />
-    <button onclick="loginAdmin()">Login</button>
+  <section class="login-box security-login" id="loginBox">
+    <h2>CeyBreez Admin Login</h2>
+    <p class="security-login-note" id="securitySetupStatus">Checking account setup…</p>
+    <p class="security-login-message" id="securityLoginMessage"></p>
+
+    <div id="securityNormalLoginBox" class="security-normal-login security-login-grid">
+      <label>Username</label>
+      <input type="text" id="adminUsername" autocomplete="username" placeholder="Username" />
+      <label>Password</label>
+      <input type="password" id="adminPassword" autocomplete="current-password" placeholder="Password" />
+      <button id="adminLoginBtn" type="button" onclick="loginAdmin()">Login</button>
+      <p class="security-login-note">Sessions are stored only for this browser tab/session and are validated by the Worker before the Admin panel opens.</p>
+    </div>
+
+    <div id="securityBootstrapBox" class="security-setup-box hidden">
+      <h3>First-time Super Admin setup</h3>
+      <p class="security-login-note">Use the existing Cloudflare <strong>ADMIN_TOKEN</strong> one time to create the first username/password account. Passwords are stored as PBKDF2 hashes, never as plain text.</p>
+      <div class="security-login-grid">
+        <label>Current ADMIN_TOKEN</label>
+        <input type="password" id="bootstrapAdminToken" autocomplete="off" placeholder="Current Worker ADMIN_TOKEN" />
+        <label>Display Name</label>
+        <input type="text" id="bootstrapDisplayName" placeholder="Administrator" />
+        <label>New Super Admin Username</label>
+        <input type="text" id="bootstrapUsername" autocomplete="username" placeholder="admin" />
+        <label>New Password</label>
+        <input type="password" id="bootstrapPassword" autocomplete="new-password" placeholder="Minimum 10 characters" />
+        <label>Confirm Password</label>
+        <input type="password" id="bootstrapPasswordConfirm" autocomplete="new-password" placeholder="Repeat password" />
+        <button type="button" onclick="bootstrapSuperAdmin()">Create Super Admin</button>
+      </div>
+    </div>
   </section>
 
   <section class="admin-panel hidden" id="adminPanel">
@@ -999,6 +1027,47 @@
   </section>
 </section>
 
+
+<section id="usersTab" class="hidden">
+  <div class="security-section-head">
+    <div><h2>User Management</h2><p>Super Admin only. Create staff accounts, set module access, reset passwords and deactivate users.</p></div>
+    <button type="button" class="v14-refresh" onclick="loadSecurityUsers()">Refresh</button>
+  </div>
+  <div class="security-grid">
+    <section class="security-card">
+      <h3 id="securityUserFormTitle">Create User</h3>
+      <form id="securityUserForm" class="security-form">
+        <input type="hidden" id="securityUserId" />
+        <label>Display Name</label><input id="securityDisplayName" required placeholder="Staff name" />
+        <label>Username</label><input id="securityUsername" required autocomplete="off" placeholder="username" />
+        <label>Password</label><input id="securityPassword" type="password" autocomplete="new-password" placeholder="Minimum 10 characters" />
+        <label>Role</label>
+        <select id="securityUserRole">
+          <option value="staff">Staff Editor — changes need approval</option>
+          <option value="viewer">Read Only — no changes</option>
+          <option value="super_admin">Super Admin — full access</option>
+        </select>
+        <label>Module Access</label><div id="securityPermissionGrid" class="security-permission-grid"></div>
+        <label class="security-inline"><input type="checkbox" id="securityUserActive" checked /> Active user</label>
+        <div class="security-inline"><button class="primary" type="submit">Save User</button><button type="button" onclick="resetSecurityUserForm()">Clear</button></div>
+      </form>
+    </section>
+    <section class="security-card">
+      <h3>Users</h3>
+      <div class="security-table-wrap"><table class="security-table"><thead><tr><th>User</th><th>Role</th><th>Status</th><th>Permissions</th><th>Last Login</th><th>Updated</th><th>Actions</th></tr></thead><tbody id="securityUsersTableBody"><tr><td colspan="7">Open User Management to load users.</td></tr></tbody></table></div>
+    </section>
+  </div>
+</section>
+
+<section id="approvalsTab" class="hidden">
+  <div class="security-section-head">
+    <div><h2>Approval Queue</h2><p>Staff Editor changes do not go live until a Super Admin approves and applies them.</p></div>
+    <div class="security-inline"><select id="approvalStatusFilter" class="security-filter"><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option><option value="Apply Failed">Apply Failed</option><option value="all">All</option></select><button type="button" class="v14-refresh" onclick="loadSecurityApprovals()">Refresh</button></div>
+  </div>
+  <section class="security-card"><div id="securityApprovalsList"><p>Open Approval Queue to load requests.</p></div></section>
+  <section class="security-card" style="margin-top:18px"><h3>Recent Security Audit</h3><div class="security-table-wrap"><table class="security-table"><thead><tr><th>Date</th><th>User</th><th>Action</th><th>Module</th><th>Target</th></tr></thead><tbody id="securityAuditTableBody"><tr><td colspan="5">Audit log loads with the approval queue.</td></tr></tbody></table></div></section>
+</section>
+
 <section id="settingsTab" class="hidden">
   <h2>Settings</h2>
   <section class="admin-section">
@@ -1062,6 +1131,7 @@
 </div>
 
 <script src="admin.js"></script>
+<script src="security-rbac.js?v=20260924"></script>
 <script type="module" src="js/modules/bookings/date-guard.js"></script>
 <script type="module">
   import { initFinanceModule } from "./js/modules/finance/index.js";

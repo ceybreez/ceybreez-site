@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="admin.css" />
   <link rel="stylesheet" href="page-builder-v2.css" />
   <link rel="stylesheet" href="v3-admin-theme.css?v=20260916" />
-  <link rel="stylesheet" href="css/security-rbac.css?v=20260924" />
+  <link rel="stylesheet" href="css/security-rbac.css?v=20260924-2" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <style id="v15BootStyle">
@@ -58,7 +58,49 @@
       <label>Password</label>
       <input type="password" id="adminPassword" autocomplete="current-password" placeholder="Password" />
       <button id="adminLoginBtn" type="button" onclick="loginAdmin()">Login</button>
+      <button class="security-link-button" type="button" onclick="openForgotPassword()">Forgot password?</button>
       <p class="security-login-note">Sessions are stored only for this browser tab/session and are validated by the Worker before the Admin panel opens.</p>
+    </div>
+
+    <div id="securityForgotBox" class="security-setup-box hidden">
+      <h3>Reset your password</h3>
+      <p class="security-login-note">Enter your username or recovery email. If a matching active account exists, a one-time reset link will be sent by email.</p>
+      <div class="security-login-grid">
+        <label>Username or Recovery Email</label>
+        <input type="text" id="forgotIdentity" autocomplete="username" placeholder="username or email@example.com" />
+        <button id="forgotPasswordBtn" type="button" onclick="requestPasswordReset()">Send Reset Link</button>
+        <button class="security-link-button" type="button" onclick="backToSecurityLogin()">Back to Login</button>
+        <p class="security-login-note" id="forgotPasswordMessage"></p>
+      </div>
+      <details class="security-emergency-recovery">
+        <summary>Emergency Super Admin recovery</summary>
+        <p class="security-login-note">Use this only if the Super Admin recovery email is unavailable. It requires the current Cloudflare ADMIN_TOKEN.</p>
+        <div class="security-login-grid">
+          <label>Current ADMIN_TOKEN</label>
+          <input type="password" id="emergencyAdminToken" autocomplete="off" placeholder="Current Worker ADMIN_TOKEN" />
+          <label>Super Admin Username or Email</label>
+          <input type="text" id="emergencyIdentity" autocomplete="off" placeholder="admin username or recovery email" />
+          <label>New Password</label>
+          <input type="password" id="emergencyPassword" autocomplete="new-password" placeholder="Minimum 10 characters" />
+          <label>Confirm Password</label>
+          <input type="password" id="emergencyPasswordConfirm" autocomplete="new-password" placeholder="Repeat password" />
+          <button type="button" onclick="emergencyPasswordReset()">Reset Super Admin Password</button>
+        </div>
+      </details>
+    </div>
+
+    <div id="securityResetBox" class="security-setup-box hidden">
+      <h3>Choose a new password</h3>
+      <p class="security-login-note">This reset link is valid for 15 minutes and can be used once.</p>
+      <div class="security-login-grid">
+        <label>New Password</label>
+        <input type="password" id="resetNewPassword" autocomplete="new-password" placeholder="Minimum 10 characters" />
+        <label>Confirm Password</label>
+        <input type="password" id="resetNewPasswordConfirm" autocomplete="new-password" placeholder="Repeat password" />
+        <button id="resetPasswordBtn" type="button" onclick="completePasswordReset()">Set New Password</button>
+        <button class="security-link-button" type="button" onclick="backToSecurityLogin()">Cancel</button>
+        <p class="security-login-note" id="resetPasswordMessage"></p>
+      </div>
     </div>
 
     <div id="securityBootstrapBox" class="security-setup-box hidden">
@@ -69,6 +111,8 @@
         <input type="password" id="bootstrapAdminToken" autocomplete="off" placeholder="Current Worker ADMIN_TOKEN" />
         <label>Display Name</label>
         <input type="text" id="bootstrapDisplayName" placeholder="Administrator" />
+        <label>Recovery Email</label>
+        <input type="email" id="bootstrapEmail" autocomplete="email" placeholder="admin@example.com" required />
         <label>New Super Admin Username</label>
         <input type="text" id="bootstrapUsername" autocomplete="username" placeholder="admin" />
         <label>New Password</label>
@@ -1030,7 +1074,7 @@
 
 <section id="usersTab" class="hidden">
   <div class="security-section-head">
-    <div><h2>User Management</h2><p>Super Admin only. Create staff accounts, set module access, reset passwords and deactivate users.</p></div>
+    <div><h2>User Management</h2><p>Super Admin only. Create staff accounts, set recovery email and module access, reset passwords, revoke sessions and deactivate users.</p></div>
     <button type="button" class="v14-refresh" onclick="loadSecurityUsers()">Refresh</button>
   </div>
   <div class="security-grid">
@@ -1039,6 +1083,7 @@
       <form id="securityUserForm" class="security-form">
         <input type="hidden" id="securityUserId" />
         <label>Display Name</label><input id="securityDisplayName" required placeholder="Staff name" />
+        <label>Recovery Email</label><input id="securityEmail" type="email" required autocomplete="email" placeholder="staff@example.com" />
         <label>Username</label><input id="securityUsername" required autocomplete="off" placeholder="username" />
         <label>Password</label><input id="securityPassword" type="password" autocomplete="new-password" placeholder="Minimum 10 characters" />
         <label>Role</label>
@@ -1054,7 +1099,7 @@
     </section>
     <section class="security-card">
       <h3>Users</h3>
-      <div class="security-table-wrap"><table class="security-table"><thead><tr><th>User</th><th>Role</th><th>Status</th><th>Permissions</th><th>Last Login</th><th>Updated</th><th>Actions</th></tr></thead><tbody id="securityUsersTableBody"><tr><td colspan="7">Open User Management to load users.</td></tr></tbody></table></div>
+      <div class="security-table-wrap"><table class="security-table"><thead><tr><th>User</th><th>Recovery Email</th><th>Role</th><th>Status</th><th>Permissions</th><th>Last Login</th><th>Updated</th><th>Actions</th></tr></thead><tbody id="securityUsersTableBody"><tr><td colspan="8">Open User Management to load users.</td></tr></tbody></table></div>
     </section>
   </div>
 </section>
@@ -1131,7 +1176,7 @@
 </div>
 
 <script src="admin.js"></script>
-<script src="security-rbac.js?v=20260924"></script>
+<script src="security-rbac.js?v=20260924-2"></script>
 <script type="module" src="js/modules/bookings/date-guard.js"></script>
 <script type="module">
   import { initFinanceModule } from "./js/modules/finance/index.js";

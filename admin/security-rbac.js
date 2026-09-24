@@ -1,5 +1,5 @@
 /* =====================================================
-   CEYBREEZ ADMIN SECURITY V5.3
+   CEYBREEZ ADMIN SECURITY V5.3.2
    Username/password login, roles, user management,
    approval queue, non-admin delete lock and audit UI.
 ===================================================== */
@@ -27,6 +27,7 @@
   let currentUser = null;
   let uiObserver = null;
   let restoring = false;
+  let activePasswordResetToken = "";
 
   function token() {
     return sessionStorage.getItem(TOKEN_KEY) || "";
@@ -113,14 +114,130 @@
     if (panel) { panel.classList.remove("hidden"); panel.style.display = ""; }
   }
 
+  function setAuthBox(name) {
+    const boxes = {
+      login: document.getElementById("securityNormalLoginBox"),
+      bootstrap: document.getElementById("securityBootstrapBox"),
+      forgot: document.getElementById("securityForgotBox"),
+      reset: document.getElementById("securityResetBox")
+    };
+    Object.entries(boxes).forEach(([key, el]) => {
+      if (el) el.classList.toggle("hidden", key !== name);
+    });
+  }
+
+  function resetTokenFromHash() {
+    const hash = String(location.hash || "");
+    const match = hash.match(/(?:^#|[&#])reset=([^&]+)/);
+    return match ? decodeURIComponent(match[1]) : "";
+  }
+
+  window.openForgotPassword = function openForgotPassword() {
+    const msg = document.getElementById("securityLoginMessage");
+    if (msg) msg.textContent = "";
+    const forgotMsg = document.getElementById("forgotPasswordMessage");
+    if (forgotMsg) forgotMsg.textContent = "";
+    setAuthBox("forgot");
+    document.getElementById("forgotIdentity")?.focus();
+  };
+
+  window.backToSecurityLogin = async function backToSecurityLogin() {
+    activePasswordResetToken = "";
+    if (location.hash.includes("reset=")) {
+      history.replaceState(null, "", location.pathname + location.search);
+    }
+    document.getElementById("resetNewPassword") && (document.getElementById("resetNewPassword").value = "");
+    document.getElementById("resetNewPasswordConfirm") && (document.getElementById("resetNewPasswordConfirm").value = "");
+    await checkBootstrapStatus();
+  };
+
+  window.requestPasswordReset = async function requestPasswordReset() {
+    const identity = document.getElementById("forgotIdentity")?.value.trim() || "";
+    const button = document.getElementById("forgotPasswordBtn");
+    const msg = document.getElementById("forgotPasswordMessage");
+    if (!identity) return alert("Enter your username or recovery email.");
+    if (button) { button.disabled = true; button.textContent = "Sending…"; }
+    if (msg) msg.textContent = "";
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ identity })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Reset request failed");
+      if (msg) msg.textContent = data.message || "If the account exists, a reset link has been sent.";
+    } catch (error) {
+      if (msg) msg.textContent = error.message || "Reset request failed.";
+    } finally {
+      if (button) { button.disabled = false; button.textContent = "Send Reset Link"; }
+    }
+  };
+
+  window.completePasswordReset = async function completePasswordReset() {
+    const password = document.getElementById("resetNewPassword")?.value || "";
+    const confirmPassword = document.getElementById("resetNewPasswordConfirm")?.value || "";
+    const button = document.getElementById("resetPasswordBtn");
+    const msg = document.getElementById("resetPasswordMessage");
+    if (!activePasswordResetToken) return alert("Reset link is missing or invalid.");
+    if (password.length < 10) return alert("Password must be at least 10 characters.");
+    if (password !== confirmPassword) return alert("Passwords do not match.");
+    if (button) { button.disabled = true; button.textContent = "Resetting…"; }
+    if (msg) msg.textContent = "";
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/auth/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: activePasswordResetToken, password })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Password reset failed");
+      clearSession();
+      activePasswordResetToken = "";
+      history.replaceState(null, "", location.pathname + location.search);
+      if (msg) msg.textContent = data.message || "Password reset successfully.";
+      alert(data.message || "Password reset successfully. Sign in with your new password.");
+      await checkBootstrapStatus();
+      document.getElementById("adminUsername")?.focus();
+    } catch (error) {
+      if (msg) msg.textContent = error.message || "Password reset failed.";
+    } finally {
+      if (button) { button.disabled = false; button.textContent = "Set New Password"; }
+    }
+  };
+
+  window.emergencyPasswordReset = async function emergencyPasswordReset() {
+    const adminToken = document.getElementById("emergencyAdminToken")?.value.trim() || "";
+    const identity = document.getElementById("emergencyIdentity")?.value.trim() || "";
+    const password = document.getElementById("emergencyPassword")?.value || "";
+    const confirmPassword = document.getElementById("emergencyPasswordConfirm")?.value || "";
+    if (!adminToken || !identity || !password) return alert("Enter ADMIN_TOKEN, Super Admin username/email and new password.");
+    if (password.length < 10) return alert("Password must be at least 10 characters.");
+    if (password !== confirmPassword) return alert("Passwords do not match.");
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/auth/emergency-reset`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
+        body: JSON.stringify({ identity, password })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Emergency reset failed");
+      ["emergencyAdminToken", "emergencyIdentity", "emergencyPassword", "emergencyPasswordConfirm"].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = "";
+      });
+      alert(data.message || "Super Admin password reset.");
+      await window.backToSecurityLogin();
+    } catch (error) {
+      alert(error.message || "Emergency reset failed");
+    }
+  };
+
   async function checkBootstrapStatus() {
     try {
       const res = await fetch(`${API_BASE}/api/admin/auth/status`, { cache: "no-store" });
       const data = await res.json();
-      const setup = document.getElementById("securityBootstrapBox");
-      if (setup) setup.classList.toggle("hidden", !!data.configured);
-      const normal = document.getElementById("securityNormalLoginBox");
-      if (normal) normal.classList.toggle("hidden", !data.configured);
+      if (activePasswordResetToken) setAuthBox("reset");
+      else setAuthBox(data.configured ? "login" : "bootstrap");
       const text = document.getElementById("securitySetupStatus");
       if (text) text.textContent = data.configured
         ? "User login is configured."
@@ -132,20 +249,22 @@
     const oldToken = document.getElementById("bootstrapAdminToken")?.value.trim() || "";
     const username = document.getElementById("bootstrapUsername")?.value.trim() || "";
     const displayName = document.getElementById("bootstrapDisplayName")?.value.trim() || "";
+    const email = document.getElementById("bootstrapEmail")?.value.trim() || "";
     const password = document.getElementById("bootstrapPassword")?.value || "";
     const confirmPassword = document.getElementById("bootstrapPasswordConfirm")?.value || "";
-    if (!oldToken || !username || !password) return alert("Enter current ADMIN_TOKEN, username and password.");
+    if (!oldToken || !username || !email || !password) return alert("Enter current ADMIN_TOKEN, display/recovery details, username and password.");
     if (password !== confirmPassword) return alert("Passwords do not match.");
     try {
       const res = await fetch(`${API_BASE}/api/admin/auth/bootstrap`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${oldToken}` },
-        body: JSON.stringify({ username, displayName, password })
+        body: JSON.stringify({ username, displayName, email, password })
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Setup failed");
       alert(data.message || "Super Admin created. Sign in with the new account.");
       document.getElementById("bootstrapAdminToken").value = "";
+      document.getElementById("bootstrapEmail").value = "";
       document.getElementById("bootstrapPassword").value = "";
       document.getElementById("bootstrapPasswordConfirm").value = "";
       await checkBootstrapStatus();
@@ -266,6 +385,7 @@
     form?.reset();
     if (document.getElementById("securityUserId")) document.getElementById("securityUserId").value = "";
     if (document.getElementById("securityUserFormTitle")) document.getElementById("securityUserFormTitle").textContent = "Create User";
+    if (document.getElementById("securityEmail")) document.getElementById("securityEmail").value = "";
     if (document.getElementById("securityUsername")) document.getElementById("securityUsername").disabled = false;
     if (document.getElementById("securityPassword")) document.getElementById("securityPassword").placeholder = "Minimum 10 characters";
     document.querySelectorAll('input[name="securityPermission"]').forEach(x => { x.checked = ["dashboard", "inquiries", "bookings"].includes(x.value); x.disabled = false; });
@@ -277,6 +397,7 @@
     if (!row) return alert("User not found.");
     document.getElementById("securityUserId").value = row.id;
     document.getElementById("securityDisplayName").value = row.displayName || "";
+    document.getElementById("securityEmail").value = row.email || "";
     document.getElementById("securityUsername").value = row.username || "";
     document.getElementById("securityUsername").disabled = true;
     document.getElementById("securityUserRole").value = row.role || "staff";
@@ -296,6 +417,7 @@
     const id = document.getElementById("securityUserId")?.value || "";
     const payload = {
       displayName: document.getElementById("securityDisplayName")?.value.trim() || "",
+      email: document.getElementById("securityEmail")?.value.trim() || "",
       username: document.getElementById("securityUsername")?.value.trim() || "",
       role: document.getElementById("securityUserRole")?.value || "staff",
       permissions: readPermissions(),
@@ -347,13 +469,14 @@
   window.loadSecurityUsers = async function loadSecurityUsers() {
     const body = document.getElementById("securityUsersTableBody");
     if (!body || !isSuperAdmin()) return;
-    body.innerHTML = '<tr><td colspan="7">Loading users…</td></tr>';
+    body.innerHTML = '<tr><td colspan="8">Loading users…</td></tr>';
     try {
       const rows = await api("/api/admin/users");
       window.__securityUsers = Array.isArray(rows) ? rows : [];
       body.innerHTML = window.__securityUsers.length ? window.__securityUsers.map(row => `
         <tr>
           <td><strong>${escapeHtml(row.displayName || row.username)}</strong><br><small>${escapeHtml(row.username)}</small></td>
+          <td>${escapeHtml(row.email || "Not set")}</td>
           <td>${escapeHtml(userRoleLabel(row.role))}</td>
           <td><span class="security-status ${row.active ? "active" : "inactive"}">${row.active ? "Active" : "Inactive"}</span></td>
           <td class="security-perm-list">${escapeHtml(row.role === "super_admin" ? "All modules" : (row.permissions || []).join(", ") || "None")}</td>
@@ -364,9 +487,9 @@
             <button type="button" onclick="revokeSecuritySessions('${row.id}','${escapeHtml(row.username)}')">Sign Out</button>
             ${row.id === currentUser?.id ? "" : `<button type="button" onclick="toggleSecurityUser('${row.id}',${row.active ? "false" : "true"})">${row.active ? "Deactivate" : "Activate"}</button>`}
           </td>
-        </tr>`).join("") : '<tr><td colspan="7">No users found.</td></tr>';
+        </tr>`).join("") : '<tr><td colspan="8">No users found.</td></tr>';
     } catch (error) {
-      body.innerHTML = `<tr><td colspan="7">${escapeHtml(error.message || "Users failed to load")}</td></tr>`;
+      body.innerHTML = `<tr><td colspan="8">${escapeHtml(error.message || "Users failed to load")}</td></tr>`;
     }
   };
 
@@ -567,6 +690,17 @@
     document.getElementById("approvalStatusFilter")?.addEventListener("change", window.loadSecurityApprovals);
     document.getElementById("adminPassword")?.addEventListener("keydown", e => { if (e.key === "Enter") window.loginAdmin(); });
     document.getElementById("adminUsername")?.addEventListener("keydown", e => { if (e.key === "Enter") window.loginAdmin(); });
+
+    activePasswordResetToken = resetTokenFromHash();
+    if (activePasswordResetToken) {
+      clearSession();
+      showLogin();
+      setAuthBox("reset");
+      const text = document.getElementById("securitySetupStatus");
+      if (text) text.textContent = "Password reset link verified on submit.";
+      document.getElementById("resetNewPassword")?.focus();
+      return;
+    }
 
     if (token()) await window.restoreCeyBreezSession();
     else {

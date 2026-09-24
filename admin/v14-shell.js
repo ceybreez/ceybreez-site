@@ -16,6 +16,7 @@
     pageBuilder: "pageControlTab",
     users: "usersTab",
     approvals: "approvalsTab",
+    backup: "backupTab",
     settings: "settingsTab"
   };
 
@@ -33,6 +34,7 @@
     pageBuilder: "pageControl",
     users: "usersTab",
     approvals: "approvalsTab",
+    backup: "backupTab",
     settings: "settingsTab"
   };
 
@@ -50,6 +52,7 @@
     pageBuilder:["Page Builder","Global website content and page sections"],
     users:["User Management","Create staff accounts, roles and module access"],
     approvals:["Approval Queue","Review and apply staff changes before they go live"],
+    backup:["Backup & Recovery","D1 snapshots, R2 media mirror and emergency restore"],
     settings:["Settings","Business settings and future integrations"]
   };
 
@@ -530,6 +533,7 @@ function initV18BlockDatePickers(bookings){
         <button type="button" data-security-module="pageBuilder" onclick="window.location.href='visual-builder/index.html'">🎨 Visual Designer</button>
         <button data-v14-tab="users" data-super-admin-only="1">👥 User Management</button>
         <button data-v14-tab="approvals" data-super-admin-only="1">✅ Approval Queue</button>
+        <button data-v14-tab="backup" data-super-admin-only="1">🛡 Backup & Recovery</button>
         <button data-v14-tab="settings">⚙ Settings</button>
       </nav>
       <button class="v14-logout" type="button" onclick="logoutAdmin()">Logout</button>`;
@@ -665,6 +669,7 @@ function initV18BlockDatePickers(bookings){
       }
       else if(logical==="users" && typeof window.loadSecurityUsers==="function") window.loadSecurityUsers();
       else if(logical==="approvals" && typeof window.loadSecurityApprovals==="function") window.loadSecurityApprovals();
+      else if(logical==="backup" && typeof window.loadBackupRecovery==="function") window.loadBackupRecovery();
     }catch(e){ console.warn("V15 refresh warning", e); }
   }
 
@@ -688,6 +693,8 @@ function initV18BlockDatePickers(bookings){
       if(typeof window.loadSecurityUsers==="function") window.loadSecurityUsers();
     } else if(logical==="approvals"){
       if(typeof window.loadSecurityApprovals==="function") window.loadSecurityApprovals();
+    } else if(logical==="backup"){
+      if(typeof window.loadBackupRecovery==="function") window.loadBackupRecovery();
     } else if(logical==="reviews"){
       // Legacy showTab changes the visible legacy panel but does not load review data.
       if(typeof originalShowTab==="function"){

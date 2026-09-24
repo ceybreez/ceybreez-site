@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="page-builder-v2.css" />
   <link rel="stylesheet" href="v3-admin-theme.css?v=20260916" />
   <link rel="stylesheet" href="css/security-rbac.css?v=20260924-2" />
+  <link rel="stylesheet" href="css/backup-recovery.css?v=20260924-1" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <style id="v15BootStyle">
@@ -1113,6 +1114,56 @@
   <section class="security-card" style="margin-top:18px"><h3>Recent Security Audit</h3><div class="security-table-wrap"><table class="security-table"><thead><tr><th>Date</th><th>User</th><th>Action</th><th>Module</th><th>Target</th></tr></thead><tbody id="securityAuditTableBody"><tr><td colspan="5">Audit log loads with the approval queue.</td></tr></tbody></table></div></section>
 </section>
 
+<section id="backupTab" class="hidden">
+  <div class="backup-section-head">
+    <div>
+      <h2>Backup &amp; Recovery</h2>
+      <p>Super Admin only. Create D1 snapshots, mirror R2 media, download backups and restore safely with a pre-restore snapshot.</p>
+    </div>
+    <button type="button" class="v14-refresh" onclick="loadBackupRecovery()">Refresh</button>
+  </div>
+
+  <div class="backup-status-grid">
+    <div class="backup-status-card"><span>Database Storage</span><strong id="backupStorageStatus">Checking…</strong><small id="backupStorageHint"></small></div>
+    <div class="backup-status-card"><span>Media Mirror</span><strong id="backupMediaStatus">Checking…</strong><small id="backupMediaHint"></small></div>
+    <div class="backup-status-card"><span>Retention</span><strong id="backupRetentionStatus">30 days</strong><small>Automatic database snapshots only</small></div>
+    <div class="backup-status-card"><span>Last Backup</span><strong id="backupLastStatus">—</strong><small id="backupLastHint">No backup loaded yet</small></div>
+  </div>
+
+  <section class="backup-card">
+    <div class="backup-card-head">
+      <div><h3>Create Backup</h3><p>Creates a complete D1 data snapshot. With a dedicated BACKUP_BUCKET, media files can also be mirrored to separate R2 storage.</p></div>
+    </div>
+    <div class="backup-actions">
+      <button type="button" class="backup-primary" id="backupCreateBtn" onclick="createBackupNow()">Create Full Backup Now</button>
+      <button type="button" id="backupMediaSyncBtn" onclick="syncBackupMedia()">Sync R2 Media Mirror</button>
+    </div>
+    <div id="backupProgress" class="backup-progress" aria-live="polite"></div>
+  </section>
+
+  <section class="backup-card">
+    <div class="backup-card-head">
+      <div><h3>Stored Database Backups</h3><p>Manual and pre-restore snapshots are retained. Automatic snapshots older than 30 days are cleaned by scheduled maintenance.</p></div>
+    </div>
+    <div class="backup-table-wrap">
+      <table class="backup-table">
+        <thead><tr><th>Created</th><th>Type</th><th>Tables / Rows</th><th>Size</th><th>Storage</th><th>Checksum</th><th>Actions</th></tr></thead>
+        <tbody id="backupTableBody"><tr><td colspan="7">Open Backup &amp; Recovery to load backups.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="backup-card backup-danger-card">
+    <div class="backup-card-head">
+      <div><h3>Recovery Tools</h3><p>Database restore requires an exact confirmation phrase and automatically creates a safety snapshot first. Media restore copies the dedicated R2 mirror back to the live media bucket.</p></div>
+    </div>
+    <div class="backup-warning">Restore is a Super Admin emergency operation. Do not restore while staff are editing the CMS.</div>
+    <div class="backup-actions">
+      <button type="button" id="backupMediaRestoreBtn" onclick="restoreBackupMedia()">Restore Media Mirror</button>
+    </div>
+  </section>
+</section>
+
 <section id="settingsTab" class="hidden">
   <h2>Settings</h2>
   <section class="admin-section">
@@ -1194,6 +1245,7 @@
   import { initReportsModule } from "./js/modules/reports/index.js";
   initReportsModule();
 </script>
+  <script src="backup-recovery.js?v=20260924-1"></script>
   <script src="v14-shell.js"></script>
 <script src="page-builder-admin-v2.js"></script>
   

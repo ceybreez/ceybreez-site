@@ -1,0 +1,10 @@
+CEYBREEZ ANALYTICS V5.6 QA
+===========================
+PASS - Shared public analytics loaded once on every public page.
+PASS - Public analytics is not loaded in /admin/.
+PASS - Admin GA4 page_view disabled; only booking conversion event is sent.
+PASS - Legacy page-specific GA4 conversion/click handlers removed to avoid double counting.
+PASS - Inquiry success event centralized through inquiry-common.js.
+PASS - Guest quote confirmation event is first-confirmation only.
+PASS - V5.6 analytics payload does not send guest name/email/mobile/reference.
+PASS - JavaScript syntax checks passed.

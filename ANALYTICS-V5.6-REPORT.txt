@@ -1,0 +1,22 @@
+CEYBREEZ ANALYTICS V5.6
+========================
+
+GA4 Measurement ID: G-3QG71CWHW2
+
+PUBLIC EVENTS
+- inquiry_submit: fires only after the inquiry API succeeds and the common success sheet opens.
+- generate_lead: GA4 recommended lead event, fired together with inquiry_submit.
+- whatsapp_click: any public WhatsApp link clicked.
+- contact_click: mailto/tel links, with contact_method=email or phone.
+- tour_inquiry_click: a tour inquiry form submit attempt.
+
+BUSINESS CONVERSION EVENTS
+- quote_confirmed: fires from the Worker confirmation page only the first time a guest confirms a quote.
+- booking_confirmed: fires when Admin successfully creates a new booking. Admin page_view tracking remains disabled.
+
+PRIVACY
+No guest name, email, phone, message, or inquiry reference is sent by the V5.6 analytics layer.
+
+GA4 NEXT STEP
+After the events appear in GA4, mark inquiry_submit, quote_confirmed and booking_confirmed as Key events.
+You may also mark whatsapp_click if WhatsApp leads are commercially important.

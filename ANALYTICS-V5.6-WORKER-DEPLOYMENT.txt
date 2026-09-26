@@ -1,0 +1,28 @@
+CEYBREEZ ANALYTICS V5.6 - DEPLOYMENT
+===================================
+
+A) WEBSITE / GITHUB
+1. Use CeyBreez-Analytics-V5.6-Replacement-Only.zip to replace only the supplied files, or use the Full GitHub Ready ZIP.
+2. Commit and push.
+3. Wait for Cloudflare Pages deployment and hard-refresh the browser.
+
+B) CLOUDFLARE WORKER
+1. Open the existing CeyBreez Worker.
+2. Replace Worker code with CeyBreez-Cloudflare-Worker-Analytics-V5.6.js.
+3. Save and Deploy.
+4. Do NOT remove DB, IMAGES_BUCKET, BACKUP_BUCKET, ADMIN_TOKEN or RESEND_API_KEY.
+
+C) TEST
+1. Submit one test inquiry -> expect inquiry_submit + generate_lead.
+2. Click a WhatsApp link -> expect whatsapp_click.
+3. Click an email link -> expect contact_click.
+4. Send a quote and confirm from the guest email -> expect quote_confirmed.
+5. Confirm the booking in Admin -> expect booking_confirmed.
+6. GA4 Realtime / DebugView can take a short time to display events.
+
+D) GA4 KEY EVENTS
+Mark these as Key events after GA4 has received them:
+- inquiry_submit
+- quote_confirmed
+- booking_confirmed
+Optional: whatsapp_click

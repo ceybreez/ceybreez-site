@@ -702,14 +702,7 @@ function resetInquiryForm(){
 }
 
 function showThankYouModal(reference){
-  if(typeof gtag !== "undefined"){
-    gtag("event", "generate_lead", {
-      inquiry_type: PROPERTY_TYPE,
-      reference: reference || ""
-    });
-  }
-
-  document.getElementById("thankYouReference").textContent = reference;
+document.getElementById("thankYouReference").textContent = reference;
   document.getElementById("thankYouModal").style.display = "flex";
 }
 
@@ -772,16 +765,7 @@ function escapeHtml(value){
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
-
-const waBtn = document.getElementById("floatingWhatsAppV3");
-if(waBtn){
-  waBtn.addEventListener("click", () => {
-    if(typeof gtag !== "undefined"){
-      gtag("event", "whatsapp_click", {
-        page_location: window.location.pathname
-      });
-    }
-  });
+});
 }
 </script>
 <script src="reviews-showcase.js"></script>
@@ -789,5 +773,6 @@ if(waBtn){
 <script src="page-builder.js?v=20260916-safe-cms"></script>
 <script defer="" src="ceybreez-language.js"></script>
 <script src="ceybreez-public-v3.js?v=20260916-2"></script>
+  <script src="ceybreez-analytics.js?v=20260926-1"></script>
 </body>
 </html>

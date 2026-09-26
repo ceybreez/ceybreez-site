@@ -1383,14 +1383,7 @@ ${specialNotes || "None"}`;
   }
 
   function showThankYouModal(reference, adminSent, guestSent){
-    if(typeof gtag !== "undefined"){
-      gtag("event", "generate_lead", {
-        inquiry_type: "tour",
-        reference: reference || ""
-      });
-    }
-
-    window.CeyBreezInquiry?.showSuccess(reference, {adminEmail:{success:adminSent}, guestEmail:{success:guestSent}}, {title:"Your Sri Lanka trip request is in.", copy:"We’ve saved the route, dates and guest details and will review the plan shortly."});
+window.CeyBreezInquiry?.showSuccess(reference, {adminEmail:{success:adminSent}, guestEmail:{success:guestSent}}, {title:"Your Sri Lanka trip request is in.", copy:"We’ve saved the route, dates and guest details and will review the plan shortly."});
     document.getElementById("thankYouReference").textContent = reference;
 
     const statusEl = document.getElementById("thankYouEmailStatus");
@@ -1445,23 +1438,13 @@ function getDirectionsUrl(mapUrl, lat, lng){
 
   alert("Directions not available.");
 }
-  const waBtn = document.getElementById("floatingWhatsAppV3");
-
-if(waBtn){
-  waBtn.addEventListener("click", () => {
-
-    if(typeof gtag !== "undefined"){
-      gtag("event", "whatsapp_click", {
-        page_location: window.location.pathname
-      });
-    }
-
-  });
+});
 }
 </script>
 <script src="inquiry-common.js?v=20260921-1"></script>
 <script src="page-builder.js?v=20260916-safe-cms"></script>
 <script defer="" src="ceybreez-language.js"></script>
 <script src="ceybreez-public-v3.js?v=20260916-2"></script>
+  <script src="ceybreez-analytics.js?v=20260926-1"></script>
 </body>
 </html>

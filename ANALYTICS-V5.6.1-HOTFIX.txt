@@ -1,0 +1,29 @@
+CEYBREEZ ANALYTICS V5.6.1 HOTFIX
+=================================
+
+ROOT CAUSE
+V5.6 removed legacy page-specific GA4 handlers, but dangling JavaScript closing
+tokens remained in several public inline scripts. Those syntax errors prevented
+the public CMS/API loader code from executing.
+
+FIXED
+- villas.html
+- apartments.html
+- homestays.html
+- tours.html
+- contact.html
+- services.html
+- terms.html
+- privacy.html
+
+NO BACKEND CHANGE
+Cloudflare Worker/API, D1, R2, security, booking, backup and CMS data are unchanged.
+The already-deployed V5.6 Worker can remain in place.
+
+ANALYTICS
+ceybreez-analytics.js and inquiry-common.js remain active, so V5.6 GA4 event tracking
+continues after this hotfix.
+
+DEPLOY
+Replace these website files in the GitHub repo root, commit/push, wait for Cloudflare
+deployment, then Ctrl+F5. Purge Cloudflare cache only if the old page is still served.

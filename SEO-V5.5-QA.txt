@@ -1,0 +1,20 @@
+CEYBREEZ SEO V5.5 QA
+====================
+Tour Details JavaScript syntax: PASS
+sitemap.xml XML parse: PASS
+JSON-LD parse: PASS
+Duplicate public-page IDs: 0
+Indexable pages with exactly one H1: PASS
+Unique title/description/canonical/robots tags: PASS
+
+- index.html: title=1, description=1, canonical=1, robots=1, h1=1
+- tours.html: title=1, description=1, canonical=1, robots=1, h1=1
+- villas.html: title=1, description=1, canonical=1, robots=1, h1=1
+- apartments.html: title=1, description=1, canonical=1, robots=1, h1=1
+- homestays.html: title=1, description=1, canonical=1, robots=1, h1=1
+- services.html: title=1, description=1, canonical=1, robots=1, h1=1
+- contact.html: title=1, description=1, canonical=1, robots=1, h1=1
+- privacy.html: title=1, description=1, canonical=1, robots=1, h1=1
+- terms.html: title=1, description=1, canonical=1, robots=1, h1=1
+- tour-details.html: title=1, description=1, canonical=1, robots=1, h1=1
+- 404.html: title=1, description=1, canonical=0, robots=1, h1=1

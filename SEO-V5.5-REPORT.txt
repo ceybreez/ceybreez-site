@@ -1,0 +1,29 @@
+CEYBREEZ SEO V5.5
+==================
+
+BASE
+- Built on the current V5.4 Security + Backup & Recovery package.
+- No booking, inquiry, CMS, security, finance or backup business logic was changed.
+
+SEO CHANGES
+- Unique SEO title + meta description for every public page.
+- Canonical URL added to every indexable public page.
+- Open Graph and Twitter social metadata standardized.
+- Organization + WebSite structured data on the home page.
+- WebPage / CollectionPage / ContactPage + BreadcrumbList structured data on inner pages.
+- Dynamic Tour Details SEO updates title, description, canonical, OG, Twitter and TouristTrip/Breadcrumb data after CMS content loads.
+- sitemap.xml updated for current static public URLs.
+- robots.txt blocks /admin/ while keeping public pages crawlable.
+- Admin routes and 404 page get noindex directives.
+- Contact page corrected to one H1.
+- Property modal images get meaningful dynamic alt text.
+
+IMPORTANT: DYNAMIC TOUR URLS
+The static sitemap cannot automatically know which tour packages currently exist in D1. Tour detail pages remain discoverable through internal links from tours.html and get a dynamic canonical URL when loaded. A later enhancement can generate the sitemap server-side from the tour API.
+
+GOOGLE SEARCH CONSOLE
+1. Add/verify ceybreez.com.
+2. Submit https://ceybreez.com/sitemap.xml
+3. Inspect the home page, tours.html, villas.html and one real tour-details URL.
+4. Request indexing after deployment.
+5. Validate structured data with Google's Rich Results Test / Schema Markup Validator.

@@ -1,0 +1,13 @@
+CEYBREEZ SEO V5.5 - GOOGLE SEARCH CONSOLE CHECKLIST
+====================================================
+
+1. Add ceybreez.com in Google Search Console.
+2. Prefer a Domain property for coverage of all protocols/subdomains.
+3. Complete Google ownership verification using the TXT record Google provides.
+4. Submit: https://ceybreez.com/sitemap.xml
+5. Use URL Inspection for the home page, tours.html, villas.html and one real tour-details.html?slug=... URL.
+6. Confirm Google sees the intended canonical URL.
+7. Request indexing for important pages after deployment.
+8. Monitor Pages/Indexing and Enhancements reports.
+
+No Google verification token is hard-coded because it must come from your own Search Console property.

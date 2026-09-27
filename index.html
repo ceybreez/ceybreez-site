@@ -125,6 +125,7 @@
 </head>
 
 <body data-page="home">
+  <!-- WELCOME SCREEN V5.7.1: visual design preserved; minimum display ~1.8s -->
   <div class="welcome-screen" id="welcomeScreen" aria-hidden="true">
     <div class="welcome-glow"></div>
     <div class="welcome-content">
@@ -646,24 +647,20 @@
       return match ? match[1] : '';
     }
 
+    /* V5.7.1 WELCOME TIMING
+       Keep the existing CeyBreez intro visible long enough to enjoy the animation.
+       The page continues loading underneath; only the overlay timing is changed. */
     function dismissWelcome(){
       const screen = $("#welcomeScreen");
       if(!screen || screen.classList.contains("hide")) return;
       screen.classList.add("hide");
       document.body.classList.add("entered");
-      try { sessionStorage.setItem("ceybreezEntered", "yes"); } catch (e) {}
-      setTimeout(() => screen.remove(), 360);
+      setTimeout(() => screen.remove(), 420);
     }
 
-    let alreadyEntered = false;
-    try { alreadyEntered = sessionStorage.getItem("ceybreezEntered") === "yes"; } catch (e) {}
-    if(alreadyEntered){
-      $("#welcomeScreen")?.remove();
-      document.body.classList.add("entered");
-    } else {
-      setTimeout(dismissWelcome, 650);
-      ["click", "wheel", "keydown", "touchstart"].forEach(event => window.addEventListener(event, dismissWelcome, {once:true, passive:true}));
-    }
+    /* Always show the welcome animation on a fresh Home page load.
+       1.8 seconds keeps the intro visible without making the site feel slow. */
+    setTimeout(dismissWelcome, 1800);
 
     const header = $("#siteHeader");
     const menuToggle = $("#menuToggle");

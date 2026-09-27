@@ -1,6 +1,6 @@
-CEYBREEZ MOBILE HEADER V5 — REPLACE / ADD
+CEYBREEZ MOBILE HEADER V6 — DESKTOP LOOK
 
-REPLACE these public HTML files in the GitHub repository root:
+Replace these HTML files:
 - index.html
 - tours.html
 - tour-details.html
@@ -10,17 +10,9 @@ REPLACE these public HTML files in the GitHub repository root:
 - services.html
 - contact.html
 
-ADD this new shared CSS file to the GitHub repository root:
-- ceybreez-mobile-nav-v5.css
+Add/replace this CSS file in the website root:
+- ceybreez-mobile-nav-v6.css
 
-DO NOT delete the existing page CSS / JS files.
-The new shared CSS MUST remain loaded last in each HTML page.
-
-Mobile layout:
-Language selector = left
-CeyBreez logo = center
-Hamburger = right
-Desktop links = hidden on screens <= 900px
-Hamburger opens the full navigation panel.
-
-After Cloudflare deploy, clear the browser/site cache or hard refresh.
+Do NOT delete existing page CSS/JS files.
+This V6 file must load last (the supplied HTML already does this).
+After Cloudflare deploy, clear mobile browser cache and reload.

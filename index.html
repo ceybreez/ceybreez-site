@@ -30,7 +30,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="reviews-showcase.css">
   <link rel="stylesheet" href="ceybreez-language.css?v=20260927-412">
-  <link rel="stylesheet" href="ceybreez-home-v3.css?v=20260927-413">
+  <link rel="stylesheet" href="ceybreez-home-v3.css?v=20260927-412">
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://ceybreez.com/">
@@ -49,6 +49,7 @@
     gtag('js', new Date());
     gtag('config', 'G-3QG71CWHW2');
   </script>
+  <link rel="stylesheet" href="ceybreez-mobile-header.css?v=20260927-414">
 </head>
 
 <body data-page="home">
@@ -95,7 +96,6 @@
       </div>
     </div>
   </header>
-  <button class="menu-backdrop" id="menuBackdrop" type="button" aria-label="Close navigation menu" tabindex="-1"></button>
 
   <main id="mainSite">
     <!-- ================================================================
@@ -596,7 +596,6 @@
     const header = $("#siteHeader");
     const menuToggle = $("#menuToggle");
     const mainNav = $("#mainNav");
-    const menuBackdrop = $("#menuBackdrop");
     const onScroll = () => header?.classList.toggle("scrolled", window.scrollY > 36);
     onScroll();
     window.addEventListener("scroll", onScroll, {passive:true});
@@ -916,5 +915,6 @@
   <script src="page-builder.js?v=20260916-safe-cms"></script>
   <script src="reviews-showcase.js"></script>
   <script src="ceybreez-language.js" defer></script>
+  <script src="ceybreez-mobile-header.js?v=20260927-414" defer></script>
 </body>
 </html>

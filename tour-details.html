@@ -19,8 +19,12 @@
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" as="style">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
 
   <link rel="stylesheet" href="tour-details.css">
   <link rel="stylesheet" href="reviews-showcase.css">
@@ -97,7 +101,7 @@
 <header class="site-header" id="siteHeader">
   <div class="nav-shell">
     <a class="brand" href="index.html" aria-label="CeyBreez home"><!-- IMAGE SOURCE: logo.png | ROLE: CeyBreez | To change this picture, change the src value below. -->
-<img src="logo.png" alt="CeyBreez"></a>
+<img src="logo.webp" alt="CeyBreez" width="900" height="382"></a>
     <nav class="main-nav" id="mainNav" aria-label="Main navigation">
       <a href="index.html">Home</a>
       <a href="villas.html">Villas</a>
@@ -183,8 +187,8 @@
 
       <section class="tour-gallery td4-gallery" aria-label="Tour photo gallery">
         <div class="gallery-main td4-gallery-main">
-          <!-- IMAGE SOURCE: images/cover.jpg | ROLE: Tour Image | To change this picture, change the src value below. -->
-<img id="mainGalleryImage" src="images/cover.jpg" alt="Tour Image">
+          <!-- IMAGE SOURCE: images/cover.webp | ROLE: Tour Image | To change this picture, change the src value below. -->
+<img id="mainGalleryImage" src="images/cover.webp" alt="Tour Image" width="1600" height="873">
           <div class="td4-image-badge"><i class="fa-solid fa-camera"></i> Travel gallery</div>
         </div>
         <div id="galleryThumbs" class="gallery-thumbs td4-gallery-thumbs"></div>
@@ -248,8 +252,8 @@
         </section>
 
         <section class="td4-note-card">
-          <div class="td4-note-image"><!-- IMAGE SOURCE: images/train.jpg | ROLE: Sri Lanka scenic journey | To change this picture, change the src value below. -->
-<img src="images/train.jpg" alt="Sri Lanka scenic journey" loading="lazy"></div>
+          <div class="td4-note-image"><!-- IMAGE SOURCE: images/train.webp | ROLE: Sri Lanka scenic journey | To change this picture, change the src value below. -->
+<img src="images/train.webp" alt="Sri Lanka scenic journey" loading="lazy" width="1200" height="800"></div>
           <div class="td4-note-copy"><span class="td4-eyebrow">Make it yours</span><h2>See something you’d change?</h2><p>Stay longer in the hills, add a beach break, change the hotel style or slow the route down. This tour is a starting point, not a fixed script.</p><a href="#tourInquiryForm">Tell us what you want <i class="fa-solid fa-arrow-right"></i></a></div>
         </section>
       </div>
@@ -322,8 +326,8 @@
      MODIFY: Text = edit HTML here. Spacing/colors = edit the CSS listed above.
      ================================================================ -->
 <section class="td4-final-cta">
-    <div class="td4-final-bg"><!-- IMAGE SOURCE: images/beach.jpg | ROLE: Sri Lanka coast | To change this picture, change the src value below. -->
-<img src="images/beach.jpg" alt="Sri Lanka coast" loading="lazy"></div>
+    <div class="td4-final-bg"><!-- IMAGE SOURCE: images/beach.webp | ROLE: Sri Lanka coast | To change this picture, change the src value below. -->
+<img src="images/beach.webp" alt="Sri Lanka coast" loading="lazy" width="1200" height="800"></div>
     <div class="td4-final-overlay"></div>
     <div class="td4-final-content"><span>Not seeing your exact trip?</span><h2>We can build Sri Lanka around you.</h2><p>Share your dates, interests and travel style. We’ll shape a route that feels personal from day one.</p><a href="tours.html#tripPlanner">Create a custom trip <i class="fa-solid fa-arrow-right"></i></a></div>
   </section>
@@ -364,7 +368,7 @@
 <footer class="site-footer" data-section="footer">
   <div class="footer-shell">
     <div class="footer-brand"><!-- IMAGE SOURCE: logo.png | ROLE: CeyBreez | To change this picture, change the src value below. -->
-<img src="logo.png" alt="CeyBreez"><p>Handpicked stays, private tours and local experiences for memorable journeys across Sri Lanka.</p></div>
+<img src="logo.webp" alt="CeyBreez" width="900" height="382"><p>Handpicked stays, private tours and local experiences for memorable journeys across Sri Lanka.</p></div>
     <div class="footer-column"><h3>Explore</h3><a href="tours.html">Private Tours</a><a href="villas.html">Villas</a><a href="apartments.html">Apartments</a><a href="homestays.html">Homestays</a></div>
     <div class="footer-column"><h3>Travel</h3><a href="services.html">Local Services</a><a href="contact.html">Plan a Custom Trip</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms & Conditions</a></div>
     <div class="footer-column"><h3>CeyBreez</h3><a href="contact.html">Contact Us</a><a href="index.html#aboutSection">About CeyBreez</a><a href="index.html#gallery">Travel Gallery</a></div>
@@ -379,6 +383,6 @@
 <script src="page-builder.js?v=20260916-safe-cms"></script>
 <script src="ceybreez-language.js" defer></script>
 <script src="ceybreez-public-v3.js?v=20260916-2"></script>
-  <script src="ceybreez-analytics.js?v=20260926-1"></script>
+  <script src="ceybreez-analytics.js?v=20260926-2"></script>
 </body>
 </html>

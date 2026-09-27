@@ -1,0 +1,31 @@
+CEYBREEZ PERFORMANCE V5.7
+=========================
+
+BASE
+- Built on Analytics V5.6.1 Hotfix.
+- SEO, analytics, inquiry, booking, security and backup flows are preserved.
+
+PAGESPEED BASELINE FROM USER TEST
+- Desktop Performance: 78; LCP 3.9 s; FCP 0.8 s; TBT 60 ms; CLS 0.
+- Mobile Performance: 66; LCP 21.9 s; FCP 3.9 s; TBT 50 ms; CLS 0.025.
+- Main bottleneck: very large image/network payloads, not JavaScript execution.
+
+V5.7 CHANGES
+1. Bundled homepage/travel JPGs now have WebP delivery variants.
+2. Visible default logo uses a lightweight WebP variant; PNG remains for favicon/schema/email compatibility.
+3. Hero fallback is preloaded and explicitly sized.
+4. Hero story images are low-priority/lazy so they do not compete with LCP.
+5. Branded welcome screen is preserved but shortened.
+6. Below-fold homepage CMS data and guest reviews are loaded near viewport rather than at initial paint.
+7. Third-party Google Fonts / Font Awesome CSS is loaded non-blocking with noscript fallback.
+8. Static asset cache lifetimes are increased safely.
+9. Admin image uploads are automatically compressed in the browser (max 1920px, WebP ~78%) before R2 upload.
+10. Worker gives future R2 images a one-year immutable cache header.
+11. Worker reports current R2 hero byte size. On mobile only, a CMS hero above ~1.4 MB is skipped in favor of the optimized local fallback until that hero is re-uploaded compressed.
+
+IMPORTANT CURRENT MEDIA NOTE
+Existing images already stored in R2 are not destructively rewritten by this release.
+For the current hero to use the CMS image on mobile, open Admin/CMS and re-upload that hero once after V5.7 deployment. The new browser optimizer will upload a much smaller WebP file. The same approach can be used for any especially large featured images.
+
+NO PAID IMAGE TRANSFORMATION FEATURE REQUIRED
+V5.7 does not require Cloudflare Images Transformations or a new binding.

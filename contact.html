@@ -3,10 +3,11 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Contact CeyBreez | Plan Your Sri Lanka Trip</title>
-  <meta name="description" content="Contact CeyBreez to plan a Sri Lanka villa stay, apartment, homestay, private tour or tailor-made travel experience.">
+  <title>Contact CeyBreez | Plan Your Sri Lanka Escape</title>
+  <meta name="description" content="Get in touch with CeyBreez to plan your villa stay, homestay, apartment booking, tour or travel experience in Sri Lanka."/>
 
   <link rel="stylesheet" href="contact.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/css/intlTelInput.css"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap"/>
@@ -23,68 +24,14 @@
     gtag('js', new Date());
     gtag('config', 'G-3QG71CWHW2');
   </script>
-  <link rel="stylesheet" href="inquiry-common.css?v=20260921-1"/>
-  <!-- SEO V5.5 START: canonical, social previews, crawl directives and structured data -->
-  <link rel="canonical" href="https://ceybreez.com/contact.html">
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-  <meta property="og:site_name" content="CeyBreez">
-  <meta property="og:locale" content="en_LK">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://ceybreez.com/contact.html">
-  <meta property="og:title" content="Contact CeyBreez | Plan Your Sri Lanka Trip">
-  <meta property="og:description" content="Contact CeyBreez to plan a Sri Lanka villa stay, apartment, homestay, private tour or tailor-made travel experience.">
-  <meta property="og:image" content="https://ceybreez.com/images/og-image.jpg">
-  <meta property="og:image:alt" content="CeyBreez Sri Lanka travel">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Contact CeyBreez | Plan Your Sri Lanka Trip">
-  <meta name="twitter:description" content="Contact CeyBreez to plan a Sri Lanka villa stay, apartment, homestay, private tour or tailor-made travel experience.">
-  <meta name="twitter:image" content="https://ceybreez.com/images/og-image.jpg">
-  <script type="application/ld+json" id="seoStructuredData">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "ContactPage",
-      "@id": "https://ceybreez.com/contact.html#webpage",
-      "url": "https://ceybreez.com/contact.html",
-      "name": "Contact CeyBreez",
-      "description": "Contact CeyBreez to plan a Sri Lanka villa stay, apartment, homestay, private tour or tailor-made travel experience.",
-      "isPartOf": {
-        "@id": "https://ceybreez.com/#website"
-      },
-      "about": {
-        "@id": "https://ceybreez.com/#organization"
-      }
-    },
-    {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://ceybreez.com/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Contact",
-          "item": "https://ceybreez.com/contact.html"
-        }
-      ]
-    }
-  ]
-}
-  </script>
-  <!-- SEO V5.5 END -->
-
+  <link rel="stylesheet" href="ceybreez-mobile-nav-v6.css?v=20260927-6">
 </head>
 <body data-page="contact">
 
   <!-- SECTION: SITE HEADER -->
   <header class="site-header" id="siteHeader">
     <div class="nav-shell">
-      <a class="brand" href="index.html" aria-label="CeyBreez home"><img src="logo.webp" alt="CeyBreez"/ width="900" height="382"></a>
+      <a class="brand" href="index.html" aria-label="CeyBreez home"><img src="logo.png" alt="CeyBreez"/></a>
       <nav class="main-nav" id="mainNav" aria-label="Main navigation">
         <a href="index.html">Home</a>
         <a href="villas.html">Villas</a>
@@ -134,9 +81,9 @@
 
       <!-- LEFT: CONTACT DETAILS -->
       <aside class="contact-info">
-        <img class="contact-logo" src="logo.webp" alt="CeyBreez Logo"/ width="900" height="382">
+        <img class="contact-logo" src="logo.png" alt="CeyBreez Logo"/>
         <span class="contact-info-kicker">A LOCAL STARTING POINT</span>
-        <h2>Let’s plan something memorable.</h2>
+        <h1>Let’s plan something memorable.</h1>
         <p class="contact-info-lead">Tell us what kind of Sri Lanka trip you want. We’ll help connect the stay, route and local experiences into one simple plan.</p>
 
         <div class="contact-benefits">
@@ -169,16 +116,11 @@
         <h2>Tell us about your trip</h2>
         <p class="contact-form-intro">A few details are enough to start. We’ll use them to understand what fits your journey.</p>
 
-        <form id="contactForm" class="cb-inquiry-form">
+        <form id="contactForm">
           <div class="contact-form-grid">
             <div class="contact-field">
               <label for="name">Your Name *</label>
               <input id="name" placeholder="Your full name" required type="text" autocomplete="name"/>
-            </div>
-
-            <div class="contact-field">
-              <label for="email">Email Address *</label>
-              <input id="email" placeholder="name@example.com" required type="email" autocomplete="email"/>
             </div>
 
             <div class="contact-field">
@@ -189,8 +131,13 @@
             </div>
 
             <div class="contact-field">
-              <label for="mobile">Mobile / WhatsApp Number *</label>
-              <input id="mobile" placeholder="Select country first" required type="tel" autocomplete="tel"/>
+              <label for="mobile">Mobile Number *</label>
+              <input id="mobile" placeholder="Mobile number" required type="tel" autocomplete="tel"/>
+            </div>
+
+            <div class="contact-field">
+              <label for="email">Email Address *</label>
+              <input id="email" placeholder="name@example.com" required type="email" autocomplete="email"/>
             </div>
 
             <div class="contact-field contact-field-full">
@@ -242,7 +189,7 @@
   <!-- SECTION: FOOTER -->
   <footer class="site-footer" data-section="footer">
     <div class="footer-shell">
-      <div class="footer-brand"><img alt="CeyBreez" src="logo.webp"/ width="900" height="382"><p>Handpicked stays, private tours and local experiences for memorable journeys across Sri Lanka.</p></div>
+      <div class="footer-brand"><img alt="CeyBreez" src="logo.png"/><p>Handpicked stays, private tours and local experiences for memorable journeys across Sri Lanka.</p></div>
       <div class="footer-column"><h3>Explore</h3><a href="tours.html">Private Tours</a><a href="villas.html">Villas</a><a href="apartments.html">Apartments</a><a href="homestays.html">Homestays</a></div>
       <div class="footer-column"><h3>Travel</h3><a href="services.html">Local Services</a><a href="contact.html">Plan a Custom Trip</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms &amp; Conditions</a></div>
       <div class="footer-column"><h3>CeyBreez</h3><a href="contact.html">Contact Us</a><a href="index.html#aboutSection">About CeyBreez</a><a href="index.html#gallery">Travel Gallery</a></div>
@@ -251,54 +198,104 @@
   </footer>
 
   <a class="floating-whatsapp-v3" href="https://api.whatsapp.com/send?phone=94704620017" id="floatingWhatsAppV3" target="_blank" rel="noopener" aria-label="WhatsApp CeyBreez"><i class="fa-brands fa-whatsapp"></i></a>
+
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/js/intlTelInput.min.js"></script>
   <script>
+    const phoneInput = document.querySelector("#mobile");
+    const countryInput = document.querySelector("#country");
+
+    const iti = window.intlTelInput(phoneInput, {
+      initialCountry: "lk",
+      separateDialCode: true,
+      preferredCountries: ["lk", "om", "in", "ae", "qa", "sa", "gb", "us"],
+      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/js/utils.js"
+    });
+
+    const countryData = window.intlTelInputGlobals.getCountryData();
+    countryData.forEach(country => {
+      const option = document.createElement("option");
+      option.value = country.name;
+      option.textContent = country.name;
+      countryInput.appendChild(option);
+    });
+
+    countryInput.addEventListener("change", function(){
+      const matchedCountry = countryData.find(country => country.name === countryInput.value);
+      if(matchedCountry){ iti.setCountry(matchedCountry.iso2); }
+    });
+
     async function sendInquiry(){
-      const form=document.getElementById("contactForm");
-      const button=form?.querySelector(".contact-submit");
-      const originalText=button?.innerHTML || "Send my trip request";
-      const name=document.getElementById("name").value.trim();
-      const country=window.CeyBreezInquiry?.getCountry("country") || document.getElementById("country").value.trim();
-      const mobile=window.CeyBreezInquiry?.getPhone("mobile") || document.getElementById("mobile").value.trim();
-      const email=document.getElementById("email").value.trim();
-      const dateFrom=document.getElementById("dateFrom").value;
-      const dateTo=document.getElementById("dateTo").value;
-      const guests=document.getElementById("guests").value;
-      const message=document.getElementById("message").value.trim();
-      const experiences=Array.from(document.querySelectorAll('.checkbox-group input:checked')).map(x=>x.value).join(", ");
-      if(!name || !country || !mobile || !email || !dateFrom || !dateTo || !guests || !experiences){ alert("Please fill all required fields."); return; }
-      const inquiryData={name,country,mobile,email,countryCode:"",experiences:`Contact / Custom Trip - ${experiences}`,itemName:"Custom Trip / Contact Inquiry",dateFrom,dateTo,guests,message};
-      const whatsappText=`Hello CeyBreez!
+      const name = document.getElementById("name").value;
+      const country = document.getElementById("country").value;
+      const mobile = phoneInput.value;
+      const email = document.getElementById("email").value;
+      const dateFrom = document.getElementById("dateFrom").value;
+      const dateTo = document.getElementById("dateTo").value;
+      const guests = document.getElementById("guests").value;
+      const message = document.getElementById("message").value;
 
-Travel Inquiry
+      const selectedCountry = iti.getSelectedCountryData();
+      const countryCode = "+" + selectedCountry.dialCode;
+      const fullMobile = iti.getNumber();
 
-Name: ${name}
-Country: ${country}
-Mobile: ${mobile}
-Email: ${email}
+      const experiences = Array.from(document.querySelectorAll('.checkbox-group input:checked'))
+        .map(item => item.value).join(", ");
 
-Experience: ${experiences}
-Dates: ${dateFrom} to ${dateTo}
-Guests: ${guests}
+      if(!name || !country || !mobile || !email || !dateFrom || !dateTo || !guests || !experiences){
+        alert("Please fill all required fields.");
+        return;
+      }
 
-Message:
-${message || "None"}`;
+      const inquiryData = { name, country, mobile: fullMobile, email, countryCode, experiences, dateFrom, dateTo, guests, message };
+
+      const whatsappText = `Hello CeyBreez!\n\nNew Travel Inquiry\n\nName: ${name}\nCountry: ${country}\nMobile: ${fullMobile}\nEmail: ${email}\n\nType of Experience:\n${experiences}\n\nExpecting Dates:\n${dateFrom} to ${dateTo}\n\nGuests:\n${guests}\n\nMessage:\n${message}`;
+
+      window.open("https://api.whatsapp.com/send?phone=94704620017&text=" + encodeURIComponent(whatsappText), "_blank");
+
       try{
-        if(button){button.disabled=true;button.innerHTML="Sending inquiry…";}
-        const response=await fetch(window.CeyBreezInquiry?.API_BASE || "https://ceybreez-contact-api.ceybreez.workers.dev",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(inquiryData)});
-        const result=await response.json().catch(()=>({}));
-        if(!response.ok || !result.success) throw new Error(result.error || "Inquiry could not be sent.");
-window.CeyBreezInquiry?.showSuccess(result.reference,result,{title:"Your trip request is in.",copy:"We’ve saved your details and will help shape the next steps."});
-        form.reset();
-        window.CeyBreezInquiry?.resetPair("country","mobile");
-        window.open("https://api.whatsapp.com/send?phone=94704620017&text="+encodeURIComponent(whatsappText),"_blank");
-      }catch(error){ console.error(error); alert(error.message || "Inquiry could not be sent. Please try again."); }
-      finally{ if(button){button.disabled=false;button.innerHTML=originalText;} }
+        const response = await fetch("https://ceybreez-contact-api.ceybreez.workers.dev", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(inquiryData)
+        });
+
+        if(response.ok){
+          if(typeof gtag !== "undefined"){
+            gtag("event", "generate_lead", { inquiry_type: "contact" });
+          }
+          alert("Inquiry sent successfully!");
+          document.getElementById("contactForm").reset();
+          iti.setCountry("lk");
+          countryInput.value = "";
+        } else {
+          alert("WhatsApp opened, but email sending failed.");
+        }
+      }catch(error){
+        alert("WhatsApp opened, but email sending failed.");
+        console.log(error);
+      }
+    }
+
+    const contactWA = document.getElementById("contactWhatsApp");
+    if(contactWA){
+      contactWA.addEventListener("click", () => {
+        if(typeof gtag !== "undefined"){
+          gtag("event", "contact_whatsapp_click", { page_location: window.location.pathname });
+        }
+      });
+    }
+
+    const socialWA = document.getElementById("socialWhatsApp");
+    if(socialWA){
+      socialWA.addEventListener("click", () => {
+        if(typeof gtag !== "undefined"){
+          gtag("event", "social_whatsapp_click", { page_location: window.location.pathname });
+        }
+      });
     }
   </script>
-  <script src="inquiry-common.js?v=20260921-1"></script>
-<script src="page-builder.js?v=20260916-safe-cms"></script>
+  <script src="page-builder.js?v=20260916-safe-cms"></script>
   <script defer src="ceybreez-language.js"></script>
   <script src="ceybreez-public-v3.js?v=20260916-2"></script>
-  <script src="ceybreez-analytics.js?v=20260926-2"></script>
 </body>
 </html>

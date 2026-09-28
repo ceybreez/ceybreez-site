@@ -438,6 +438,7 @@ async function loadDestinationsFromAPI(){
         time: item.timeNeeded || "",
         nearby: item.nearby || "",
         description: item.description || "",
+        coverImage: item.logoImage || "",
         photos: Array.isArray(item.photos) ? item.photos.filter(Boolean) : []
       };
     });
@@ -515,7 +516,8 @@ function renderDestinationCards(data){
   visible.forEach((place, index) => {
     const item = locationData[place.id] || place;
     const photos = Array.isArray(item.photos) ? item.photos.filter(Boolean) : [];
-    const cover = photos[0] || destinationFallbackImage(item.province || place.province, item.name || place.name);
+    const galleryPhotos = [item.coverImage || place.logoImage, ...photos].filter((url, imageIndex, list) => url && list.indexOf(url) === imageIndex);
+    const cover = galleryPhotos[0] || destinationFallbackImage(item.province || place.province, item.name || place.name);
     const card = document.createElement("article");
     card.className = `destination-visual-card ${index === 0 && activeDestinationProvince === "all" ? "destination-visual-card-featured" : ""}`;
     card.tabIndex = 0;
@@ -525,7 +527,7 @@ function renderDestinationCards(data){
       <div class="destination-card-image">
         <img src="${cover}" alt="${escapeDestinationHtml(item.name || place.name)}" loading="lazy"/>
         <span class="destination-card-province"><i class="fa-solid fa-location-dot"></i> ${escapeDestinationHtml((item.province || place.province || "Sri Lanka").replace(/ Province$/i, ""))}</span>
-        <span class="destination-card-gallery-count"><i class="fa-regular fa-images"></i> ${Math.max(photos.length, 1)}</span>
+        <span class="destination-card-gallery-count"><i class="fa-regular fa-images"></i> ${Math.max(galleryPhotos.length, 1)}</span>
       </div>
       <div class="destination-card-body">
         <div>
@@ -1122,7 +1124,8 @@ function showDestinationToast(message){
     gallery.innerHTML = "";
 
     const photos = (Array.isArray(item.photos) ? item.photos.filter(Boolean) : []);
-    destinationLightboxPhotos = photos.length ? photos : [destinationFallbackImage(item.province, item.name)];
+    const galleryPhotos = [item.coverImage, ...photos].filter((url, index, list) => url && list.indexOf(url) === index);
+    destinationLightboxPhotos = galleryPhotos.length ? galleryPhotos : [destinationFallbackImage(item.province, item.name)];
     destinationLightboxIndex = 0;
 
     destinationLightboxPhotos.forEach((photo, index) => {

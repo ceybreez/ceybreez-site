@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="admin.css" />
   <link rel="stylesheet" href="page-builder-v2.css" />
   <link rel="stylesheet" href="v3-admin-theme.css?v=20260916" />
+  <link rel="stylesheet" href="destination-cms-v55.css?v=20260928-1" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <style id="v15BootStyle">
@@ -69,69 +70,258 @@
     </div>
 
     <section id="destinationsTab">
-      <h2>Tours Destinations</h2>
+      <div class="v55-destination-head">
+        <div>
+          <span class="v55-kicker">Destination CMS</span>
+          <h2>Destinations & Travel Guides</h2>
+          <p>Manage the image cards, destination article, gallery, map details and website visibility from one place.</p>
+        </div>
+        <button type="button" class="v55-primary-action" onclick="openAddDestinationForm()">+ Add Destination</button>
+      </div>
 
-      <div class="cms-toolbar">
-        <input id="destinationSearch" placeholder="Search tour location..." />
+      <div class="v55-destination-stats" aria-label="Destination summary">
+        <div class="v55-stat-card"><span>Total</span><strong id="v55DestTotal">0</strong></div>
+        <div class="v55-stat-card"><span>Live</span><strong id="v55DestActive">0</strong></div>
+        <div class="v55-stat-card"><span>Featured</span><strong id="v55DestFeatured">0</strong></div>
+        <div class="v55-stat-card"><span>Gallery Photos</span><strong id="v55DestPhotos">0</strong></div>
+      </div>
+
+      <div class="cms-toolbar v55-destination-toolbar">
+        <input id="destinationSearch" placeholder="Search destination, province, nearby place..." />
         <select id="destinationProvinceFilter"><option value="all">All Provinces</option></select>
         <select id="destinationStatusFilter">
-          <option value="all">All Status</option><option value="active">Active</option><option value="hidden">Hidden</option><option value="featured">Featured</option>
+          <option value="all">All Status</option>
+          <option value="active">Active</option>
+          <option value="hidden">Hidden</option>
+          <option value="featured">Featured</option>
         </select>
-        <button type="button" onclick="openAddDestinationForm()">+ Add New Tour Location</button>
+        <button type="button" onclick="openAddDestinationForm()">+ Add Destination</button>
       </div>
-      <div class="table-wrap cms-table-wrap"><table class="admin-table cms-table"><thead><tr>
-        <th onclick="sortCmsTable('destinations','name')">Location</th><th onclick="sortCmsTable('destinations','province')">Province</th><th>Area / Nearby</th><th>Best For</th><th>Status</th><th>Featured</th><th>Action</th>
-      </tr></thead><tbody id="destinationsTableBody"><tr><td colspan="7" class="empty-row">No destinations loaded</td></tr></tbody></table></div>
-      <button type="button" class="form-toggle-btn" onclick="toggleCmsForm('destinationFormBox')">Show / Hide Tour Location Form</button>
-      <div id="destinationFormBox" class="cms-form-box hidden">
+
+      <div class="table-wrap cms-table-wrap v55-destination-table-wrap">
+        <table class="admin-table cms-table v55-destination-table">
+          <thead>
+            <tr>
+              <th onclick="sortCmsTable('destinations','name')">Destination</th>
+              <th onclick="sortCmsTable('destinations','province')">Province</th>
+              <th>Area</th>
+              <th>Best For</th>
+              <th>Gallery</th>
+              <th>Status</th>
+              <th>Featured</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="destinationsTableBody">
+            <tr><td colspan="8" class="empty-row">No destinations loaded</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="destinationFormBox" class="cms-form-box hidden v55-destination-editor">
         <div class="cms-modal-head" id="destinationFormBoxHeader">
-          <h3 id="destinationFormBoxTitle">Add / Edit Tour Location</h3>
-          <button type="button" onclick="closeCmsForm('destinationFormBox')">×</button>
-        </div>
-      <form id="destinationForm">
-        <input type="hidden" id="destEditId" />
-
-        <input id="destName" placeholder="Location Name" required />
-        <input id="destProvince" placeholder="Province" required />
-        <input id="destArea" placeholder="Nearest City / Area" required />
-        <input id="destLat" placeholder="Latitude" required />
-        <input id="destLng" placeholder="Longitude" required />
-        <input id="destMapUrl" placeholder="Google Map Link" />
-        <input id="destBestFor" placeholder="Best For" />
-        <input id="destTime" placeholder="Time Needed" />
-        <input id="destNearby" placeholder="Nearby Places" />
-        <textarea id="destDescription" placeholder="Description"></textarea>
-        <label>Logo / Badge Image URL</label>
-        <input id="destLogo" placeholder="Optional logo / badge image URL" />
-        <div class="upload-box mini-upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleSingleUploadDrop(event, 'destLogo', 'destination-logos')">
-          <h3>Upload Destination Logo / Badge</h3><p>Optional logo, icon, or badge image.</p>
-          <input type="file" id="destLogoUploader" accept="image/*" onchange="uploadSingleFileFromInput('destLogoUploader', 'destLogo', 'destination-logos')" />
-          <button type="button" onclick="document.getElementById('destLogoUploader').click()">Browse Logo</button>
+          <div>
+            <span class="v55-kicker">Travel guide editor</span>
+            <h3 id="destinationFormBoxTitle">Add / Edit Destination</h3>
+          </div>
+          <button type="button" onclick="closeCmsForm('destinationFormBox')" aria-label="Close destination editor">×</button>
         </div>
 
-        <div class="upload-box" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'dest')">
-          <h3>Upload Destination Photos</h3>
-          <p>Drag & drop photos here, or browse from your computer.</p>
-          <input type="file" id="destPhotoUploader" multiple accept="image/*" onchange="uploadPhotos('dest')" />
-          <button type="button" onclick="document.getElementById('destPhotoUploader').click()">Browse Photos</button>
-          <p id="destUploadStatus" class="upload-status"></p>
-        </div>
+        <form id="destinationForm">
+          <input type="hidden" id="destEditId" />
 
-        <textarea id="destPhotos" placeholder="Photo URLs will appear here automatically, one per line"></textarea>
-        <div id="destPhotoPreview" class="photo-preview"></div>
+          <div class="v55-editor-layout">
+            <div class="v55-editor-main">
 
-        <label><input type="checkbox" id="destActive" checked /> Active / Show on website</label>
-        <label><input type="checkbox" id="destFeatured" /> Featured / Show on Home Page</label>
+              <section class="v55-editor-card">
+                <div class="v55-editor-card-head">
+                  <div><span>01</span><h3>Destination Basics</h3></div>
+                  <p>Information used on the destination card and detail view.</p>
+                </div>
 
-        <button type="submit">Save Destination</button>
-        <button type="button" onclick="resetDestinationForm()">Clear</button>
-      </form>
+                <div class="v55-field-grid v55-field-grid-3">
+                  <label class="v55-field">
+                    <span>Location Name *</span>
+                    <input id="destName" placeholder="Kandy" required />
+                  </label>
 
+                  <label class="v55-field">
+                    <span>Province *</span>
+                    <select id="destProvince" required>
+                      <option value="">Select province</option>
+                      <option>Central Province</option>
+                      <option>Eastern Province</option>
+                      <option>North Central Province</option>
+                      <option>North Western Province</option>
+                      <option>Northern Province</option>
+                      <option>Sabaragamuwa Province</option>
+                      <option>Southern Province</option>
+                      <option>Uva Province</option>
+                      <option>Western Province</option>
+                    </select>
+                  </label>
+
+                  <label class="v55-field">
+                    <span>Nearest City / Area *</span>
+                    <input id="destArea" placeholder="Kandy City" required />
+                  </label>
+                </div>
+              </section>
+
+              <section class="v55-editor-card">
+                <div class="v55-editor-card-head">
+                  <div><span>02</span><h3>Travel Guide Article</h3></div>
+                  <p>The public popup uses this as the destination story/article.</p>
+                </div>
+
+                <div class="v55-field-grid v55-field-grid-3">
+                  <label class="v55-field">
+                    <span>Best For</span>
+                    <input id="destBestFor" placeholder="Culture, temples, scenic walks" />
+                  </label>
+                  <label class="v55-field">
+                    <span>Time Needed</span>
+                    <input id="destTime" placeholder="1 day / 2–3 days" />
+                  </label>
+                  <label class="v55-field">
+                    <span>Nearby Places</span>
+                    <input id="destNearby" placeholder="Peradeniya, Nuwara Eliya" />
+                  </label>
+                </div>
+
+                <label class="v55-field v55-article-field">
+                  <span>Destination Article / Full Description</span>
+                  <textarea id="destDescription" rows="11" placeholder="Write the destination story, what to see, why to visit, useful travel notes and local highlights..."></textarea>
+                  <small><strong id="v55ArticleCount">0</strong> characters · line breaks are shown on the website.</small>
+                </label>
+              </section>
+
+              <section class="v55-editor-card">
+                <div class="v55-editor-card-head">
+                  <div><span>03</span><h3>Map & Location</h3></div>
+                  <p>Coordinates power the website map and route planner.</p>
+                </div>
+
+                <div class="v55-field-grid v55-field-grid-2">
+                  <label class="v55-field">
+                    <span>Latitude *</span>
+                    <input id="destLat" inputmode="decimal" placeholder="7.2906" required />
+                  </label>
+                  <label class="v55-field">
+                    <span>Longitude *</span>
+                    <input id="destLng" inputmode="decimal" placeholder="80.6337" required />
+                  </label>
+                </div>
+
+                <label class="v55-field">
+                  <span>Google Map / Official Map Link</span>
+                  <input id="destMapUrl" placeholder="https://maps.google.com/..." />
+                </label>
+                <div class="v55-inline-actions">
+                  <button type="button" class="mini-btn" onclick="v55OpenDestinationMapPreview()">Open Map Preview</button>
+                </div>
+              </section>
+
+              <section class="v55-editor-card">
+                <div class="v55-editor-card-head">
+                  <div><span>04</span><h3>Gallery Images</h3></div>
+                  <p>Upload multiple images. Visitors can open them full-screen and run a slideshow.</p>
+                </div>
+
+                <div class="upload-box v55-gallery-upload" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'dest')">
+                  <h3>Upload Destination Gallery</h3>
+                  <p>Drag & drop photos here, or browse from your computer.</p>
+                  <input type="file" id="destPhotoUploader" multiple accept="image/*" onchange="uploadPhotos('dest')" />
+                  <button type="button" onclick="document.getElementById('destPhotoUploader').click()">Browse Photos</button>
+                  <p id="destUploadStatus" class="upload-status"></p>
+                </div>
+
+                <div class="v55-gallery-help">
+                  <span>Tip: use the <strong>Set Cover</strong> button on any photo to make it the main destination card image.</span>
+                </div>
+
+                <div id="destPhotoPreview" class="photo-preview v55-photo-preview"></div>
+
+                <details class="v55-advanced">
+                  <summary>Advanced: photo URLs</summary>
+                  <textarea id="destPhotos" placeholder="One photo URL per line"></textarea>
+                  <button type="button" class="mini-btn" onclick="renderPhotoPreview('dest')">Refresh Gallery Preview</button>
+                </details>
+              </section>
+            </div>
+
+            <aside class="v55-editor-side">
+              <section class="v55-editor-card v55-cover-card">
+                <div class="v55-editor-card-head">
+                  <div><span>Cover</span><h3>Card Image</h3></div>
+                </div>
+
+                <div id="v55DestCoverPreview" class="v55-cover-preview">
+                  <span>No cover selected</span>
+                </div>
+
+                <input id="destLogo" type="hidden" />
+
+                <div class="upload-box mini-upload-box v55-cover-upload"
+                     ondragover="handleDragOver(event)"
+                     ondragleave="handleDragLeave(event)"
+                     ondrop="v55HandleCoverDrop(event)">
+                  <h3>Upload Cover Image</h3>
+                  <p>This appears first on the destination card.</p>
+                  <input type="file" id="destLogoUploader" accept="image/*" onchange="v55UploadDestinationCover()" />
+                  <button type="button" onclick="document.getElementById('destLogoUploader').click()">Browse Cover</button>
+                  <p id="v55DestCoverStatus" class="upload-status"></p>
+                </div>
+
+                <label class="v55-field">
+                  <span>Cover Image URL</span>
+                  <input id="v55DestCoverUrl" placeholder="https://..." onchange="v55SetCoverFromUrl(this.value)" />
+                </label>
+              </section>
+
+              <section class="v55-editor-card">
+                <div class="v55-editor-card-head">
+                  <div><span>Preview</span><h3>Website Card</h3></div>
+                </div>
+                <div id="v55DestinationCardPreview" class="v55-public-card-preview">
+                  <div class="v55-public-card-image"><span>Destination image</span></div>
+                  <div class="v55-public-card-body">
+                    <small>Sri Lanka</small>
+                    <strong>Destination Name</strong>
+                    <p>Best for travel experiences</p>
+                  </div>
+                </div>
+              </section>
+
+              <section class="v55-editor-card">
+                <div class="v55-editor-card-head">
+                  <div><span>Visibility</span><h3>Website Display</h3></div>
+                </div>
+
+                <label class="v55-switch-row">
+                  <input type="checkbox" id="destActive" checked />
+                  <span><strong>Active</strong><small>Show this destination on the website.</small></span>
+                </label>
+
+                <label class="v55-switch-row">
+                  <input type="checkbox" id="destFeatured" />
+                  <span><strong>Featured</strong><small>Mark it as a highlighted destination.</small></span>
+                </label>
+              </section>
+
+              <div class="v55-save-panel">
+                <button type="submit" class="v55-save-btn">Save Destination</button>
+                <button type="button" class="v55-secondary-btn" onclick="resetDestinationForm()">Clear Form</button>
+              </div>
+            </aside>
+          </div>
+        </form>
       </div>
+
       <div id="destinationsList" class="list legacy-card-list hidden"></div>
     </section>
 
-    <section id="propertiesTab" class="hidden">
+<section id="propertiesTab" class="hidden">
       <h2>Properties</h2>
 
       <div class="cms-toolbar property-toolbar">
@@ -1062,6 +1252,7 @@
 </div>
 
 <script src="admin.js"></script>
+<script src="destination-cms-v55.js?v=20260928-1"></script>
 <script type="module" src="js/modules/bookings/date-guard.js"></script>
 <script type="module">
   import { initFinanceModule } from "./js/modules/finance/index.js";

@@ -34,15 +34,15 @@ button,a{-webkit-tap-highlight-color:transparent}
 ::selection{background:var(--primary);color:#fff}
 
 /* INTRO */
-.welcome-screen{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:#0a3f3b;color:#fff;overflow:hidden;transition:opacity .75s ease,visibility .75s ease}
-.welcome-screen::before{content:"";position:absolute;inset:0;background:linear-gradient(125deg,rgba(5,33,30,.84),rgba(10,72,65,.55)),url("images/cover.jpg") center/cover;transform:scale(1.05);animation:introZoom 3.5s ease forwards}
+.welcome-screen{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:#0a3f3b;color:#fff;overflow:hidden;transition:opacity .32s ease,visibility .32s ease}
+.welcome-screen::before{content:"";position:absolute;inset:0;background:linear-gradient(125deg,rgba(5,33,30,.84),rgba(10,72,65,.55)),url("images/cover.webp") center/cover;transform:scale(1.05);animation:introZoom 1.4s ease forwards}
 .welcome-glow{position:absolute;width:46vw;height:46vw;border-radius:50%;background:rgba(218,163,85,.17);filter:blur(80px);right:-12vw;top:-18vw}
-.welcome-content{position:relative;z-index:2;text-align:center;width:min(760px,86vw);animation:introUp .85s ease both}
+.welcome-content{position:relative;z-index:2;text-align:center;width:min(760px,86vw);animation:introUp .55s ease both}
 .welcome-content img{width:min(520px,76vw);margin:18px auto 20px;filter:brightness(0) invert(1);opacity:.97}
 .welcome-kicker{font-size:11px;font-weight:700;letter-spacing:.34em;text-transform:uppercase;opacity:.78}
 .welcome-content p{text-transform:uppercase;font-size:11px;letter-spacing:.36em;font-weight:600;opacity:.72}
 .welcome-line{width:180px;height:1px;background:rgba(255,255,255,.25);margin:0 auto 18px;overflow:hidden}
-.welcome-line span{display:block;height:100%;background:#fff;animation:introLine 1.4s ease forwards}
+.welcome-line span{display:block;height:100%;background:#fff;animation:introLine .7s ease forwards}
 .welcome-screen.hide{opacity:0;visibility:hidden;pointer-events:none}
 @keyframes introZoom{to{transform:scale(1)}}
 @keyframes introUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
@@ -338,4 +338,12 @@ button,a{-webkit-tap-highlight-color:transparent}
   transform:translateY(-7px);
   box-shadow:0 20px 50px rgba(20,55,47,.12) !important;
   border-color:rgba(15,118,110,.16) !important;
+}
+
+/* PERFORMANCE V5.7: defer paint/layout work for far-below-fold homepage sections. */
+@supports (content-visibility:auto){
+  .featured-block,.editorial-section,.cb-social-proof,.reels-section,.final-cta{content-visibility:auto;contain-intrinsic-size:900px;}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero-image,.welcome-screen::before,.welcome-content,.welcome-line span{animation:none!important;}
 }

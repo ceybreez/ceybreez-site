@@ -443,51 +443,24 @@ function renderPhotoPreview(type) {
     : document.getElementById("propPhotoPreview");
 
   const urls = linesToArray(photosBox.value);
-  if (!previewBox) return;
   previewBox.innerHTML = "";
 
   urls.forEach((url, index) => {
     const item = document.createElement("div");
-    item.className = type === "dest" ? "preview-item v55-dest-preview-item" : "preview-item";
-    if(type === "dest"){
-      const isCover = (document.getElementById("destLogo")?.value || "") === url;
-      item.innerHTML = `
-        <div class="v55-preview-image-wrap">
-          <img src="${url}" alt="Destination photo ${index + 1}" onclick="openImagePreview('${escapeJs(url)}')">
-          ${isCover ? `<span class="v55-cover-badge">Cover</span>` : ``}
-        </div>
-        <div class="v55-preview-actions">
-          <button type="button" onclick="v55SetDestinationCover(${index})">${isCover ? "Cover Image" : "Set Cover"}</button>
-          <button type="button" onclick="v55MoveDestinationPhoto(${index},-1)" ${index===0?"disabled":""} aria-label="Move photo left">←</button>
-          <button type="button" onclick="v55MoveDestinationPhoto(${index},1)" ${index===urls.length-1?"disabled":""} aria-label="Move photo right">→</button>
-          <button type="button" class="v55-remove-photo" onclick="removePhoto('${type}', ${index})">Remove</button>
-        </div>
-      `;
-    }else{
-      item.innerHTML = `
-        <img src="${url}" alt="Photo ${index + 1}" onclick="openImagePreview('${escapeJs(url)}')">
-        <button type="button" onclick="removePhoto('${type}', ${index})">×</button>
-      `;
-    }
+    item.className = "preview-item";
+    item.innerHTML = `
+      <img src="${url}" alt="Photo ${index + 1}" onclick="openImagePreview('${url}')">
+      <button type="button" onclick="removePhoto('${type}', ${index})">×</button>
+    `;
     previewBox.appendChild(item);
   });
-
-  if(type === "dest"){
-    if(typeof renderDestinationCoverPreview === "function") renderDestinationCoverPreview();
-    if(typeof v55RenderDestinationPreview === "function") v55RenderDestinationPreview();
-  }
 }
 
 function removePhoto(type, index) {
   const photosBox = getPhotosBox(type);
   const urls = linesToArray(photosBox.value);
-  const removed = urls[index];
   urls.splice(index, 1);
   photosBox.value = urls.join("\n");
-  if(type === "dest"){
-    const cover = document.getElementById("destLogo");
-    if(cover && cover.value === removed) cover.value = urls[0] || "";
-  }
   renderPhotoPreview(type);
 }
 
@@ -531,7 +504,6 @@ async function loadDestinations() {
     allDestinations = data || [];
     setFilterOptions("destinationProvinceFilter", allDestinations.map(x => x.province), "All Provinces");
     renderDestinationsTable();
-    if (typeof v55UpdateDestinationStats === "function") v55UpdateDestinationStats(allDestinations);
     const box = document.getElementById("destinationsList"); if (box) box.innerHTML = "";
   } catch (err) { alert(err.message); }
 }
@@ -540,53 +512,24 @@ function renderDestinationsTable(){
   const search=(document.getElementById("destinationSearch")?.value||"").toLowerCase();
   const province=document.getElementById("destinationProvinceFilter")?.value||"all";
   const status=document.getElementById("destinationStatusFilter")?.value||"all";
-  let data=allDestinations.filter(item=>{
-    const text=`${item.name||""} ${item.province||""} ${item.area||""} ${item.nearby||""} ${item.bestFor||""} ${item.description||""}`.toLowerCase();
-    return (!search||text.includes(search)) && (province==="all"||String(item.province||"")===province) && statusFilterMatch(item,status);
-  });
+  let data=allDestinations.filter(item=>{ const text=`${item.name||""} ${item.province||""} ${item.area||""} ${item.nearby||""} ${item.bestFor||""}`.toLowerCase(); return (!search||text.includes(search)) && (province==="all"||String(item.province||"")===province) && statusFilterMatch(item,status); });
   data=sortByCms("destinations",data);
-  if(typeof v55UpdateDestinationStats === "function") v55UpdateDestinationStats(allDestinations);
-  if(!data.length){ tbody.innerHTML=`<tr><td colspan="8" class="empty-row">No destinations found</td></tr>`; return; }
-  tbody.innerHTML=data.map(item=>{
-    const photos=Array.isArray(item.photos)?item.photos.filter(Boolean):[];
-    const cover=item.logoImage||photos[0]||"";
-    return `<tr class="clickable-row" onclick="editDestinationById('${escapeJs(item.id)}')">
-      <td>
-        <div class="v55-table-destination">
-          ${cover?`<img src="${escapeHtml(cover)}" alt="">`:`<span class="v55-table-placeholder">IMG</span>`}
-          <div><strong>${escapeHtml(item.name||"-")}</strong><small>${escapeHtml(item.nearby||item.mapUrl||"")}</small></div>
-        </div>
-      </td>
-      <td>${escapeHtml(item.province||"-")}</td>
-      <td>${escapeHtml(item.area||"-")}</td>
-      <td>${escapeHtml(item.bestFor||"-")}</td>
-      <td><span class="v55-photo-count">${photos.length}</span></td>
-      <td>${cmsStatusBadge(item.active)}</td>
-      <td>${cmsFeaturedBadge(item.featured)}</td>
-      <td onclick="event.stopPropagation();"><button class="mini-btn" onclick="editDestinationById('${escapeJs(item.id)}')">Edit</button><button class="delete-btn mini-btn" onclick="deleteDestination('${escapeJs(item.id)}')">Delete</button></td>
-    </tr>`;
-  }).join("");
+  if(!data.length){ tbody.innerHTML=`<tr><td colspan="7" class="empty-row">No tour locations found</td></tr>`; return; }
+  tbody.innerHTML=data.map(item=>`<tr class="clickable-row" onclick="editDestinationById('${escapeJs(item.id)}')"><td><strong>${escapeHtml(item.name||"-")}</strong><br><small>${escapeHtml(item.mapUrl||"")}</small></td><td>${escapeHtml(item.province||"-")}</td><td>${escapeHtml(item.area||item.nearby||"-")}</td><td>${escapeHtml(item.bestFor||"-")}</td><td>${cmsStatusBadge(item.active)}</td><td>${cmsFeaturedBadge(item.featured)}</td><td onclick="event.stopPropagation();"><button class="mini-btn" onclick="editDestinationById('${escapeJs(item.id)}')">Edit</button><button class="delete-btn mini-btn" onclick="deleteDestination('${escapeJs(item.id)}')">Delete</button></td></tr>`).join("");
 }
-function openAddDestinationForm(){
-  resetDestinationForm();
-  const t=document.getElementById("destinationFormBoxTitle"); if(t)t.textContent="Add New Destination";
-  showCmsForm("destinationFormBox");
-  if(typeof v55RenderDestinationPreview === "function") v55RenderDestinationPreview();
-}
+function openAddDestinationForm(){ resetDestinationForm(); const t=document.getElementById("destinationFormBoxTitle"); if(t)t.textContent="Add New Tour Location"; showCmsForm("destinationFormBox"); }
 function editDestinationById(id){ const item=allDestinations.find(x=>String(x.id)===String(id)); if(item) editDestination(item); }
 
 async function saveDestination(e) {
   e.preventDefault();
 
   const editId = document.getElementById("destEditId").value;
-  const photoList = linesToArray(document.getElementById("destPhotos").value);
-  const requestedCover = (document.getElementById("destLogo")?.value || "").trim();
 
   const data = {
     name: document.getElementById("destName").value.trim(),
     province: document.getElementById("destProvince").value.trim(),
     area: document.getElementById("destArea")?.value.trim() || "",
-    logoImage: requestedCover || photoList[0] || "",
+    logoImage: document.getElementById("destLogo")?.value.trim() || "",
     lat: document.getElementById("destLat").value.trim(),
     lng: document.getElementById("destLng").value.trim(),
     mapUrl: document.getElementById("destMapUrl").value.trim(),
@@ -594,7 +537,7 @@ async function saveDestination(e) {
     timeNeeded: document.getElementById("destTime").value.trim(),
     nearby: document.getElementById("destNearby").value.trim(),
     description: document.getElementById("destDescription").value.trim(),
-    photos: photoList,
+    photos: linesToArray(document.getElementById("destPhotos").value),
     active: document.getElementById("destActive").checked,
     featured: document.getElementById("destFeatured").checked
   };
@@ -617,7 +560,7 @@ async function saveDestination(e) {
 }
 
 function editDestination(item) {
-  const t=document.getElementById("destinationFormBoxTitle"); if(t)t.textContent="Edit Destination";
+  const t=document.getElementById("destinationFormBoxTitle"); if(t)t.textContent="Edit Tour Location";
   document.getElementById("destEditId").value = item.id;
   document.getElementById("destName").value = item.name || "";
   document.getElementById("destProvince").value = item.province || "";
@@ -634,8 +577,6 @@ function editDestination(item) {
   document.getElementById("destActive").checked = !!item.active;
   document.getElementById("destFeatured").checked = item.featured || false;
   renderPhotoPreview("dest");
-  if (typeof renderDestinationCoverPreview === "function") renderDestinationCoverPreview();
-  if (typeof v55RenderDestinationPreview === "function") v55RenderDestinationPreview();
   showCmsForm("destinationFormBox");
 }
 
@@ -649,9 +590,6 @@ function resetDestinationForm() {
   document.getElementById("destMapUrl").value = "";
   if (document.getElementById("destArea")) document.getElementById("destArea").value = "";
   if (document.getElementById("destLogo")) document.getElementById("destLogo").value = "";
-  if (document.getElementById("v55DestCoverUrl")) document.getElementById("v55DestCoverUrl").value = "";
-  if (typeof renderDestinationCoverPreview === "function") renderDestinationCoverPreview();
-  if (typeof v55RenderDestinationPreview === "function") v55RenderDestinationPreview();
 }
 
 async function deleteDestination(id) {

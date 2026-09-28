@@ -81,13 +81,7 @@
     }
 
     const image = target.querySelector('[data-field="image"]');
-    if (image && section.mediaUrl) {
-      const mobile = window.matchMedia && window.matchMedia("(max-width: 900px)").matches;
-      const bytes = Number(section.mediaBytes || 0);
-      const oversizedHero = section.sectionKey === "hero" && mobile && bytes > (1400 * 1024);
-      if (!oversizedHero) image.src = section.mediaUrl;
-      else image.dataset.performanceFallback = "oversized-cms-hero";
-    }
+    if (image && section.mediaUrl) image.src = section.mediaUrl;
 
     target.querySelector(":scope > .cms-bg-video")?.remove();
 

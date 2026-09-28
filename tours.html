@@ -5,6 +5,12 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>CeyBreez Tours | Explore Sri Lanka</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="CeyBreez Tours | Explore Sri Lanka">
+<meta property="og:description" content="Handpicked stays, tours and local experiences across Sri Lanka.">
+<meta property="og:image" content="https://ceybreez.com/images/og-image.jpg">
+<meta property="og:url" content="https://ceybreez.com/tours">
+<link rel="canonical" href="https://ceybreez.com/tours">
 <meta content="Discover Sri Lanka through curated tours, day trips, cultural experiences, beaches, wildlife and adventure with CeyBreez." name="description"/>
 <link href="logo.png" rel="icon" type="image/png"/>
 <link href="tours.css" rel="stylesheet"/>
@@ -28,7 +34,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="ceybreez-public-v3.css?v=20260917-5" rel="stylesheet"/>
 <link href="tours-v4.css?v=20260917-6" rel="stylesheet"/>
-  <link rel="stylesheet" href="ceybreez-mobile-nav-v6.css?v=20260927-6">
+  <link rel="stylesheet" href="ceybreez-mobile-nav-v6.css?v=20260928-final">
 </head>
 <body data-page="tours">
 <header class="site-header" id="siteHeader">
@@ -1342,9 +1348,9 @@ ${specialNotes || "None"}`;
       if(adminSent && guestSent){
         statusEl.textContent = "Inquiry saved and confirmation emails were sent successfully.";
       }else if(adminSent){
-        statusEl.textContent = "Inquiry saved. Admin email was sent, but the guest confirmation email was not confirmed.";
+        statusEl.textContent = "Inquiry received successfully. The guest confirmation email could not be verified.";
       }else{
-        statusEl.textContent = "Inquiry saved successfully. Email delivery could not be confirmed; our team can still see it in Admin.";
+        statusEl.textContent = "Inquiry received successfully. Email delivery could not be confirmed, but our team has your request.";
       }
     }
 

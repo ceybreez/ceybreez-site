@@ -33,41 +33,6 @@ function setText(id, text){ const el=document.getElementById(id); if(el) el.text
 /* JS FUNCTION: setStatus — Shows loading/error state. */
 function setStatus(text){ setText("detailStatus", text); }
 
-/* JS FUNCTION: updateTourSeo — Updates canonical URL, social metadata and structured data after the CMS tour loads. */
-function updateTourSeo(tour){
-  const title = clean(tour.title) || "Sri Lanka Tour Package";
-  const rawDescription = clean(tour.shortDescription || tour.fullDescription || "Explore this Sri Lanka tour package with CeyBreez.");
-  const description = rawDescription.replace(/\s+/g, " ").slice(0, 158);
-  const slug = clean(tour.slug || tour.id || qs("slug") || qs("id"));
-  const canonical = `https://ceybreez.com/tour-details.html?slug=${encodeURIComponent(slug)}`;
-  const image = new URL(firstImage(tour), window.location.origin).href;
-  document.title = `${title} | CeyBreez`;
-  const setMeta = (selector, attribute, value) => { const el = document.querySelector(selector); if(el) el.setAttribute(attribute, value); };
-  const canonicalEl = document.querySelector('link[rel="canonical"]');
-  if(canonicalEl) canonicalEl.href = canonical;
-  setMeta('meta[name="description"]', "content", description);
-  setMeta('meta[property="og:url"]', "content", canonical);
-  setMeta('meta[property="og:title"]', "content", `${title} | CeyBreez`);
-  setMeta('meta[property="og:description"]', "content", description);
-  setMeta('meta[property="og:image"]', "content", image);
-  setMeta('meta[property="og:image:alt"]', "content", `${title} - CeyBreez`);
-  setMeta('meta[name="twitter:title"]', "content", `${title} | CeyBreez`);
-  setMeta('meta[name="twitter:description"]', "content", description);
-  setMeta('meta[name="twitter:image"]', "content", image);
-  const photos = [firstImage(tour), ...array(tour.photos)].filter(Boolean).map(src => new URL(src, window.location.origin).href);
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {"@type":"WebPage","@id":`${canonical}#webpage`,"url":canonical,"name":title,"description":description,"isPartOf":{"@id":"https://ceybreez.com/#website"},"about":{"@id":`${canonical}#tour`}},
-      {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ceybreez.com/"},{"@type":"ListItem","position":2,"name":"Tours","item":"https://ceybreez.com/tours.html"},{"@type":"ListItem","position":3,"name":title,"item":canonical}]},
-      {"@type":"TouristTrip","@id":`${canonical}#tour`,"name":title,"description":description,"image":photos,"touristType":clean(tour.category)||"Sri Lanka traveller","provider":{"@type":"Organization","@id":"https://ceybreez.com/#organization","name":"CeyBreez","url":"https://ceybreez.com/"}}
-    ]
-  };
-  const schemaEl = document.getElementById("seoStructuredData");
-  if(schemaEl) schemaEl.textContent = JSON.stringify(structuredData);
-}
-
-
 /* JS FUNCTION: renderList — Renders itinerary/inclusion/exclusion list items. */
 
 function renderList(id, items, emptyText){
@@ -81,7 +46,22 @@ function renderList(id, items, emptyText){
 
 function renderTour(tour){
   currentTour = tour;
-  updateTourSeo(tour);
+  document.title = `${tour.title || "Tour"} | CeyBreez`;
+
+  const pageKey = encodeURIComponent(tour.slug || tour.id || qs("slug") || qs("id") || "");
+  const pageUrl = `https://ceybreez.com/tour-details.html?slug=${pageKey}`;
+  const canonical = document.getElementById("dynamicCanonical");
+  if(canonical) canonical.href = pageUrl;
+  const setMeta = (property, content) => {
+    if(!content) return;
+    let meta = document.querySelector(`meta[property="${property}"]`);
+    if(!meta){ meta = document.createElement("meta"); meta.setAttribute("property", property); document.head.appendChild(meta); }
+    meta.setAttribute("content", content);
+  };
+  setMeta("og:title", document.title);
+  setMeta("og:description", tour.shortDescription || "Explore this Sri Lanka tour package with CeyBreez.");
+  setMeta("og:image", firstImage(tour));
+  setMeta("og:url", pageUrl);
 
   setText("breadcrumbTitle", tour.title || "Tour Package");
   setText("tourTitle", tour.title || "Tour Package");
@@ -241,8 +221,8 @@ async function submitInquiry(event){
 
   const guestName = clean(document.getElementById("guestName").value);
   const guestEmail = clean(document.getElementById("guestEmail").value);
-  const guestMobile = window.CeyBreezInquiry?.getPhone("guestMobile") || clean(document.getElementById("guestMobile").value);
-  const guestCountry = window.CeyBreezInquiry?.getCountry("guestCountry") || clean(document.getElementById("guestCountry").value);
+  const guestMobile = clean(document.getElementById("guestMobile").value);
+  const guestCountry = clean(document.getElementById("guestCountry").value);
   const travelDate = clean(document.getElementById("travelDate").value);
   const guestCount = clean(document.getElementById("guestCount").value);
   const msg = clean(document.getElementById("guestMessage").value);
@@ -268,13 +248,11 @@ async function submitInquiry(event){
   try{
     const res = await fetch(API_BASE, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) });
     const data = await res.json();
-    if(!res.ok || !data.success) throw new Error(data.error || "Failed to send inquiry");
+    if(!res.ok) throw new Error(data.error || "Failed to send inquiry");
     resultEl.innerHTML = `Inquiry sent successfully.<br>Reference: <strong>${escapeHtml(data.reference || "")}</strong>`;
-    window.CeyBreezInquiry?.showSuccess(data.reference, data, {title:"Your tour request is in.", copy:"We’ve saved this tour request and will confirm the plan with you shortly."});
     const whatsappText = `CeyBreez Tour Inquiry%0AReference: ${encodeURIComponent(data.reference || "")}%0ATour: ${encodeURIComponent(currentTour.title || "")}%0AName: ${encodeURIComponent(guestName)}%0AMobile: ${encodeURIComponent(guestMobile)}`;
     window.open(`https://api.whatsapp.com/send?phone=94704620017&text=${whatsappText}`, "_blank");
     event.target.reset();
-    window.CeyBreezInquiry?.resetPair("guestCountry","guestMobile");
   }catch(error){
     console.error(error);
     resultEl.textContent = "Inquiry sending failed. Please contact us on WhatsApp.";

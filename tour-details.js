@@ -33,6 +33,41 @@ function setText(id, text){ const el=document.getElementById(id); if(el) el.text
 /* JS FUNCTION: setStatus — Shows loading/error state. */
 function setStatus(text){ setText("detailStatus", text); }
 
+/* JS FUNCTION: updateTourSeo — Updates canonical URL, social metadata and structured data after the CMS tour loads. */
+function updateTourSeo(tour){
+  const title = clean(tour.title) || "Sri Lanka Tour Package";
+  const rawDescription = clean(tour.shortDescription || tour.fullDescription || "Explore this Sri Lanka tour package with CeyBreez.");
+  const description = rawDescription.replace(/\s+/g, " ").slice(0, 158);
+  const slug = clean(tour.slug || tour.id || qs("slug") || qs("id"));
+  const canonical = `https://ceybreez.com/tour-details.html?slug=${encodeURIComponent(slug)}`;
+  const image = new URL(firstImage(tour), window.location.origin).href;
+  document.title = `${title} | CeyBreez`;
+  const setMeta = (selector, attribute, value) => { const el = document.querySelector(selector); if(el) el.setAttribute(attribute, value); };
+  const canonicalEl = document.querySelector('link[rel="canonical"]');
+  if(canonicalEl) canonicalEl.href = canonical;
+  setMeta('meta[name="description"]', "content", description);
+  setMeta('meta[property="og:url"]', "content", canonical);
+  setMeta('meta[property="og:title"]', "content", `${title} | CeyBreez`);
+  setMeta('meta[property="og:description"]', "content", description);
+  setMeta('meta[property="og:image"]', "content", image);
+  setMeta('meta[property="og:image:alt"]', "content", `${title} - CeyBreez`);
+  setMeta('meta[name="twitter:title"]', "content", `${title} | CeyBreez`);
+  setMeta('meta[name="twitter:description"]', "content", description);
+  setMeta('meta[name="twitter:image"]', "content", image);
+  const photos = [firstImage(tour), ...array(tour.photos)].filter(Boolean).map(src => new URL(src, window.location.origin).href);
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {"@type":"WebPage","@id":`${canonical}#webpage`,"url":canonical,"name":title,"description":description,"isPartOf":{"@id":"https://ceybreez.com/#website"},"about":{"@id":`${canonical}#tour`}},
+      {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://ceybreez.com/"},{"@type":"ListItem","position":2,"name":"Tours","item":"https://ceybreez.com/tours.html"},{"@type":"ListItem","position":3,"name":title,"item":canonical}]},
+      {"@type":"TouristTrip","@id":`${canonical}#tour`,"name":title,"description":description,"image":photos,"touristType":clean(tour.category)||"Sri Lanka traveller","provider":{"@type":"Organization","@id":"https://ceybreez.com/#organization","name":"CeyBreez","url":"https://ceybreez.com/"}}
+    ]
+  };
+  const schemaEl = document.getElementById("seoStructuredData");
+  if(schemaEl) schemaEl.textContent = JSON.stringify(structuredData);
+}
+
+
 /* JS FUNCTION: renderList — Renders itinerary/inclusion/exclusion list items. */
 
 function renderList(id, items, emptyText){
@@ -46,7 +81,7 @@ function renderList(id, items, emptyText){
 
 function renderTour(tour){
   currentTour = tour;
-  document.title = `${tour.title || "Tour"} | CeyBreez`;
+  updateTourSeo(tour);
 
   setText("breadcrumbTitle", tour.title || "Tour Package");
   setText("tourTitle", tour.title || "Tour Package");

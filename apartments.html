@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Holiday Apartments in Sri Lanka | CeyBreez</title>
-<meta content="Find comfortable holiday apartments across Sri Lanka. Ideal for couples, families and long stays with CeyBreez." name="description"/>
+<meta name="description" content="Find comfortable holiday apartments in Sri Lanka for couples, families, short stays and longer visits with CeyBreez.">
 <link href="logo.png" rel="icon" type="image/png"/>
 <link href="apartments.css" rel="stylesheet"/>
 <link href="ceybreez-language.css" rel="stylesheet"/>
@@ -28,6 +28,60 @@
 <link href="ceybreez-public-v3.css?v=20260916-3" rel="stylesheet"/><link href="stays-v4.css?v=20260917-1" rel="stylesheet"/>
 <link href="apartments-v4.css?v=20260917-8" rel="stylesheet"/>
   <link rel="stylesheet" href="inquiry-common.css?v=20260921-1"/>
+  <!-- SEO V5.5 START: canonical, social previews, crawl directives and structured data -->
+  <link rel="canonical" href="https://ceybreez.com/apartments.html">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta property="og:site_name" content="CeyBreez">
+  <meta property="og:locale" content="en_LK">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ceybreez.com/apartments.html">
+  <meta property="og:title" content="Holiday Apartments in Sri Lanka | CeyBreez">
+  <meta property="og:description" content="Find comfortable holiday apartments in Sri Lanka for couples, families, short stays and longer visits with CeyBreez.">
+  <meta property="og:image" content="https://ceybreez.com/images/og-image.jpg">
+  <meta property="og:image:alt" content="CeyBreez Sri Lanka travel">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Holiday Apartments in Sri Lanka | CeyBreez">
+  <meta name="twitter:description" content="Find comfortable holiday apartments in Sri Lanka for couples, families, short stays and longer visits with CeyBreez.">
+  <meta name="twitter:image" content="https://ceybreez.com/images/og-image.jpg">
+  <script type="application/ld+json" id="seoStructuredData">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": "https://ceybreez.com/apartments.html#webpage",
+      "url": "https://ceybreez.com/apartments.html",
+      "name": "Holiday Apartments in Sri Lanka",
+      "description": "Find comfortable holiday apartments in Sri Lanka for couples, families, short stays and longer visits with CeyBreez.",
+      "isPartOf": {
+        "@id": "https://ceybreez.com/#website"
+      },
+      "about": {
+        "@id": "https://ceybreez.com/#organization"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://ceybreez.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Apartments",
+          "item": "https://ceybreez.com/apartments.html"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <!-- SEO V5.5 END -->
+
 </head>
 <body data-page="apartments">
 <header class="site-header" id="siteHeader">
@@ -383,6 +437,7 @@ function openPropertyModal(id){
   const photos = item.photos && item.photos.length ? item.photos : ["images/cover.jpg"];
   const mainImage = document.getElementById("modalMainImage");
   mainImage.src = photos[0];
+  mainImage.alt = item.name ? `${item.name} photo` : "CeyBreez Sri Lanka stay";
 
   photos.forEach(photo => {
     const img = document.createElement("img");

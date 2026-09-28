@@ -33,7 +33,7 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="ceybreez-public-v3.css?v=20260917-5" rel="stylesheet"/>
-<link href="tours-v4.css?v=20260917-6" rel="stylesheet"/>
+<link href="tours-v4.css?v=20260928-53" rel="stylesheet"/>
   <link rel="stylesheet" href="ceybreez-mobile-nav-v6.css?v=20260928-final">
 </head>
 <body data-page="tours">
@@ -130,70 +130,21 @@
 <article class="route-card-v4"><img src="images/beach.jpg" alt="Sri Lanka coast" loading="lazy"/><div><span>4–6 DAYS</span><h3>South Coast Escape</h3><p>Galle → Unawatuna → Mirissa with beach time and local experiences.</p><b>Ocean · food · sunsets</b></div></article>
 </div>
 </section>
-<section class="destinations destinations-v4">
-<div class="v4-section-head"><div><span class="v4-eyebrow">Explore by region</span><h2>Places worth building a journey around.</h2></div></div>
-<p class="destination-intro">
-    Explore Sri Lanka by province. Click a place to view details, photos and map, then add it to your trip plan.
-  </p>
-<div class="province-grid">
-<div class="province-card">
-<h3>Western Province</h3>
-<button onclick="openLocationModal('colombo')" type="button">Colombo</button>
-<button onclick="openLocationModal('negombo')" type="button">Negombo</button>
-<button onclick="openLocationModal('kalutara')" type="button">Kalutara</button>
+<section class="destinations destinations-v4 destination-discovery-v53" id="destinationDiscovery">
+<div class="v4-section-head destination-discovery-head">
+  <div>
+    <span class="v4-eyebrow">Explore visually</span>
+    <h2>Choose places by the feeling they give you.</h2>
+  </div>
+  <p>Every destination now has a visual card. Open a place to read its travel notes, browse the photo gallery, view the map and add it straight to your trip.</p>
 </div>
-<div class="province-card">
-<h3>Central Province</h3>
-<button onclick="openLocationModal('kandy')" type="button">Kandy</button>
-<button onclick="openLocationModal('nuwaraEliya')" type="button">Nuwara Eliya</button>
-<button onclick="openLocationModal('ramboda')" type="button">Ramboda</button>
+<div class="destination-filter-row" id="destinationProvinceFilters" aria-label="Filter destinations by province">
+  <button class="destination-filter active" type="button" data-province="all">All places</button>
 </div>
-<div class="province-card">
-<h3>Southern Province</h3>
-<button onclick="openLocationModal('galleFort')" type="button">Galle Fort</button>
-<button onclick="openLocationModal('hikkaduwa')" type="button">Hikkaduwa</button>
-<button onclick="openLocationModal('mirissa')" type="button">Mirissa</button>
-<button onclick="openLocationModal('unawatuna')" type="button">Unawatuna</button>
-</div>
-<div class="province-card">
-<h3>North Central Province</h3>
-<button onclick="openLocationModal('sigiriya')" type="button">Sigiriya</button>
-<button onclick="openLocationModal('dambulla')" type="button">Dambulla Cave Temple</button>
-<button onclick="openLocationModal('polonnaruwa')" type="button">Polonnaruwa</button>
-<button onclick="openLocationModal('minneriya')" type="button">Minneriya</button>
-</div>
-<div class="province-card">
-<h3>Eastern Province</h3>
-<button onclick="openLocationModal('trincomalee')" type="button">Trincomalee</button>
-<button onclick="openLocationModal('nilaveli')" type="button">Nilaveli</button>
-<button onclick="openLocationModal('pasikudah')" type="button">Pasikudah</button>
-<button onclick="openLocationModal('arugamBay')" type="button">Arugam Bay</button>
-</div>
-<div class="province-card">
-<h3>Uva Province</h3>
-<button onclick="openLocationModal('ella')" type="button">Ella</button>
-<button onclick="openLocationModal('nineArch')" type="button">Nine Arch Bridge</button>
-<button onclick="openLocationModal('diyaluma')" type="button">Diyaluma Falls</button>
-<button onclick="openLocationModal('liptonSeat')" type="button">Lipton’s Seat</button>
-</div>
-<div class="province-card">
-<h3>Northern Province</h3>
-<button onclick="openLocationModal('jaffna')" type="button">Jaffna</button>
-<button onclick="openLocationModal('nallur')" type="button">Nallur Temple</button>
-<button onclick="openLocationModal('casuarina')" type="button">Casuarina Beach</button>
-</div>
-<div class="province-card">
-<h3>Sabaragamuwa Province</h3>
-<button onclick="openLocationModal('pinnawala')" type="button">Pinnawala</button>
-<button onclick="openLocationModal('kitulgala')" type="button">Kitulgala</button>
-<button onclick="openLocationModal('adamsPeak')" type="button">Adam’s Peak</button>
-</div>
-<div class="province-card">
-<h3>North Western Province</h3>
-<button onclick="openLocationModal('wilpattu')" type="button">Wilpattu</button>
-<button onclick="openLocationModal('chilaw')" type="button">Chilaw</button>
-<button onclick="openLocationModal('anawilundawa')" type="button">Anawilundawa</button>
-</div>
+<div class="province-grid destination-card-grid" id="destinationCardGrid" aria-live="polite">
+  <article class="destination-loading-card"><span></span><span></span><span></span></article>
+  <article class="destination-loading-card"><span></span><span></span><span></span></article>
+  <article class="destination-loading-card"><span></span><span></span><span></span></article>
 </div>
 </section>
 <section class="why why-v4">
@@ -380,30 +331,51 @@
 <div class="footer-bottom"><span data-field="content" id="footerText">© <span id="footerYear">2026</span> CeyBreez. All rights reserved.</span><span>Stay · Taste · Explore Sri Lanka</span></div>
 </footer>
 <a aria-label="WhatsApp CeyBreez" class="floating-whatsapp-v3" href="https://api.whatsapp.com/send?phone=94704620017" id="floatingWhatsAppV3" rel="noopener" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
-<div class="destination-modal" id="locationModal">
-<div class="destination-modal-card">
-<button class="destination-close" onclick="closeLocationModal()">×</button>
-<h2 id="modalLocationTitle">Location Name</h2>
-<div class="modal-gallery" id="modalLocationGallery"></div>
-<p id="modalLocationDescription"></p>
-<div class="dest-info-grid">
-<div><strong>Best For</strong><span id="modalLocationBestFor"></span></div>
-<div><strong>Time Needed</strong><span id="modalLocationTime"></span></div>
-<div><strong>Nearby</strong><span id="modalLocationNearby"></span></div>
+<div class="destination-modal destination-modal-v53" id="locationModal" role="dialog" aria-modal="true" aria-labelledby="modalLocationTitle">
+<div class="destination-modal-card destination-modal-card-v53">
+<button class="destination-close" onclick="closeLocationModal()" aria-label="Close destination details">×</button>
+<div class="destination-modal-layout">
+  <div class="destination-modal-visuals">
+    <div class="destination-modal-heading-mobile">
+      <span class="destination-modal-province" id="modalLocationProvinceMobile"></span>
+      <h2 id="modalLocationTitleMobile">Location Name</h2>
+    </div>
+    <div class="modal-gallery modal-gallery-v53" id="modalLocationGallery"></div>
+    <p class="gallery-hint"><i class="fa-solid fa-expand"></i> Click a photo to zoom · use arrows for slideshow</p>
+  </div>
+  <div class="destination-modal-content">
+    <span class="destination-modal-province" id="modalLocationProvince"></span>
+    <h2 id="modalLocationTitle">Location Name</h2>
+    <div class="destination-article">
+      <span class="destination-article-label">About this place</span>
+      <p id="modalLocationDescription"></p>
+    </div>
+    <div class="dest-info-grid dest-info-grid-v53">
+      <div><strong>Best For</strong><span id="modalLocationBestFor"></span></div>
+      <div><strong>Time Needed</strong><span id="modalLocationTime"></span></div>
+      <div><strong>Nearby</strong><span id="modalLocationNearby"></span></div>
+    </div>
+    <div class="destination-map-wrap"><div id="modalLocationMap"></div></div>
+    <div class="modal-actions modal-actions-v53">
+      <button id="tourMapBtn" type="button"><i class="fa-solid fa-location-dot"></i> Open Map</button>
+      <button id="tourDirectionsBtn" type="button"><i class="fa-solid fa-diamond-turn-right"></i> Directions</button>
+    </div>
+    <button class="add-selected-btn add-selected-btn-v53" onclick="addModalLocationToTrip()" type="button">
+      <i class="fa-solid fa-plus"></i> Add This Place To My Trip
+    </button>
+  </div>
 </div>
-<div id="modalLocationMap"></div>
-<div class="modal-actions">
-<button id="tourMapBtn" type="button">
-    📍 Open Map
-  </button>
-<button id="tourDirectionsBtn" type="button">
-    🧭 Get Directions
-  </button>
 </div>
-<button class="add-selected-btn" onclick="addModalLocationToTrip()" type="button">
-  + Add To Trip Planner
-</button>
 </div>
+<div class="destination-lightbox" id="destinationLightbox" role="dialog" aria-modal="true" aria-label="Destination photo viewer">
+  <button class="lightbox-close" type="button" onclick="closeDestinationLightbox()" aria-label="Close photo viewer">×</button>
+  <button class="lightbox-nav lightbox-prev" type="button" onclick="changeDestinationLightbox(-1)" aria-label="Previous photo"><i class="fa-solid fa-chevron-left"></i></button>
+  <figure class="lightbox-stage">
+    <img id="destinationLightboxImage" src="" alt=""/>
+    <figcaption><span id="destinationLightboxCaption"></span><span id="destinationLightboxCount"></span></figcaption>
+  </figure>
+  <button class="lightbox-nav lightbox-next" type="button" onclick="changeDestinationLightbox(1)" aria-label="Next photo"><i class="fa-solid fa-chevron-right"></i></button>
+  <button class="lightbox-play" id="destinationLightboxPlay" type="button" onclick="toggleDestinationSlideshow()"><i class="fa-solid fa-play"></i> Slideshow</button>
 </div>
 <div class="thankyou-modal" id="thankYouModal">
 <div class="thankyou-card">
@@ -435,6 +407,9 @@
   let modalLocationMap = null;
   let modalLocationMarker = null;
   let selectedModalLocationKey = null;
+  let destinationLightboxPhotos = [];
+  let destinationLightboxIndex = 0;
+  let destinationSlideshowTimer = null;
   let latestDistance = "";
   let latestDuration = "";
   let latestRouteText = "";
@@ -453,7 +428,9 @@ async function loadDestinationsFromAPI(){
 
     data.forEach(item => {
       locationData[item.id] = {
+        id: item.id,
         name: item.name,
+        province: item.province || "Sri Lanka",
         lat: Number(item.lat),
         lng: Number(item.lng),
         mapUrl: item.mapUrl || "",
@@ -461,7 +438,7 @@ async function loadDestinationsFromAPI(){
         time: item.timeNeeded || "",
         nearby: item.nearby || "",
         description: item.description || "",
-        photos: item.photos || []
+        photos: Array.isArray(item.photos) ? item.photos.filter(Boolean) : []
       };
     });
 
@@ -471,39 +448,138 @@ async function loadDestinationsFromAPI(){
   }
 }
 
+function destinationFallbackImage(province, name){
+  const text = `${province || ""} ${name || ""}`.toLowerCase();
+  if(text.includes("southern") || text.includes("eastern") || text.includes("western") || text.includes("beach") || text.includes("bay") || text.includes("trincomalee") || text.includes("mirissa") || text.includes("hikkaduwa") || text.includes("negombo")) return "images/beach.jpg";
+  if(text.includes("central") || text.includes("uva") || text.includes("ella") || text.includes("nuwara") || text.includes("ramboda") || text.includes("peak")) return "images/mountains.jpg";
+  if(text.includes("north central") || text.includes("kandy") || text.includes("temple") || text.includes("galle") || text.includes("jaffna")) return "images/temple.jpg";
+  if(text.includes("wilpattu") || text.includes("minneriya") || text.includes("pinnawala") || text.includes("kitulgala")) return "images/nature.jpg";
+  return "images/cover.jpg";
+}
+
+let activeDestinationProvince = "all";
+
 function buildProvinceGrid(data){
-  const provinceGrid = document.querySelector(".province-grid");
-  if(!provinceGrid) return;
+  const grid = document.getElementById("destinationCardGrid") || document.querySelector(".province-grid");
+  const filters = document.getElementById("destinationProvinceFilters");
+  if(!grid) return;
 
-  provinceGrid.innerHTML = "";
+  const cleanData = Array.isArray(data) ? data.filter(item => item && item.name) : [];
+  const provinces = [...new Set(cleanData.map(item => item.province || "Sri Lanka"))].sort((a,b) => a.localeCompare(b));
 
-  const grouped = {};
+  if(filters){
+    filters.innerHTML = "";
+    const allBtn = document.createElement("button");
+    allBtn.type = "button";
+    allBtn.className = "destination-filter active";
+    allBtn.dataset.province = "all";
+    allBtn.textContent = "All places";
+    filters.appendChild(allBtn);
 
-  data.forEach(item => {
-    if(!grouped[item.province]){
-      grouped[item.province] = [];
-    }
-    grouped[item.province].push(item);
-  });
-
-  Object.keys(grouped).forEach(province => {
-    const card = document.createElement("div");
-    card.className = "province-card";
-
-    const title = document.createElement("h3");
-    title.textContent = province;
-    card.appendChild(title);
-
-    grouped[province].forEach(place => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.textContent = place.name;
-      button.onclick = () => openLocationModal(place.id);
-      card.appendChild(button);
+    provinces.forEach(province => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "destination-filter";
+      btn.dataset.province = province;
+      btn.textContent = province.replace(/ Province$/i, "");
+      filters.appendChild(btn);
     });
 
-    provinceGrid.appendChild(card);
+    filters.querySelectorAll(".destination-filter").forEach(btn => {
+      btn.addEventListener("click", () => {
+        activeDestinationProvince = btn.dataset.province || "all";
+        filters.querySelectorAll(".destination-filter").forEach(x => x.classList.toggle("active", x === btn));
+        renderDestinationCards(cleanData);
+      });
+    });
+  }
+
+  renderDestinationCards(cleanData);
+}
+
+function renderDestinationCards(data){
+  const grid = document.getElementById("destinationCardGrid") || document.querySelector(".province-grid");
+  if(!grid) return;
+
+  const visible = activeDestinationProvince === "all"
+    ? data
+    : data.filter(item => (item.province || "Sri Lanka") === activeDestinationProvince);
+
+  grid.innerHTML = "";
+
+  if(!visible.length){
+    grid.innerHTML = '<div class="destination-empty">No destinations are available in this region yet.</div>';
+    return;
+  }
+
+  visible.forEach((place, index) => {
+    const item = locationData[place.id] || place;
+    const photos = Array.isArray(item.photos) ? item.photos.filter(Boolean) : [];
+    const cover = photos[0] || destinationFallbackImage(item.province || place.province, item.name || place.name);
+    const card = document.createElement("article");
+    card.className = `destination-visual-card ${index === 0 && activeDestinationProvince === "all" ? "destination-visual-card-featured" : ""}`;
+    card.tabIndex = 0;
+    card.setAttribute("role", "button");
+    card.setAttribute("aria-label", `Explore ${item.name || place.name}`);
+    card.innerHTML = `
+      <div class="destination-card-image">
+        <img src="${cover}" alt="${escapeDestinationHtml(item.name || place.name)}" loading="lazy"/>
+        <span class="destination-card-province"><i class="fa-solid fa-location-dot"></i> ${escapeDestinationHtml((item.province || place.province || "Sri Lanka").replace(/ Province$/i, ""))}</span>
+        <span class="destination-card-gallery-count"><i class="fa-regular fa-images"></i> ${Math.max(photos.length, 1)}</span>
+      </div>
+      <div class="destination-card-body">
+        <div>
+          <h3>${escapeDestinationHtml(item.name || place.name)}</h3>
+          <p>${escapeDestinationHtml(item.bestFor || "Discover this place")}</p>
+        </div>
+        <div class="destination-card-actions">
+          <button class="destination-read-btn" type="button" aria-label="Read about ${escapeDestinationHtml(item.name || place.name)}"><span>Explore</span><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+          <button class="destination-quick-add" type="button" aria-label="Add ${escapeDestinationHtml(item.name || place.name)} to trip"><i class="fa-solid fa-plus"></i></button>
+        </div>
+      </div>`;
+
+    const open = () => openLocationModal(place.id);
+    card.addEventListener("click", open);
+    card.addEventListener("keydown", event => {
+      if(event.key === "Enter" || event.key === " "){
+        event.preventDefault();
+        open();
+      }
+    });
+    card.querySelector(".destination-read-btn")?.addEventListener("click", event => {
+      event.stopPropagation();
+      open();
+    });
+    card.querySelector(".destination-quick-add")?.addEventListener("click", event => {
+      event.stopPropagation();
+      addDestinationKeyToTrip(place.id, false);
+      showDestinationToast(`${item.name || place.name} added to your trip`);
+    });
+    grid.appendChild(card);
   });
+}
+
+function escapeDestinationHtml(value){
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function showDestinationToast(message){
+  let toast = document.getElementById("destinationToast");
+  if(!toast){
+    toast = document.createElement("div");
+    toast.id = "destinationToast";
+    toast.className = "destination-toast";
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>${escapeDestinationHtml(message)}</span>`;
+  toast.classList.add("show");
+  clearTimeout(window.__destinationToastTimer);
+  window.__destinationToastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
 }
 
   function getServiceType(){
@@ -1018,31 +1094,49 @@ function buildProvinceGrid(data){
 
     selectedModalLocationKey = key;
     const mapBtn = document.getElementById("tourMapBtn");
-const dirBtn = document.getElementById("tourDirectionsBtn");
+    const dirBtn = document.getElementById("tourDirectionsBtn");
 
-if(mapBtn){
-  mapBtn.onclick = () => openMapUrl(item.mapUrl, item.lat, item.lng);
-}
+    if(mapBtn){
+      mapBtn.onclick = () => openMapUrl(item.mapUrl, item.lat, item.lng);
+    }
 
-if(dirBtn){
-  dirBtn.onclick = () => getDirectionsUrl(item.mapUrl, item.lat, item.lng);
-}
+    if(dirBtn){
+      dirBtn.onclick = () => getDirectionsUrl(item.mapUrl, item.lat, item.lng);
+    }
 
-    document.getElementById("locationModal").style.display = "flex";
+    const modal = document.getElementById("locationModal");
+    modal.style.display = "flex";
+    document.body.classList.add("destination-modal-open");
+
+    const provinceLabel = item.province || "Sri Lanka";
     document.getElementById("modalLocationTitle").textContent = item.name;
-    document.getElementById("modalLocationDescription").textContent = item.description;
-    document.getElementById("modalLocationBestFor").textContent = item.bestFor;
-    document.getElementById("modalLocationTime").textContent = item.time;
-    document.getElementById("modalLocationNearby").textContent = item.nearby;
+    document.getElementById("modalLocationTitleMobile").textContent = item.name;
+    document.getElementById("modalLocationProvince").textContent = provinceLabel;
+    document.getElementById("modalLocationProvinceMobile").textContent = provinceLabel;
+    document.getElementById("modalLocationDescription").textContent = item.description || "More destination notes are being prepared by CeyBreez.";
+    document.getElementById("modalLocationBestFor").textContent = item.bestFor || "Flexible travel";
+    document.getElementById("modalLocationTime").textContent = item.time || "Flexible";
+    document.getElementById("modalLocationNearby").textContent = item.nearby || "Ask us for nearby stops";
 
     const gallery = document.getElementById("modalLocationGallery");
     gallery.innerHTML = "";
 
-    item.photos.forEach(photo => {
+    const photos = (Array.isArray(item.photos) ? item.photos.filter(Boolean) : []);
+    destinationLightboxPhotos = photos.length ? photos : [destinationFallbackImage(item.province, item.name)];
+    destinationLightboxIndex = 0;
+
+    destinationLightboxPhotos.forEach((photo, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "modal-gallery-item";
+      button.setAttribute("aria-label", `Open photo ${index + 1} of ${item.name}`);
       const img = document.createElement("img");
       img.src = photo;
-      img.alt = item.name;
-      gallery.appendChild(img);
+      img.alt = `${item.name} photo ${index + 1}`;
+      img.loading = "lazy";
+      button.appendChild(img);
+      button.addEventListener("click", () => openDestinationLightbox(index));
+      gallery.appendChild(button);
     });
 
     setTimeout(() => {
@@ -1065,21 +1159,19 @@ if(dirBtn){
         .openPopup();
 
       modalLocationMap.invalidateSize();
-    }, 200);
+    }, 220);
   }
 
   function closeLocationModal(){
     document.getElementById("locationModal").style.display = "none";
+    document.body.classList.remove("destination-modal-open");
   }
 
-  function addModalLocationToTrip(){
-    if(!selectedModalLocationKey) return;
+  function addDestinationKeyToTrip(key, shouldScroll = true){
+    const item = locationData[key];
+    if(!item) return false;
 
-    const item = locationData[selectedModalLocationKey];
-
-    const alreadyExists = provinceSelectedLocations.some(
-      place => place.name === item.name
-    );
+    const alreadyExists = provinceSelectedLocations.some(place => place.name === item.name);
 
     if(!alreadyExists){
       provinceSelectedLocations.push({
@@ -1094,13 +1186,91 @@ if(dirBtn){
     renderProvinceSelectedList();
     updateMapAndList();
     generateItinerary();
-    closeLocationModal();
 
-    document.getElementById("tripPlanner").scrollIntoView({
-      behavior:"smooth",
-      block:"start"
-    });
+    if(shouldScroll){
+      document.getElementById("tripPlanner")?.scrollIntoView({ behavior:"smooth", block:"start" });
+    }
+    return !alreadyExists;
   }
+
+  function addModalLocationToTrip(){
+    if(!selectedModalLocationKey) return;
+    const item = locationData[selectedModalLocationKey];
+    const added = addDestinationKeyToTrip(selectedModalLocationKey, true);
+    closeLocationModal();
+    showDestinationToast(added ? `${item.name} added to your trip` : `${item.name} is already in your trip`);
+  }
+
+  function openDestinationLightbox(index = 0){
+    if(!destinationLightboxPhotos.length) return;
+    destinationLightboxIndex = Math.max(0, Math.min(index, destinationLightboxPhotos.length - 1));
+    const lightbox = document.getElementById("destinationLightbox");
+    lightbox.classList.add("open");
+    document.body.classList.add("destination-lightbox-open");
+    renderDestinationLightbox();
+  }
+
+  function renderDestinationLightbox(){
+    const image = document.getElementById("destinationLightboxImage");
+    const caption = document.getElementById("destinationLightboxCaption");
+    const count = document.getElementById("destinationLightboxCount");
+    const item = locationData[selectedModalLocationKey] || {};
+    if(!image || !destinationLightboxPhotos.length) return;
+    image.src = destinationLightboxPhotos[destinationLightboxIndex];
+    image.alt = `${item.name || "Destination"} photo ${destinationLightboxIndex + 1}`;
+    caption.textContent = item.name || "Sri Lanka";
+    count.textContent = `${destinationLightboxIndex + 1} / ${destinationLightboxPhotos.length}`;
+  }
+
+  function changeDestinationLightbox(direction){
+    if(!destinationLightboxPhotos.length) return;
+    destinationLightboxIndex = (destinationLightboxIndex + direction + destinationLightboxPhotos.length) % destinationLightboxPhotos.length;
+    renderDestinationLightbox();
+  }
+
+  function closeDestinationLightbox(){
+    document.getElementById("destinationLightbox")?.classList.remove("open");
+    document.body.classList.remove("destination-lightbox-open");
+    stopDestinationSlideshow();
+  }
+
+  function toggleDestinationSlideshow(){
+    if(destinationSlideshowTimer){
+      stopDestinationSlideshow();
+      return;
+    }
+    const btn = document.getElementById("destinationLightboxPlay");
+    if(btn) btn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
+    destinationSlideshowTimer = setInterval(() => changeDestinationLightbox(1), 2600);
+  }
+
+  function stopDestinationSlideshow(){
+    if(destinationSlideshowTimer){
+      clearInterval(destinationSlideshowTimer);
+      destinationSlideshowTimer = null;
+    }
+    const btn = document.getElementById("destinationLightboxPlay");
+    if(btn) btn.innerHTML = '<i class="fa-solid fa-play"></i> Slideshow';
+  }
+
+  document.addEventListener("keydown", event => {
+    const lightbox = document.getElementById("destinationLightbox");
+    if(lightbox?.classList.contains("open")){
+      if(event.key === "Escape") closeDestinationLightbox();
+      if(event.key === "ArrowLeft") changeDestinationLightbox(-1);
+      if(event.key === "ArrowRight") changeDestinationLightbox(1);
+      return;
+    }
+    const modal = document.getElementById("locationModal");
+    if(event.key === "Escape" && modal?.style.display === "flex") closeLocationModal();
+  });
+
+  document.getElementById("locationModal")?.addEventListener("click", event => {
+    if(event.target?.id === "locationModal") closeLocationModal();
+  });
+  document.getElementById("destinationLightbox")?.addEventListener("click", event => {
+    if(event.target?.id === "destinationLightbox") closeDestinationLightbox();
+  });
 
   function renderProvinceSelectedList(){
     const list = document.getElementById("provinceSelectedList");

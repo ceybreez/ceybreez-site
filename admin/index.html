@@ -7,8 +7,6 @@
   <link rel="stylesheet" href="admin.css" />
   <link rel="stylesheet" href="page-builder-v2.css" />
   <link rel="stylesheet" href="v3-admin-theme.css?v=20260916" />
-  <link rel="stylesheet" href="css/security-rbac.css?v=20260924-2" />
-  <link rel="stylesheet" href="css/backup-recovery.css?v=20260924-1" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <style id="v15BootStyle">
@@ -31,7 +29,7 @@
   <script>
     // Apply the correct auth state before the page paints.
     document.documentElement.classList.add(
-      sessionStorage.getItem("CEYBREEZ_SESSION_TOKEN") ? "v15-authenticated" : "v15-logged-out"
+      localStorage.getItem("CEYBREEZ_ADMIN_TOKEN") ? "v15-authenticated" : "v15-logged-out"
     );
   </script>
 </head>
@@ -48,81 +46,10 @@
 <div class="admin-wrap">
   <h1>CeyBreez Admin V10 Professional Stable</h1>
 
-  <section class="login-box security-login" id="loginBox">
-    <h2>CeyBreez Admin Login</h2>
-    <p class="security-login-note" id="securitySetupStatus">Checking account setup…</p>
-    <p class="security-login-message" id="securityLoginMessage"></p>
-
-    <div id="securityNormalLoginBox" class="security-normal-login security-login-grid">
-      <label>Username</label>
-      <input type="text" id="adminUsername" autocomplete="username" placeholder="Username" />
-      <label>Password</label>
-      <input type="password" id="adminPassword" autocomplete="current-password" placeholder="Password" />
-      <button id="adminLoginBtn" type="button" onclick="loginAdmin()">Login</button>
-      <button class="security-link-button" type="button" onclick="openForgotPassword()">Forgot password?</button>
-      <p class="security-login-note">Sessions are stored only for this browser tab/session and are validated by the Worker before the Admin panel opens.</p>
-    </div>
-
-    <div id="securityForgotBox" class="security-setup-box hidden">
-      <h3>Reset your password</h3>
-      <p class="security-login-note">Enter your username or recovery email. If a matching active account exists, a one-time reset link will be sent by email.</p>
-      <div class="security-login-grid">
-        <label>Username or Recovery Email</label>
-        <input type="text" id="forgotIdentity" autocomplete="username" placeholder="username or email@example.com" />
-        <button id="forgotPasswordBtn" type="button" onclick="requestPasswordReset()">Send Reset Link</button>
-        <button class="security-link-button" type="button" onclick="backToSecurityLogin()">Back to Login</button>
-        <p class="security-login-note" id="forgotPasswordMessage"></p>
-      </div>
-      <details class="security-emergency-recovery">
-        <summary>Emergency Super Admin recovery</summary>
-        <p class="security-login-note">Use this only if the Super Admin recovery email is unavailable. It requires the current Cloudflare ADMIN_TOKEN.</p>
-        <div class="security-login-grid">
-          <label>Current ADMIN_TOKEN</label>
-          <input type="password" id="emergencyAdminToken" autocomplete="off" placeholder="Current Worker ADMIN_TOKEN" />
-          <label>Super Admin Username or Email</label>
-          <input type="text" id="emergencyIdentity" autocomplete="off" placeholder="admin username or recovery email" />
-          <label>New Password</label>
-          <input type="password" id="emergencyPassword" autocomplete="new-password" placeholder="Minimum 10 characters" />
-          <label>Confirm Password</label>
-          <input type="password" id="emergencyPasswordConfirm" autocomplete="new-password" placeholder="Repeat password" />
-          <button type="button" onclick="emergencyPasswordReset()">Reset Super Admin Password</button>
-        </div>
-      </details>
-    </div>
-
-    <div id="securityResetBox" class="security-setup-box hidden">
-      <h3>Choose a new password</h3>
-      <p class="security-login-note">This reset link is valid for 15 minutes and can be used once.</p>
-      <div class="security-login-grid">
-        <label>New Password</label>
-        <input type="password" id="resetNewPassword" autocomplete="new-password" placeholder="Minimum 10 characters" />
-        <label>Confirm Password</label>
-        <input type="password" id="resetNewPasswordConfirm" autocomplete="new-password" placeholder="Repeat password" />
-        <button id="resetPasswordBtn" type="button" onclick="completePasswordReset()">Set New Password</button>
-        <button class="security-link-button" type="button" onclick="backToSecurityLogin()">Cancel</button>
-        <p class="security-login-note" id="resetPasswordMessage"></p>
-      </div>
-    </div>
-
-    <div id="securityBootstrapBox" class="security-setup-box hidden">
-      <h3>First-time Super Admin setup</h3>
-      <p class="security-login-note">Use the existing Cloudflare <strong>ADMIN_TOKEN</strong> one time to create the first username/password account. Passwords are stored as PBKDF2 hashes, never as plain text.</p>
-      <div class="security-login-grid">
-        <label>Current ADMIN_TOKEN</label>
-        <input type="password" id="bootstrapAdminToken" autocomplete="off" placeholder="Current Worker ADMIN_TOKEN" />
-        <label>Display Name</label>
-        <input type="text" id="bootstrapDisplayName" placeholder="Administrator" />
-        <label>Recovery Email</label>
-        <input type="email" id="bootstrapEmail" autocomplete="email" placeholder="admin@example.com" required />
-        <label>New Super Admin Username</label>
-        <input type="text" id="bootstrapUsername" autocomplete="username" placeholder="admin" />
-        <label>New Password</label>
-        <input type="password" id="bootstrapPassword" autocomplete="new-password" placeholder="Minimum 10 characters" />
-        <label>Confirm Password</label>
-        <input type="password" id="bootstrapPasswordConfirm" autocomplete="new-password" placeholder="Repeat password" />
-        <button type="button" onclick="bootstrapSuperAdmin()">Create Super Admin</button>
-      </div>
-    </div>
+  <section class="login-box" id="loginBox">
+    <h2>Admin Login</h2>
+    <input type="password" id="adminToken" placeholder="Enter ADMIN_TOKEN" />
+    <button onclick="loginAdmin()">Login</button>
   </section>
 
   <section class="admin-panel hidden" id="adminPanel">
@@ -1072,98 +999,6 @@
   </section>
 </section>
 
-
-<section id="usersTab" class="hidden">
-  <div class="security-section-head">
-    <div><h2>User Management</h2><p>Super Admin only. Create staff accounts, set recovery email and module access, reset passwords, revoke sessions and deactivate users.</p></div>
-    <button type="button" class="v14-refresh" onclick="loadSecurityUsers()">Refresh</button>
-  </div>
-  <div class="security-grid">
-    <section class="security-card">
-      <h3 id="securityUserFormTitle">Create User</h3>
-      <form id="securityUserForm" class="security-form">
-        <input type="hidden" id="securityUserId" />
-        <label>Display Name</label><input id="securityDisplayName" required placeholder="Staff name" />
-        <label>Recovery Email</label><input id="securityEmail" type="email" required autocomplete="email" placeholder="staff@example.com" />
-        <label>Username</label><input id="securityUsername" required autocomplete="off" placeholder="username" />
-        <label>Password</label><input id="securityPassword" type="password" autocomplete="new-password" placeholder="Minimum 10 characters" />
-        <label>Role</label>
-        <select id="securityUserRole">
-          <option value="staff">Staff Editor — changes need approval</option>
-          <option value="viewer">Read Only — no changes</option>
-          <option value="super_admin">Super Admin — full access</option>
-        </select>
-        <label>Module Access</label><div id="securityPermissionGrid" class="security-permission-grid"></div>
-        <label class="security-inline"><input type="checkbox" id="securityUserActive" checked /> Active user</label>
-        <div class="security-inline"><button class="primary" type="submit">Save User</button><button type="button" onclick="resetSecurityUserForm()">Clear</button></div>
-      </form>
-    </section>
-    <section class="security-card">
-      <h3>Users</h3>
-      <div class="security-table-wrap"><table class="security-table"><thead><tr><th>User</th><th>Recovery Email</th><th>Role</th><th>Status</th><th>Permissions</th><th>Last Login</th><th>Updated</th><th>Actions</th></tr></thead><tbody id="securityUsersTableBody"><tr><td colspan="8">Open User Management to load users.</td></tr></tbody></table></div>
-    </section>
-  </div>
-</section>
-
-<section id="approvalsTab" class="hidden">
-  <div class="security-section-head">
-    <div><h2>Approval Queue</h2><p>Staff Editor changes do not go live until a Super Admin approves and applies them.</p></div>
-    <div class="security-inline"><select id="approvalStatusFilter" class="security-filter"><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option><option value="Apply Failed">Apply Failed</option><option value="all">All</option></select><button type="button" class="v14-refresh" onclick="loadSecurityApprovals()">Refresh</button></div>
-  </div>
-  <section class="security-card"><div id="securityApprovalsList"><p>Open Approval Queue to load requests.</p></div></section>
-  <section class="security-card" style="margin-top:18px"><h3>Recent Security Audit</h3><div class="security-table-wrap"><table class="security-table"><thead><tr><th>Date</th><th>User</th><th>Action</th><th>Module</th><th>Target</th></tr></thead><tbody id="securityAuditTableBody"><tr><td colspan="5">Audit log loads with the approval queue.</td></tr></tbody></table></div></section>
-</section>
-
-<section id="backupTab" class="hidden">
-  <div class="backup-section-head">
-    <div>
-      <h2>Backup &amp; Recovery</h2>
-      <p>Super Admin only. Create D1 snapshots, mirror R2 media, download backups and restore safely with a pre-restore snapshot.</p>
-    </div>
-    <button type="button" class="v14-refresh" onclick="loadBackupRecovery()">Refresh</button>
-  </div>
-
-  <div class="backup-status-grid">
-    <div class="backup-status-card"><span>Database Storage</span><strong id="backupStorageStatus">Checking…</strong><small id="backupStorageHint"></small></div>
-    <div class="backup-status-card"><span>Media Mirror</span><strong id="backupMediaStatus">Checking…</strong><small id="backupMediaHint"></small></div>
-    <div class="backup-status-card"><span>Retention</span><strong id="backupRetentionStatus">30 days</strong><small>Automatic database snapshots only</small></div>
-    <div class="backup-status-card"><span>Last Backup</span><strong id="backupLastStatus">—</strong><small id="backupLastHint">No backup loaded yet</small></div>
-  </div>
-
-  <section class="backup-card">
-    <div class="backup-card-head">
-      <div><h3>Create Backup</h3><p>Creates a complete D1 data snapshot. With a dedicated BACKUP_BUCKET, media files can also be mirrored to separate R2 storage.</p></div>
-    </div>
-    <div class="backup-actions">
-      <button type="button" class="backup-primary" id="backupCreateBtn" onclick="createBackupNow()">Create Full Backup Now</button>
-      <button type="button" id="backupMediaSyncBtn" onclick="syncBackupMedia()">Sync R2 Media Mirror</button>
-    </div>
-    <div id="backupProgress" class="backup-progress" aria-live="polite"></div>
-  </section>
-
-  <section class="backup-card">
-    <div class="backup-card-head">
-      <div><h3>Stored Database Backups</h3><p>Manual and pre-restore snapshots are retained. Automatic snapshots older than 30 days are cleaned by scheduled maintenance.</p></div>
-    </div>
-    <div class="backup-table-wrap">
-      <table class="backup-table">
-        <thead><tr><th>Created</th><th>Type</th><th>Tables / Rows</th><th>Size</th><th>Storage</th><th>Checksum</th><th>Actions</th></tr></thead>
-        <tbody id="backupTableBody"><tr><td colspan="7">Open Backup &amp; Recovery to load backups.</td></tr></tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="backup-card backup-danger-card">
-    <div class="backup-card-head">
-      <div><h3>Recovery Tools</h3><p>Database restore requires an exact confirmation phrase and automatically creates a safety snapshot first. Media restore copies the dedicated R2 mirror back to the live media bucket.</p></div>
-    </div>
-    <div class="backup-warning">Restore is a Super Admin emergency operation. Do not restore while staff are editing the CMS.</div>
-    <div class="backup-actions">
-      <button type="button" id="backupMediaRestoreBtn" onclick="restoreBackupMedia()">Restore Media Mirror</button>
-    </div>
-  </section>
-</section>
-
 <section id="settingsTab" class="hidden">
   <h2>Settings</h2>
   <section class="admin-section">
@@ -1226,10 +1061,7 @@
   </div>
 </div>
 
-<script src="image-upload-optimizer.js?v=20260927-1"></script>
-<script src="admin-analytics.js?v=20260926-1"></script>
 <script src="admin.js"></script>
-<script src="security-rbac.js?v=20260924-2"></script>
 <script type="module" src="js/modules/bookings/date-guard.js"></script>
 <script type="module">
   import { initFinanceModule } from "./js/modules/finance/index.js";
@@ -1247,7 +1079,6 @@
   import { initReportsModule } from "./js/modules/reports/index.js";
   initReportsModule();
 </script>
-  <script src="backup-recovery.js?v=20260924-1"></script>
   <script src="v14-shell.js"></script>
 <script src="page-builder-admin-v2.js"></script>
   

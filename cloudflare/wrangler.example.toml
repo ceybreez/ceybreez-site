@@ -1,0 +1,13 @@
+name = "ceybreez-contact-api"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+# Example only. Keep real IDs/secrets in Cloudflare settings.
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "YOUR_DATABASE_NAME"
+# database_id = "YOUR_DATABASE_ID"
+
+# [[r2_buckets]]
+# binding = "IMAGES_BUCKET"
+# bucket_name = "YOUR_BUCKET_NAME"

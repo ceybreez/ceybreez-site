@@ -183,22 +183,21 @@ function bindFinanceEvents() {
     if (validationError) return alert(validationError);
 
     try {
-      let result;
       if (txnId && editKind === "Payment") {
-        result = await updatePayment(txnId, payload);
+        await updatePayment(txnId, payload);
       } else if (txnId && editKind === "Refund") {
-        result = await updateRefund(txnId, payload);
+        await updateRefund(txnId, payload);
       } else if (entryType === "Refund") {
-        result = await saveRefund(payload);
+        await saveRefund(payload);
       } else if (entryType === "Adjustment") {
-        result = await saveAdjustment(payload);
+        await saveAdjustment(payload);
       } else if (entryType === "Commission") {
-        result = await saveCommission(payload);
+        await saveCommission(payload);
       } else {
-        result = await savePayment(payload);
+        await savePayment(payload);
       }
 
-      alert(result?.pendingApproval ? (result.message || "Finance change submitted for approval.") : (txnId ? "Finance entry updated." : "Finance entry saved."));
+      alert(txnId ? "Finance entry updated." : "Finance entry saved.");
       resetFinanceForm(false);
       await window.renderFinanceModule(false);
       if (selectedBookingId) await reloadSelectedHistory();
@@ -317,20 +316,17 @@ export function initFinanceModule() {
     }
   };
 
-  window.printFinanceReceipt = async function printFinanceReceipt(kind, id) {
+  window.printFinanceReceipt = function printFinanceReceipt(kind, id) {
     if (kind !== "Payment" && kind !== "Refund") return alert("Receipt is available for payments and refunds only.");
-    try { await window.openProtectedAdminResource(financeReceiptUrl(kind, id)); }
-    catch (error) { alert(error.message || "Receipt failed"); }
+    window.open(financeReceiptUrl(kind, id), "_blank");
   };
 
-  window.exportFinanceCSV = async function exportFinanceCSV() {
-    try { await window.openProtectedAdminResource(financeCsvUrl(), { downloadName: `ceybreez-finance-${new Date().toISOString().slice(0,10)}.csv`, newTab: false }); }
-    catch (error) { alert(error.message || "Finance export failed"); }
+  window.exportFinanceCSV = function exportFinanceCSV() {
+    window.open(financeCsvUrl(), "_blank");
   };
 
-  window.printFinanceInvoice = async function printFinanceInvoice(bookingId) {
-    try { await window.openProtectedAdminResource(financeInvoiceUrl(bookingId)); }
-    catch (error) { alert(error.message || "Invoice failed"); }
+  window.printFinanceInvoice = function printFinanceInvoice(bookingId) {
+    window.open(financeInvoiceUrl(bookingId), "_blank");
   };
 
   window.emailFinanceReceipt = async function emailFinanceReceiptAction(kind, id) {

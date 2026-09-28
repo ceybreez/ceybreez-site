@@ -42,8 +42,8 @@ function bindEvents() {
       const payload = collectPropertyPayload();
       if (!payload.name) return alert("Property name is required.");
       try {
-        const result = await saveProperty(payload);
-        alert(result?.pendingApproval ? (result.message || "Property change submitted for approval") : "Property saved");
+        await saveProperty(payload);
+        alert("Property saved");
         resetForm();
         await refreshProperties();
       } catch (error) {

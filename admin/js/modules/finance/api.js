@@ -2,7 +2,7 @@ const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
 
 function getAdminToken() {
   return (
-    sessionStorage.getItem("CEYBREEZ_SESSION_TOKEN") ||
+    localStorage.getItem("CEYBREEZ_ADMIN_TOKEN") ||
     localStorage.getItem("adminToken") ||
     ""
   );
@@ -92,15 +92,15 @@ export function saveCommission(payload) {
 }
 
 export function financeCsvUrl() {
-  return "/api/admin/finance/export/csv";
+  return API_BASE + "/api/admin/finance/export/csv?token=" + encodeURIComponent(getAdminToken());
 }
 
 export function financeReceiptUrl(kind, id) {
-  return `/api/admin/finance/receipt/${encodeURIComponent(kind)}/${encodeURIComponent(id)}`;
+  return API_BASE + `/api/admin/finance/receipt/${encodeURIComponent(kind)}/${encodeURIComponent(id)}?token=` + encodeURIComponent(getAdminToken());
 }
 
 export function financeInvoiceUrl(bookingId) {
-  return `/api/admin/finance/invoice/${encodeURIComponent(bookingId)}`;
+  return API_BASE + `/api/admin/finance/invoice/${encodeURIComponent(bookingId)}?token=` + encodeURIComponent(getAdminToken());
 }
 
 export function emailFinanceReceipt(kind, id) {

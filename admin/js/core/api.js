@@ -1,7 +1,7 @@
 import { API_BASE, TOKEN_KEY } from "./config.js";
 
 export function getAdminToken() {
-  return sessionStorage.getItem(TOKEN_KEY) || "";
+  return localStorage.getItem(TOKEN_KEY) || "";
 }
 
 export function authHeaders() {

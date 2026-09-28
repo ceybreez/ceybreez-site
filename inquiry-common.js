@@ -157,6 +157,7 @@
   }
 
   function showSuccess(reference, result, options={}){
+    window.CeyBreezAnalytics?.trackInquirySuccess(reference, options.inquiryType);
     const sheet=ensureSuccessSheet();
     const state=emailState(result || {});
     const title=options.title || "Thank you. Your inquiry is in.";

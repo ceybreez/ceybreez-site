@@ -287,29 +287,14 @@ ${message || "None"}`;
         const response=await fetch(window.CeyBreezInquiry?.API_BASE || "https://ceybreez-contact-api.ceybreez.workers.dev",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(inquiryData)});
         const result=await response.json().catch(()=>({}));
         if(!response.ok || !result.success) throw new Error(result.error || "Inquiry could not be sent.");
-        if(typeof gtag!=="undefined") gtag("event","generate_lead",{inquiry_type:"contact",reference:result.reference||""});
-        window.CeyBreezInquiry?.showSuccess(result.reference,result,{title:"Your trip request is in.",copy:"We’ve saved your details and will help shape the next steps."});
+window.CeyBreezInquiry?.showSuccess(result.reference,result,{title:"Your trip request is in.",copy:"We’ve saved your details and will help shape the next steps."});
         form.reset();
         window.CeyBreezInquiry?.resetPair("country","mobile");
         window.open("https://api.whatsapp.com/send?phone=94704620017&text="+encodeURIComponent(whatsappText),"_blank");
       }catch(error){ console.error(error); alert(error.message || "Inquiry could not be sent. Please try again."); }
       finally{ if(button){button.disabled=false;button.innerHTML=originalText;} }
     }
-
-    const contactWA = document.getElementById("contactWhatsApp");
-    if(contactWA){
-      contactWA.addEventListener("click", () => {
-        if(typeof gtag !== "undefined"){
-          gtag("event", "contact_whatsapp_click", { page_location: window.location.pathname });
-        }
-      });
-    }
-
-    const socialWA = document.getElementById("socialWhatsApp");
-    if(socialWA){
-      socialWA.addEventListener("click", () => {
-        if(typeof gtag !== "undefined"){
-          gtag("event", "social_whatsapp_click", { page_location: window.location.pathname });
+);
         }
       });
     }
@@ -318,5 +303,6 @@ ${message || "None"}`;
 <script src="page-builder.js?v=20260916-safe-cms"></script>
   <script defer src="ceybreez-language.js"></script>
   <script src="ceybreez-public-v3.js?v=20260916-2"></script>
+  <script src="ceybreez-analytics.js?v=20260926-1"></script>
 </body>
 </html>

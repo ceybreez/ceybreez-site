@@ -477,15 +477,7 @@ loadServicesPage().then(() => {
   buildServiceGallery(allServices);
   initCategoryJumpCards();
 });
-  const socialWA = document.getElementById("socialWhatsApp");
-
-if(socialWA){
-  socialWA.addEventListener("click", () => {
-
-    if(typeof gtag !== "undefined"){
-      gtag("event", "social_whatsapp_click", {
-        page_location: window.location.pathname
-      });
+);
     }
 
   });
@@ -494,5 +486,6 @@ if(socialWA){
 <script src="page-builder.js?v=20260916-safe-cms"></script>
 <script defer="" src="ceybreez-language.js"></script>
 <script src="ceybreez-public-v3.js?v=20260916-2"></script>
+  <script src="ceybreez-analytics.js?v=20260926-1"></script>
 </body>
 </html>

@@ -33,8 +33,9 @@ export function initReportsModule() {
 
   window.renderReports = window.renderReportsModule;
 
-  window.exportReportsCSV = function exportReportsCSV() {
-    window.open(reportsCsvUrl(readReportFilters()), "_blank");
+  window.exportReportsCSV = async function exportReportsCSV() {
+    try { await window.openProtectedAdminResource(reportsCsvUrl(readReportFilters()), { downloadName: `ceybreez-reports-${new Date().toISOString().slice(0,10)}.csv`, newTab: false }); }
+    catch (error) { alert(error.message || "Report export failed"); }
   };
 
   window.exportReportCSV = window.exportReportsCSV;

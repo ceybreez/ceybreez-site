@@ -1,10 +1,10 @@
 const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
-const TOKEN_KEY = "CEYBREEZ_ADMIN_TOKEN";
+const TOKEN_KEY = "CEYBREEZ_SESSION_TOKEN";
 
 export function authHeaders() {
   return {
     "Content-Type": "application/json",
-    "Authorization": `Bearer ${localStorage.getItem(TOKEN_KEY) || ""}`
+    "Authorization": `Bearer ${sessionStorage.getItem(TOKEN_KEY) || ""}`
   };
 }
 
@@ -66,7 +66,7 @@ export async function uploadTourImage(file, folder = "tour-packages") {
   const res = await fetch(`${API_BASE}/api/admin/upload-image`, {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${localStorage.getItem(TOKEN_KEY) || ""}`
+      "Authorization": `Bearer ${sessionStorage.getItem(TOKEN_KEY) || ""}`
     },
     body: formData
   });

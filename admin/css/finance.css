@@ -336,3 +336,44 @@
     grid-column: 1 !important;
   }
 }
+
+
+/* =====================================================
+   FINANCE V5.2 - ENTRY FORM ALIGNMENT ONLY
+   Scoped to Finance page. Prevents the legacy
+   .v6-labeled-form label rule from showing hidden
+   commission labels and keeps every label/control pair
+   in a clean two-column row.
+===================================================== */
+#financeEntryForm > .finance-commission-field.hidden,
+#financeEntryForm > .finance-commission-field[hidden] {
+  display: none !important;
+}
+
+#financeEntryForm > label:not(.hidden) {
+  grid-column: 1 !important;
+  align-self: center !important;
+  margin: 0 !important;
+}
+
+#financeEntryForm > input:not([type="hidden"]):not(.hidden),
+#financeEntryForm > select:not(.hidden),
+#financeEntryForm > textarea:not(.hidden) {
+  grid-column: 2 !important;
+  margin: 0 !important;
+}
+
+#financeEntryForm > button[type="submit"] {
+  grid-column: 2 !important;
+  justify-self: start !important;
+}
+
+@media (max-width: 900px) {
+  #financeEntryForm > label:not(.hidden),
+  #financeEntryForm > input:not([type="hidden"]):not(.hidden),
+  #financeEntryForm > select:not(.hidden),
+  #financeEntryForm > textarea:not(.hidden),
+  #financeEntryForm > button[type="submit"] {
+    grid-column: 1 !important;
+  }
+}

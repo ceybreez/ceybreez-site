@@ -5,12 +5,6 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>CeyBreez Tours | Explore Sri Lanka</title>
-<meta property="og:type" content="website">
-<meta property="og:title" content="CeyBreez Tours | Explore Sri Lanka">
-<meta property="og:description" content="Handpicked stays, tours and local experiences across Sri Lanka.">
-<meta property="og:image" content="https://ceybreez.com/images/og-image.jpg">
-<meta property="og:url" content="https://ceybreez.com/tours">
-<link rel="canonical" href="https://ceybreez.com/tours">
 <meta content="Discover Sri Lanka through curated tours, day trips, cultural experiences, beaches, wildlife and adventure with CeyBreez." name="description"/>
 <link href="logo.png" rel="icon" type="image/png"/>
 <link href="tours.css" rel="stylesheet"/>
@@ -34,7 +28,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="ceybreez-public-v3.css?v=20260917-5" rel="stylesheet"/>
 <link href="tours-v4.css?v=20260917-6" rel="stylesheet"/>
-  <link rel="stylesheet" href="ceybreez-mobile-nav-v6.css?v=20260928-final">
+  <link rel="stylesheet" href="inquiry-common.css?v=20260921-1"/>
 </head>
 <body data-page="tours">
 <header class="site-header" id="siteHeader">
@@ -224,7 +218,7 @@
 <div class="step-line"></div>
 <div class="step"><span>4</span><p>Guest Details</p></div>
 </div>
-<form id="tripForm">
+<form id="tripForm" class="cb-inquiry-form">
 <div class="planner-section">
 <h3>1. What Service Do You Need?</h3>
 <div class="service-grid">
@@ -351,8 +345,8 @@
 <div class="form-grid">
 <div><label>Your Name</label><input id="guestName" required="" type="text"/></div>
 <div><label>Email</label><input id="guestEmail" required="" type="email"/></div>
-<div><label>WhatsApp / Mobile</label><input id="guestMobile" required="" type="tel"/></div>
-<div><label>Country</label><input id="guestCountry" required="" type="text"/></div>
+<div><label>Country</label><select id="guestCountry" required><option value="">Select your country</option></select></div>
+<div><label>WhatsApp / Mobile</label><input id="guestMobile" placeholder="Select country first" required="" type="tel"/></div>
 <div><label>Number of Guests</label><input id="guestCount" min="1" oninput="updateVehicleSuggestion()" required="" type="number"/></div>
 </div>
 </div>
@@ -1173,8 +1167,8 @@ if(dirBtn){
 
     const guestName = document.getElementById("guestName").value.trim();
     const guestEmail = document.getElementById("guestEmail").value.trim();
-    const guestMobile = document.getElementById("guestMobile").value.trim();
-    const guestCountry = document.getElementById("guestCountry").value.trim();
+    const guestMobile = window.CeyBreezInquiry?.getPhone("guestMobile") || document.getElementById("guestMobile").value.trim();
+    const guestCountry = window.CeyBreezInquiry?.getCountry("guestCountry") || document.getElementById("guestCountry").value.trim();
     const guestCount = document.getElementById("guestCount").value;
     const specialNotes = document.getElementById("specialNotes").value.trim();
 
@@ -1327,6 +1321,7 @@ ${specialNotes || "None"}`;
     latestItineraryText = "";
 
     document.getElementById("numberOfDays").value = "";
+    window.CeyBreezInquiry?.resetPair("guestCountry","guestMobile");
     document.getElementById("otherLocationList").innerHTML = "";
     renderProvinceSelectedList();
     updateVehicleSuggestion();
@@ -1341,6 +1336,7 @@ ${specialNotes || "None"}`;
       });
     }
 
+    window.CeyBreezInquiry?.showSuccess(reference, {adminEmail:{success:adminSent}, guestEmail:{success:guestSent}}, {title:"Your Sri Lanka trip request is in.", copy:"We’ve saved the route, dates and guest details and will review the plan shortly."});
     document.getElementById("thankYouReference").textContent = reference;
 
     const statusEl = document.getElementById("thankYouEmailStatus");
@@ -1348,13 +1344,13 @@ ${specialNotes || "None"}`;
       if(adminSent && guestSent){
         statusEl.textContent = "Inquiry saved and confirmation emails were sent successfully.";
       }else if(adminSent){
-        statusEl.textContent = "Inquiry received successfully. The guest confirmation email could not be verified.";
+        statusEl.textContent = "Inquiry saved. We received your request, but the guest confirmation email could not be confirmed.";
       }else{
-        statusEl.textContent = "Inquiry received successfully. Email delivery could not be confirmed, but our team has your request.";
+        statusEl.textContent = "Inquiry saved successfully. Email delivery could not be confirmed, but our team has received your request.";
       }
     }
 
-    document.getElementById("thankYouModal").style.display = "flex";
+    if(!window.CeyBreezInquiry) document.getElementById("thankYouModal").style.display = "flex";
   }
 
   function closeThankYouModal(){
@@ -1409,6 +1405,7 @@ if(waBtn){
   });
 }
 </script>
+<script src="inquiry-common.js?v=20260921-1"></script>
 <script src="page-builder.js?v=20260916-safe-cms"></script>
 <script defer="" src="ceybreez-language.js"></script>
 <script src="ceybreez-public-v3.js?v=20260916-2"></script>

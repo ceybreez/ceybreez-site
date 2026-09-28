@@ -1,0 +1,19 @@
+CEYBREEZ SECURITY V5.3 - DEPLOYMENT
+=================================
+
+Adds username/password login, Super Admin/Staff Editor/Read Only roles, per-module permissions, approval queue, delete protection for non-admin users, audit log, server-side sessions, and protected Finance/Reports downloads.
+
+DEPLOY ORDER
+1. Replace website files from the V5.3 Replacement Only ZIP in GitHub and deploy.
+2. Replace the existing Cloudflare Worker code with CeyBreez-Cloudflare-Worker-Security-V5.3.js and deploy. Keep current D1/R2/Resend/ORS bindings.
+3. Open https://ceybreez.com/admin/ and use First-time Super Admin setup.
+4. Enter the CURRENT Worker ADMIN_TOKEN one time, then create a Super Admin username/password (minimum 10 characters).
+5. Sign in normally with username/password.
+6. Admin -> User Management: create Staff Editor or Read Only users and select module permissions.
+7. Staff Editor create/edit actions are saved as Pending Approval and are NOT live until Super Admin approves them.
+8. Non-Super-Admin users cannot delete records.
+9. Admin -> Approval Queue: review, Approve & Apply, or Reject.
+
+The Worker automatically creates D1 tables admin_users, admin_sessions, admin_pending_changes, and admin_audit_log. No manual migration is normally required.
+
+RECOMMENDED: after first setup, rotate the Cloudflare ADMIN_TOKEN secret to a new strong random value and never share it with staff.

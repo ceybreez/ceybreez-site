@@ -5,12 +5,6 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>CeyBreez Villas | Luxury Villa Stays in Sri Lanka</title>
-<meta property="og:type" content="website">
-<meta property="og:title" content="CeyBreez Villas | Luxury Villa Stays in Sri Lanka">
-<meta property="og:description" content="Handpicked stays, tours and local experiences across Sri Lanka.">
-<meta property="og:image" content="https://ceybreez.com/images/og-image.jpg">
-<meta property="og:url" content="https://ceybreez.com/villas">
-<link rel="canonical" href="https://ceybreez.com/villas">
 <meta content="Explore handpicked luxury villas in Sri Lanka. Beachfront villas, private retreats and peaceful escapes with CeyBreez." name="description"/>
 <link href="logo.png" rel="icon" type="image/png"/>
 <link href="villas.css" rel="stylesheet"/>
@@ -35,7 +29,7 @@
 <link href="ceybreez-public-v3.css?v=20260916-3" rel="stylesheet"/>
 <link href="stays-v4.css?v=20260917-1" rel="stylesheet"/>
 <link href="villas-v4.css?v=20260917-4" rel="stylesheet"/>
-  <link rel="stylesheet" href="ceybreez-mobile-nav-v6.css?v=20260928-final">
+  <link rel="stylesheet" href="inquiry-common.css?v=20260921-1"/>
 </head>
 <body data-page="villas">
 <header class="site-header" id="siteHeader">
@@ -82,7 +76,7 @@
 </section><!-- SECTION: STAY MOOD CARDS | Images + text can be edited directly here -->
 <section class="stay-v4-moods v31-reveal"><div class="stay-v4-section-head"><span class="stay-v4-eyebrow dark">FIND YOUR PACE</span><h2>Choose the feeling, not just the room.</h2><p>Different trips need different kinds of space. Start with the feeling you want.</p></div><div class="stay-v4-mood-grid"><article class="stay-v4-mood"><img alt="Coast &amp; pool" decoding="async" loading="lazy" src="images/beach.jpg"/><div><span>CEYBREEZ STAY</span><h3>Coast &amp; pool</h3><p>Beachside days and private spaces to switch off.</p></div></article><article class="stay-v4-mood"><img alt="Green &amp; quiet" decoding="async" loading="lazy" src="images/nature.jpg"/><div><span>CEYBREEZ STAY</span><h3>Green &amp; quiet</h3><p>Nature-led stays for slower mornings and calm evenings.</p></div></article><article class="stay-v4-mood"><img alt="Together time" decoding="async" loading="lazy" src="images/cover.jpg"/><div><span>CEYBREEZ STAY</span><h3>Together time</h3><p>Room for families and friends to share the trip.</p></div></article></div></section>
 <!-- SECTION: CMS VILLA LISTING | Data: /api/properties?type=villa | Card styling: villas-v4.css -->
-<section class="properties-section" id="properties"><div class="stay-v4-property-head"><div><span class="stay-v4-eyebrow dark">HANDPICKED FOR THE JOURNEY</span><h2>Villas worth staying in.</h2><p>Browse the current villa collection. Search by location, group size or bedrooms, then open any stay for photos and full details.</p></div></div>
+<section class="properties-section" id="properties"><div class="stay-v4-property-head"><div><span class="stay-v4-eyebrow dark">HANDPICKED FOR THE JOURNEY</span><h2>Villas worth staying in.</h2><p>Browse the current villa collection. Search by location, group size or bedrooms, then open any stay for photos and full details.</p></div><span class="villa-v4-cms-note"><i class="fa-solid fa-sparkles"></i> Curated stays · selected for your journey</span></div>
 
 <div class="property-filters">
 <input id="propertySearch" placeholder="Search villas..." type="text"/>
@@ -108,14 +102,14 @@
 <section class="stay-v4-why"><div class="stay-v4-section-head light"><span class="stay-v4-eyebrow">STAY WITH SUPPORT</span><h2>Why book a CeyBreez villa?</h2><p>The accommodation is only one part of the journey. We help connect the pieces around it.</p></div><div class="stay-v4-why-grid"><article><i class="fa-solid fa-house-chimney-window"></i><h3>Handpicked, not endless</h3><p>A focused collection instead of hundreds of look-alike listings.</p></article><article><i class="fa-solid fa-route"></i><h3>Stay + journey thinking</h3><p>We can connect the villa with transfers, tours and the rest of your route.</p></article><article><i class="fa-solid fa-comments"></i><h3>Human help when you need it</h3><p>Ask about dates, location or trip details and speak to a real team.</p></article></div></section><!-- SECTION: VILLA INQUIRY FORM | IDs are used by JS, do not rename without updating JS -->
 <section class="villa-inquiry-section" id="villaInquiry">
 <div class="villa-v4-inquiry-head"><div><span class="stay-v4-eyebrow dark stay-v4-inquiry-eye">READY WHEN YOU ARE</span><h2>Check your villa stay.</h2><p class="section-intro">Select a villa, add your travel details and send the request. We’ll confirm availability and the next steps with you.</p></div><div class="villa-v4-inquiry-promise"><span>01</span><p>No instant payment required</p><span>02</span><p>Availability checked by the team</p><span>03</span><p>Trip extras can be added later</p></div></div>
-<div class="villa-inquiry-box">
+<div class="villa-inquiry-box cb-inquiry-form">
 <div class="form-grid">
 <div class="field-group"><label>🏡 Select Villa *</label><select id="inqVillaSelect" onchange="selectVillaFromDropdown()"><option value="">Select Villa</option></select></div>
 <div class="field-group"><label>✅ Selected Villa</label><input id="inqVillaName" placeholder="Selected villa will appear here" readonly="" type="text"/></div>
 <div class="field-group"><label>👤 Full Name *</label><input id="inqName" placeholder="Enter your full name" required="" type="text"/></div>
 <div class="field-group"><label>📧 Email Address *</label><input id="inqEmail" placeholder="example@email.com" required="" type="email"/></div>
-<div class="field-group"><label>📱 WhatsApp / Mobile *</label><input id="inqMobile" placeholder="+94 77 123 4567" required="" type="tel"/></div>
-<div class="field-group"><label>🌍 Country *</label><input id="inqCountry" placeholder="Your country" required="" type="text"/></div>
+<div class="field-group"><label>🌍 Country *</label><select id="inqCountry" required><option value="">Select your country</option></select></div>
+<div class="field-group"><label>📱 WhatsApp / Mobile *</label><input id="inqMobile" placeholder="Select country first" required="" type="tel"/></div>
 <!-- FORM ROW: Guests + automatically calculated nights -->
 <div class="field-group"><label>👥 Number of Guests *</label><input id="inqGuests" min="1" placeholder="Number of guests" required="" type="number"/></div>
 <div class="field-group"><label>🌙 Number of Nights</label><input id="inqDays" placeholder="Auto calculated" readonly="" type="text"/></div>
@@ -557,8 +551,8 @@ async function sendPropertyInquiry(){
 
   const name = document.getElementById("inqName").value.trim();
   const email = document.getElementById("inqEmail").value.trim();
-  const mobile = document.getElementById("inqMobile").value.trim();
-  const country = document.getElementById("inqCountry").value.trim();
+  const mobile = window.CeyBreezInquiry?.getPhone("inqMobile") || document.getElementById("inqMobile").value.trim();
+  const country = window.CeyBreezInquiry?.getCountry("inqCountry") || document.getElementById("inqCountry").value.trim();
   const guests = document.getElementById("inqGuests").value.trim();
   const checkIn = document.getElementById("inqCheckIn").value;
   const checkOut = document.getElementById("inqCheckOut").value;
@@ -627,14 +621,15 @@ ${notes || "None"}`;
 
     const result = await response.json();
 
-    if(response.ok){
-      showThankYouModal(result.reference || "CB-000000");
+    if(response.ok && result.success){
+      window.CeyBreezInquiry?.showSuccess(result.reference, result, {title:"Your stay request is in.", copy:"We’ve saved the stay details and will confirm availability with you shortly."});
       resetInquiryForm();
     }else{
-      alert("WhatsApp opened, but email sending failed.");
+      alert(result.error || "Inquiry could not be sent. Please try again.");
     }
   }catch(error){
-    alert("WhatsApp opened, but email sending failed.");
+    console.error(error);
+    alert("Inquiry could not be sent. Please try again.");
   }
 }
 
@@ -647,6 +642,7 @@ function resetInquiryForm(){
   if(checkInPicker) checkInPicker.clear();
   if(checkOutPicker) checkOutPicker.clear();
   document.getElementById("inqDays").value = "";
+  window.CeyBreezInquiry?.resetPair("inqCountry","inqMobile");
   checkAvailabilityLive();
 }
 
@@ -734,6 +730,7 @@ if(waBtn){
 }
 </script>
 <script src="reviews-showcase.js"></script>
+<script src="inquiry-common.js?v=20260921-1"></script>
 <script src="page-builder.js?v=20260916-safe-cms"></script>
 <script defer="" src="ceybreez-language.js"></script>
 <script src="ceybreez-public-v3.js?v=20260916-2"></script>

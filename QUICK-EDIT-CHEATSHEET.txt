@@ -1,37 +1,40 @@
 CEYBREEZ QUICK EDIT CHEAT SHEET
 ================================
 
-SEARCH TERMS
-------------
-HTML:       SECTION:
-HTML image: IMAGE SOURCE:
-CSS:        CSS SECTION:
-JS:         JS FUNCTION:
+OPEN THE WHOLE WEBSITE FOLDER IN VS CODE
+File > Open Folder > choose the repository root.
 
-PAGE FILES
-----------
-Home          = index.html + ceybreez-home-v3.css
-Tours         = tours.html + tours.css + tours-v4.css + tours.js
-Tour Details  = tour-details.html + tour-details.css + tour-details-v4.css + tour-details.js
-Villas        = villas.html + villas.css + stays-v4.css
-Apartments    = apartments.html + apartments.css + stays-v4.css
-Homestays     = homestays.html + homestays.css + stays-v4.css
-Services      = services.html + services.css + services-v4.css
-Contact       = contact.html + contact.css + contact-v4.css
+FAST SEARCH TERMS
+- HTML visible section: SECTION:
+- CSS visual section: CSS SECTION:
+- JavaScript helper/function: JS FUNCTION:
+- Hard-coded photo: IMAGE SOURCE:
 
-MOST COMMON EDITS
------------------
-1. TEXT: edit the HTML inside the correct SECTION comment.
-2. STATIC IMAGE: search IMAGE SOURCE and change the src.
-3. CMS IMAGE: change it in Admin/CMS; API cards use mainImage/photos/image fields.
-4. COLOR: edit color/background in the matching CSS SECTION.
-5. SPACING: edit padding/margin/gap in the matching CSS SECTION.
-6. FONT SIZE: edit font-size / clamp(...) in the matching CSS SECTION.
-7. CARD WIDTH: edit grid-template-columns / minmax / width / max-width.
-8. MOBILE: go to the @media block near the bottom of that CSS file.
-9. FUNCTION/LOGIC: search JS FUNCTION in the JS file.
-10. DO NOT merge V4 override CSS into base CSS unless you intentionally refactor both.
+COMMON EDITS
+- Text / headings / button labels -> matching .html file
+- Font color -> CSS `color:`
+- Background -> CSS `background:` / `background-color:`
+- Padding -> CSS `padding:`
+- Gap between cards -> CSS `gap:`
+- Section height -> CSS `min-height:` / `padding-block:`
+- Static photo -> change `<img src="...">` in HTML or `url(...)` in CSS
+- CMS photo/data -> edit it in Admin/CMS, not the hard-coded HTML
 
-NOTE
-----
-Line numbers change when code is edited. The SECTION/CSS SECTION/JS FUNCTION labels are more reliable than fixed line numbers.
+IMPORTANT FILES
+Home: index.html + ceybreez-home-v3.css
+Tours: tours.html + tours.css + tours-v4.css
+Tour details: tour-details.html + tour-details.css + tour-details-v4.css
+Villas: villas.html + villas.css + stays-v4.css + villas-v4.css
+Apartments: apartments.html + apartments.css + stays-v4.css + apartments-v4.css
+Homestays: homestays.html + homestays.css + stays-v4.css + homestays-v4.css
+Services: services.html + services.css + services-v4.css
+Contact: contact.html + contact.css + contact-v4.css
+Language button: ceybreez-language.css / ceybreez-language.js
+
+DO NOT
+- Do not paste V4 CSS over the base CSS. Keep both files.
+- Do not remove IDs used by forms/planner/CMS.
+- Do not put HTML comments inside an opening tag or class attribute.
+
+DEPLOY
+Commit only changed files to GitHub, push, wait for Cloudflare deployment, then Ctrl + F5.

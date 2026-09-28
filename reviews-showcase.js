@@ -67,14 +67,13 @@
   function youtubeId(url){ const m=String(url||"").match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([^?&/]+)/); return m?m[1]:""; }
   /* JS FUNCTION: renderStatsAndReels — Updates stats and video reels from CMS site-content. */
   function renderStatsAndReels(){
-    const happy = state.content.happy_customer_count || "";
-    const trips = state.content.completed_trip_count || "";
-    const rating = state.content.google_rating || "";
-    document.querySelectorAll('[data-happy-customers]').forEach(x=>{ x.textContent=happy; const card=x.closest('.cb-proof-stat'); if(card) card.hidden = !(Number(happy) > 0); });
-    document.querySelectorAll('[data-completed-trips]').forEach(x=>{ x.textContent=trips; const card=x.closest('.cb-proof-stat'); if(card) card.hidden = !(Number(trips) > 0); });
-    document.querySelectorAll('[data-google-rating]').forEach(x=>{ x.textContent=rating; const card=x.closest('.cb-proof-stat'); if(card) card.hidden = !(Number(rating) > 0); });
+    const happy = state.content.happy_customer_count || "0";
+    const trips = state.content.completed_trip_count || "0";
+    const rating = state.content.google_rating || "5.0";
+    document.querySelectorAll('[data-happy-customers]').forEach(x=>x.textContent=happy);
+    document.querySelectorAll('[data-completed-trips]').forEach(x=>x.textContent=trips);
+    document.querySelectorAll('[data-google-rating]').forEach(x=>x.textContent=rating);
     document.querySelectorAll('[data-google-review-link]').forEach(a=>{ const u=state.content.google_review_url; if(u) a.href=u; else a.style.display='none'; });
-    document.querySelectorAll('.cb-proof-stats').forEach(row=>{ row.hidden = ![...row.children].some(card => !card.hidden); });
 
     const reels=arr(state.content.review_reels);
     document.querySelectorAll('[data-reels-grid]').forEach(grid=>{

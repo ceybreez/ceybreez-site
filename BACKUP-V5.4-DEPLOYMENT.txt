@@ -1,0 +1,113 @@
+CEYBREEZ SECURITY V5.4 — BACKUP & RECOVERY
+============================================
+
+WHAT THIS VERSION ADDS
+----------------------
+1. Super Admin-only "Backup & Recovery" section in Admin.
+2. Manual D1 database snapshots stored as JSON in R2.
+3. SHA-256 checksum verification before restore.
+4. Downloadable database backup files.
+5. Automatic safety snapshot before every database restore.
+6. Current Super Admin account is preserved during restore to reduce lockout risk.
+7. Dedicated R2 media mirror when BACKUP_BUCKET is configured.
+8. Emergency media mirror restore back to IMAGES_BUCKET.
+9. Scheduled daily backup handler.
+10. Automatic database snapshots older than 30 days are purged.
+11. Backup, restore and media-sync operations are written to the Security Audit Log.
+12. Staff Editor / Read Only users cannot access Backup & Recovery.
+
+IMPORTANT R2 SETUP (RECOMMENDED)
+--------------------------------
+Create a SEPARATE R2 bucket for backups. Recommended bucket name:
+  ceybreez-backups
+
+In Cloudflare:
+  Workers & Pages -> your CeyBreez API Worker -> Settings -> Bindings
+  Add -> R2 bucket
+  Variable name: BACKUP_BUCKET
+  R2 bucket: ceybreez-backups
+
+Keep the existing IMAGES_BUCKET binding unchanged.
+
+Without BACKUP_BUCKET:
+- D1 snapshots still work by falling back to IMAGES_BUCKET.
+- Media mirroring is disabled because copying media into the same live bucket is not a real backup.
+- The Admin page will show a warning.
+
+AUTOMATIC DAILY BACKUP
+----------------------
+The Worker includes a scheduled() handler, but Cloudflare still needs a Cron Trigger.
+
+Recommended Cron Trigger:
+  0 2 * * *
+
+This runs daily at 02:00 UTC.
+
+Cloudflare path:
+  Workers & Pages -> CeyBreez API Worker -> Triggers -> Cron Triggers -> Add Cron Trigger
+
+Automatic task does:
+- Create D1 snapshot
+- Synchronize up to 500 R2 media objects per scheduled run when BACKUP_BUCKET is configured
+- Purge automatic D1 snapshots older than 30 days
+- Keep Manual and Pre-Restore snapshots
+- Send an admin email if the scheduled backup fails (when email configuration is available)
+
+DEPLOYMENT ORDER
+----------------
+A. WEBSITE / GITHUB
+Replace/add these files from the V5.4 Replacement ZIP:
+  admin/index.html
+  admin/v14-shell.js
+  admin/backup-recovery.js
+  admin/css/backup-recovery.css
+  BACKUP-V5.4-DEPLOYMENT.txt
+
+Commit and Push.
+
+B. CLOUDFLARE WORKER
+Replace the current Worker code with:
+  CeyBreez-Cloudflare-Worker-Security-V5.4.js
+Save and Deploy.
+
+C. CLOUDFLARE R2
+Add BACKUP_BUCKET binding as explained above.
+
+D. CRON
+Add the daily Cron Trigger if automatic daily backups are required.
+
+FIRST TEST
+----------
+1. Log in as Super Admin.
+2. Open Backup & Recovery.
+3. Check "Database Storage" and "Media Mirror" status.
+4. Click "Create Full Backup Now".
+5. Download the new backup JSON.
+6. Do NOT test Restore on important live data unless you intentionally want to roll data back.
+7. Confirm the Backup action appears in Approval Queue -> Recent Security Audit / Audit Log.
+
+RESTORE SAFETY
+--------------
+Database Restore:
+- Super Admin only.
+- Requires exact phrase: RESTORE <backup-id>
+- Verifies SHA-256 checksum.
+- Creates a new Pre-Restore safety snapshot first.
+- Restores data into the CURRENT database schema.
+- Does not restore temporary login sessions or password-reset tokens.
+- Preserves the currently logged-in Super Admin account.
+
+Media Restore:
+- Requires dedicated BACKUP_BUCKET.
+- Requires exact phrase: RESTORE MEDIA
+- Copies media-mirror/* objects back to the live IMAGES_BUCKET.
+
+RETENTION
+---------
+- Automatic D1 backups: 30 days.
+- Manual backups: retained.
+- Pre-Restore safety snapshots: retained.
+- Media mirror: incremental and retained in the dedicated backup bucket.
+
+NO MANUAL D1 SQL MIGRATION IS REQUIRED.
+The Worker creates its backup metadata tables automatically.

@@ -1,18 +1,82 @@
-CEYBREEZ MOBILE HEADER V6 — DESKTOP LOOK
+CEYBREEZ V5.9 — DESTINATION CMS + FOOTER PARTNERS FINAL
+=======================================================
 
-Replace these HTML files:
-- index.html
+PURPOSE
+- Final cleanup/test pass for Destination CMS and Footer Partners.
+- Built to preserve the current Security/User Management/Approval Queue system.
+- No Worker, D1, R2 or security-file change is included.
+
+REPLACE IN GITHUB ROOT
+- page-builder.js
 - tours.html
-- tour-details.html
+- index.html
 - villas.html
 - apartments.html
 - homestays.html
 - services.html
 - contact.html
+- tour-details.html
+- privacy.html
+- terms.html
+- 404.html
 
-Add/replace this CSS file in the website root:
-- ceybreez-mobile-nav-v6.css
+REPLACE IN /admin
+- admin/destination-cms-v55.js
+- admin/destination-cms-v55.css
+- admin/footer-partners-admin.js
 
-Do NOT delete existing page CSS/JS files.
-This V6 file must load last (the supplied HTML already does this).
-After Cloudflare deploy, clear mobile browser cache and reload.
+DO NOT REPLACE / DO NOT TOUCH
+- admin/index.html
+- admin/admin.js
+- admin/security-rbac.js
+- admin/css/security-rbac.css
+- admin/backup-recovery.js
+- cloudflare/worker.js
+- D1 database
+- R2 bucket
+- Cloudflare secrets / bindings
+
+WHAT THIS FIXES
+DESTINATION CMS
+- Publishing checklist for required/recommended destination data.
+- Coordinate-range validation before save.
+- Map-link validation.
+- Active-without-cover / short-article warnings.
+- Featured automatically keeps Active enabled.
+- Cover/image error handling.
+- Safer cover upload size/type checks.
+- Quick Open Public Tours Page / Use First Gallery Photo actions.
+- Existing gallery order, Set Cover, image upload, article, map, Active/Featured and public preview retained.
+
+PUBLIC DESTINATION EXPERIENCE
+- Broken destination images fall back cleanly.
+- Missing/invalid coordinates no longer try to create a broken map.
+- Map/Directions buttons disable when no map target exists.
+- Article, gallery zoom, slideshow and Add to Trip remain unchanged.
+
+FOOTER PARTNERS
+- Admin live preview of footer logos.
+- Total/live counters.
+- Display ON validation for name/logo/link.
+- www.example.com links normalised to https://www.example.com.
+- Invalid links do not silently point back into ceybreez.com.
+- Broken logo images are hidden safely on the public footer.
+- Sponsor/advert links keep sponsored rel handling.
+- Display OFF logos remain hidden.
+- Unsaved changes are marked with * on the Save button.
+
+CACHE
+- Public HTML page-builder.js query bumped to v=20260929-v59 so visitors receive the new footer renderer instead of a cached older copy.
+- Non-Tours public HTML changes are only this cache-version update.
+
+AFTER DEPLOY — TEST ORDER
+1. /admin/ -> login -> confirm User Management + Approval Queue still present.
+2. Tours CMS -> edit Kandy (or another destination).
+3. Check Publishing Checklist, cover, gallery, article, coordinates, Save.
+4. /tours -> open the destination -> gallery zoom/slideshow -> Add to Trip.
+5. Page Builder -> Global Settings -> Footer Partners & Recognition.
+6. Add one test logo + official link, Display ON, Save.
+7. Open Home/Tours/Contact and confirm logo appears and opens the saved link.
+8. Turn Display OFF and confirm the logo disappears.
+
+See V5.9-QA-REPORT.txt for QA results.

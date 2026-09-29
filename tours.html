@@ -458,6 +458,21 @@ function destinationFallbackImage(province, name){
   return "images/cover.jpg";
 }
 
+function destinationHasValidCoords(item){
+  const lat = Number(item?.lat);
+  const lng = Number(item?.lng);
+  return Number.isFinite(lat) && Number.isFinite(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180 && !(lat === 0 && lng === 0);
+}
+
+function applyDestinationImageFallback(img, item){
+  if(!img) return;
+  img.addEventListener("error", () => {
+    const fallback = destinationFallbackImage(item?.province, item?.name);
+    if(img.src && img.src.endsWith(fallback)) return;
+    img.src = fallback;
+  }, { once:true });
+}
+
 let activeDestinationProvince = "all";
 
 function buildProvinceGrid(data){
@@ -539,6 +554,8 @@ function renderDestinationCards(data){
           <button class="destination-quick-add" type="button" aria-label="Add ${escapeDestinationHtml(item.name || place.name)} to trip"><i class="fa-solid fa-plus"></i></button>
         </div>
       </div>`;
+
+    applyDestinationImageFallback(card.querySelector(".destination-card-image img"), item);
 
     const open = () => openLocationModal(place.id);
     card.addEventListener("click", open);
@@ -1098,12 +1115,19 @@ function showDestinationToast(message){
     const mapBtn = document.getElementById("tourMapBtn");
     const dirBtn = document.getElementById("tourDirectionsBtn");
 
+    const hasCoords = destinationHasValidCoords(item);
+    const hasMapTarget = !!String(item.mapUrl || "").trim() || hasCoords;
+
     if(mapBtn){
-      mapBtn.onclick = () => openMapUrl(item.mapUrl, item.lat, item.lng);
+      mapBtn.disabled = !hasMapTarget;
+      mapBtn.title = hasMapTarget ? "Open map" : "Map details are not available yet";
+      mapBtn.onclick = hasMapTarget ? (() => openMapUrl(item.mapUrl, item.lat, item.lng)) : null;
     }
 
     if(dirBtn){
-      dirBtn.onclick = () => getDirectionsUrl(item.mapUrl, item.lat, item.lng);
+      dirBtn.disabled = !hasMapTarget;
+      dirBtn.title = hasMapTarget ? "Get directions" : "Directions are not available yet";
+      dirBtn.onclick = hasMapTarget ? (() => getDirectionsUrl(item.mapUrl, item.lat, item.lng)) : null;
     }
 
     const modal = document.getElementById("locationModal");
@@ -1137,32 +1161,39 @@ function showDestinationToast(message){
       img.src = photo;
       img.alt = `${item.name} photo ${index + 1}`;
       img.loading = "lazy";
+      applyDestinationImageFallback(img, item);
       button.appendChild(img);
       button.addEventListener("click", () => openDestinationLightbox(index));
       gallery.appendChild(button);
     });
 
-    setTimeout(() => {
-      if(!modalLocationMap){
-        modalLocationMap = L.map("modalLocationMap").setView([item.lat, item.lng], 12);
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution:"© OpenStreetMap"
-        }).addTo(modalLocationMap);
-      }
+    const mapWrap = document.querySelector("#locationModal .destination-map-wrap");
+    if(mapWrap) mapWrap.style.display = hasCoords ? "" : "none";
 
-      modalLocationMap.setView([item.lat, item.lng], 12);
+    if(hasCoords){
+      setTimeout(() => {
+        if(typeof L === "undefined") return;
+        if(!modalLocationMap){
+          modalLocationMap = L.map("modalLocationMap").setView([item.lat, item.lng], 12);
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution:"© OpenStreetMap"
+          }).addTo(modalLocationMap);
+        }
 
-      if(modalLocationMarker){
-        modalLocationMap.removeLayer(modalLocationMarker);
-      }
+        modalLocationMap.setView([item.lat, item.lng], 12);
 
-      modalLocationMarker = L.marker([item.lat, item.lng])
-        .addTo(modalLocationMap)
-        .bindPopup(item.name)
-        .openPopup();
+        if(modalLocationMarker){
+          modalLocationMap.removeLayer(modalLocationMarker);
+        }
 
-      modalLocationMap.invalidateSize();
-    }, 220);
+        modalLocationMarker = L.marker([item.lat, item.lng])
+          .addTo(modalLocationMap)
+          .bindPopup(item.name)
+          .openPopup();
+
+        modalLocationMap.invalidateSize();
+      }, 220);
+    }
   }
 
   function closeLocationModal(){
@@ -1582,7 +1613,7 @@ if(waBtn){
   });
 }
 </script>
-<script src="page-builder.js?v=20260916-safe-cms"></script>
+<script src="page-builder.js?v=20260929-v59"></script>
 <script defer="" src="ceybreez-language.js"></script>
 <script src="ceybreez-public-v3.js?v=20260916-2"></script>
 </body>

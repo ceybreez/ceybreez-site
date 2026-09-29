@@ -309,12 +309,21 @@
   function safePartnerLink(value) {
     const raw = String(value || "").trim();
     if (!raw) return "";
+    let candidate = "";
+    if (/^[a-z][a-z0-9+.-]*:/i.test(raw)) candidate = raw;
+    else if (/^(www\.|[a-z0-9-]+\.[a-z]{2,})(?:\/|$)/i.test(raw)) candidate = `https://${raw}`;
+    else if (raw.startsWith("/")) candidate = raw;
+    else return "";
     try {
-      const url = new URL(raw, window.location.href);
+      const url = new URL(candidate, window.location.href);
       return ["http:", "https:"].includes(url.protocol) ? url.href : "";
     } catch {
       return "";
     }
+  }
+
+  function footerPartnerIsActive(value) {
+    return !(value === false || value === 0 || value === "0" || value === "false");
   }
 
   function safePartnerImage(value) {
@@ -355,7 +364,7 @@
 
   function renderFooterPartners(siteContent) {
     const items = parseFooterPartners(siteContent?.footer_partners)
-      .filter((item) => item && item.active !== false && item.active !== 0 && String(item.logo || "").trim());
+      .filter((item) => item && footerPartnerIsActive(item.active) && String(item.logo || "").trim());
 
     document.querySelectorAll(".cb-footer-partners").forEach((node) => node.remove());
     if (!items.length) return;
@@ -399,6 +408,10 @@
         image.alt = name;
         image.loading = "lazy";
         image.decoding = "async";
+        image.addEventListener("error", () => {
+          card.remove();
+          if (!logos.children.length) section.remove();
+        }, { once: true });
         card.appendChild(image);
 
         const sr = document.createElement("span");

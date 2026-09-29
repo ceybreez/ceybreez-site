@@ -493,15 +493,153 @@
     }
   };
 
+  function approvalParseBody(row) {
+    if (!row?.bodyText) return null;
+    try { return JSON.parse(row.bodyText); } catch (_) { return row.bodyText; }
+  }
+
   function approvalPayloadPreview(row) {
-    if (!row.bodyText) return "No request body";
-    try {
-      const parsed = JSON.parse(row.bodyText);
-      const text = JSON.stringify(parsed, null, 2);
-      return text.length > 1600 ? text.slice(0, 1600) + "\n…" : text;
-    } catch (_) {
-      return String(row.bodyText).slice(0, 1600);
+    const parsed = approvalParseBody(row);
+    if (parsed === null || parsed === "") return "No request body";
+    if (typeof parsed === "string") return parsed.slice(0, 4000);
+    const text = JSON.stringify(parsed, null, 2);
+    return text.length > 4000 ? text.slice(0, 4000) + "\n…" : text;
+  }
+
+  function approvalPrettyLabel(value) {
+    return String(value || "")
+      .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+      .replaceAll("_", " ")
+      .replaceAll("-", " ")
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function approvalShortValue(value) {
+    if (value === null || value === undefined || value === "") return "—";
+    if (typeof value === "boolean") return value ? "Yes" : "No";
+    if (Array.isArray(value)) {
+      if (!value.length) return "None";
+      const text = value.map(v => typeof v === "object" ? JSON.stringify(v) : String(v)).join(", ");
+      return text.length > 220 ? text.slice(0, 220) + "…" : text;
     }
+    if (typeof value === "object") {
+      const text = JSON.stringify(value);
+      return text.length > 220 ? text.slice(0, 220) + "…" : text;
+    }
+    const text = String(value);
+    return text.length > 260 ? text.slice(0, 260) + "…" : text;
+  }
+
+  function approvalFriendlyInfo(row) {
+    const method = String(row?.method || "").toUpperCase();
+    const rawPath = String(row?.path || "");
+    const pathname = rawPath.split("?")[0];
+    const parts = pathname.split("/").filter(Boolean).map(decodeURIComponent);
+    const info = {
+      section: approvalPrettyLabel(row?.module || "General"),
+      action: method === "POST" ? "Create / Submit" : method === "PUT" || method === "PATCH" ? "Update" : method === "DELETE" ? "Delete" : method || "Change",
+      target: "Admin system",
+      record: "—",
+      endpoint: rawPath || "—"
+    };
+
+    const idAt = index => parts[index] || "";
+    const last = parts[parts.length - 1] || "";
+
+    if (pathname.startsWith("/api/admin/inquiries/")) {
+      const id = idAt(3);
+      info.section = "Inquiry Management";
+      info.record = id || "—";
+      info.target = id ? `Inquiry ${id}` : "Inquiry";
+      if (last === "payment-sync") info.action = "Update payment status";
+      else if (last === "quote") info.action = "Create / update quote";
+      else if (last === "status") info.action = "Change inquiry status";
+      else if (last === "guest-confirm") info.action = "Confirm guest response";
+      else if (last === "notes") info.action = method === "POST" ? "Add inquiry note" : "Update inquiry note";
+      else info.action = method === "POST" ? "Update inquiry" : info.action;
+    } else if (pathname.startsWith("/api/admin/bookings/")) {
+      const id = idAt(3);
+      info.section = "Booking Management";
+      info.record = id || "—";
+      info.target = id ? `Booking ${id}` : "Booking";
+      if (last === "status") info.action = "Change booking status";
+      else info.action = method === "POST" ? "Create / update booking" : info.action;
+    } else if (pathname.startsWith("/api/admin/properties")) {
+      const id = idAt(3);
+      info.section = "Properties CMS";
+      info.record = id || "New property";
+      info.target = id ? `Property ${id}` : "New property";
+      info.action = method === "POST" ? "Create property" : method === "DELETE" ? "Delete property" : "Update property";
+    } else if (pathname.startsWith("/api/admin/tour-packages") || pathname.startsWith("/api/admin/tours")) {
+      const id = idAt(3);
+      info.section = "Tours CMS";
+      info.record = id || "New tour";
+      info.target = id ? `Tour ${id}` : "New tour";
+      info.action = method === "POST" ? "Create tour" : method === "DELETE" ? "Delete tour" : "Update tour";
+    } else if (pathname.startsWith("/api/admin/destinations")) {
+      const id = idAt(3);
+      info.section = "Tours CMS · Destinations";
+      info.record = id || "New destination";
+      info.target = id ? `Destination ${id}` : "New destination";
+      info.action = method === "POST" ? "Create destination" : method === "DELETE" ? "Delete destination" : "Update destination";
+    } else if (pathname.startsWith("/api/admin/services")) {
+      const id = idAt(3);
+      info.section = "Cafe & Services CMS";
+      info.record = id || "New service";
+      info.target = id ? `Service ${id}` : "New service";
+      info.action = method === "POST" ? "Create service" : method === "DELETE" ? "Delete service" : "Update service";
+    } else if (pathname.startsWith("/api/admin/reviews")) {
+      const id = idAt(3);
+      info.section = "Reviews";
+      info.record = id || "New review";
+      info.target = id ? `Review ${id}` : "New review";
+      info.action = method === "POST" ? "Create review" : method === "DELETE" ? "Delete review" : "Update review";
+    } else if (pathname.startsWith("/api/admin/finance/")) {
+      info.section = "Finance";
+      info.target = "Finance record";
+      info.action = approvalPrettyLabel(last || "Finance update");
+      const body = approvalParseBody(row);
+      if (body && typeof body === "object") info.record = body.bookingId || body.id || body.reference || "—";
+    } else if (pathname === "/api/admin/site-content") {
+      info.section = "Page Builder";
+      info.target = "Website content";
+      info.action = "Update site content";
+      const body = approvalParseBody(row);
+      if (body && typeof body === "object") info.record = body.key || "Global content";
+    } else if (pathname.startsWith("/api/admin/page-sections")) {
+      info.section = "Page Builder";
+      info.target = "Website page section";
+      info.action = method === "POST" ? "Create / save page section" : "Update page section";
+      const body = approvalParseBody(row);
+      if (body && typeof body === "object") info.record = body.title || body.sectionKey || body.id || "—";
+    } else if (pathname.startsWith("/api/admin/v2/availability")) {
+      info.section = "Availability / Matrix";
+      info.target = "Availability calendar";
+      info.action = last === "block" ? "Block dates" : last === "manual-booking" ? "Create manual booking" : approvalPrettyLabel(last || "Availability update");
+      const body = approvalParseBody(row);
+      if (body && typeof body === "object") info.record = body.propertyName || body.itemName || body.bookingId || "—";
+    }
+
+    return info;
+  }
+
+  function approvalPayloadRows(row) {
+    const body = approvalParseBody(row);
+    if (!body || typeof body !== "object" || Array.isArray(body)) return [];
+    const hidden = new Set(["password", "passwordHash", "passwordSalt", "token", "authorization"]);
+    return Object.entries(body)
+      .filter(([key]) => !hidden.has(String(key).toLowerCase()))
+      .map(([key, value]) => ({ key, label: approvalPrettyLabel(key), value: approvalShortValue(value) }));
+  }
+
+  function approvalChangeTable(row) {
+    const rows = approvalPayloadRows(row);
+    if (!rows.length) return '<div class="security-approval-empty">No structured field details were submitted with this request.</div>';
+    return `<div class="security-change-table">${rows.map(item => `
+      <div class="security-change-row">
+        <div class="security-change-key">${escapeHtml(item.label)}</div>
+        <div class="security-change-value">${escapeHtml(item.value)}</div>
+      </div>`).join("")}</div>`;
   }
 
   window.loadSecurityApprovals = async function loadSecurityApprovals() {
@@ -512,16 +650,39 @@
     try {
       const rows = await api(`/api/admin/approvals?status=${encodeURIComponent(status)}`);
       window.__securityApprovals = Array.isArray(rows) ? rows : [];
-      box.innerHTML = window.__securityApprovals.length ? window.__securityApprovals.map(row => `
+      box.innerHTML = window.__securityApprovals.length ? window.__securityApprovals.map(row => {
+        const info = approvalFriendlyInfo(row);
+        return `
         <article class="security-approval-card">
           <div class="security-approval-head">
-            <div><strong>${escapeHtml(row.module || "General")}</strong> · ${escapeHtml(row.method || "")}<br><small>${escapeHtml(row.path || "")}</small></div>
+            <div>
+              <div class="security-approval-title">${escapeHtml(info.action)}</div>
+              <div class="security-approval-location">${escapeHtml(info.section)} → ${escapeHtml(info.target)}</div>
+            </div>
             <span class="security-status ${String(row.status).toLowerCase().replaceAll(" ", "-")}">${escapeHtml(row.status || "Pending")}</span>
           </div>
-          <div class="security-approval-meta">Requested by <strong>${escapeHtml(row.username)}</strong> · ${escapeHtml(row.createdAt ? new Date(row.createdAt).toLocaleString() : "")}</div>
-          <details><summary>Review submitted details</summary><pre>${escapeHtml(approvalPayloadPreview(row))}</pre></details>
+
+          <div class="security-approval-summary-grid">
+            <div><span>Where</span><strong>${escapeHtml(info.section)}</strong></div>
+            <div><span>Record / Item</span><strong>${escapeHtml(info.record)}</strong></div>
+            <div><span>Action</span><strong>${escapeHtml(info.action)}</strong></div>
+            <div><span>Requested by</span><strong>${escapeHtml(row.username || "Unknown")}</strong></div>
+          </div>
+
+          <div class="security-approval-time">Requested ${escapeHtml(row.createdAt ? new Date(row.createdAt).toLocaleString() : "")}</div>
+
+          <div class="security-requested-change-title">Requested changes</div>
+          ${approvalChangeTable(row)}
+
+          <details class="security-approval-technical">
+            <summary>Technical request details</summary>
+            <div class="security-endpoint-line"><strong>${escapeHtml(String(row.method || ""))}</strong> ${escapeHtml(info.endpoint)}</div>
+            <pre>${escapeHtml(approvalPayloadPreview(row))}</pre>
+          </details>
+
           ${String(row.status).toLowerCase() === "pending" ? `<div class="security-approval-actions"><button type="button" class="approve" onclick="approveSecurityChange('${row.id}')">Approve & Apply</button><button type="button" class="reject" onclick="rejectSecurityChange('${row.id}')">Reject</button></div>` : `<p class="security-review-note">${escapeHtml(row.reviewNote || "")} ${row.reviewedBy ? `— ${escapeHtml(row.reviewedBy)}` : ""}</p>`}
-        </article>`).join("") : "<p>No approval requests in this filter.</p>";
+        </article>`;
+      }).join("") : "<p>No approval requests in this filter.</p>";
       await loadSecurityAudit();
     } catch (error) {
       box.innerHTML = `<p>${escapeHtml(error.message || "Approval queue failed to load")}</p>`;

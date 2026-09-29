@@ -103,3 +103,21 @@
   #destinationsTab .v55-editor-card{padding:13px;border-radius:13px}
   #destinationsTab .v55-photo-preview{grid-template-columns:1fr}
 }
+
+/* =========================================================
+   V5.9 PUBLISHING CHECKLIST + RESILIENCE
+========================================================= */
+#destinationsTab .v59-readiness-card{border-color:#d9e6e1;background:linear-gradient(180deg,#fff,#fbfdfc)}
+#destinationsTab .v59-readiness-status{border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:12px;font-weight:800}
+#destinationsTab .v59-readiness-status.ready{background:#eaf7f0;color:#116844;border:1px solid #c9ead8}
+#destinationsTab .v59-readiness-status.needs-work{background:#fff3ed;color:#9a3412;border:1px solid #fed7c7}
+#destinationsTab .v59-readiness-list{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+#destinationsTab .v59-readiness-list li{display:flex;align-items:center;gap:8px;font-size:11px;color:#475467}
+#destinationsTab .v59-check-icon{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:900;flex:none}
+#destinationsTab .v59-readiness-list li.ok .v59-check-icon{background:#e8f5ee;color:#087443}
+#destinationsTab .v59-readiness-list li.warn .v59-check-icon{background:#fff4d8;color:#8a6414}
+#destinationsTab .v59-readiness-list li.bad .v59-check-icon{background:#fdecea;color:#b42318}
+#destinationsTab .v59-readiness-actions{display:grid;grid-template-columns:1fr;gap:7px;margin-top:12px}
+#destinationsTab .v59-readiness-actions .mini-btn{width:100%;margin:0}
+#destinationsTab .v59-readiness-actions .mini-btn:disabled{opacity:.45;cursor:not-allowed}
+#destinationsTab .v59-image-error{display:grid;place-items:center;width:100%;height:100%;padding:14px;text-align:center;color:#8a6159;background:#fff2ef;font-size:11px}

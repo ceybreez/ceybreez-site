@@ -12,7 +12,10 @@
   let partners = [];
   let loaded = false;
 
-  const token = () => localStorage.getItem("CEYBREEZ_ADMIN_TOKEN") || "";
+  const token = () => {
+    try { if (typeof ADMIN_TOKEN !== "undefined" && ADMIN_TOKEN) return ADMIN_TOKEN; } catch (_) {}
+    return sessionStorage.getItem("CEYBREEZ_SESSION_TOKEN") || localStorage.getItem("CEYBREEZ_ADMIN_TOKEN") || "";
+  };
   const auth = (json = false) => {
     const headers = { Authorization: `Bearer ${token()}` };
     if (json) headers["Content-Type"] = "application/json";
@@ -307,7 +310,7 @@
     });
 
     window.addEventListener("storage", (event) => {
-      if (event.key === "CEYBREEZ_ADMIN_TOKEN" && event.newValue) loadPartners(true);
+      if (["CEYBREEZ_ADMIN_TOKEN","CEYBREEZ_SESSION_TOKEN"].includes(event.key) && event.newValue) loadPartners(true);
     });
   }
 

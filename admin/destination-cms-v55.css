@@ -1,123 +1,297 @@
 /* =========================================================
    CEYBREEZ DESTINATION CMS V5.5
 ========================================================= */
-#destinationsTab{--v55-green:#0f5c4d;--v55-green-dark:#083f36;--v55-cream:#f7f3e9;--v55-gold:#e8c779;--v55-border:#dde5e1;--v55-text:#17312c;--v55-muted:#6a7a75}
-#destinationsTab .v55-destination-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin:0 0 18px}
-#destinationsTab .v55-destination-head h2{margin:5px 0 6px;font-size:30px;color:var(--v55-text)}
-#destinationsTab .v55-destination-head p{margin:0;max-width:720px;color:var(--v55-muted);line-height:1.6}
-#destinationsTab .v55-kicker{display:inline-block;color:#a17f32;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
-#destinationsTab .v55-primary-action,#destinationsTab .v55-save-btn{border:0;border-radius:12px;background:var(--v55-green);color:#fff;font-weight:800;padding:12px 18px;cursor:pointer;box-shadow:0 8px 18px rgba(15,92,77,.14)}
-#destinationsTab .v55-primary-action:hover,#destinationsTab .v55-save-btn:hover{background:var(--v55-green-dark)}
-#destinationsTab .v55-destination-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 18px}
-#destinationsTab .v55-stat-card{background:#fff;border:1px solid var(--v55-border);border-radius:15px;padding:16px 18px;box-shadow:0 5px 16px rgba(31,55,48,.04)}
-#destinationsTab .v55-stat-card span{display:block;color:var(--v55-muted);font-size:12px;margin-bottom:7px}
-#destinationsTab .v55-stat-card strong{font-size:25px;color:var(--v55-green-dark)}
-#destinationsTab .v55-destination-toolbar{display:grid;grid-template-columns:minmax(220px,1.5fr) minmax(170px,.8fr) minmax(150px,.7fr) auto;gap:10px;align-items:center;margin-bottom:14px}
-#destinationsTab .v55-destination-toolbar input,#destinationsTab .v55-destination-toolbar select{width:100%;min-width:0}
-#destinationsTab .v55-destination-table-wrap{border-radius:15px;border:1px solid var(--v55-border);overflow:auto;background:#fff}
-#destinationsTab .v55-destination-table{min-width:980px;margin:0}
-#destinationsTab .v55-table-destination{display:flex;align-items:center;gap:11px;min-width:200px}
-#destinationsTab .v55-table-destination img,#destinationsTab .v55-table-placeholder{width:50px;height:42px;border-radius:9px;object-fit:cover;flex:none;background:#e9efec;display:grid;place-items:center;color:#71817c;font-size:9px;font-weight:800}
-#destinationsTab .v55-table-destination strong{display:block;color:var(--v55-text);margin-bottom:3px}
-#destinationsTab .v55-table-destination small{display:block;max-width:210px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--v55-muted)}
-#destinationsTab .v55-photo-count{display:inline-grid;place-items:center;min-width:31px;height:28px;border-radius:999px;background:#edf5f1;color:var(--v55-green);font-weight:800}
+:is(#destinationsTab,#v64CmsDrawer){--v55-green:#0f5c4d;--v55-green-dark:#083f36;--v55-cream:#f7f3e9;--v55-gold:#e8c779;--v55-border:#dde5e1;--v55-text:#17312c;--v55-muted:#6a7a75}
+:is(#destinationsTab,#v64CmsDrawer) .v55-destination-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin:0 0 18px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-destination-head h2{margin:5px 0 6px;font-size:30px;color:var(--v55-text)}
+:is(#destinationsTab,#v64CmsDrawer) .v55-destination-head p{margin:0;max-width:720px;color:var(--v55-muted);line-height:1.6}
+:is(#destinationsTab,#v64CmsDrawer) .v55-kicker{display:inline-block;color:#a17f32;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+:is(#destinationsTab,#v64CmsDrawer) .v55-primary-action,:is(#destinationsTab,#v64CmsDrawer) .v55-save-btn{border:0;border-radius:12px;background:var(--v55-green);color:#fff;font-weight:800;padding:12px 18px;cursor:pointer;box-shadow:0 8px 18px rgba(15,92,77,.14)}
+:is(#destinationsTab,#v64CmsDrawer) .v55-primary-action:hover,:is(#destinationsTab,#v64CmsDrawer) .v55-save-btn:hover{background:var(--v55-green-dark)}
+:is(#destinationsTab,#v64CmsDrawer) .v55-destination-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 18px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-stat-card{background:#fff;border:1px solid var(--v55-border);border-radius:15px;padding:16px 18px;box-shadow:0 5px 16px rgba(31,55,48,.04)}
+:is(#destinationsTab,#v64CmsDrawer) .v55-stat-card span{display:block;color:var(--v55-muted);font-size:12px;margin-bottom:7px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-stat-card strong{font-size:25px;color:var(--v55-green-dark)}
+:is(#destinationsTab,#v64CmsDrawer) .v55-destination-toolbar{display:grid;grid-template-columns:minmax(220px,1.5fr) minmax(170px,.8fr) minmax(150px,.7fr) auto;gap:10px;align-items:center;margin-bottom:14px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-destination-toolbar input,:is(#destinationsTab,#v64CmsDrawer) .v55-destination-toolbar select{width:100%;min-width:0}
+:is(#destinationsTab,#v64CmsDrawer) .v55-destination-table-wrap{border-radius:15px;border:1px solid var(--v55-border);overflow:auto;background:#fff}
+:is(#destinationsTab,#v64CmsDrawer) .v55-destination-table{min-width:980px;margin:0}
+:is(#destinationsTab,#v64CmsDrawer) .v55-table-destination{display:flex;align-items:center;gap:11px;min-width:200px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-table-destination img,:is(#destinationsTab,#v64CmsDrawer) .v55-table-placeholder{width:50px;height:42px;border-radius:9px;object-fit:cover;flex:none;background:#e9efec;display:grid;place-items:center;color:#71817c;font-size:9px;font-weight:800}
+:is(#destinationsTab,#v64CmsDrawer) .v55-table-destination strong{display:block;color:var(--v55-text);margin-bottom:3px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-table-destination small{display:block;max-width:210px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--v55-muted)}
+:is(#destinationsTab,#v64CmsDrawer) .v55-photo-count{display:inline-grid;place-items:center;min-width:31px;height:28px;border-radius:999px;background:#edf5f1;color:var(--v55-green);font-weight:800}
 
-#destinationsTab .v55-destination-editor{padding:0!important;overflow:hidden;background:#f3f6f4!important;border:1px solid var(--v55-border)!important;border-radius:18px!important}
-#destinationsTab .v55-destination-editor .cms-modal-head{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--v55-border);padding:17px 20px;display:flex;align-items:center;justify-content:space-between}
-#destinationsTab .v55-destination-editor .cms-modal-head h3{margin:4px 0 0;color:var(--v55-text)}
-#destinationsTab .v55-editor-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,.75fr);gap:16px;padding:16px}
-#destinationsTab .v55-editor-main,#destinationsTab .v55-editor-side{display:flex;flex-direction:column;gap:16px}
-#destinationsTab .v55-editor-side{position:sticky;top:88px;align-self:start}
-#destinationsTab .v55-editor-card{background:#fff;border:1px solid var(--v55-border);border-radius:16px;padding:17px;box-shadow:0 5px 18px rgba(33,59,51,.035)}
-#destinationsTab .v55-editor-card-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;margin-bottom:15px}
-#destinationsTab .v55-editor-card-head>div{display:flex;align-items:center;gap:9px}
-#destinationsTab .v55-editor-card-head>div>span{display:inline-grid;place-items:center;min-width:31px;height:26px;border-radius:999px;background:#f0e5c8;color:#806321;font-weight:800;font-size:10px;text-transform:uppercase}
-#destinationsTab .v55-editor-card-head h3{margin:0;color:var(--v55-text);font-size:17px}
-#destinationsTab .v55-editor-card-head p{margin:0;color:var(--v55-muted);font-size:12px;line-height:1.5;max-width:330px;text-align:right}
-#destinationsTab .v55-field-grid{display:grid;gap:12px}
-#destinationsTab .v55-field-grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
-#destinationsTab .v55-field-grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-#destinationsTab .v55-field{display:flex;flex-direction:column;gap:7px;margin:0 0 12px;color:var(--v55-text);font-weight:700;font-size:12px}
-#destinationsTab .v55-field input,#destinationsTab .v55-field select,#destinationsTab .v55-field textarea,#destinationsTab .v55-advanced textarea{width:100%;box-sizing:border-box;border:1px solid #d7e1dc!important;border-radius:11px!important;background:#fbfcfb!important;color:#19352f!important;padding:11px 12px!important;outline:none!important;box-shadow:none!important;font:500 13px/1.45 Arial,sans-serif!important}
-#destinationsTab .v55-field input:focus,#destinationsTab .v55-field select:focus,#destinationsTab .v55-field textarea:focus{border-color:#6ca394!important;box-shadow:0 0 0 3px rgba(15,92,77,.08)!important}
-#destinationsTab .v55-article-field textarea{min-height:190px;resize:vertical}
-#destinationsTab .v55-article-field small{color:var(--v55-muted);font-weight:500}
-#destinationsTab .v55-inline-actions{display:flex;gap:8px;margin-top:-3px}
-#destinationsTab .v55-gallery-upload,#destinationsTab .v55-cover-upload{border:1.5px dashed #a9c2ba!important;background:#f8fbf9!important;border-radius:14px!important}
-#destinationsTab .v55-gallery-help{margin:12px 0;color:#60716c;font-size:12px;background:#f8f3e7;border-radius:10px;padding:10px 12px}
-#destinationsTab .v55-photo-preview{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
-#destinationsTab .v55-dest-preview-item{position:relative!important;display:block!important;background:#fff!important;border:1px solid var(--v55-border)!important;border-radius:12px!important;overflow:hidden!important;padding:0!important}
-#destinationsTab .v55-preview-image-wrap{position:relative;aspect-ratio:4/3;background:#eef2f0}
-#destinationsTab .v55-preview-image-wrap img{width:100%!important;height:100%!important;object-fit:cover!important;border-radius:0!important;display:block;cursor:zoom-in}
-#destinationsTab .v55-cover-badge{position:absolute;top:8px;left:8px;background:var(--v55-gold);color:#4b3a12;border-radius:999px;padding:5px 8px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
-#destinationsTab .v55-preview-actions{display:grid;grid-template-columns:1fr auto auto;gap:6px;padding:8px}
-#destinationsTab .v55-preview-actions button{border:1px solid #d9e2de;background:#fff;color:#25463d;border-radius:8px;padding:7px 8px;font-size:10px;font-weight:700;cursor:pointer}
-#destinationsTab .v55-preview-actions button:disabled{opacity:.35;cursor:not-allowed}
-#destinationsTab .v55-preview-actions .v55-remove-photo{grid-column:1/-1;color:#a23c3c;background:#fff7f7;border-color:#f0d0d0}
-#destinationsTab .v55-advanced{margin-top:13px;border-top:1px solid #edf0ee;padding-top:11px}
-#destinationsTab .v55-advanced summary{cursor:pointer;color:#60716c;font-size:12px;font-weight:700;margin-bottom:10px}
-#destinationsTab .v55-advanced textarea{min-height:90px;margin-bottom:9px}
-#destinationsTab .v55-cover-preview{width:100%;aspect-ratio:16/10;border-radius:13px;overflow:hidden;background:linear-gradient(135deg,#eef3f0,#f9f6ed);display:grid;place-items:center;color:#7c8a86;font-size:12px;margin-bottom:12px;border:1px solid #e1e8e4}
-#destinationsTab .v55-cover-preview img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in}
-#destinationsTab .v55-public-card-preview{border:1px solid #e1e7e4;border-radius:14px;overflow:hidden;background:#fff}
-#destinationsTab .v55-public-card-image{aspect-ratio:16/10;background:linear-gradient(135deg,#0f5c4d,#467b6f);display:grid;place-items:center;color:#dce9e5;font-size:11px;overflow:hidden}
-#destinationsTab .v55-public-card-image img{width:100%;height:100%;object-fit:cover}
-#destinationsTab .v55-public-card-body{padding:13px}
-#destinationsTab .v55-public-card-body small{display:block;color:#9a7931;font-size:9px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;margin-bottom:5px}
-#destinationsTab .v55-public-card-body strong{display:block;color:#123a31;font-size:18px;margin-bottom:5px}
-#destinationsTab .v55-public-card-body p{margin:0;color:#64746f;font-size:11px;line-height:1.5}
-#destinationsTab .v55-switch-row{display:flex;gap:11px;align-items:flex-start;padding:12px 0;margin:0;border-bottom:1px solid #edf0ee;color:var(--v55-text)}
-#destinationsTab .v55-switch-row:last-child{border-bottom:0}
-#destinationsTab .v55-switch-row input{width:19px!important;height:19px!important;flex:none;margin-top:2px}
-#destinationsTab .v55-switch-row span{display:flex;flex-direction:column;gap:3px}
-#destinationsTab .v55-switch-row strong{font-size:13px}
-#destinationsTab .v55-switch-row small{font-size:11px;color:var(--v55-muted);line-height:1.45}
-#destinationsTab .v55-save-panel{display:grid;grid-template-columns:1fr;gap:8px}
-#destinationsTab .v55-save-panel button{width:100%;margin:0!important}
-#destinationsTab .v55-secondary-btn{border:1px solid #cfdad5;border-radius:11px;background:#fff;color:#315148;font-weight:800;padding:11px 16px;cursor:pointer}
+:is(#destinationsTab,#v64CmsDrawer) .v55-destination-editor{padding:0!important;overflow:hidden;background:#f3f6f4!important;border:1px solid var(--v55-border)!important;border-radius:18px!important}
+:is(#destinationsTab,#v64CmsDrawer) .v55-destination-editor .cms-modal-head{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--v55-border);padding:17px 20px;display:flex;align-items:center;justify-content:space-between}
+:is(#destinationsTab,#v64CmsDrawer) .v55-destination-editor .cms-modal-head h3{margin:4px 0 0;color:var(--v55-text)}
+:is(#destinationsTab,#v64CmsDrawer) .v55-editor-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,.75fr);gap:16px;padding:16px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-editor-main,:is(#destinationsTab,#v64CmsDrawer) .v55-editor-side{display:flex;flex-direction:column;gap:16px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-editor-side{position:sticky;top:88px;align-self:start}
+:is(#destinationsTab,#v64CmsDrawer) .v55-editor-card{background:#fff;border:1px solid var(--v55-border);border-radius:16px;padding:17px;box-shadow:0 5px 18px rgba(33,59,51,.035)}
+:is(#destinationsTab,#v64CmsDrawer) .v55-editor-card-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;margin-bottom:15px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-editor-card-head>div{display:flex;align-items:center;gap:9px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-editor-card-head>div>span{display:inline-grid;place-items:center;min-width:31px;height:26px;border-radius:999px;background:#f0e5c8;color:#806321;font-weight:800;font-size:10px;text-transform:uppercase}
+:is(#destinationsTab,#v64CmsDrawer) .v55-editor-card-head h3{margin:0;color:var(--v55-text);font-size:17px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-editor-card-head p{margin:0;color:var(--v55-muted);font-size:12px;line-height:1.5;max-width:330px;text-align:right}
+:is(#destinationsTab,#v64CmsDrawer) .v55-field-grid{display:grid;gap:12px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-field-grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+:is(#destinationsTab,#v64CmsDrawer) .v55-field-grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+:is(#destinationsTab,#v64CmsDrawer) .v55-field{display:flex;flex-direction:column;gap:7px;margin:0 0 12px;color:var(--v55-text);font-weight:700;font-size:12px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-field input,:is(#destinationsTab,#v64CmsDrawer) .v55-field select,:is(#destinationsTab,#v64CmsDrawer) .v55-field textarea,:is(#destinationsTab,#v64CmsDrawer) .v55-advanced textarea{width:100%;box-sizing:border-box;border:1px solid #d7e1dc!important;border-radius:11px!important;background:#fbfcfb!important;color:#19352f!important;padding:11px 12px!important;outline:none!important;box-shadow:none!important;font:500 13px/1.45 Arial,sans-serif!important}
+:is(#destinationsTab,#v64CmsDrawer) .v55-field input:focus,:is(#destinationsTab,#v64CmsDrawer) .v55-field select:focus,:is(#destinationsTab,#v64CmsDrawer) .v55-field textarea:focus{border-color:#6ca394!important;box-shadow:0 0 0 3px rgba(15,92,77,.08)!important}
+:is(#destinationsTab,#v64CmsDrawer) .v55-article-field textarea{min-height:190px;resize:vertical}
+:is(#destinationsTab,#v64CmsDrawer) .v55-article-field small{color:var(--v55-muted);font-weight:500}
+:is(#destinationsTab,#v64CmsDrawer) .v55-inline-actions{display:flex;gap:8px;margin-top:-3px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-gallery-upload,:is(#destinationsTab,#v64CmsDrawer) .v55-cover-upload{border:1.5px dashed #a9c2ba!important;background:#f8fbf9!important;border-radius:14px!important}
+:is(#destinationsTab,#v64CmsDrawer) .v55-gallery-help{margin:12px 0;color:#60716c;font-size:12px;background:#f8f3e7;border-radius:10px;padding:10px 12px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-photo-preview{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-dest-preview-item{position:relative!important;display:block!important;background:#fff!important;border:1px solid var(--v55-border)!important;border-radius:12px!important;overflow:hidden!important;padding:0!important}
+:is(#destinationsTab,#v64CmsDrawer) .v55-preview-image-wrap{position:relative;aspect-ratio:4/3;background:#eef2f0}
+:is(#destinationsTab,#v64CmsDrawer) .v55-preview-image-wrap img{width:100%!important;height:100%!important;object-fit:cover!important;border-radius:0!important;display:block;cursor:zoom-in}
+:is(#destinationsTab,#v64CmsDrawer) .v55-cover-badge{position:absolute;top:8px;left:8px;background:var(--v55-gold);color:#4b3a12;border-radius:999px;padding:5px 8px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+:is(#destinationsTab,#v64CmsDrawer) .v55-preview-actions{display:grid;grid-template-columns:1fr auto auto;gap:6px;padding:8px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-preview-actions button{border:1px solid #d9e2de;background:#fff;color:#25463d;border-radius:8px;padding:7px 8px;font-size:10px;font-weight:700;cursor:pointer}
+:is(#destinationsTab,#v64CmsDrawer) .v55-preview-actions button:disabled{opacity:.35;cursor:not-allowed}
+:is(#destinationsTab,#v64CmsDrawer) .v55-preview-actions .v55-remove-photo{grid-column:1/-1;color:#a23c3c;background:#fff7f7;border-color:#f0d0d0}
+:is(#destinationsTab,#v64CmsDrawer) .v55-advanced{margin-top:13px;border-top:1px solid #edf0ee;padding-top:11px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-advanced summary{cursor:pointer;color:#60716c;font-size:12px;font-weight:700;margin-bottom:10px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-advanced textarea{min-height:90px;margin-bottom:9px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-cover-preview{width:100%;aspect-ratio:16/10;border-radius:13px;overflow:hidden;background:linear-gradient(135deg,#eef3f0,#f9f6ed);display:grid;place-items:center;color:#7c8a86;font-size:12px;margin-bottom:12px;border:1px solid #e1e8e4}
+:is(#destinationsTab,#v64CmsDrawer) .v55-cover-preview img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in}
+:is(#destinationsTab,#v64CmsDrawer) .v55-public-card-preview{border:1px solid #e1e7e4;border-radius:14px;overflow:hidden;background:#fff}
+:is(#destinationsTab,#v64CmsDrawer) .v55-public-card-image{aspect-ratio:16/10;background:linear-gradient(135deg,#0f5c4d,#467b6f);display:grid;place-items:center;color:#dce9e5;font-size:11px;overflow:hidden}
+:is(#destinationsTab,#v64CmsDrawer) .v55-public-card-image img{width:100%;height:100%;object-fit:cover}
+:is(#destinationsTab,#v64CmsDrawer) .v55-public-card-body{padding:13px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-public-card-body small{display:block;color:#9a7931;font-size:9px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;margin-bottom:5px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-public-card-body strong{display:block;color:#123a31;font-size:18px;margin-bottom:5px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-public-card-body p{margin:0;color:#64746f;font-size:11px;line-height:1.5}
+:is(#destinationsTab,#v64CmsDrawer) .v55-switch-row{display:flex;gap:11px;align-items:flex-start;padding:12px 0;margin:0;border-bottom:1px solid #edf0ee;color:var(--v55-text)}
+:is(#destinationsTab,#v64CmsDrawer) .v55-switch-row:last-child{border-bottom:0}
+:is(#destinationsTab,#v64CmsDrawer) .v55-switch-row input{width:19px!important;height:19px!important;flex:none;margin-top:2px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-switch-row span{display:flex;flex-direction:column;gap:3px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-switch-row strong{font-size:13px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-switch-row small{font-size:11px;color:var(--v55-muted);line-height:1.45}
+:is(#destinationsTab,#v64CmsDrawer) .v55-save-panel{display:grid;grid-template-columns:1fr;gap:8px}
+:is(#destinationsTab,#v64CmsDrawer) .v55-save-panel button{width:100%;margin:0!important}
+:is(#destinationsTab,#v64CmsDrawer) .v55-secondary-btn{border:1px solid #cfdad5;border-radius:11px;background:#fff;color:#315148;font-weight:800;padding:11px 16px;cursor:pointer}
 
 @media (max-width:1100px){
-  #destinationsTab .v55-editor-layout{grid-template-columns:1fr}
-  #destinationsTab .v55-editor-side{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
-  #destinationsTab .v55-save-panel{grid-column:1/-1;grid-template-columns:1fr 1fr}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-editor-layout{grid-template-columns:1fr}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-editor-side{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-save-panel{grid-column:1/-1;grid-template-columns:1fr 1fr}
 }
 @media (max-width:780px){
-  #destinationsTab .v55-destination-head{display:block}
-  #destinationsTab .v55-destination-head .v55-primary-action{margin-top:12px;width:100%}
-  #destinationsTab .v55-destination-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-  #destinationsTab .v55-destination-toolbar{grid-template-columns:1fr 1fr}
-  #destinationsTab .v55-destination-toolbar input{grid-column:1/-1}
-  #destinationsTab .v55-destination-toolbar button{grid-column:1/-1}
-  #destinationsTab .v55-field-grid-3,#destinationsTab .v55-field-grid-2{grid-template-columns:1fr}
-  #destinationsTab .v55-editor-card-head{display:block}
-  #destinationsTab .v55-editor-card-head p{text-align:left;margin-top:7px}
-  #destinationsTab .v55-photo-preview{grid-template-columns:repeat(2,minmax(0,1fr))}
-  #destinationsTab .v55-editor-side{display:flex}
-  #destinationsTab .v55-save-panel{display:grid;grid-template-columns:1fr}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-destination-head{display:block}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-destination-head .v55-primary-action{margin-top:12px;width:100%}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-destination-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-destination-toolbar{grid-template-columns:1fr 1fr}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-destination-toolbar input{grid-column:1/-1}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-destination-toolbar button{grid-column:1/-1}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-field-grid-3,:is(#destinationsTab,#v64CmsDrawer) .v55-field-grid-2{grid-template-columns:1fr}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-editor-card-head{display:block}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-editor-card-head p{text-align:left;margin-top:7px}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-photo-preview{grid-template-columns:repeat(2,minmax(0,1fr))}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-editor-side{display:flex}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-save-panel{display:grid;grid-template-columns:1fr}
 }
 @media (max-width:480px){
-  #destinationsTab .v55-destination-stats{grid-template-columns:1fr 1fr}
-  #destinationsTab .v55-destination-toolbar{grid-template-columns:1fr}
-  #destinationsTab .v55-destination-toolbar>*{grid-column:auto!important}
-  #destinationsTab .v55-editor-layout{padding:9px;gap:10px}
-  #destinationsTab .v55-editor-card{padding:13px;border-radius:13px}
-  #destinationsTab .v55-photo-preview{grid-template-columns:1fr}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-destination-stats{grid-template-columns:1fr 1fr}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-destination-toolbar{grid-template-columns:1fr}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-destination-toolbar>*{grid-column:auto!important}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-editor-layout{padding:9px;gap:10px}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-editor-card{padding:13px;border-radius:13px}
+  :is(#destinationsTab,#v64CmsDrawer) .v55-photo-preview{grid-template-columns:1fr}
 }
 
 /* =========================================================
    V5.9 PUBLISHING CHECKLIST + RESILIENCE
 ========================================================= */
-#destinationsTab .v59-readiness-card{border-color:#d9e6e1;background:linear-gradient(180deg,#fff,#fbfdfc)}
-#destinationsTab .v59-readiness-status{border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:12px;font-weight:800}
-#destinationsTab .v59-readiness-status.ready{background:#eaf7f0;color:#116844;border:1px solid #c9ead8}
-#destinationsTab .v59-readiness-status.needs-work{background:#fff3ed;color:#9a3412;border:1px solid #fed7c7}
-#destinationsTab .v59-readiness-list{list-style:none;margin:0;padding:0;display:grid;gap:7px}
-#destinationsTab .v59-readiness-list li{display:flex;align-items:center;gap:8px;font-size:11px;color:#475467}
-#destinationsTab .v59-check-icon{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:900;flex:none}
-#destinationsTab .v59-readiness-list li.ok .v59-check-icon{background:#e8f5ee;color:#087443}
-#destinationsTab .v59-readiness-list li.warn .v59-check-icon{background:#fff4d8;color:#8a6414}
-#destinationsTab .v59-readiness-list li.bad .v59-check-icon{background:#fdecea;color:#b42318}
-#destinationsTab .v59-readiness-actions{display:grid;grid-template-columns:1fr;gap:7px;margin-top:12px}
-#destinationsTab .v59-readiness-actions .mini-btn{width:100%;margin:0}
-#destinationsTab .v59-readiness-actions .mini-btn:disabled{opacity:.45;cursor:not-allowed}
-#destinationsTab .v59-image-error{display:grid;place-items:center;width:100%;height:100%;padding:14px;text-align:center;color:#8a6159;background:#fff2ef;font-size:11px}
+:is(#destinationsTab,#v64CmsDrawer) .v59-readiness-card{border-color:#d9e6e1;background:linear-gradient(180deg,#fff,#fbfdfc)}
+:is(#destinationsTab,#v64CmsDrawer) .v59-readiness-status{border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:12px;font-weight:800}
+:is(#destinationsTab,#v64CmsDrawer) .v59-readiness-status.ready{background:#eaf7f0;color:#116844;border:1px solid #c9ead8}
+:is(#destinationsTab,#v64CmsDrawer) .v59-readiness-status.needs-work{background:#fff3ed;color:#9a3412;border:1px solid #fed7c7}
+:is(#destinationsTab,#v64CmsDrawer) .v59-readiness-list{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+:is(#destinationsTab,#v64CmsDrawer) .v59-readiness-list li{display:flex;align-items:center;gap:8px;font-size:11px;color:#475467}
+:is(#destinationsTab,#v64CmsDrawer) .v59-check-icon{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:900;flex:none}
+:is(#destinationsTab,#v64CmsDrawer) .v59-readiness-list li.ok .v59-check-icon{background:#e8f5ee;color:#087443}
+:is(#destinationsTab,#v64CmsDrawer) .v59-readiness-list li.warn .v59-check-icon{background:#fff4d8;color:#8a6414}
+:is(#destinationsTab,#v64CmsDrawer) .v59-readiness-list li.bad .v59-check-icon{background:#fdecea;color:#b42318}
+:is(#destinationsTab,#v64CmsDrawer) .v59-readiness-actions{display:grid;grid-template-columns:1fr;gap:7px;margin-top:12px}
+:is(#destinationsTab,#v64CmsDrawer) .v59-readiness-actions .mini-btn{width:100%;margin:0}
+:is(#destinationsTab,#v64CmsDrawer) .v59-readiness-actions .mini-btn:disabled{opacity:.45;cursor:not-allowed}
+:is(#destinationsTab,#v64CmsDrawer) .v59-image-error{display:grid;place-items:center;width:100%;height:100%;padding:14px;text-align:center;color:#8a6159;background:#fff2ef;font-size:11px}
+
+
+/* =========================================================
+   V5.9.1 DESTINATION EDITOR / V6.4 DRAWER COMPATIBILITY FIX
+   - Keeps destination-specific UI styling after the form is
+     moved from #destinationsTab into the shared CMS drawer.
+   - Neutralises the generic v64 field wrapper inside this form.
+========================================================= */
+
+/* Destination editor gets a wider premium workspace only; other CMS drawers are unchanged. */
+#v64CmsDrawer .v64-cms-drawer-card:has(#destinationForm){
+  width:min(1160px,96vw) !important;
+  max-width:1160px !important;
+}
+
+#v64CmsDrawer .v64-cms-drawer-body:has(#destinationForm){
+  padding:18px 20px 24px !important;
+  background:#eef3f0 !important;
+}
+
+/* The destination form already owns its internal layout. Do not force the generic 2-col form grid. */
+#v64CmsDrawer #destinationForm{
+  display:block !important;
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+#v64CmsDrawer #destinationForm > .v55-editor-layout{
+  width:100% !important;
+  min-width:0 !important;
+}
+
+/* v6WrapFormFields() also sees destination inputs. Visually neutralise those
+   wrappers so the purpose-built V5.5 labels/cards remain the only UI shown. */
+#v64CmsDrawer #destinationForm .v55-field > .v64-field,
+#v64CmsDrawer #destinationForm .v55-advanced .v64-field{
+  display:contents !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+#v64CmsDrawer #destinationForm .v55-field > .v64-field > label,
+#v64CmsDrawer #destinationForm .v55-advanced .v64-field > label{
+  display:none !important;
+}
+
+/* Generic drawer rules make every label span the full grid. Restore destination grids. */
+#v64CmsDrawer #destinationForm .v55-field{
+  grid-column:auto !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:stretch !important;
+  gap:7px !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+}
+
+#v64CmsDrawer #destinationForm .v55-field-grid-3 > .v55-field,
+#v64CmsDrawer #destinationForm .v55-field-grid-2 > .v55-field{
+  grid-column:auto !important;
+}
+
+#v64CmsDrawer #destinationForm .v55-field input,
+#v64CmsDrawer #destinationForm .v55-field select,
+#v64CmsDrawer #destinationForm .v55-field textarea,
+#v64CmsDrawer #destinationForm .v55-advanced textarea{
+  min-height:43px !important;
+  margin:0 !important;
+}
+
+#v64CmsDrawer #destinationForm .v55-article-field textarea{
+  min-height:220px !important;
+}
+
+/* Do not let generic drawer button rules stretch small gallery/map controls. */
+#v64CmsDrawer #destinationForm .v55-inline-actions button,
+#v64CmsDrawer #destinationForm .v55-preview-actions button,
+#v64CmsDrawer #destinationForm .v59-readiness-actions button,
+#v64CmsDrawer #destinationForm .v55-advanced button,
+#v64CmsDrawer #destinationForm .upload-box button{
+  grid-column:auto !important;
+  width:auto !important;
+}
+
+#v64CmsDrawer #destinationForm .v55-switch-row{
+  grid-column:auto !important;
+  background:transparent !important;
+  border-radius:0 !important;
+  padding:12px 0 !important;
+}
+
+#v64CmsDrawer #destinationForm .v55-switch-row input{
+  width:19px !important;
+  min-width:19px !important;
+}
+
+/* More polished card rhythm in the drawer. */
+#v64CmsDrawer #destinationForm .v55-editor-card{
+  box-shadow:0 8px 24px rgba(20,61,51,.055) !important;
+}
+
+#v64CmsDrawer #destinationForm .v55-editor-card-head{
+  padding-bottom:2px !important;
+}
+
+#v64CmsDrawer #destinationForm .v55-save-panel{
+  position:sticky !important;
+  bottom:0 !important;
+  z-index:4 !important;
+  padding:12px !important;
+  margin:-4px -4px 0 !important;
+  border:1px solid #dce6e2 !important;
+  border-radius:14px !important;
+  background:rgba(255,255,255,.96) !important;
+  box-shadow:0 -8px 24px rgba(31,55,48,.06) !important;
+  backdrop-filter:blur(8px) !important;
+}
+
+#v64CmsDrawer #destinationForm .v55-save-panel button{
+  width:100% !important;
+}
+
+@media (max-width:1100px){
+  #v64CmsDrawer .v64-cms-drawer-card:has(#destinationForm){
+    width:96vw !important;
+    max-width:none !important;
+  }
+  #v64CmsDrawer #destinationForm .v55-editor-layout{
+    grid-template-columns:1fr !important;
+  }
+  #v64CmsDrawer #destinationForm .v55-editor-side{
+    position:static !important;
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+  #v64CmsDrawer #destinationForm .v55-save-panel{
+    grid-column:1/-1 !important;
+    grid-template-columns:1fr 1fr !important;
+  }
+}
+
+@media (max-width:760px){
+  #v64CmsDrawer .v64-cms-drawer-card:has(#destinationForm){
+    width:100vw !important;
+    max-width:none !important;
+  }
+  #v64CmsDrawer .v64-cms-drawer-body:has(#destinationForm){
+    padding:10px !important;
+  }
+  #v64CmsDrawer #destinationForm .v55-editor-layout{
+    padding:0 !important;
+    gap:10px !important;
+  }
+  #v64CmsDrawer #destinationForm .v55-editor-side{
+    display:flex !important;
+  }
+  #v64CmsDrawer #destinationForm .v55-field-grid-3,
+  #v64CmsDrawer #destinationForm .v55-field-grid-2{
+    grid-template-columns:1fr !important;
+  }
+  #v64CmsDrawer #destinationForm .v55-save-panel{
+    grid-template-columns:1fr !important;
+  }
+}

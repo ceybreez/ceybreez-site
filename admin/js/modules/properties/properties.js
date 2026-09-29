@@ -19,8 +19,47 @@ function escapeAttr(value) { return String(value || "").replaceAll("&", "&amp;")
 function isValidUrl(value) { if (!value) return true; try { const u = new URL(value); return ["http:", "https:"].includes(u.protocol); } catch { return false; } }
 function isValidImageUrlOrPath(value) { if (!value) return true; if (/^(images\/|\.\.?\/|\/)/i.test(value)) return true; return isValidUrl(value); }
 function isNonNegative(value) { if (!value) return true; const n = Number(value); return Number.isFinite(n) && n >= 0; }
-function showForm() { if (typeof window.showCmsForm === "function") window.showCmsForm("propertyFormBox"); else byId("propertyFormBox")?.classList.remove("hidden"); }
-function closeForm() { if (formDirty && !confirm("You have unsaved property changes. Close without saving?")) return; formDirty = false; if (typeof window.closeCmsForm === "function") window.closeCmsForm("propertyFormBox"); else byId("propertyFormBox")?.classList.add("hidden"); }
+function recoverPropertyFormFromLegacyDrawer() {
+  const form = byId("propertyForm");
+  const box = byId("propertyFormBox");
+  const drawer = byId("v64CmsDrawer");
+  const drawerBody = byId("v64CmsDrawerBody");
+  if (!form || !box) return;
+
+  // Older Admin V6.4 moves CMS forms into the narrow right-side drawer and
+  // wraps every input in .v64-field. The V6.1 property editor is a complete
+  // layout of its own, so restore/unwrap it before opening.
+  if (drawerBody?.contains(form) && typeof window.v64CloseCmsDrawer === "function") {
+    try { window.v64CloseCmsDrawer(); } catch (_) {}
+  }
+  if (!box.contains(form)) box.appendChild(form);
+
+  form.querySelectorAll(".v64-field").forEach((wrap) => {
+    const control = wrap.querySelector("input, select, textarea");
+    if (control) wrap.replaceWith(control);
+    else wrap.remove();
+  });
+  delete form.dataset.v64Wrapped;
+  drawer?.classList.add("hidden");
+}
+
+function showForm() {
+  recoverPropertyFormFromLegacyDrawer();
+  const box = byId("propertyFormBox");
+  if (!box) return;
+  box.classList.remove("hidden");
+  box.classList.add("property-cms-modal-open");
+  document.body.classList.add("property-editor-open");
+}
+
+function closeForm() {
+  if (formDirty && !confirm("You have unsaved property changes. Close without saving?")) return;
+  formDirty = false;
+  const box = byId("propertyFormBox");
+  box?.classList.add("hidden");
+  box?.classList.remove("property-cms-modal-open");
+  document.body.classList.remove("property-editor-open");
+}
 function setUploadStatus(id, message = "", isError = false) { const el = byId(id); if (!el) return; el.textContent = message; el.classList.toggle("error", !!isError); }
 function setDirty(value = true) { formDirty = value; const badge = byId("propertyDirtyBadge"); if (badge) { badge.textContent = value ? "Unsaved" : "Saved"; badge.classList.toggle("unsaved", value); } }
 
@@ -183,6 +222,7 @@ function installGlobalCompatibility() {
 }
 
 export function initPropertiesModule() {
+  recoverPropertyFormFromLegacyDrawer();
   extendPropertyForm(); bindEditorEvents(); interceptLegacyFilters(); installGlobalCompatibility();
   const headerClose = byId("propertyFormBoxHeader")?.querySelector("button"); if (headerClose) { headerClose.removeAttribute("onclick"); headerClose.addEventListener("click", closeForm); }
   renderMediaPreviews(); updateLivePreview(); setFormTab("basic"); setTimeout(updateLivePreview, 250);

@@ -8,3 +8,92 @@
 .property-live-rail{position:sticky;top:0;align-self:start;min-height:100%;padding:17px;border-left:1px solid #e2ebeb;background:#f0f7f6}.property-live-rail-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.property-live-rail-head span{font-size:8px;letter-spacing:.12em;color:#73858b;font-weight:900}.property-live-rail-head strong{display:block;color:#18373c;font-size:12px}.property-dirty-badge{padding:5px 8px;border-radius:999px;background:#e8f7ef;color:#23754c;font-size:8px!important;letter-spacing:0!important}.property-dirty-badge.unsaved{background:#fff2d9;color:#8a5b14}.property-preview-card{overflow:hidden;border-radius:17px;background:#fff;border:1px solid #dce8e7;box-shadow:0 10px 24px rgba(18,67,66,.09)}.property-preview-image{height:180px;background:#e7f1f0;display:grid;place-items:center;overflow:hidden}.property-preview-image img{width:100%;height:100%;object-fit:cover}.property-preview-body{padding:14px}.property-preview-badges{display:flex;gap:5px;margin-bottom:7px}.property-preview-badges span{padding:4px 7px;border-radius:999px;background:#e7f5f3;color:#0f766e;font-size:8px;font-weight:900;text-transform:uppercase}.property-preview-badges span:nth-child(2){background:#fff4ce;color:#8a6412}.property-preview-badges .hidden{display:none}.property-preview-body h4{margin:0;color:#163a3e;font-size:16px}.property-preview-body p{font-size:10px;line-height:1.45;color:#6c7d82;margin:7px 0 10px;min-height:45px}.property-preview-meta{display:flex;flex-wrap:wrap;gap:6px;color:#60757a;font-size:8px}.property-preview-price{display:flex;justify-content:space-between;align-items:end;border-top:1px solid #edf1f1;margin-top:12px;padding-top:10px}.property-preview-price span{font-size:8px;color:#809196}.property-preview-price strong{font-size:14px;color:#0f766e}.property-completeness{margin-top:13px;padding:13px;border:1px solid #dbe7e6;background:#fff;border-radius:14px}.property-completeness-head{display:flex;justify-content:space-between;font-size:9px;color:#516a70}.property-progress{height:6px;border-radius:999px;background:#e6efee;overflow:hidden;margin:8px 0 10px}.property-progress i{display:block;height:100%;width:0;background:#0f766e;transition:.2s}.property-completeness-list{display:grid;grid-template-columns:1fr 1fr;gap:5px}.property-completeness-list span{font-size:8px;color:#93a1a5}.property-completeness-list span.done{color:#39765a;font-weight:800}.property-modal-footer{position:sticky;bottom:0;background:#fff;border-top:1px solid #e5eef0;padding:11px 17px;display:flex;justify-content:space-between;align-items:center;gap:12px;box-shadow:0 -8px 20px rgba(15,23,42,.05)}.property-footer-left{font-size:9px;color:#7a8d92}.property-footer-actions{display:flex;gap:8px}.property-modal-footer button{border:0!important;border-radius:9px!important;padding:10px 14px!important;font-weight:900!important;cursor:pointer!important;font-size:10px!important}.property-primary-btn{background:#0f766e!important;color:#fff!important;min-width:150px}.property-secondary-btn{background:#eaf4f2!important;color:#0f766e!important}.property-primary-btn:disabled,.property-secondary-btn:disabled{opacity:.45;cursor:not-allowed!important}
 @media(max-width:1150px){#propertyFormBox.cms-form-box{width:min(1180px,calc(100vw - 24px))}.property-editor-layout{grid-template-columns:1fr}.property-live-rail{position:relative;border-left:0;border-top:1px solid #e2ebeb;min-height:0}.property-preview-card{max-width:520px}.property-upload-grid{grid-template-columns:1fr}.property-facility-box .facility-options{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:800px){#propertyFormBox.cms-form-box{width:100vw;height:100vh;max-height:100vh;border-radius:0}.property-editor-form{max-height:calc(100vh - 60px)}.property-editor-tabs{padding:8px 10px}.property-editor-main{padding:13px}.property-form-grid.two-col,.property-form-grid.three-col{grid-template-columns:1fr}.property-pane-title{align-items:flex-start;flex-direction:column}.property-rate-preview{grid-template-columns:auto 1fr}.property-facility-box .facility-options{grid-template-columns:1fr}.property-gallery-preview{grid-template-columns:repeat(2,minmax(0,1fr))}.property-switch-grid{grid-template-columns:1fr}.property-live-rail{padding:13px}.property-modal-footer{padding:10px;flex-direction:column;align-items:stretch}.property-footer-left{display:none}.property-footer-actions{display:grid;grid-template-columns:1fr 1fr}.property-primary-btn{grid-column:1/-1;order:-1}.property-completeness-list{grid-template-columns:1fr 1fr}.property-table-name{min-width:190px}.property-toolbar{display:grid!important;grid-template-columns:1fr}.property-toolbar button{width:100%}}
+
+
+/* =====================================================
+   V6.1.1 PROPERTY EDITOR LAYOUT FIX
+   The legacy Admin V6.4 drawer must not control the new Properties editor.
+   Properties use a wide modal; Destination/Services keep their existing drawer.
+===================================================== */
+body.property-editor-open{overflow:hidden!important}
+#propertyFormBox.cms-form-box:not(.hidden){
+  position:fixed!important;
+  inset:18px!important;
+  width:calc(100vw - 36px)!important;
+  max-width:1500px!important;
+  height:calc(100vh - 36px)!important;
+  max-height:none!important;
+  margin:auto!important;
+  padding:0!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  background:#fff!important;
+  border:1px solid #d7e6e4!important;
+  border-radius:20px!important;
+  z-index:2147483635!important;
+  box-shadow:0 30px 90px rgba(3,31,30,.34)!important;
+}
+#propertyFormBox.cms-form-box:not(.hidden)>.cms-modal-head{
+  flex:0 0 auto!important;
+  min-height:58px!important;
+  box-sizing:border-box!important;
+  margin:0!important;
+  padding:12px 16px!important;
+  border-radius:20px 20px 0 0!important;
+}
+#propertyFormBox.cms-form-box form.property-editor-form{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none!important;
+  padding:0!important;
+  margin:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  grid-template-columns:none!important;
+  gap:0!important;
+  overflow:hidden!important;
+  background:#fff!important;
+}
+#propertyFormBox .property-editor-tabs{flex:0 0 auto!important}
+#propertyFormBox .property-editor-layout{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  grid-template-columns:minmax(0,1fr) 330px!important;
+}
+#propertyFormBox .property-editor-main{min-height:0!important;overflow:auto!important}
+#propertyFormBox .property-live-rail{
+  position:relative!important;
+  top:auto!important;
+  align-self:stretch!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow:auto!important;
+}
+#propertyFormBox .property-modal-footer{flex:0 0 auto!important;position:relative!important;bottom:auto!important;z-index:5!important}
+
+/* Safety fallback: if an old open drawer still contains the property form,
+   keep the new editor structure intact instead of the legacy two-column form grid. */
+#v64CmsDrawerBody form.property-editor-form{
+  display:flex!important;
+  flex-direction:column!important;
+  grid-template-columns:none!important;
+  gap:0!important;
+  padding:0!important;
+}
+#v64CmsDrawerBody form.property-editor-form .property-editor-layout{grid-column:1/-1!important;width:100%!important}
+#v64CmsDrawerBody form.property-editor-form .property-editor-tabs,
+#v64CmsDrawerBody form.property-editor-form .property-modal-footer{grid-column:1/-1!important;width:100%!important}
+
+@media(max-width:1150px){
+  #propertyFormBox.cms-form-box:not(.hidden){inset:12px!important;width:calc(100vw - 24px)!important;height:calc(100vh - 24px)!important}
+  #propertyFormBox .property-editor-layout{grid-template-columns:1fr!important;overflow:auto!important}
+  #propertyFormBox .property-editor-main{overflow:visible!important}
+  #propertyFormBox .property-live-rail{overflow:visible!important;border-left:0!important;border-top:1px solid #e2ebeb!important}
+}
+@media(max-width:800px){
+  #propertyFormBox.cms-form-box:not(.hidden){inset:0!important;width:100vw!important;height:100vh!important;border-radius:0!important}
+  #propertyFormBox.cms-form-box:not(.hidden)>.cms-modal-head{border-radius:0!important}
+}

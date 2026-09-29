@@ -1,0 +1,56 @@
+CEYBREEZ MASTER MERGE — SECURITY PRESERVED
+Built from user-provided: ceybreez-site-main (17).zip
+Merged only the requested feature sets: Public V5.1 QA, Tours V5.3, Footer Partners V5.4, Destination CMS V5.5.
+
+SECURITY / USER ACCOUNT PRESERVATION
+- UNCHANGED SHA-256: admin/security-rbac.js = e3eb4a7aad31b70f3dd5da1f9a0f78079d709b59c74be9cef9722ac231c75b09
+- UNCHANGED SHA-256: admin/css/security-rbac.css = 7e684a1b621003e3090a2db1a3b6515bb41742d72ef16732fb463fc2a0e4df62
+- UNCHANGED SHA-256: admin/backup-recovery.js = 5c4e041c86bf4c81724839681e4fb9ddff0c03ab0e5431d6437e1a8da9eefc98
+- UNCHANGED SHA-256: admin/css/backup-recovery.css = bc3a3842eb3f099086c82c8fc0e56b362e02f57138a535f8e2caeb6de1fd520e
+- UNCHANGED SHA-256: cloudflare/worker.js = bb06c709fcc14ce53b38e04778a7cdbed34677d2f81115729735fb5686b82aa8
+- UNCHANGED SHA-256: CeyBreez-Cloudflare-Worker-Analytics-V5.6.js = 51313d151abc4c9f6bff8f18ca2b25e316f8048f7d35ebb1e4dd409c31cda068
+- User Management / Approval Queue / Backup & Recovery HTML block preserved byte-for-byte from the uploaded master baseline.
+- admin/admin.js still uses CEYBREEZ_SESSION_TOKEN and restoreCeyBreezSession().
+- booking_confirmed analytics tracking preserved.
+- NO Cloudflare Worker code was modified by this merge.
+
+MERGED CHANGES
+- index.html: V5.1 canonical/Open Graph metadata merged without replacing page layout
+- villas.html: V5.1 canonical/Open Graph metadata merged without replacing page layout
+- apartments.html: V5.1 canonical/Open Graph metadata merged without replacing page layout
+- homestays.html: V5.1 canonical/Open Graph metadata merged without replacing page layout
+- contact.html: V5.1 canonical/Open Graph metadata merged without replacing page layout
+- services.html: V5.1 canonical merged
+- tour-details.html: V5.1 dynamic SEO placeholders merged; existing newer tour detail layout retained
+- tour-details.js: V5.1 dynamic social/canonical fallback merged into existing richer SEO code
+- index.html: Removed public-facing CMS wording from reel placeholders
+- contact.html: V5.1 semantic heading fix merged
+- reviews-showcase.js: V5.1 review proof metrics now hide empty/unverified defaults
+- index.html: V5.1 mobile-header cache version updated
+- tours.html: V5.1 mobile-header cache version updated
+- tour-details.html: V5.1 mobile-header cache version updated
+- villas.html: V5.1 mobile-header cache version updated
+- apartments.html: V5.1 mobile-header cache version updated
+- homestays.html: V5.1 mobile-header cache version updated
+- services.html: V5.1 mobile-header cache version updated
+- contact.html: V5.1 mobile-header cache version updated
+- _headers: V5.1 HTML no-cache rule added; newer security/performance cache rules preserved
+- sitemap.xml: V5.1 clean public routes merged while preserving newer sitemap metadata
+- tours.html: V5.3 visual destination cards + V5.5 cover/gallery/article support merged
+- tours-v4.css: Appended V5.3 destination image-card/modal/lightbox styles; existing CSS retained
+- page-builder.js: V5.4 footer partner display merged; baseline performance fallback retained
+- admin/index.html: V5.5 destination editor + V5.4 footer manager hooks merged; User Management/Approvals/Backup sections preserved
+- admin/admin.js: V5.5 destination gallery/cover editor behavior merged; Security V5.3.2 session auth and later analytics retained
+- admin/footer-partners-admin.js: V5.4 footer manager adapted to preserved Security V5.3.2 session token
+
+QA
+- Public CMS/internal wording leak check: PASS
+- Duplicate ID check (main public pages + admin): PASS
+- Local src/href reference check (main public pages + admin): PASS
+- Critical security/backend hash preservation: PASS
+- Footer Partners admin token compatibility updated for Security V5.3.2 sessions.
+- Destination CMS V5.5 scripts/styles present and wired.
+- JavaScript syntax check (Node): PASS for page-builder.js, reviews-showcase.js, tour-details.js, admin/admin.js, admin/security-rbac.js, admin/destination-cms-v55.js, admin/footer-partners-admin.js.
+- Inline JavaScript syntax check (main public pages + admin): PASS, 0 errors.
+- CSS parser check (Tours V4, public theme, destination CMS, security CSS): PASS, 0 parser errors.
+- H1 semantic check (Home, Tours, Tour Details, Villas, Apartments, Homestays, Services, Contact): PASS, exactly 1 H1 per page.

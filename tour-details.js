@@ -42,9 +42,21 @@ function updateTourSeo(tour){
   const canonical = `https://ceybreez.com/tour-details.html?slug=${encodeURIComponent(slug)}`;
   const image = new URL(firstImage(tour), window.location.origin).href;
   document.title = `${title} | CeyBreez`;
-  const setMeta = (selector, attribute, value) => { const el = document.querySelector(selector); if(el) el.setAttribute(attribute, value); };
-  const canonicalEl = document.querySelector('link[rel="canonical"]');
-  if(canonicalEl) canonicalEl.href = canonical;
+  const setMeta = (selector, attribute, value) => {
+    let el = document.querySelector(selector);
+    if(!el){
+      el = document.createElement("meta");
+      const propertyMatch = selector.match(/meta\[property="([^"]+)"\]/);
+      const nameMatch = selector.match(/meta\[name="([^"]+)"\]/);
+      if(propertyMatch) el.setAttribute("property", propertyMatch[1]);
+      if(nameMatch) el.setAttribute("name", nameMatch[1]);
+      document.head.appendChild(el);
+    }
+    el.setAttribute(attribute, value);
+  };
+  let canonicalEl = document.querySelector('link[rel="canonical"]');
+  if(!canonicalEl){ canonicalEl = document.createElement("link"); canonicalEl.rel = "canonical"; document.head.appendChild(canonicalEl); }
+  canonicalEl.href = canonical;
   setMeta('meta[name="description"]', "content", description);
   setMeta('meta[property="og:url"]', "content", canonical);
   setMeta('meta[property="og:title"]', "content", `${title} | CeyBreez`);

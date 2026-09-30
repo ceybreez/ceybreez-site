@@ -97,3 +97,102 @@ body.property-editor-open{overflow:hidden!important}
   #propertyFormBox.cms-form-box:not(.hidden){inset:0!important;width:100vw!important;height:100vh!important;border-radius:0!important}
   #propertyFormBox.cms-form-box:not(.hidden)>.cms-modal-head{border-radius:0!important}
 }
+
+/* =====================================================
+   V6.1.2 VIEWPORT / CLIPPING FIX
+   - propertyFormBox is portalled to <body> by properties.js
+   - fixed geometry is now always relative to the browser viewport
+   - compact windows stack Live Preview below the editor to preserve field width
+===================================================== */
+#propertyFormBox[data-property-viewport-portal="1"].cms-form-box:not(.hidden){
+  position:fixed!important;
+  top:14px!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:14px!important;
+  inset:auto!important;
+  transform:translateX(-50%)!important;
+  width:min(1500px,calc(100vw - 28px))!important;
+  max-width:none!important;
+  height:auto!important;
+  max-height:none!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  isolation:isolate!important;
+  z-index:2147483640!important;
+}
+body.property-editor-open::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(5,28,27,.42);
+  backdrop-filter:blur(2px);
+  z-index:2147483630;
+  pointer-events:none;
+}
+#propertyFormBox[data-property-viewport-portal="1"] .property-editor-layout{
+  width:100%!important;
+  min-width:0!important;
+}
+#propertyFormBox[data-property-viewport-portal="1"] .property-editor-main,
+#propertyFormBox[data-property-viewport-portal="1"] .property-form-pane,
+#propertyFormBox[data-property-viewport-portal="1"] .property-form-grid,
+#propertyFormBox[data-property-viewport-portal="1"] .property-field{
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+#propertyFormBox[data-property-viewport-portal="1"] input,
+#propertyFormBox[data-property-viewport-portal="1"] select,
+#propertyFormBox[data-property-viewport-portal="1"] textarea{
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+
+/* A half-screen desktop window needs editing space more than a side preview. */
+@media(max-width:1350px){
+  #propertyFormBox[data-property-viewport-portal="1"].cms-form-box:not(.hidden){
+    top:10px!important;
+    bottom:10px!important;
+    width:calc(100vw - 20px)!important;
+  }
+  #propertyFormBox[data-property-viewport-portal="1"] .property-editor-layout{
+    grid-template-columns:minmax(0,1fr)!important;
+    overflow:auto!important;
+  }
+  #propertyFormBox[data-property-viewport-portal="1"] .property-editor-main{
+    overflow:visible!important;
+  }
+  #propertyFormBox[data-property-viewport-portal="1"] .property-live-rail{
+    position:relative!important;
+    width:auto!important;
+    height:auto!important;
+    overflow:visible!important;
+    border-left:0!important;
+    border-top:1px solid #e2ebeb!important;
+    display:grid!important;
+    grid-template-columns:minmax(260px,420px) minmax(260px,1fr)!important;
+    align-items:start!important;
+    gap:14px!important;
+  }
+  #propertyFormBox[data-property-viewport-portal="1"] .property-preview-card,
+  #propertyFormBox[data-property-viewport-portal="1"] .property-completeness-card{
+    margin:0!important;
+    max-width:none!important;
+  }
+}
+@media(max-width:760px){
+  #propertyFormBox[data-property-viewport-portal="1"].cms-form-box:not(.hidden){
+    top:0!important;
+    bottom:0!important;
+    left:0!important;
+    transform:none!important;
+    width:100vw!important;
+    height:100dvh!important;
+    border-radius:0!important;
+  }
+  #propertyFormBox[data-property-viewport-portal="1"] .property-live-rail{
+    grid-template-columns:1fr!important;
+  }
+}

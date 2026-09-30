@@ -19,6 +19,16 @@ function escapeAttr(value) { return String(value || "").replaceAll("&", "&amp;")
 function isValidUrl(value) { if (!value) return true; try { const u = new URL(value); return ["http:", "https:"].includes(u.protocol); } catch { return false; } }
 function isValidImageUrlOrPath(value) { if (!value) return true; if (/^(images\/|\.\.?\/|\/)/i.test(value)) return true; return isValidUrl(value); }
 function isNonNegative(value) { if (!value) return true; const n = Number(value); return Number.isFinite(n) && n >= 0; }
+
+/* V6.1.2: keep the premium editor outside the V14/V15 content grid.
+   Some admin shell/layout rules create clipping/containing contexts for descendants.
+   Portalling the modal to <body> guarantees viewport-based positioning. */
+function mountPropertyModalToBody() {
+  const box = byId("propertyFormBox");
+  if (!box || !document.body) return;
+  if (box.parentNode !== document.body) document.body.appendChild(box);
+  box.dataset.propertyViewportPortal = "1";
+}
 function recoverPropertyFormFromLegacyDrawer() {
   const form = byId("propertyForm");
   const box = byId("propertyFormBox");
@@ -45,6 +55,7 @@ function recoverPropertyFormFromLegacyDrawer() {
 
 function showForm() {
   recoverPropertyFormFromLegacyDrawer();
+  mountPropertyModalToBody();
   const box = byId("propertyFormBox");
   if (!box) return;
   box.classList.remove("hidden");
@@ -223,6 +234,7 @@ function installGlobalCompatibility() {
 
 export function initPropertiesModule() {
   recoverPropertyFormFromLegacyDrawer();
+  mountPropertyModalToBody();
   extendPropertyForm(); bindEditorEvents(); interceptLegacyFilters(); installGlobalCompatibility();
   const headerClose = byId("propertyFormBoxHeader")?.querySelector("button"); if (headerClose) { headerClose.removeAttribute("onclick"); headerClose.addEventListener("click", closeForm); }
   renderMediaPreviews(); updateLivePreview(); setFormTab("basic"); setTimeout(updateLivePreview, 250);

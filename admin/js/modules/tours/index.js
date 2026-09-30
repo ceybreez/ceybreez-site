@@ -27,6 +27,18 @@ function isValidUrlOrPath(value) {
 function isNonNegativeNumber(value) { if (!value) return true; const n = Number(value); return Number.isFinite(n) && n >= 0; }
 function setDirty(value = true) { formDirty = value; const badge = byId("tourDirtyBadge"); if (badge) { badge.textContent = value ? "Unsaved" : "Saved"; badge.classList.toggle("unsaved", value); } }
 
+/* V6.6.1: detach the Tours editor from transformed/overflow admin containers.
+   A fixed modal inside those containers can be clipped and appear as a half form.
+   Mounting it directly under <body> makes it use the real browser viewport,
+   matching the final Properties editor behaviour. */
+function ensureTourModalPortal() {
+  const overlay = byId("tourPackageFormBox");
+  if (!overlay || !document.body) return;
+  overlay.classList.add("tour-modal-overlay");
+  if (overlay.parentNode !== document.body) document.body.appendChild(overlay);
+  overlay.dataset.tourViewportPortal = "1";
+}
+
 function setPane(name) {
   const pane = name === "packages" ? "packages" : "destinations";
   document.querySelectorAll(".tours-tab-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.tourTab === pane));
@@ -142,6 +154,7 @@ function resetTourForm({ keepOpen = true } = {}) {
 }
 
 function openTourForm(tour = null) {
+  ensureTourModalPortal();
   resetTourForm(); setText("tourPackageFormTitle", tour ? "Edit Tour Package" : "Add Tour Package"); setText("tourPackageModeLabel", tour ? "EDIT PACKAGE" : "NEW PACKAGE"); setText("tourPackageFormSubtitle", tour ? "Update package details, media and publishing status." : "Build the package step by step. Required and recommended fields are highlighted.");
   if (tour) {
     setValue("tourEditId", tour.id || ""); setValue("tourTitle", tour.title || ""); setValue("tourSlug", tour.slug || ""); setValue("tourCategory", tour.category || ""); setValue("tourLocation", tour.location || ""); setValue("tourDuration", tour.duration || ""); setValue("tourCurrency", tour.currency || "USD"); setValue("tourBasePrice", tour.basePrice || ""); setValue("tourChildPrice", tour.childPrice || ""); setValue("tourShortDescription", tour.shortDescription || ""); setValue("tourFullDescription", tour.fullDescription || ""); setValue("tourItinerary", arrayToLines(tour.itinerary)); setValue("tourInclusions", arrayToLines(tour.inclusions)); setValue("tourExclusions", arrayToLines(tour.exclusions)); setValue("tourMainImage", tour.mainImage || ""); setValue("tourPhotos", arrayToLines(tour.photos)); if (byId("tourPickupAvailable")) byId("tourPickupAvailable").checked = !!tour.pickupAvailable; if (byId("tourActive")) byId("tourActive").checked = tour.active === true || Number(tour.active) === 1; if (byId("tourFeatured")) byId("tourFeatured").checked = tour.featured === true || Number(tour.featured) === 1; setValue("tourSortOrder", tour.sortOrder || 0); slugManuallyEdited = true;
@@ -199,7 +212,7 @@ function wireToursModule() {
 
 export async function initToursModule() {
   const container = byId("destinationsTab"); if (!container) return;
-  if (!toursModuleReady) { renderToursModuleShell(container); wireToursModule(); setFormTab("basic"); toursModuleReady = true; }
+  if (!toursModuleReady) { renderToursModuleShell(container); wireToursModule(); ensureTourModalPortal(); setFormTab("basic"); toursModuleReady = true; }
 }
 window.initToursModule = initToursModule;
 window.openToursPackagesPane = async function () { await initToursModule(); setPane("packages"); await loadTourPackages(); };

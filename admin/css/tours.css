@@ -6,3 +6,40 @@ body.tour-modal-open{overflow:hidden}.tour-modal-overlay{position:fixed;inset:0;
 .tour-live-rail{position:sticky;top:0;min-height:100%;padding:18px;border-left:1px solid #e2ebeb;background:#f0f7f6}.tour-live-rail-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.tour-live-rail-head span{font-size:9px;letter-spacing:.12em;color:#73858b;font-weight:900}.tour-live-rail-head strong{display:block;color:#18373c;font-size:13px}.tour-dirty-badge{padding:5px 8px;border-radius:999px;background:#e8f7ef;color:#23754c;font-size:9px!important;letter-spacing:0!important}.tour-dirty-badge.unsaved{background:#fff2d9;color:#8a5b14}.tour-preview-card{overflow:hidden;border-radius:17px;background:#fff;border:1px solid #dce8e7;box-shadow:0 10px 24px rgba(18,67,66,.09)}.tour-preview-image{height:180px;background:#e7f1f0;display:grid;place-items:center;overflow:hidden}.tour-preview-image img{width:100%;height:100%;object-fit:cover}.tour-preview-body{padding:14px}.tour-preview-badges{display:flex;gap:5px;margin-bottom:7px}.tour-preview-badges span{padding:4px 7px;border-radius:999px;background:#e7f5f3;color:#0f766e;font-size:8px;font-weight:900;text-transform:uppercase}.tour-preview-badges span:nth-child(2){background:#fff4ce;color:#8a6412}.tour-preview-badges .hidden{display:none}.tour-preview-body h4{margin:0;color:#163a3e;font-size:16px}.tour-preview-body p{font-size:11px;line-height:1.45;color:#6c7d82;margin:7px 0 10px;min-height:46px}.tour-preview-meta{display:flex;flex-wrap:wrap;gap:6px;color:#60757a;font-size:9px}.tour-preview-price{display:flex;justify-content:space-between;align-items:end;border-top:1px solid #edf1f1;margin-top:12px;padding-top:10px}.tour-preview-price span{font-size:9px;color:#809196}.tour-preview-price strong{font-size:15px;color:#0f766e}.tour-completeness{margin-top:13px;padding:13px;border:1px solid #dbe7e6;background:#fff;border-radius:14px}.tour-completeness-head{display:flex;justify-content:space-between;font-size:10px;color:#516a70}.tour-progress{height:6px;border-radius:999px;background:#e6efee;overflow:hidden;margin:8px 0 10px}.tour-progress i{display:block;height:100%;width:0;background:#0f766e;transition:.2s}.tour-completeness-list{display:grid;grid-template-columns:1fr 1fr;gap:5px}.tour-completeness-list span{font-size:9px;color:#93a1a5}.tour-completeness-list span.done{color:#39765a;font-weight:800}.tour-modal-footer{position:sticky;bottom:0;background:#fff;border-top:1px solid #e5eef0;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;box-shadow:0 -8px 20px rgba(15,23,42,.05)}.tour-footer-left{font-size:10px;color:#7a8d92}.tour-footer-actions{display:flex;gap:8px}.tour-modal-footer button{border:0;border-radius:9px;padding:10px 14px;font-weight:900;cursor:pointer}.tour-primary-btn{background:#0f766e;color:#fff;min-width:160px}.tour-primary-btn:disabled,.tour-secondary-btn:disabled{opacity:.45;cursor:not-allowed}.tour-secondary-btn{background:#eaf4f2;color:#0f766e}.tour-dark-btn{background:#334155;color:#fff}
 @media(max-width:1150px){.tour-editor-layout{grid-template-columns:1fr}.tour-live-rail{position:relative;border-left:0;border-top:1px solid #e2ebeb;min-height:0}.tour-preview-card{max-width:520px}.tour-switch-grid{grid-template-columns:1fr}.tour-upload-grid,.tour-content-grid{grid-template-columns:1fr}}
 @media(max-width:800px){.tours-module-head{align-items:flex-start;flex-direction:column}.tour-head-summary{width:100%}.tour-head-summary>div{flex:1}.tours-toolbar{grid-template-columns:1fr}.tour-section-heading{align-items:stretch;flex-direction:column}.tour-add-package-btn{width:100%}.tour-modal-overlay{padding:0}.tour-modal-card{width:100vw;height:100vh;max-height:100vh;border-radius:0}.tour-modal-head{padding:13px 14px}.tour-modal-head p{display:none}.tour-preview-link{display:none}.tour-editor-tabs{padding:9px 10px}.tour-modal-body{max-height:none;flex:1}.tour-editor-main{padding:13px}.tour-form-grid.two-col,.tour-form-grid.three-col{grid-template-columns:1fr}.tour-pane-title{align-items:flex-start}.tour-upload-grid{grid-template-columns:1fr}.tour-gallery-preview{grid-template-columns:repeat(2,minmax(0,1fr))}.tour-switch-grid{grid-template-columns:1fr}.tour-live-rail{padding:13px}.tour-modal-footer{padding:10px;flex-direction:column;align-items:stretch}.tour-footer-left{display:none}.tour-footer-actions{display:grid;grid-template-columns:1fr 1fr}.tour-primary-btn{grid-column:1/-1;order:-1}.tour-completeness-list{grid-template-columns:1fr 1fr}.tours-table-wrap{margin:0 -8px}.tour-table-name{min-width:210px}}
+
+/* =====================================================
+   V6.6.1 TOURS EDITOR VIEWPORT PORTAL FIX
+   Keep the existing Tours editor UI, but force the modal shell to use the
+   browser viewport after JS moves #tourPackageFormBox directly under <body>.
+   This prevents clipping by transformed/overflow admin content containers.
+===================================================== */
+#tourPackageFormBox.tour-modal-overlay,
+#tourPackageFormBox.tour-modal-overlay *{box-sizing:border-box}
+body> #tourPackageFormBox.tour-modal-overlay{
+  position:fixed!important;inset:0!important;z-index:99999!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;height:auto!important;max-width:none!important;max-height:none!important;
+  margin:0!important;padding:20px!important;overflow:auto!important;
+  background:rgba(10,28,35,.72)!important;backdrop-filter:blur(4px)!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+body> #tourPackageFormBox.tour-modal-overlay.hidden{display:none!important}
+body> #tourPackageFormBox .tour-modal-card{
+  width:min(1440px,98vw)!important;max-height:95vh!important;min-height:0!important;
+  margin:auto!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;
+}
+body> #tourPackageFormBox .tour-package-form{
+  flex:1 1 auto!important;min-height:0!important;overflow:hidden!important;
+}
+body> #tourPackageFormBox .tour-modal-body{
+  flex:1 1 auto!important;min-height:0!important;max-height:none!important;overflow:auto!important;
+}
+body> #tourPackageFormBox .tour-modal-footer{flex:0 0 auto!important}
+@media(max-width:1150px){
+  body> #tourPackageFormBox .tour-modal-card{width:min(1080px,98vw)!important}
+}
+@media(max-width:800px){
+  body> #tourPackageFormBox.tour-modal-overlay{padding:0!important}
+  body> #tourPackageFormBox .tour-modal-card{width:100vw!important;height:100dvh!important;max-height:100dvh!important;border-radius:0!important}
+}
+

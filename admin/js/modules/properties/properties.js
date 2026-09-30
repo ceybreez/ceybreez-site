@@ -20,15 +20,9 @@ function isValidUrl(value) { if (!value) return true; try { const u = new URL(va
 function isValidImageUrlOrPath(value) { if (!value) return true; if (/^(images\/|\.\.?\/|\/)/i.test(value)) return true; return isValidUrl(value); }
 function isNonNegative(value) { if (!value) return true; const n = Number(value); return Number.isFinite(n) && n >= 0; }
 
-/* V6.1.2: keep the premium editor outside the V14/V15 content grid.
-   Some admin shell/layout rules create clipping/containing contexts for descendants.
-   Portalling the modal to <body> guarantees viewport-based positioning. */
-function mountPropertyModalToBody() {
-  const box = byId("propertyFormBox");
-  if (!box || !document.body) return;
-  if (box.parentNode !== document.body) document.body.appendChild(box);
-  box.dataset.propertyViewportPortal = "1";
-}
+/* V6.1.3: use the exact same modal shell pattern as Tours CMS.
+   The property editor is detached from the legacy .cms-form-box / right drawer
+   so old admin CSS cannot resize, clip or convert it into a narrow panel. */
 function recoverPropertyFormFromLegacyDrawer() {
   const form = byId("propertyForm");
   const box = byId("propertyFormBox");
@@ -36,13 +30,9 @@ function recoverPropertyFormFromLegacyDrawer() {
   const drawerBody = byId("v64CmsDrawerBody");
   if (!form || !box) return;
 
-  // Older Admin V6.4 moves CMS forms into the narrow right-side drawer and
-  // wraps every input in .v64-field. The V6.1 property editor is a complete
-  // layout of its own, so restore/unwrap it before opening.
   if (drawerBody?.contains(form) && typeof window.v64CloseCmsDrawer === "function") {
     try { window.v64CloseCmsDrawer(); } catch (_) {}
   }
-  if (!box.contains(form)) box.appendChild(form);
 
   form.querySelectorAll(".v64-field").forEach((wrap) => {
     const control = wrap.querySelector("input, select, textarea");
@@ -53,23 +43,70 @@ function recoverPropertyFormFromLegacyDrawer() {
   drawer?.classList.add("hidden");
 }
 
+function upgradePropertyModalShell() {
+  const box = byId("propertyFormBox");
+  const header = byId("propertyFormBoxHeader");
+  const form = byId("propertyForm");
+  if (!box || !header || !form || !document.body) return;
+
+  if (box.dataset.propertyTourShell === "1") return;
+
+  // Completely opt out of legacy CMS drawer/form geometry.
+  box.classList.remove("cms-form-box", "property-cms-modal-open", "v6-cms-modal-open");
+  box.classList.add("property-modal-overlay");
+  box.removeAttribute("style");
+  delete box.dataset.propertyViewportPortal;
+
+  const card = document.createElement("div");
+  card.className = "property-modal-card";
+
+  header.classList.remove("cms-modal-head", "v6-cms-modal-head");
+  header.classList.add("property-modal-head");
+
+  const title = byId("propertyFormBoxTitle");
+  if (title && !header.querySelector(".property-modal-title")) {
+    const titleWrap = document.createElement("div");
+    titleWrap.className = "property-modal-title";
+    const kicker = document.createElement("span");
+    kicker.className = "property-modal-kicker";
+    kicker.id = "propertyFormModeLabel";
+    kicker.textContent = "PROPERTY CMS";
+    const subtitle = document.createElement("p");
+    subtitle.id = "propertyFormSubtitle";
+    subtitle.textContent = "Create and manage property details, rates, facilities and media.";
+    titleWrap.append(kicker, title, subtitle);
+    header.prepend(titleWrap);
+  }
+
+  const closeButton = header.querySelector("button");
+  if (closeButton) closeButton.classList.add("property-modal-close");
+
+  card.append(header, form);
+  box.replaceChildren(card);
+  if (box.parentNode !== document.body) document.body.appendChild(box);
+  box.dataset.propertyTourShell = "1";
+  box.setAttribute("aria-hidden", box.classList.contains("hidden") ? "true" : "false");
+}
+
 function showForm() {
   recoverPropertyFormFromLegacyDrawer();
-  mountPropertyModalToBody();
+  upgradePropertyModalShell();
   const box = byId("propertyFormBox");
   if (!box) return;
   box.classList.remove("hidden");
-  box.classList.add("property-cms-modal-open");
-  document.body.classList.add("property-editor-open");
+  box.setAttribute("aria-hidden", "false");
+  document.body.classList.add("property-modal-open");
+  const main = box.querySelector(".property-editor-main");
+  if (main) main.scrollTop = 0;
 }
 
-function closeForm() {
-  if (formDirty && !confirm("You have unsaved property changes. Close without saving?")) return;
+function closeForm(force = false) {
+  if (!force && formDirty && !confirm("You have unsaved property changes. Close without saving?")) return;
   formDirty = false;
   const box = byId("propertyFormBox");
   box?.classList.add("hidden");
-  box?.classList.remove("property-cms-modal-open");
-  document.body.classList.remove("property-editor-open");
+  box?.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("property-modal-open");
 }
 function setUploadStatus(id, message = "", isError = false) { const el = byId(id); if (!el) return; el.textContent = message; el.classList.toggle("error", !!isError); }
 function setDirty(value = true) { formDirty = value; const badge = byId("propertyDirtyBadge"); if (badge) { badge.textContent = value ? "Unsaved" : "Saved"; badge.classList.toggle("unsaved", value); } }
@@ -82,7 +119,7 @@ function setFormTab(name) {
   const prev = byId("propertyFormPrevBtn"); const next = byId("propertyFormNextBtn");
   if (prev) prev.disabled = idx <= 0;
   if (next) { next.disabled = idx >= formTabs.length - 1; next.textContent = idx === formTabs.length - 2 ? "Review SEO →" : "Next →"; }
-  byId("propertyFormBox")?.scrollTo?.({ top: 0, behavior: "smooth" });
+  byId("propertyFormBox")?.querySelector?.(".property-editor-main")?.scrollTo?.({ top: 0, behavior: "smooth" });
 }
 function moveFormTab(step) { const idx = formTabs.indexOf(currentFormTab); setFormTab(formTabs[Math.min(Math.max(idx + step, 0), formTabs.length - 1)]); }
 
@@ -189,7 +226,7 @@ async function refreshProperties() {
 async function submitProperty(event) {
   event?.preventDefault?.(); event?.stopImmediatePropagation?.();
   const payload = collectPropertyPayload(); const error = validatePayload(payload); if (error) return alert(error);
-  try { const result = await apiSaveProperty(payload); alert(result?.pendingApproval ? (result.message || "Property change submitted for approval") : "Property saved"); setDirty(false); resetForm(payload.type || "villa"); if (typeof window.closeCmsForm === "function") window.closeCmsForm("propertyFormBox"); await refreshProperties(); }
+  try { const result = await apiSaveProperty(payload); alert(result?.pendingApproval ? (result.message || "Property change submitted for approval") : "Property saved"); setDirty(false); resetForm(payload.type || "villa"); closeForm(true); await refreshProperties(); }
   catch (errorSave) { alert(errorSave.message || "Property save failed"); }
 }
 
@@ -222,9 +259,9 @@ function installGlobalCompatibility() {
   window.loadProperties = refreshProperties;
   window.renderPropertiesTable = () => renderPropertiesTable(propertyState);
   window.resetPropertyForm = () => resetForm(val("propType") || "villa");
-  window.openAddEnterprisePropertyForm = function(type = "villa") { resetForm(type); setText("propertyFormBoxTitle", `Add New ${type.charAt(0).toUpperCase() + type.slice(1)}`); showForm(); updateLivePreview(); };
+  window.openAddEnterprisePropertyForm = function(type = "villa") { resetForm(type); setText("propertyFormBoxTitle", `Add New ${type.charAt(0).toUpperCase() + type.slice(1)}`); setText("propertyFormModeLabel", "NEW PROPERTY"); setText("propertyFormSubtitle", "Build the property step by step. Details, rates, facilities and media stay in one clean editor."); showForm(); updateLivePreview(); };
   window.openAddPropertyForm = window.openAddEnterprisePropertyForm;
-  window.editEnterpriseProperty = function(id) { const item = propertyState.find(x => String(x.id) === String(id)) || (window.allProperties || []).find(x => String(x.id) === String(id)); if (!item) return alert("Property not found."); setText("propertyFormBoxTitle", "Edit Property"); fillPropertyForm(item); slugManuallyEdited = !!item.slug; setFormTab("basic"); renderMediaPreviews(); updateLivePreview(); setDirty(false); showForm(); };
+  window.editEnterpriseProperty = function(id) { const item = propertyState.find(x => String(x.id) === String(id)) || (window.allProperties || []).find(x => String(x.id) === String(id)); if (!item) return alert("Property not found."); setText("propertyFormBoxTitle", "Edit Property"); setText("propertyFormModeLabel", "EDIT PROPERTY"); setText("propertyFormSubtitle", "Update property details, rates, facilities, gallery and publishing settings."); fillPropertyForm(item); slugManuallyEdited = !!item.slug; setFormTab("basic"); renderMediaPreviews(); updateLivePreview(); setDirty(false); showForm(); };
   window.editPropertyById = window.editEnterpriseProperty;
   window.deleteEnterpriseProperty = async function(id) { if (!confirm("Delete this property?")) return; try { const result = await apiDeleteProperty(id); alert(result?.pendingApproval ? (result.message || "Delete submitted for approval") : "Property deleted"); await refreshProperties(); } catch (error) { alert(error.message || "Property delete failed"); } };
   window.deleteProperty = window.deleteEnterpriseProperty;
@@ -234,8 +271,9 @@ function installGlobalCompatibility() {
 
 export function initPropertiesModule() {
   recoverPropertyFormFromLegacyDrawer();
-  mountPropertyModalToBody();
-  extendPropertyForm(); bindEditorEvents(); interceptLegacyFilters(); installGlobalCompatibility();
+  extendPropertyForm();
+  upgradePropertyModalShell();
+  bindEditorEvents(); interceptLegacyFilters(); installGlobalCompatibility();
   const headerClose = byId("propertyFormBoxHeader")?.querySelector("button"); if (headerClose) { headerClose.removeAttribute("onclick"); headerClose.addEventListener("click", closeForm); }
   renderMediaPreviews(); updateLivePreview(); setFormTab("basic"); setTimeout(updateLivePreview, 250);
   document.addEventListener("click", event => { if (event.target?.closest?.('[data-v14-tab="properties"]')) setTimeout(refreshProperties, 80); }, true);

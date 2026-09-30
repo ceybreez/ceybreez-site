@@ -1,18 +1,25 @@
 import { apiGet } from "../../core/api.js";
 
+async function safeGet(path){
+  try {
+    const data = await apiGet(path);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.warn("Dashboard source unavailable:", path, error?.message || error);
+    return [];
+  }
+}
+
 export async function loadDashboardData(){
-  const [inquiries, bookings, properties, tours, reviews] = await Promise.all([
-    apiGet("/api/admin/inquiries").catch(()=>[]),
-    apiGet("/api/admin/bookings").catch(()=>[]),
-    apiGet("/api/admin/properties").catch(()=>[]),
-    apiGet("/api/admin/destinations").catch(()=>[]),
-    apiGet("/api/admin/reviews").catch(()=>[])
+  const [inquiries, bookings, properties, destinations, tourPackages, services, reviews] = await Promise.all([
+    safeGet("/api/admin/inquiries"),
+    safeGet("/api/admin/bookings"),
+    safeGet("/api/admin/properties"),
+    safeGet("/api/admin/destinations"),
+    safeGet("/api/admin/tour-packages"),
+    safeGet("/api/admin/services"),
+    safeGet("/api/admin/reviews")
   ]);
-  return {
-    inquiries: Array.isArray(inquiries) ? inquiries : [],
-    bookings: Array.isArray(bookings) ? bookings : [],
-    properties: Array.isArray(properties) ? properties : [],
-    tours: Array.isArray(tours) ? tours : [],
-    reviews: Array.isArray(reviews) ? reviews : []
-  };
+
+  return { inquiries, bookings, properties, destinations, tourPackages, services, reviews };
 }

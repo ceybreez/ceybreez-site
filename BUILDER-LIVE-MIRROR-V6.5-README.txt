@@ -1,0 +1,86 @@
+CEYBREEZ V6.5 - PAGE BUILDER + VISUAL BUILDER LIVE MIRROR
+===========================================================
+
+PURPOSE
+-------
+Make Page Builder and Visual Builder start from the same current public website
+that visitors see, instead of loading old/hidden visual-builder layout overrides.
+
+WHAT THIS FIX DOES
+------------------
+1. Visual Builder uses a new Live Mirror V5 namespace.
+   - New published records: __visual_live_*
+   - Old __visual_* records are NOT deleted.
+   - Old records are ignored by normal live pages and by the new Visual Builder.
+
+2. Page Builder discovers the REAL sections on every public page.
+   - Home already has data-section markers.
+   - Villas / Apartments / Homestays / Tours / Contact / legal pages are given
+     stable runtime section keys automatically by page-builder.js.
+   - No need to manually add data-section attributes to every HTML section.
+
+3. New Page Builder layout changes can actually appear on the public website.
+   - New saves are tagged liveLayout=true, builderVersion=5.0-live-mirror.
+   - Old legacy layout settings remain quarantined unless explicitly opened in
+     legacy preview mode.
+
+4. Visual Builder loads the actual live page first.
+   - It no longer starts with old Visual Builder published records.
+   - Existing new Live Mirror edits are then layered on top, exactly as live.
+
+5. Dynamic CMS content is safer.
+   - Normal style edits no longer capture/freeze an element's entire innerHTML.
+   - HTML is captured only for intentional text/structure edits such as direct
+     text editing, adding/deleting/duplicating/reordering blocks.
+
+6. Public page-builder.js cache version is bumped in all public HTML files so
+   browsers do not keep the old JS for up to one week.
+
+FILES IN THIS PACKAGE
+---------------------
+/page-builder.js
+/index.html
+/villas.html
+/apartments.html
+/homestays.html
+/tours.html
+/tour-details.html
+/services.html
+/contact.html
+/privacy.html
+/terms.html
+/404.html
+/admin/page-builder-admin-v2.js
+/admin/visual-builder/builder.js
+/admin/visual-builder/index.html
+
+NOT CHANGED
+-----------
+- Cloudflare Worker
+- Admin Security / Login
+- User Management
+- Roles / Permissions
+- Approval Queue
+- Inquiries / Bookings / Finance
+- Properties / Tours / Services CMS modules
+- Database schema
+
+TEST AFTER UPLOAD
+-----------------
+1. Hard refresh Admin: Ctrl + Shift + R.
+2. Open Admin > Page Builder.
+3. Choose Home, Villas, Tours, Services and Contact one by one.
+4. Confirm preview matches the current public page.
+5. Click a real heading/image/button in preview and confirm inspector selects it.
+6. Save ONE small test change, refresh public page and verify it appears.
+7. Open Visual Designer.
+8. Confirm it starts from the same public website, not the old alternate layout.
+9. Save Draft first. Then Publish to Live only after preview is correct.
+10. Test Desktop / Tablet / Mobile preview.
+
+IMPORTANT
+---------
+CMS-controlled business data should still be edited in its dedicated CMS:
+Properties CMS, Tours CMS, Services CMS, Destination CMS, Reviews, etc.
+Page Builder / Visual Builder is best for page text, static images, buttons,
+spacing, colours and layout around those dynamic modules.

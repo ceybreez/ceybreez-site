@@ -321,19 +321,30 @@
 
   function discoverPreviewSections() {
     const doc=frameDoc(); if(!doc)return;
-    const savedKeys=new Set(state.items.filter(x=>!x.__virtual).map(x=>String(x.sectionKey)));
-    const virtual=[...doc.querySelectorAll('[data-section]')].filter(n=>!savedKeys.has(String(n.dataset.section))).map((node,index)=>{
-      const key=node.dataset.section;
+    const saved = state.items.filter(x=>!x.__virtual);
+    const savedByKey = new Map(saved.map(x=>[String(x.sectionKey||''),x]));
+    const nodes=[...doc.querySelectorAll('[data-section]')];
+    const mirror=[];
+    nodes.forEach((node,index)=>{
+      const key=String(node.dataset.section||'').trim();
+      if(!key)return;
+      const existing=savedByKey.get(key);
+      if(existing){
+        mirror.push({...existing,sortOrder:index,__mirror:true});
+        return;
+      }
       const title=node.querySelector('[data-field="title"],h1,h2,h3')?.textContent?.trim() || key;
       const subtitle=node.querySelector('[data-field="subtitle"]')?.textContent?.trim() || '';
       const content=node.querySelector('[data-field="content"],p')?.textContent?.trim() || '';
-      const button=node.querySelector('[data-field="button"]');
+      const button=node.querySelector('[data-field="button"],a,button');
       const image=node.querySelector('[data-field="image"],img');
-      return {id:`local:${key}`,__virtual:true,page:currentPage(),sectionKey:key,sectionType:'existing',title,subtitle,content,
+      mirror.push({id:`local:${key}`,__virtual:true,__mirror:true,page:currentPage(),sectionKey:key,sectionType:'existing',title,subtitle,content,
         buttonText:button?.textContent?.trim()||'',buttonUrl:button?.getAttribute('href')||'',mediaUrl:image?.getAttribute('src')||'',
-        backgroundColor:'#ffffff',textColor:'#222222',headingColor:'#17324d',buttonColor:'#0f766e',sortOrder:index,active:true,settings:{}};
+        backgroundColor:'#ffffff',textColor:'#222222',headingColor:'#17324d',buttonColor:'#0f766e',sortOrder:index,active:true,settings:{}});
     });
-    state.items=[...state.items.filter(x=>!x.__virtual),...virtual]; renderList();
+    state.items=mirror;
+    if(state.selectedId && !state.items.some(x=>String(x.id)===String(state.selectedId))) state.selectedId='';
+    renderList();
   }
 
   function installPreviewEditor() {
@@ -370,7 +381,7 @@
   }
 
   window.pb2SetDevice=(device)=>setDevice(device);
-  window.pb2RefreshPreview=()=>{const f=$('pb2PreviewFrame');if(f)f.src=`${PAGE_URLS[currentPage()]||PAGE_URLS.home}?pbpreview=${Date.now()}`;};
+  window.pb2RefreshPreview=()=>{const f=$('pb2PreviewFrame');if(f)f.src=`${PAGE_URLS[currentPage()]||PAGE_URLS.home}?pbmirror=${Date.now()}`;};
   window.pb2ChangePage=(page)=>{if($('sectionPage'))$('sectionPage').value=page;state.selectedId='';clearSelection();loadPageSections();window.pb2RefreshPreview();};
   window.pb2NewSection=()=>{resetSectionForm();$('sectionPage').value=currentPage();$('sectionKey').value='custom';state.selectedId='';clearSelection();};
   window.pb2ResetSelectedSection=()=>{if(confirm('Clear the selected form? Saved data remains until Save is pressed.'))window.pb2NewSection();};
@@ -420,7 +431,7 @@
   window.savePageSection=async function(e){
     e?.preventDefault(); const status=$('pb2SaveStatus'); if(status){status.textContent='Saving…';status.className='';}
     const mode=backgroundMode();
-    const settings={backgroundMode:mode,videoUrl:mode==='video'?$('sectionVideo').value.trim():'',gradientStart:$('sectionGradientStart').value,gradientEnd:$('sectionGradientEnd').value,paddingTop:px('sectionPaddingTop'),paddingBottom:px('sectionPaddingBottom'),borderRadius:px('sectionBorderRadius'),shadow:$('sectionShadow').value,animation:$('sectionAnimation').value,cards:collectCards(),buttonText:$('sectionButtonText').value.trim(),buttonUrl:$('sectionButtonUrl').value.trim(),backgroundSize:$('sectionBackgroundSize').value,backgroundPosition:$('sectionBackgroundPosition').value,overlay:Number($('sectionOverlay').value||35),headingColor:$('sectionHeadingColor').value,headingFont:$('sectionHeadingFont').value,headingSize:px('sectionHeadingSize'),fontSize:px('sectionFontSize'),elementStyles:state.elementStyles,customElements:state.customElements};
+    const settings={liveLayout:true,builderVersion:'5.0-live-mirror',backgroundMode:mode,videoUrl:mode==='video'?$('sectionVideo').value.trim():'',gradientStart:$('sectionGradientStart').value,gradientEnd:$('sectionGradientEnd').value,paddingTop:px('sectionPaddingTop'),paddingBottom:px('sectionPaddingBottom'),borderRadius:px('sectionBorderRadius'),shadow:$('sectionShadow').value,animation:$('sectionAnimation').value,cards:collectCards(),buttonText:$('sectionButtonText').value.trim(),buttonUrl:$('sectionButtonUrl').value.trim(),backgroundSize:$('sectionBackgroundSize').value,backgroundPosition:$('sectionBackgroundPosition').value,overlay:Number($('sectionOverlay').value||35),headingColor:$('sectionHeadingColor').value,headingFont:$('sectionHeadingFont').value,headingSize:px('sectionHeadingSize'),fontSize:px('sectionFontSize'),elementStyles:state.elementStyles,customElements:state.customElements};
     const data={id:$('sectionEditId').value||'',page:currentPage(),sectionKey:$('sectionKey').value,sectionType:$('sectionType').value,title:$('sectionTitle').value.trim(),subtitle:$('sectionSubtitle').value.trim(),content:$('sectionContent').value.trim(),buttonText:$('sectionButtonText').value.trim(),buttonUrl:$('sectionButtonUrl').value.trim(),mediaUrl:$('sectionImage').value.trim(),backgroundType:mode,backgroundColor:mode==='color'?$('sectionBgColor').value:'transparent',backgroundImage:mode==='image'?$('sectionBackgroundImage').value.trim():'',textColor:$('sectionTextColor').value,headingColor:$('sectionHeadingColor').value,buttonColor:$('sectionButtonColor').value,fontFamily:$('sectionFontFamily').value,fontSize:px('sectionFontSize'),sortOrder:$('sectionSortOrder').value,active:$('sectionActive').checked,settings};
     try{const res=await fetch(`${API_BASE}/api/admin/page-sections`,{method:'POST',headers:authHeaders(),body:JSON.stringify(data)});const out=await res.json();if(!res.ok)throw new Error(out.error||'Save failed');if(status){status.textContent='Saved';status.className='pb2-status-ok';}await loadPageSections();window.pb2RefreshPreview();}
     catch(err){if(status){status.textContent=err.message;status.className='pb2-status-error';}alert(err.message);}
@@ -446,6 +457,8 @@
 
   function bindOnce(){
     if(state.initialized)return;state.initialized=true;ensureInspector();
+    const help=document.querySelector('#pageControlTab .v3-help');
+    if(help) help.innerHTML='<strong>Live Mirror:</strong> this preview is built from the same public page structure visitors see. Legacy hidden Visual Builder layouts are ignored. Save Changes publishes only the section you are editing.';
     document.querySelectorAll('.pb2-accordion-title').forEach(btn=>btn.addEventListener('click',()=>btn.parentElement.classList.toggle('open')));
     document.querySelectorAll('#sectionForm input,#sectionForm textarea,#sectionForm select').forEach(input=>input.addEventListener('input',window.pb2LivePreview));
     document.querySelectorAll('input[name="sectionBackgroundMode"]').forEach(input=>input.addEventListener('change',updateBackgroundControls));

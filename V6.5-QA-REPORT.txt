@@ -1,0 +1,16 @@
+CeyBreez V6.5 Builder Live Mirror - Static QA
+==============================================
+PASS: page-builder.js JavaScript syntax
+PASS: admin/page-builder-admin-v2.js JavaScript syntax
+PASS: admin/visual-builder/builder.js JavaScript syntax
+PASS: Visual Builder legacy V3/V4 local draft migration removed
+PASS: Visual Builder publishes only __visual_live_* records
+PASS: Public runtime recognises __visual_live_* records
+PASS: Legacy __visual_* records remain ignored by normal public mode
+PASS: Page Builder new saves marked liveLayout / builderVersion 5.0-live-mirror
+PASS: Runtime section discovery added for pages missing data-section attributes
+PASS: Public HTML page-builder.js cache-bust updated
+PASS: No Worker/security/user-management files included in patch
+
+Runtime checks still required after deployment because D1 content and live API data
+are external to this static package.

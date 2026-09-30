@@ -11,10 +11,13 @@
   "use strict";
 
   const API_BASE = "https://ceybreez-contact-api.ceybreez.workers.dev";
-  const BUILDER_MODE = new URLSearchParams(window.location.search).has("cbuilder");
-  const VISUAL_PUBLIC_MODE = new URLSearchParams(window.location.search).has("visual");
-  const allowVisualOverrides = () => BUILDER_MODE || VISUAL_PUBLIC_MODE || document.body?.dataset.cmsLayout === "legacy";
+  const SEARCH_PARAMS = new URLSearchParams(window.location.search);
+  const LEGACY_VISUAL_PREVIEW_MODE = SEARCH_PARAMS.has("legacyVisual");
+  const VISUAL_PUBLIC_MODE = SEARCH_PARAMS.has("visual");
+  const allowLegacyVisualOverrides = () => LEGACY_VISUAL_PREVIEW_MODE || VISUAL_PUBLIC_MODE || document.body?.dataset.cmsLayout === "legacy";
   let lastSections = [];
+  let liveVisualObserver = null;
+  let liveVisualObserverTimer = null;
 
   const settingsOf = (value) => {
     try {
@@ -25,12 +28,59 @@
   };
 
   const pageKey = () => document.body?.dataset.page || "home";
-  const isVisualSection = (section) => String(section?.sectionKey || "").startsWith("__visual_");
+  const sectionKeyOf = (section) => String(section?.sectionKey || "");
+  const isVisualSection = (section) => sectionKeyOf(section).startsWith("__visual_");
+  const isLiveVisualSection = (section) => sectionKeyOf(section).startsWith("__visual_live_");
+  const isLegacyVisualSection = (section) => isVisualSection(section) && !isLiveVisualSection(section);
+  const isLiveLayoutSection = (section, settings) => settings?.liveLayout === true || String(settings?.builderVersion || "").startsWith("5.");
+
+  function slugPart(value) {
+    return String(value || "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
+  function runtimeSectionBase(node, index) {
+    if (node.dataset.section) return slugPart(node.dataset.section) || `section-${index + 1}`;
+    if (node.id) return slugPart(node.id) || `section-${index + 1}`;
+    if (node.matches?.("header.site-header")) return "site-header";
+    if (node.matches?.("footer.site-footer")) return "footer";
+    if (node.id === "welcomeScreen" || node.classList?.contains("welcome-screen")) return "welcome";
+    const ignored = new Set(["active", "hidden", "v31-reveal", "editorial-section", "content-card"]);
+    const cls = [...(node.classList || [])].map(slugPart).find((name) => name && !ignored.has(name));
+    if (cls) return cls;
+    return `${slugPart(node.tagName || "section") || "section"}-${index + 1}`;
+  }
+
+  function ensureRuntimeSectionKeys() {
+    const candidates = [
+      document.querySelector("#welcomeScreen"),
+      document.querySelector("header.site-header"),
+      ...document.querySelectorAll("section"),
+      document.querySelector("footer.site-footer")
+    ].filter(Boolean);
+    const used = new Set();
+    candidates.forEach((node, index) => {
+      const existing = slugPart(node.dataset.section || "");
+      let base = runtimeSectionBase(node, index);
+      let key = existing || base;
+      let n = 2;
+      while (used.has(key)) key = `${base}-${n++}`;
+      used.add(key);
+      if (!node.dataset.section) {
+        node.dataset.section = key;
+        node.dataset.cbRuntimeSection = "1";
+      }
+    });
+  }
 
   /* JS FUNCTION: loadCeyBreezSections — Loads CMS page sections for the current page. */
 
   async function loadCeyBreezSections(page = pageKey()) {
     try {
+      ensureRuntimeSectionKeys();
       const url = `${API_BASE}/api/page-sections?page=${encodeURIComponent(page)}&v=${Date.now()}`;
       const response = await fetch(url, { cache: "no-store" });
       const sections = await response.json();
@@ -50,10 +100,11 @@
 
   function applySection(section) {
     if (isVisualSection(section)) {
-      // The Visual Builder owns these records. Its iframe skips them and applies
-      // the local draft after loading the normal CMS content.
-      if (allowVisualOverrides()) {
-        const settings = settingsOf(section.settings);
+      const settings = settingsOf(section.settings);
+      // V5 Live Mirror records are the only visual records intentionally shared
+      // by the editor and the public website. Older visual-builder records stay
+      // quarantined so they cannot make the builder look different from live.
+      if (isLiveVisualSection(section) || (isLegacyVisualSection(section) && allowLegacyVisualOverrides())) {
         applyVisualBuilderRecords(document.body, settings.visualBuilderRecords || []);
       }
       return;
@@ -91,7 +142,7 @@
 
     target.querySelector(":scope > .cms-bg-video")?.remove();
 
-    if (allowVisualOverrides()) {
+    if (isLiveLayoutSection(section, settings) || allowLegacyVisualOverrides()) {
       if (mode === "video" && settings.videoUrl) applyVideoBackground(target, settings.videoUrl);
       if (Array.isArray(settings.cards)) renderCards(target, settings.cards);
       applySectionStyles(target, section, settings);
@@ -440,6 +491,30 @@
     }
   }
 
+  function setupLiveVisualObserver() {
+    if (liveVisualObserver) liveVisualObserver.disconnect();
+    const applyLiveRecords = () => {
+      const rows = lastSections.filter(isLiveVisualSection);
+      if (!rows.length) return;
+      if (liveVisualObserver) liveVisualObserver.disconnect();
+      try {
+        rows.forEach((section) => {
+          const settings = settingsOf(section.settings);
+          applyVisualBuilderRecords(document.body, settings.visualBuilderRecords || []);
+        });
+      } finally {
+        setTimeout(() => {
+          if (liveVisualObserver && document.body) liveVisualObserver.observe(document.body, { childList: true, subtree: true });
+        }, 0);
+      }
+    };
+    liveVisualObserver = new MutationObserver(() => {
+      clearTimeout(liveVisualObserverTimer);
+      liveVisualObserverTimer = setTimeout(applyLiveRecords, 120);
+    });
+    if (document.body) liveVisualObserver.observe(document.body, { childList: true, subtree: true });
+  }
+
   let readyResolve;
   window.CEYBREEZ_PAGE_BUILDER_READY = new Promise((resolve) => {
     readyResolve = resolve;
@@ -452,6 +527,7 @@
       loadCeyBreezSections(pageKey()),
       loadFooterPartners()
     ]);
+    setupLiveVisualObserver();
     readyResolve(sections);
     window.dispatchEvent(new CustomEvent("ceybreez:page-builder-ready", { detail: { sections } }));
   }
@@ -459,13 +535,11 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true });
   else start();
 
-  if (allowVisualOverrides() && !BUILDER_MODE) {
-    let resizeTimer;
-    addEventListener("resize", () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        lastSections.filter(isVisualSection).forEach(applySection);
-      }, 180);
-    });
-  }
+  let resizeTimer;
+  addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      lastSections.filter((section) => isLiveVisualSection(section) || (isLegacyVisualSection(section) && allowLegacyVisualOverrides())).forEach(applySection);
+    }, 180);
+  });
 })();

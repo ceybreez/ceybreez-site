@@ -1,0 +1,166 @@
+/* =====================================================
+   CEYBREEZ ADMIN V6.4 - MOBILE / PWA APP LAYER
+   Front-end shell only. Does not change authentication or API permissions.
+===================================================== */
+:root{
+  --cb-pwa-green:#0f766e;
+  --cb-pwa-green-dark:#064e47;
+  --cb-pwa-bg:#eef2f5;
+  --cb-pwa-card:#ffffff;
+  --cb-pwa-muted:#64748b;
+  --cb-pwa-line:#d9e3e1;
+  --cb-pwa-gold:#f0b84b;
+  --cb-pwa-bottom:72px;
+}
+
+.cb-pwa-install{
+  display:none;
+  align-items:center;
+  gap:7px;
+  min-height:40px;
+  padding:9px 13px !important;
+  margin:0 !important;
+  border:0 !important;
+  border-radius:12px !important;
+  background:#0f766e !important;
+  color:#fff !important;
+  font-weight:800 !important;
+  box-shadow:0 7px 18px rgba(15,118,110,.2) !important;
+}
+.cb-pwa-install.is-visible{display:inline-flex !important;}
+.cb-pwa-install.is-installed{display:none !important;}
+
+.cb-pwa-network{
+  position:fixed;
+  top:max(10px, env(safe-area-inset-top));
+  left:50%;
+  transform:translateX(-50%) translateY(-140%);
+  z-index:20000;
+  padding:9px 14px;
+  border-radius:999px;
+  background:#7f1d1d;
+  color:#fff;
+  font:800 12px/1.2 Inter,Arial,sans-serif;
+  box-shadow:0 12px 30px rgba(15,23,42,.2);
+  opacity:0;
+  pointer-events:none;
+  transition:.22s ease;
+}
+.cb-pwa-network.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.cb-pwa-network.online{background:#166534;}
+
+.cb-pwa-bottom-nav{
+  display:none;
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:2900;
+  min-height:calc(var(--cb-pwa-bottom) + env(safe-area-inset-bottom));
+  padding:7px 8px calc(7px + env(safe-area-inset-bottom));
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:4px;
+  background:rgba(255,255,255,.97);
+  border-top:1px solid #dce5e3;
+  box-shadow:0 -10px 30px rgba(15,23,42,.12);
+  backdrop-filter:blur(16px);
+}
+.cb-pwa-bottom-nav button{
+  min-width:0 !important;
+  min-height:54px !important;
+  margin:0 !important;
+  padding:5px 2px !important;
+  border:0 !important;
+  border-radius:14px !important;
+  background:transparent !important;
+  color:#5d6f6b !important;
+  box-shadow:none !important;
+  display:flex !important;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  font-size:10px !important;
+  font-weight:800 !important;
+  line-height:1.1 !important;
+  touch-action:manipulation;
+}
+.cb-pwa-bottom-nav .cb-pwa-icon{font-size:19px;line-height:1;}
+.cb-pwa-bottom-nav button.active{
+  background:#e6f5f2 !important;
+  color:#075e56 !important;
+}
+.cb-pwa-bottom-nav button.active .cb-pwa-icon{transform:translateY(-1px);}
+
+.cb-pwa-standalone-badge{
+  display:none;
+  align-items:center;
+  gap:5px;
+  color:#0f766e;
+  font-size:10px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+body.cb-pwa-standalone .cb-pwa-standalone-badge{display:inline-flex;}
+
+@media (max-width:900px){
+  body.v14-shell-ready .cb-pwa-bottom-nav{display:grid;}
+  body.v14-shell-ready .v14-main{
+    padding-bottom:calc(var(--cb-pwa-bottom) + env(safe-area-inset-bottom)) !important;
+  }
+  body.v14-shell-ready #v15Content{
+    padding-bottom:calc(22px + var(--cb-pwa-bottom) + env(safe-area-inset-bottom)) !important;
+  }
+  body.v14-shell-ready .v14-topbar{
+    padding-top:calc(10px + env(safe-area-inset-top)) !important;
+    min-height:calc(64px + env(safe-area-inset-top)) !important;
+  }
+  body.v14-shell-ready .v14-sidebar{
+    padding-top:calc(14px + env(safe-area-inset-top)) !important;
+    padding-bottom:calc(14px + env(safe-area-inset-bottom)) !important;
+  }
+  body.v14-shell-ready .v14-mobile-menu{
+    border-radius:13px !important;
+  }
+  body.v14-shell-ready .admin-section,
+  body.v14-shell-ready .v14-panel,
+  body.v14-shell-ready .v14-section-head,
+  body.v14-shell-ready .cms-toolbar,
+  body.v14-shell-ready .table-wrap{
+    border-radius:15px !important;
+  }
+  body.v14-shell-ready button,
+  body.v14-shell-ready a,
+  body.v14-shell-ready input,
+  body.v14-shell-ready select{
+    touch-action:manipulation;
+  }
+  body.v14-shell-ready input,
+  body.v14-shell-ready select,
+  body.v14-shell-ready textarea{
+    min-height:44px;
+  }
+  body.v14-shell-ready textarea{min-height:96px;}
+  body.v14-shell-ready .modal-actions button,
+  body.v14-shell-ready .button-row button,
+  body.v14-shell-ready .toolbar button{
+    min-height:44px !important;
+  }
+  body.cb-pwa-standalone .v14-topbar{
+    -webkit-user-select:none;
+    user-select:none;
+  }
+}
+
+@media (max-width:520px){
+  .cb-pwa-bottom-nav{padding-left:4px;padding-right:4px;gap:2px;}
+  .cb-pwa-bottom-nav button{font-size:9px !important;}
+  .cb-pwa-bottom-nav .cb-pwa-icon{font-size:18px;}
+  body.v14-shell-ready #v15Content{padding-left:9px !important;padding-right:9px !important;}
+  body.v14-shell-ready .v14-topbar{padding-left:10px !important;padding-right:10px !important;}
+}
+
+@media (display-mode: standalone){
+  html,body{overscroll-behavior-y:none;}
+}

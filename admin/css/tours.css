@@ -43,3 +43,148 @@ body> #tourPackageFormBox .tour-modal-footer{flex:0 0 auto!important}
   body> #tourPackageFormBox .tour-modal-card{width:100vw!important;height:100dvh!important;max-height:100dvh!important;border-radius:0!important}
 }
 
+
+/* =====================================================
+   V6.6.2 TOURS EDITOR BUTTON NORMALIZATION
+   Visual-only fix: keep all existing editor logic/layout unchanged.
+===================================================== */
+body> #tourPackageFormBox .tour-editor-tabs{
+  align-items:center!important;
+  gap:8px!important;
+  padding:12px 18px!important;
+}
+body> #tourPackageFormBox .tour-editor-tab{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:6px!important;
+  height:34px!important;
+  min-height:34px!important;
+  padding:0 13px!important;
+  margin:0!important;
+  border:1px solid #d3e5e2!important;
+  border-radius:999px!important;
+  background:#fff!important;
+  color:#0f766e!important;
+  font-size:11px!important;
+  font-weight:850!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+  vertical-align:middle!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+body> #tourPackageFormBox .tour-editor-tab>span{
+  flex:0 0 18px!important;
+  width:18px!important;
+  height:18px!important;
+  margin:0!important;
+  display:inline-grid!important;
+  place-items:center!important;
+  border-radius:50%!important;
+  background:#edf6f5!important;
+  color:#0f766e!important;
+  font-size:9px!important;
+  font-weight:900!important;
+  line-height:1!important;
+}
+body> #tourPackageFormBox .tour-editor-tab em{
+  display:inline-flex!important;
+  align-items:center!important;
+  margin:0 0 0 1px!important;
+  padding:2px 5px!important;
+  border-radius:999px!important;
+  background:#eaf7f4!important;
+  color:#0f766e!important;
+  font-size:8px!important;
+  font-style:normal!important;
+  font-weight:900!important;
+  line-height:1!important;
+}
+body> #tourPackageFormBox .tour-editor-tab.active{
+  background:#0f766e!important;
+  color:#fff!important;
+  border-color:#0f766e!important;
+  box-shadow:0 3px 8px rgba(15,118,110,.16)!important;
+}
+body> #tourPackageFormBox .tour-editor-tab.active>span{
+  background:rgba(255,255,255,.18)!important;
+  color:#fff!important;
+}
+body> #tourPackageFormBox .tour-editor-tab.active em{
+  background:rgba(255,255,255,.18)!important;
+  color:#fff!important;
+}
+
+body> #tourPackageFormBox .tour-modal-head-actions button,
+body> #tourPackageFormBox .tour-footer-actions button{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  white-space:nowrap!important;
+  line-height:1!important;
+  font-family:inherit!important;
+  box-sizing:border-box!important;
+}
+body> #tourPackageFormBox .tour-preview-link{
+  height:34px!important;
+  min-height:34px!important;
+  padding:0 13px!important;
+}
+body> #tourPackageFormBox .tour-modal-close{
+  flex:0 0 36px!important;
+  width:36px!important;
+  height:36px!important;
+  min-width:36px!important;
+  min-height:36px!important;
+  padding:0!important;
+  line-height:1!important;
+}
+body> #tourPackageFormBox .tour-footer-actions{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+}
+body> #tourPackageFormBox .tour-footer-actions button{
+  height:38px!important;
+  min-height:38px!important;
+  padding:0 14px!important;
+  border-radius:9px!important;
+  font-size:11px!important;
+  font-weight:900!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+body> #tourPackageFormBox .tour-primary-btn{
+  min-width:160px!important;
+}
+
+@media(max-width:800px){
+  body> #tourPackageFormBox .tour-editor-tabs{
+    padding:9px 10px!important;
+    gap:6px!important;
+  }
+  body> #tourPackageFormBox .tour-editor-tab{
+    height:32px!important;
+    min-height:32px!important;
+    padding:0 11px!important;
+    font-size:10px!important;
+  }
+  body> #tourPackageFormBox .tour-footer-actions{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+  }
+  body> #tourPackageFormBox .tour-footer-actions button{
+    width:100%!important;
+    min-width:0!important;
+  }
+  body> #tourPackageFormBox .tour-primary-btn{
+    grid-column:1/-1!important;
+    order:-1!important;
+  }
+}

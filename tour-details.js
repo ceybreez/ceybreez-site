@@ -267,7 +267,7 @@ async function submitInquiry(event){
     country: guestCountry,
     mobile: guestMobile,
     email: guestEmail,
-    countryCode: "",
+    countryCode: window.CeyBreezInquiry?.getDialCode("guestCountry") || "",
     experiences: `Tour Package - ${currentTour.title || "CeyBreez Tour"}`,
     itemName: currentTour.title || "Tour Package",
     dateFrom: travelDate,

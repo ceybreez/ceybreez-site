@@ -78,6 +78,17 @@
     requestAnimationFrame(()=>{ try{ phone.setSelectionRange(phone.value.length, phone.value.length); }catch(e){} });
   }
 
+  function setPhoneEnabled(phone, enabled){
+    if(!phone) return;
+    phone.disabled=!enabled;
+    phone.setAttribute("aria-disabled", enabled ? "false" : "true");
+    phone.placeholder=enabled ? "Enter mobile number" : "Select country first";
+    if(!enabled){
+      phone.value="";
+      phone.dataset.cbDial="";
+    }
+  }
+
   function bindPair(countryId, phoneId){
     let country=byId(countryId);
     const phone=byId(phoneId);
@@ -86,21 +97,31 @@
     populateCountrySelect(country);
     country.dataset.cbCountry="1";
     phone.dataset.cbPhone="1";
-    country.addEventListener("change",()=>{
+    phone.inputMode="tel";
+    phone.autocomplete="tel";
+
+    const sync=()=>{
       const c=selectedCountry(country);
-      if(c) setPhonePrefix(phone,c.dial);
-      else { phone.dataset.cbDial=""; if(/^\+\d+\s*$/.test(clean(phone.value))) phone.value=""; }
-    });
-    phone.addEventListener("focus",()=>{
-      if(!clean(phone.value)){
-        const c=selectedCountry(country);
-        if(c) setPhonePrefix(phone,c.dial);
+      if(!c){
+        setPhoneEnabled(phone,false);
+        return;
       }
+      setPhoneEnabled(phone,true);
+      setPhonePrefix(phone,c.dial);
+    };
+
+    country.addEventListener("change",sync);
+    phone.addEventListener("focus",()=>{
+      const c=selectedCountry(country);
+      if(c && !clean(phone.value)) setPhonePrefix(phone,c.dial);
     });
     phone.addEventListener("blur",()=>{
       const c=selectedCountry(country);
       if(c && !clean(phone.value)) setPhonePrefix(phone,c.dial);
     });
+
+    if(selectedCountry(country)) sync();
+    else setPhoneEnabled(phone,false);
   }
 
   function getCountry(id){ return clean(byId(id)?.value); }
@@ -178,7 +199,7 @@
   function resetPair(countryId, phoneId){
     const country=byId(countryId), phone=byId(phoneId);
     if(country) country.value="";
-    if(phone){ phone.value=""; phone.dataset.cbDial=""; }
+    if(phone) setPhoneEnabled(phone,false);
   }
 
   function decorateForms(){

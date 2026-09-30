@@ -35,6 +35,7 @@
 <link href="ceybreez-public-v3.css?v=20260916-3" rel="stylesheet"/><link href="stays-v4.css?v=20260917-1" rel="stylesheet"/>
 <link href="homestays-v4.css?v=20260917-8" rel="stylesheet"/>
   <link rel="stylesheet" href="ceybreez-mobile-nav-v6.css?v=20260928-final">
+  <link rel="stylesheet" href="inquiry-common.css?v=20260930-2">
 </head>
 <body data-page="homestays">
 <header class="site-header" id="siteHeader">
@@ -122,12 +123,12 @@
 <input id="inqEmail" placeholder="example@email.com" required="" type="email"/>
 </div>
 <div class="field-group">
-<label>📱 WhatsApp / Mobile *</label>
-<input id="inqMobile" placeholder="+94 77 123 4567" required="" type="tel"/>
-</div>
-<div class="field-group">
 <label>🌍 Country *</label>
 <input id="inqCountry" placeholder="Your country" required="" type="text"/>
+</div>
+<div class="field-group">
+<label>📱 WhatsApp / Mobile *</label>
+<input id="inqMobile" placeholder="Select country first" required="" type="tel"/>
 </div>
 <div class="field-group">
 <label>👥 Number of Guests *</label>
@@ -599,8 +600,8 @@ async function sendPropertyInquiry(){
 
   const name = document.getElementById("inqName").value.trim();
   const email = document.getElementById("inqEmail").value.trim();
-  const mobile = document.getElementById("inqMobile").value.trim();
-  const country = document.getElementById("inqCountry").value.trim();
+  const mobile = window.CeyBreezInquiry?.getPhone("inqMobile") || document.getElementById("inqMobile").value.trim();
+  const country = window.CeyBreezInquiry?.getCountry("inqCountry") || document.getElementById("inqCountry").value.trim();
   const guests = document.getElementById("inqGuests").value.trim();
   const checkIn = document.getElementById("inqCheckIn").value;
   const checkOut = document.getElementById("inqCheckOut").value;
@@ -651,7 +652,7 @@ ${notes || "None"}`;
     email,
     mobile,
     country,
-    countryCode: "",
+    countryCode: window.CeyBreezInquiry?.getDialCode("inqCountry") || "",
     experiences: PROPERTY_LABEL + " Inquiry - " + selectedProperty.name,
     itemName: selectedProperty.name,
     dateFrom: checkIn,
@@ -685,6 +686,7 @@ function resetInquiryForm(){
     const el = document.getElementById(id);
     if(el) el.value = "";
   });
+  window.CeyBreezInquiry?.resetPair("inqCountry", "inqMobile");
 
   if(checkInPicker) checkInPicker.clear();
   if(checkOutPicker) checkOutPicker.clear();
@@ -776,9 +778,9 @@ if(waBtn){
 }
 </script>
 <script src="reviews-showcase.js"></script>
-<script src="ceybreez-country-phone.js?v=20260930-1"></script>
 <script src="page-builder.js?v=20260930-v65-live-mirror"></script>
 <script defer="" src="ceybreez-language.js"></script>
 <script src="ceybreez-public-v3.js?v=20260916-2"></script>
+<script src="inquiry-common.js?v=20260930-2"></script>
 </body>
 </html>

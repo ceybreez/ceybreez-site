@@ -13,7 +13,6 @@
   <meta name="description" content="Get in touch with CeyBreez to plan your villa stay, homestay, apartment booking, tour or travel experience in Sri Lanka."/>
 
   <link rel="stylesheet" href="contact.css"/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/css/intlTelInput.css"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap"/>
@@ -31,6 +30,7 @@
     gtag('config', 'G-3QG71CWHW2');
   </script>
   <link rel="stylesheet" href="ceybreez-mobile-nav-v6.css?v=20260928-final">
+  <link rel="stylesheet" href="inquiry-common.css?v=20260930-2">
 </head>
 <body data-page="contact">
 
@@ -204,31 +204,9 @@
   </footer>
 
   <a class="floating-whatsapp-v3" href="https://api.whatsapp.com/send?phone=94704620017" id="floatingWhatsAppV3" target="_blank" rel="noopener" aria-label="WhatsApp CeyBreez"><i class="fa-brands fa-whatsapp"></i></a>
-
-  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/js/intlTelInput.min.js"></script>
-  <script>
+<script>
     const phoneInput = document.querySelector("#mobile");
     const countryInput = document.querySelector("#country");
-
-    const iti = window.intlTelInput(phoneInput, {
-      initialCountry: "lk",
-      separateDialCode: true,
-      preferredCountries: ["lk", "om", "in", "ae", "qa", "sa", "gb", "us"],
-      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.6/build/js/utils.js"
-    });
-
-    const countryData = window.intlTelInputGlobals.getCountryData();
-    countryData.forEach(country => {
-      const option = document.createElement("option");
-      option.value = country.name;
-      option.textContent = country.name;
-      countryInput.appendChild(option);
-    });
-
-    countryInput.addEventListener("change", function(){
-      const matchedCountry = countryData.find(country => country.name === countryInput.value);
-      if(matchedCountry){ iti.setCountry(matchedCountry.iso2); }
-    });
 
     async function sendInquiry(){
       const name = document.getElementById("name").value;
@@ -240,14 +218,13 @@
       const guests = document.getElementById("guests").value;
       const message = document.getElementById("message").value;
 
-      const selectedCountry = iti.getSelectedCountryData();
-      const countryCode = "+" + selectedCountry.dialCode;
-      const fullMobile = iti.getNumber();
+      const fullMobile = window.CeyBreezInquiry?.getPhone("mobile") || phoneInput.value.trim();
+      const countryCode = window.CeyBreezInquiry?.getDialCode("country") || "";
 
       const experiences = Array.from(document.querySelectorAll('.checkbox-group input:checked'))
         .map(item => item.value).join(", ");
 
-      if(!name || !country || !mobile || !email || !dateFrom || !dateTo || !guests || !experiences){
+      if(!name || !country || !fullMobile || !email || !dateFrom || !dateTo || !guests || !experiences){
         alert("Please fill all required fields.");
         return;
       }
@@ -271,8 +248,7 @@
           }
           alert("Inquiry sent successfully!");
           document.getElementById("contactForm").reset();
-          iti.setCountry("lk");
-          countryInput.value = "";
+          window.CeyBreezInquiry?.resetPair("country", "mobile");
         } else {
           alert("WhatsApp opened, but email sending failed.");
         }
@@ -303,5 +279,6 @@
   <script src="page-builder.js?v=20260930-v65-live-mirror"></script>
   <script defer src="ceybreez-language.js"></script>
   <script src="ceybreez-public-v3.js?v=20260916-2"></script>
+<script src="inquiry-common.js?v=20260930-2"></script>
 </body>
 </html>

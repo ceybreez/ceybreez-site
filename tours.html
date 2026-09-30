@@ -35,6 +35,7 @@
 <link href="ceybreez-public-v3.css?v=20260917-5" rel="stylesheet"/>
 <link href="tours-v4.css?v=20260928-53" rel="stylesheet"/>
   <link rel="stylesheet" href="ceybreez-mobile-nav-v6.css?v=20260928-final">
+  <link rel="stylesheet" href="inquiry-common.css?v=20260930-2">
 </head>
 <body data-page="tours">
 <header class="site-header" id="siteHeader">
@@ -302,8 +303,8 @@
 <div class="form-grid">
 <div><label>Your Name</label><input id="guestName" required="" type="text"/></div>
 <div><label>Email</label><input id="guestEmail" required="" type="email"/></div>
-<div><label>WhatsApp / Mobile</label><input id="guestMobile" required="" type="tel"/></div>
 <div><label>Country</label><input id="guestCountry" required="" type="text"/></div>
+<div><label>WhatsApp / Mobile</label><input id="guestMobile" required="" type="tel"/></div>
 <div><label>Number of Guests</label><input id="guestCount" min="1" oninput="updateVehicleSuggestion()" required="" type="number"/></div>
 </div>
 </div>
@@ -1377,8 +1378,8 @@ function showDestinationToast(message){
 
     const guestName = document.getElementById("guestName").value.trim();
     const guestEmail = document.getElementById("guestEmail").value.trim();
-    const guestMobile = document.getElementById("guestMobile").value.trim();
-    const guestCountry = document.getElementById("guestCountry").value.trim();
+    const guestMobile = window.CeyBreezInquiry?.getPhone("guestMobile") || document.getElementById("guestMobile").value.trim();
+    const guestCountry = window.CeyBreezInquiry?.getCountry("guestCountry") || document.getElementById("guestCountry").value.trim();
     const guestCount = document.getElementById("guestCount").value;
     const specialNotes = document.getElementById("specialNotes").value.trim();
 
@@ -1463,7 +1464,7 @@ ${specialNotes || "None"}`;
       country: guestCountry,
       mobile: guestMobile,
       email: guestEmail,
-      countryCode: "",
+      countryCode: window.CeyBreezInquiry?.getDialCode("guestCountry") || "",
       experiences: serviceType,
       itemName: "Custom Sri Lanka Tour",
       dateFrom: startDate,
@@ -1519,6 +1520,7 @@ ${specialNotes || "None"}`;
 
   function resetTourInquiryForm(){
     document.getElementById("tripForm")?.reset();
+    window.CeyBreezInquiry?.resetPair("guestCountry", "guestMobile");
 
     selectedSuggestion = null;
     selectedStartLocation = null;
@@ -1613,9 +1615,9 @@ if(waBtn){
   });
 }
 </script>
-<script src="ceybreez-country-phone.js?v=20260930-1"></script>
 <script src="page-builder.js?v=20260930-v65-live-mirror"></script>
 <script defer="" src="ceybreez-language.js"></script>
 <script src="ceybreez-public-v3.js?v=20260916-2"></script>
+<script src="inquiry-common.js?v=20260930-2"></script>
 </body>
 </html>

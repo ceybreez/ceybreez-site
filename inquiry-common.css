@@ -36,3 +36,24 @@
 .cb-inquiry-success-actions button{background:var(--cb-inquiry-green);color:#fff}.cb-inquiry-success-actions a{background:#eef4f1;color:var(--cb-inquiry-green)}
 html.cb-inquiry-modal-open{overflow:hidden}
 @media(max-width:700px){.cb-inquiry-success-card{padding:28px 20px;border-radius:20px}.cb-inquiry-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),.cb-inquiry-form select{min-height:46px!important}.cb-inquiry-success-actions>*{flex:1 1 160px}}
+
+
+/* V6.5.2 — site-wide inquiry form consistency */
+.cb-inquiry-form .form-grid,
+.cb-inquiry-form .contact-form-grid{gap:16px!important}
+.cb-inquiry-form .field-group,
+.cb-inquiry-form .contact-field,
+.cb-inquiry-form .form-grid>div{min-width:0}
+.cb-inquiry-form label{display:block;margin:0 0 7px!important}
+.cb-inquiry-form select[data-cb-country="1"]{background-color:#fbfaf7!important}
+.cb-inquiry-form [data-cb-phone="1"]:disabled{background:#f0f1ee!important;color:#8b948f!important;border-color:#e0e2de!important;cursor:not-allowed!important;opacity:1!important}
+.cb-inquiry-form [data-cb-phone="1"]:not(:disabled){background:#fbfaf7!important;color:#203d36!important}
+.cb-inquiry-form .checkbox-group label{margin:0!important}
+.cb-inquiry-form .contact-submit,
+.cb-inquiry-form .send-inquiry-btn,
+.cb-inquiry-form .send-plan-btn,
+.cb-inquiry-form button[type="submit"]{min-width:170px}
+@media(max-width:700px){
+  .cb-inquiry-form .form-grid,.cb-inquiry-form .contact-form-grid{gap:12px!important}
+  .cb-inquiry-form .contact-submit,.cb-inquiry-form .send-inquiry-btn,.cb-inquiry-form .send-plan-btn,.cb-inquiry-form button[type="submit"]{width:100%!important}
+}

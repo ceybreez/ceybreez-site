@@ -13,6 +13,11 @@
   let loaded = false;
   let dirty = false;
   let tokenWatch = null;
+  let loadInFlight = null;
+
+  function sessionValidated() {
+    return sessionStorage.getItem("CEYBREEZ_SESSION_VALIDATED") === "1" && !!token();
+  }
 
   const token = () => {
     try { if (typeof ADMIN_TOKEN !== "undefined" && ADMIN_TOKEN) return ADMIN_TOKEN; } catch (_) {}
@@ -202,7 +207,7 @@
     if (!file) return;
     if (!String(file.type || "").startsWith("image/")) return setStatus("Please choose an image file.", "bad");
     if (Number(file.size || 0) > 15 * 1024 * 1024) return setStatus("Please use a logo image smaller than 15 MB.", "bad");
-    if (!token()) return setStatus("Admin login session not found. Please log in again.", "bad");
+    if (!sessionValidated()) return setStatus("Admin login session not validated. Please log in again.", "bad");
 
     const formData = new FormData();
     formData.append("file", file);
@@ -352,23 +357,34 @@
 
   async function loadPartners(force = false) {
     injectManager();
-    if (!token()) return;
+
+    // Do not call protected APIs while the login/session is still being checked.
+    // This prevents stale tokens from creating a burst of overlapping site-content requests.
+    if (!sessionValidated()) return;
     if (loaded && !force) return;
-    setStatus("Loading footer logos…");
-    try {
-      const response = await fetch(`${API}/api/admin/site-content`, { headers: auth(), cache: "no-store" });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Could not load footer logos");
-      partners = parse(data.footer_partners);
-      const heading = document.getElementById("cbFooterPartnersHeading");
-      if (heading) heading.value = data.footer_partners_heading || "Partners & Recognition";
-      loaded = true;
-      markDirty(false);
-      render();
-      setStatus(partners.length ? `${partners.length} footer logo(s) loaded.` : "No footer logos saved yet.", "ok");
-    } catch (error) {
-      setStatus(error.message || "Could not load footer logos", "bad");
-    }
+    if (loadInFlight) return loadInFlight;
+
+    loadInFlight = (async () => {
+      setStatus("Loading footer logos…");
+      try {
+        const response = await fetch(`${API}/api/admin/site-content`, { headers: auth(), cache: "no-store" });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || "Could not load footer logos");
+        partners = parse(data.footer_partners);
+        const heading = document.getElementById("cbFooterPartnersHeading");
+        if (heading) heading.value = data.footer_partners_heading || "Partners & Recognition";
+        loaded = true;
+        markDirty(false);
+        render();
+        setStatus(partners.length ? `${partners.length} footer logo(s) loaded.` : "No footer logos saved yet.", "ok");
+      } catch (error) {
+        setStatus(error.message || "Could not load footer logos", "bad");
+      } finally {
+        loadInFlight = null;
+      }
+    })();
+
+    return loadInFlight;
   }
 
   async function savePartners() {
@@ -408,16 +424,17 @@
 
   function boot() {
     injectManager();
-    if (token()) loadPartners();
+    if (sessionValidated()) loadPartners();
 
     document.addEventListener("click", event => {
+      if (!sessionValidated()) return;
       if (event.target.closest(".pb2-global-btn") || event.target.closest('[onclick*="pageControl"]')) setTimeout(() => loadPartners(true), 180);
     });
 
     const form = document.getElementById("siteContentForm");
     if (form && typeof MutationObserver !== "undefined") {
       new MutationObserver(() => {
-        if (!form.classList.contains("hidden") && token()) loadPartners(!loaded);
+        if (!form.classList.contains("hidden") && sessionValidated() && !loadInFlight) loadPartners(!loaded);
       }).observe(form, { attributes: true, attributeFilter: ["class"] });
     }
 
@@ -427,8 +444,9 @@
       event.returnValue = "";
     });
 
+    // Wait for Security V5.3.2 to validate the session. Never use a stale token by itself.
     tokenWatch = setInterval(() => {
-      if (token() && !loaded) loadPartners();
+      if (sessionValidated() && !loaded && !loadInFlight) loadPartners();
       if (loaded && tokenWatch) { clearInterval(tokenWatch); tokenWatch = null; }
     }, 800);
     setTimeout(() => { if (tokenWatch) { clearInterval(tokenWatch); tokenWatch = null; } }, 12000);

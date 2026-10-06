@@ -553,6 +553,7 @@
     let homeMediaPool = [];
     let activeGalleryItems = [];
     let activeGalleryIndex = 0;
+    let galleryVisibleCount = 12;
 
     const GALLERY_FALLBACK = [
       {src:'images/beach.jpg', kicker:'Coast', title:'Golden shores', caption:'Warm water, slow afternoons and long sunsets.'},
@@ -773,17 +774,32 @@
         const key = clean(item?.src);
         if(!key || seen.has(key)) return false;
         seen.add(key); return true;
-      }).slice(0, 12);
+      }).slice(0, 48);
       if(!activeGalleryItems.length) activeGalleryItems = GALLERY_FALLBACK.slice();
-      const display = activeGalleryItems.slice(0, 8);
-      grid.innerHTML = display.map((item, index) => `
-        <button class="gallery-tile gallery-tile-${(index % 8) + 1}" type="button" data-gallery-index="${index}" aria-label="Open ${esc(item.title)}">
+      const display = activeGalleryItems.slice(0, galleryVisibleCount);
+      grid.innerHTML = display.map((item, index) => {
+        const layoutClass = index < 8 ? ` gallery-tile-${index + 1}` : ' gallery-tile-extra';
+        return `
+        <button class="gallery-tile${layoutClass}" type="button" data-gallery-index="${index}" aria-label="Open ${esc(item.title)}">
           <!-- DYNAMIC IMAGE: Gallery image comes from home_gallery CMS or fallback media. -->
 <img src="${esc(item.src)}" alt="${esc(item.title)}" loading="lazy" decoding="async">
           <span class="gallery-tile-shade"></span>
           <span class="gallery-tile-copy"><small>${esc(item.kicker)}</small><strong>${esc(item.title)}</strong></span>
           <span class="gallery-expand"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></span>
-        </button>`).join('');
+        </button>`;
+      }).join('');
+
+      let more = document.getElementById('galleryShowMore');
+      if(!more){
+        more = document.createElement('button');
+        more.id = 'galleryShowMore';
+        more.type = 'button';
+        more.className = 'gallery-show-more';
+        grid.insertAdjacentElement('afterend', more);
+      }
+      const remaining = Math.max(0, activeGalleryItems.length - display.length);
+      more.hidden = remaining === 0;
+      more.innerHTML = remaining ? `Show more photos <span>+${Math.min(6, remaining)}</span>` : '';
     }
 
     function updateLightbox(){
@@ -815,6 +831,12 @@
     }
 
     document.addEventListener('click', event => {
+      const more = event.target.closest('#galleryShowMore');
+      if(more){
+        galleryVisibleCount = Math.min(galleryVisibleCount + 6, activeGalleryItems.length);
+        renderGallery();
+        return;
+      }
       const tile = event.target.closest('[data-gallery-index]');
       if(tile) openGallery(tile.dataset.galleryIndex);
     });

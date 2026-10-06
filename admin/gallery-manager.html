@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CeyBreez · Home Gallery Manager</title>
+  <link rel="icon" href="../logo.png">
+  <link rel="stylesheet" href="gallery-manager.css?v=20261006-1">
+</head>
+<body>
+  <div class="gm-shell">
+    <header class="gm-header">
+      <div>
+        <span class="gm-kicker">CEYBREEZ ADMIN</span>
+        <h1>Home Gallery Manager</h1>
+        <p>Add more photos without changing the Page Builder. Nothing becomes live until you preview and publish the gallery.</p>
+      </div>
+      <div class="gm-header-actions">
+        <a class="gm-btn gm-btn-light" href="index.html">← Back to Admin</a>
+        <a class="gm-btn gm-btn-light" href="../index.html#gallery" target="_blank" rel="noopener">Open Live Home ↗</a>
+      </div>
+    </header>
+
+    <section class="gm-statusbar" aria-live="polite">
+      <div><strong id="gmCount">0</strong><span>draft photos</span></div>
+      <div><strong id="gmLiveCount">0</strong><span>live photos</span></div>
+      <div><strong id="gmPublishState">Not previewed</strong><span>publish state</span></div>
+      <div class="gm-status-message" id="gmStatus">Checking admin session…</div>
+    </section>
+
+    <main class="gm-main">
+      <section class="gm-toolbar-card">
+        <div class="gm-toolbar-copy">
+          <h2>Add photos</h2>
+          <p>Select several images at once. Uploading stores the files, but does <strong>not</strong> put them live.</p>
+        </div>
+        <div class="gm-toolbar-actions">
+          <input id="gmFiles" type="file" accept="image/*" multiple hidden>
+          <button class="gm-btn gm-btn-primary" id="gmChooseBtn" type="button">+ Upload Photos</button>
+          <button class="gm-btn gm-btn-light" id="gmAddUrlBtn" type="button">+ Add Image URL</button>
+          <button class="gm-btn gm-btn-light" id="gmPreviewBtn" type="button">Preview Draft</button>
+          <button class="gm-btn gm-btn-live" id="gmPublishBtn" type="button" disabled>Publish Gallery</button>
+        </div>
+        <div class="gm-progress" id="gmProgress" hidden><span id="gmProgressBar"></span></div>
+      </section>
+
+      <section class="gm-note">
+        <strong>Safe workflow:</strong> Upload / reorder / remove → Preview Draft → Publish Gallery. The public home page can show more photos, while the full set stays available in the lightbox.
+      </section>
+
+      <section>
+        <div class="gm-section-head">
+          <div><span class="gm-kicker">DRAFT</span><h2>Gallery photos</h2></div>
+          <div class="gm-secondary-actions">
+            <button class="gm-btn gm-btn-light" id="gmResetBtn" type="button">Discard Draft</button>
+          </div>
+        </div>
+        <div id="gmEmpty" class="gm-empty" hidden>No gallery photos yet. Upload your first images above.</div>
+        <div id="gmGrid" class="gm-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="gmUrlDialog" class="gm-dialog">
+    <form method="dialog" class="gm-dialog-card" id="gmUrlForm">
+      <div class="gm-dialog-head"><div><span class="gm-kicker">ADD PHOTO</span><h2>Image URL</h2></div><button value="cancel" aria-label="Close">×</button></div>
+      <label>Image URL<input id="gmUrlInput" type="url" placeholder="https://.../photo.jpg"></label>
+      <label>Title<input id="gmUrlTitle" type="text" placeholder="Island moment"></label>
+      <div class="gm-dialog-actions"><button class="gm-btn gm-btn-light" value="cancel">Cancel</button><button class="gm-btn gm-btn-primary" id="gmUrlSave" value="default">Add to Draft</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="gmPreviewDialog" class="gm-preview-dialog">
+    <div class="gm-preview-shell">
+      <header class="gm-preview-head">
+        <div><span class="gm-kicker">PRIVATE DRAFT PREVIEW</span><h2>Home gallery before publish</h2><p id="gmPreviewCount"></p></div>
+        <button class="gm-preview-close" id="gmPreviewClose" type="button" aria-label="Close preview">×</button>
+      </header>
+      <div class="gm-preview-grid" id="gmPreviewGrid"></div>
+      <footer class="gm-preview-footer">
+        <span>This is only a preview. The live website is unchanged.</span>
+        <button class="gm-btn gm-btn-live" id="gmPreviewPublish" type="button">Looks Good — Publish Gallery</button>
+      </footer>
+    </div>
+  </dialog>
+
+  <template id="gmCardTemplate">
+    <article class="gm-card" draggable="true">
+      <div class="gm-card-image-wrap"><img class="gm-card-image" alt="Gallery draft image"><span class="gm-order"></span></div>
+      <div class="gm-card-body">
+        <label>Small label<input class="gm-kicker-input" maxlength="40" placeholder="Sri Lanka"></label>
+        <label>Photo title<input class="gm-title-input" maxlength="80" placeholder="Island moment"></label>
+        <label>Caption<textarea class="gm-caption-input" rows="2" maxlength="220" placeholder="Optional caption"></textarea></label>
+        <div class="gm-card-actions">
+          <button type="button" class="gm-mini gm-up" title="Move up">↑</button>
+          <button type="button" class="gm-mini gm-down" title="Move down">↓</button>
+          <button type="button" class="gm-mini gm-replace" title="Replace photo">Replace</button>
+          <button type="button" class="gm-mini gm-remove" title="Remove from draft">Remove</button>
+        </div>
+      </div>
+      <input class="gm-replace-file" type="file" accept="image/*" hidden>
+    </article>
+  </template>
+
+  <script src="gallery-manager.js?v=20261006-1"></script>
+</body>
+</html>

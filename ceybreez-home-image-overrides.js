@@ -3,7 +3,7 @@
   const API='https://ceybreez-contact-api.ceybreez.workers.dev';
   const KEY='home_static_image_overrides_v1';
   const EXCLUDE=[
-    '#homeGalleryGrid','.gallery-tile','#galleryLightbox','.gallery-lightbox',
+    '#galleryLightbox','.gallery-lightbox',
     '#homeReelsTrack','.reel-card','#featuredToursGrid','#featuredStaysGrid',
     '#featuredDestinationsGrid','#featuredServicesGrid','.data-grid',
     '.tour-card','.stay-card','.destination-card','.service-card','.property-card',
@@ -21,17 +21,20 @@
     if(!raw || LOGO_RE.test(raw)) return false;
     return true;
   }
-  function labelFor(img,i){
-    if(img.id==='heroImage') return 'Hero main image';
-    const p=img.closest('.hero-story'); if(p){const all=[...document.querySelectorAll('.hero-story img')].filter(eligible);return `Hero story photo ${all.indexOf(img)+1}`}
-    if(img.closest('.collage-main')) return 'About collage · main photo';
-    if(img.closest('.collage-small.top')) return 'About collage · top photo';
-    if(img.closest('.collage-small.bottom')) return 'About collage · bottom photo';
-    if(img.closest('.thing-card')){const all=[...document.querySelectorAll('.thing-card img')].filter(eligible);return `Things to do · photo ${all.indexOf(img)+1}`}
-    if(img.closest('.journey-banner')) return 'Journey banner photo';
-    if(img.closest('.final-cta')) return 'Final call-to-action photo';
-    return `Static photo ${i+1}`;
+  function slotInfo(img,i){
+    if(img.id==='heroImage') return {key:'home:hero-main',label:'Hero main image'};
+    let p=img.closest('.hero-story');
+    if(p){const all=[...document.querySelectorAll('.hero-story img')].filter(eligible);const n=all.indexOf(img)+1;return {key:`home:hero-story:${n}`,label:`Hero story card photo ${n}`}}
+    if(img.closest('.collage-main')) return {key:'home:about:main',label:'About collage · main photo'};
+    if(img.closest('.collage-small.top')) return {key:'home:about:top',label:'About collage · top photo'};
+    if(img.closest('.collage-small.bottom')) return {key:'home:about:bottom',label:'About collage · bottom photo'};
+    if(img.closest('.thing-card')){const all=[...document.querySelectorAll('.thing-card img')].filter(eligible);const n=all.indexOf(img)+1;return {key:`home:things:${n}`,label:`Things to do card photo ${n}`}}
+    if(img.closest('#homeGalleryGrid,.gallery-tile')){const all=[...document.querySelectorAll('#homeGalleryGrid .gallery-tile img,.gallery-tile img')].filter(eligible);const n=all.indexOf(img)+1;return {key:`home:gallery:${n}`,label:`Home gallery photo ${n}`}}
+    if(img.closest('.journey-banner')) return {key:'home:journey-banner',label:'Journey banner photo'};
+    if(img.closest('.final-cta')) return {key:'home:final-cta',label:'Final call-to-action photo'};
+    return {key:`home:static:${i+1}`,label:`Static page photo ${i+1}`};
   }
+  function labelFor(img,i){ return slotInfo(img,i).label; }
   function scan(){
     const counts={}; const list=[];
     [...document.images].filter(eligible).forEach((img,i)=>{
@@ -39,16 +42,19 @@
       const original=img.dataset.cbStaticOriginal;
       const n=normSrc(original); counts[n]=(counts[n]||0)+1;
       const occurrence=counts[n];
-      const key=`img:${encodeURIComponent(n)}#${occurrence}`;
+      const legacyKey=`img:${encodeURIComponent(n)}#${occurrence}`;
+      const info=slotInfo(img,i);
+      const key=info.key;
       img.dataset.cbStaticKey=key;
-      list.push({key,original,norm:n,occurrence,label:labelFor(img,i),element:img});
+      img.dataset.cbStaticLegacyKey=legacyKey;
+      list.push({key,legacyKey,original,norm:n,occurrence,label:info.label,element:img});
     });
     return list;
   }
   function applyMap(map={}){
     const targets=scan();
     targets.forEach(t=>{
-      const item=map[t.key];
+      const item=map[t.key] || map[t.legacyKey];
       const src=clean(item?.src);
       t.element.setAttribute('src',src||t.original);
       if(src) t.element.dataset.cbStaticOverridden='1'; else delete t.element.dataset.cbStaticOverridden;
@@ -61,7 +67,7 @@
       const d=await r.json(); applyMap(parse(d[KEY]));
     }catch(_){/* fail closed: original images stay unchanged */}
   }
-  window.CeyBreezHomeStaticImages={scan,applyMap,eligible,labelFor,key:KEY};
+  window.CeyBreezHomeStaticImages={scan,applyMap,eligible,labelFor,slotInfo,key:KEY};
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(load,0),{once:true});
   else setTimeout(load,0);
 })();

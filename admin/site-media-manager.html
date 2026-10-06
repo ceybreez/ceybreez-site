@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CeyBreez Site Media Manager</title><link rel="stylesheet" href="site-media-manager.css?v=20261006-1"></head><body>
+<div class="sm-shell">
+  <div class="sm-top"><div><h1>Site Media Manager</h1><p>Replace existing page photos and add extra galleries without changing the current layout.</p></div><a class="sm-back" href="index.html">← Admin</a></div>
+  <div class="sm-toolbar">
+    <select id="smPage"><option value="tours">Tours</option><option value="villas">Villas</option><option value="apartments">Apartments</option><option value="homestays">Homestays</option><option value="services">Services</option></select>
+    <button class="sm-btn" id="smSaveDraft" type="button">Save Draft</button>
+    <button class="sm-btn" id="smPreview" type="button">Preview Draft</button>
+    <button class="sm-btn primary" id="smPublish" type="button" disabled>Publish Page Media</button>
+    <button class="sm-btn danger" id="smDiscard" type="button">Discard Draft</button>
+  </div>
+  <div id="smStatus" class="sm-status">Loading…</div>
+  <div class="sm-layout">
+    <section class="sm-panel"><h2>Existing page photos</h2><p class="sm-note">Nothing changes on the live page unless you replace a photo and publish. “Restore original” removes only the override.</p><div id="smSlots" class="sm-grid"></div></section>
+    <aside class="sm-panel"><h2>Extra gallery</h2><p class="sm-note">Add more photos to make the page richer. The new gallery stays completely hidden until at least one photo is published.</p><input id="smGalleryFiles" type="file" accept="image/*" multiple hidden><button class="sm-btn" id="smAddGallery" type="button">+ Add photos</button><div id="smGallery" class="sm-gallery-list" style="margin-top:12px"></div></aside>
+  </div>
+</div>
+<dialog id="smPreviewDialog" class="sm-preview"><div class="sm-preview-head"><strong>Private Draft Preview</strong><button id="smClosePreview" type="button">Close</button></div><iframe id="smPreviewFrame" title="Draft preview"></iframe></dialog>
+<input id="smReplaceFile" type="file" accept="image/*" hidden>
+<script src="site-media-manager.js?v=20261006-1"></script></body></html>

@@ -1,0 +1,162 @@
+{
+  "tours": [
+    {
+      "slot": "tours-image-1",
+      "src": "images/train.jpg",
+      "label": "Scenic train through Sri Lanka"
+    },
+    {
+      "slot": "tours-image-2",
+      "src": "images/beach.jpg",
+      "label": "Sri Lanka beach"
+    },
+    {
+      "slot": "tours-image-3",
+      "src": "images/temple.jpg",
+      "label": "Sri Lankan cultural landmark"
+    },
+    {
+      "slot": "tours-image-4",
+      "src": "images/mountains.jpg",
+      "label": "Sri Lanka highlands"
+    },
+    {
+      "slot": "tours-image-5",
+      "src": "images/nature.jpg",
+      "label": "Sri Lanka nature journey"
+    },
+    {
+      "slot": "tours-image-6",
+      "src": "images/beach.jpg",
+      "label": "Sri Lanka coast"
+    }
+  ],
+  "villas": [
+    {
+      "slot": "villas-image-1",
+      "src": "images/cover.jpg",
+      "label": "Sri Lanka travel inspiration"
+    },
+    {
+      "slot": "villas-image-2",
+      "src": "images/beach.jpg",
+      "label": "CeyBreez Sri Lanka experience"
+    },
+    {
+      "slot": "villas-image-3",
+      "src": "images/nature.jpg",
+      "label": "Sri Lanka holiday inspiration"
+    },
+    {
+      "slot": "villas-image-4",
+      "src": "images/beach.jpg",
+      "label": "Coast &amp; pool"
+    },
+    {
+      "slot": "villas-image-5",
+      "src": "images/nature.jpg",
+      "label": "Green &amp; quiet"
+    },
+    {
+      "slot": "villas-image-6",
+      "src": "images/cover.jpg",
+      "label": "Together time"
+    }
+  ],
+  "apartments": [
+    {
+      "slot": "apartments-image-1",
+      "src": "images/beach.jpg",
+      "label": "Sri Lanka travel inspiration"
+    },
+    {
+      "slot": "apartments-image-2",
+      "src": "images/food.jpg",
+      "label": "CeyBreez Sri Lanka experience"
+    },
+    {
+      "slot": "apartments-image-3",
+      "src": "images/cover.jpg",
+      "label": "Sri Lanka holiday inspiration"
+    },
+    {
+      "slot": "apartments-image-4",
+      "src": "images/food.jpg",
+      "label": "City ease"
+    },
+    {
+      "slot": "apartments-image-5",
+      "src": "images/cover.jpg",
+      "label": "Family room"
+    },
+    {
+      "slot": "apartments-image-6",
+      "src": "images/beach.jpg",
+      "label": "Stay longer"
+    }
+  ],
+  "homestays": [
+    {
+      "slot": "homestays-image-1",
+      "src": "images/mountains.jpg",
+      "label": "Sri Lanka travel inspiration"
+    },
+    {
+      "slot": "homestays-image-2",
+      "src": "images/nature.jpg",
+      "label": "CeyBreez Sri Lanka experience"
+    },
+    {
+      "slot": "homestays-image-3",
+      "src": "images/temple.jpg",
+      "label": "Sri Lanka holiday inspiration"
+    },
+    {
+      "slot": "homestays-image-4",
+      "src": "images/mountains.jpg",
+      "label": "Hill-country calm"
+    },
+    {
+      "slot": "homestays-image-5",
+      "src": "images/nature.jpg",
+      "label": "Nature nearby"
+    },
+    {
+      "slot": "homestays-image-6",
+      "src": "images/temple.jpg",
+      "label": "Local culture"
+    }
+  ],
+  "services": [
+    {
+      "slot": "services-image-1",
+      "src": "images/food.jpg",
+      "label": "Sri Lanka travel inspiration"
+    },
+    {
+      "slot": "services-image-2",
+      "src": "images/nature.jpg",
+      "label": "CeyBreez Sri Lanka experience"
+    },
+    {
+      "slot": "services-image-3",
+      "src": "images/temple.jpg",
+      "label": "Sri Lanka holiday inspiration"
+    },
+    {
+      "slot": "services-image-4",
+      "src": "images/food.jpg",
+      "label": "Local food in Sri Lanka"
+    },
+    {
+      "slot": "services-image-5",
+      "src": "images/train.jpg",
+      "label": "Sri Lanka travel transport"
+    },
+    {
+      "slot": "services-image-6",
+      "src": "images/nature.jpg",
+      "label": "Sri Lanka local travel"
+    }
+  ]
+}

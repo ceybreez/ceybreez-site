@@ -36,6 +36,7 @@
 <link href="homestays-v4.css?v=20260917-8" rel="stylesheet"/>
   <link rel="stylesheet" href="ceybreez-mobile-nav-v6.css?v=20260928-final">
   <link rel="stylesheet" href="inquiry-common.css?v=20260930-2">
+  <link rel="stylesheet" href="ceybreez-media-overrides.css?v=20261006-1">
 </head>
 <body data-page="homestays">
 <header class="site-header" id="siteHeader">
@@ -67,11 +68,11 @@
 </section><section aria-label="Local places, real stories" class="editorial-gallery v31-reveal">
 <div class="editorial-gallery-head"><div><span class="v31-eyebrow">Live closer</span><h2>Local places, real stories</h2></div><p>Homestays that bring you closer to Sri Lanka’s landscapes, people and everyday warmth.</p></div>
 <div class="editorial-gallery-grid">
-<figure class="editorial-gallery-main"><img alt="Sri Lanka travel inspiration" decoding="async" loading="lazy" src="images/mountains.jpg"/><figcaption>Stay · Explore · Feel Sri Lanka</figcaption></figure>
-<figure><img alt="CeyBreez Sri Lanka experience" decoding="async" loading="lazy" src="images/nature.jpg"/></figure>
-<figure><img alt="Sri Lanka holiday inspiration" decoding="async" loading="lazy" src="images/temple.jpg"/></figure>
+<figure class="editorial-gallery-main"><img alt="Sri Lanka travel inspiration" decoding="async" loading="lazy" src="images/mountains.jpg"/ data-cb-media-slot="homestays-image-1"><figcaption>Stay · Explore · Feel Sri Lanka</figcaption></figure>
+<figure><img alt="CeyBreez Sri Lanka experience" decoding="async" loading="lazy" src="images/nature.jpg"/ data-cb-media-slot="homestays-image-2"></figure>
+<figure><img alt="Sri Lanka holiday inspiration" decoding="async" loading="lazy" src="images/temple.jpg"/ data-cb-media-slot="homestays-image-3"></figure>
 </div>
-</section><section class="stay-v4-moods v31-reveal"><div class="stay-v4-section-head"><span class="stay-v4-eyebrow dark">FIND YOUR PACE</span><h2>Closer to place, people and pace.</h2><p>Different trips need different kinds of space. Start with the feeling you want.</p></div><div class="stay-v4-mood-grid"><article class="stay-v4-mood"><img alt="Hill-country calm" decoding="async" loading="lazy" src="images/mountains.jpg"/><div><span>CEYBREEZ STAY</span><h3>Hill-country calm</h3><p>Cool air, green views and slower mountain mornings.</p></div></article><article class="stay-v4-mood"><img alt="Nature nearby" decoding="async" loading="lazy" src="images/nature.jpg"/><div><span>CEYBREEZ STAY</span><h3>Nature nearby</h3><p>Wake up closer to the landscapes you came to see.</p></div></article><article class="stay-v4-mood"><img alt="Local culture" decoding="async" loading="lazy" src="images/temple.jpg"/><div><span>CEYBREEZ STAY</span><h3>Local culture</h3><p>A more personal route into Sri Lankan traditions and daily life.</p></div></article></div></section>
+</section><section class="stay-v4-moods v31-reveal"><div class="stay-v4-section-head"><span class="stay-v4-eyebrow dark">FIND YOUR PACE</span><h2>Closer to place, people and pace.</h2><p>Different trips need different kinds of space. Start with the feeling you want.</p></div><div class="stay-v4-mood-grid"><article class="stay-v4-mood"><img alt="Hill-country calm" decoding="async" loading="lazy" src="images/mountains.jpg"/ data-cb-media-slot="homestays-image-4"><div><span>CEYBREEZ STAY</span><h3>Hill-country calm</h3><p>Cool air, green views and slower mountain mornings.</p></div></article><article class="stay-v4-mood"><img alt="Nature nearby" decoding="async" loading="lazy" src="images/nature.jpg"/ data-cb-media-slot="homestays-image-5"><div><span>CEYBREEZ STAY</span><h3>Nature nearby</h3><p>Wake up closer to the landscapes you came to see.</p></div></article><article class="stay-v4-mood"><img alt="Local culture" decoding="async" loading="lazy" src="images/temple.jpg"/ data-cb-media-slot="homestays-image-6"><div><span>CEYBREEZ STAY</span><h3>Local culture</h3><p>A more personal route into Sri Lankan traditions and daily life.</p></div></article></div></section>
 <!-- SECTION: CMS PROPERTY LISTING | Data comes from /api/properties; visual styling in page V4 CSS -->
 <section class="properties-section" id="properties"><div class="stay-v4-property-head"><span class="stay-v4-eyebrow dark">HANDPICKED FOR THE JOURNEY</span><h2>Featured Homestays</h2><p>Warm local stays selected for character, comfort and a closer connection to place.</p></div>
 
@@ -172,6 +173,18 @@
 <div class="cb-review-toolbar"><select data-review-item-filter=""><option value="">All reviews</option></select><a data-google-review-link="" href="#" rel="noopener" target="_blank">Leave a Google Review</a></div>
 <div class="cb-review-grid" data-review-grid=""></div>
 </section>
+
+<section class="cb-extra-gallery" data-cb-extra-gallery="homestays" hidden aria-label="More travel photos">
+  <div class="cb-extra-gallery-inner">
+    <div class="cb-extra-gallery-head">
+      <span>More moments</span>
+      <h2>More photos</h2>
+    </div>
+    <div class="cb-extra-gallery-grid" data-cb-extra-gallery-grid></div>
+    <button class="cb-extra-gallery-more" type="button" data-cb-extra-gallery-more hidden>Show more photos</button>
+  </div>
+</section>
+
 <footer class="site-footer" data-section="footer">
 <div class="footer-shell">
 <div class="footer-brand"><img alt="CeyBreez" src="logo.png"/><p>Handpicked stays, private tours and local experiences for memorable journeys across Sri Lanka.</p></div>
@@ -782,5 +795,6 @@ if(waBtn){
 <script defer="" src="ceybreez-language.js"></script>
 <script src="ceybreez-public-v3.js?v=20260916-2"></script>
 <script src="inquiry-common.js?v=20260930-2"></script>
+  <script src="ceybreez-media-overrides.js?v=20261006-1"></script>
 </body>
 </html>

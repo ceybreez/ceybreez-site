@@ -34,6 +34,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="ceybreez-public-v3.css?v=20260916-3" rel="stylesheet"/><link href="services-v4.css?v=20260917-10" rel="stylesheet"/>
   <link rel="stylesheet" href="ceybreez-mobile-nav-v6.css?v=20260928-final">
+  <link rel="stylesheet" href="ceybreez-media-overrides.css?v=20261006-1">
 </head>
 <body data-page="services">
 <header class="site-header" id="siteHeader">
@@ -53,12 +54,12 @@
 <section class="services-v4-intro"><div><span class="services-v4-eyebrow dark">THE USEFUL SIDE OF TRAVEL</span><h2>Everything around the itinerary matters too.</h2></div><p>A great day can depend on a good coffee stop, an easy transfer, a nearby supermarket or the right rental. CeyBreez brings those practical local options closer to the rest of your trip.</p><div class="services-v4-mini"><article><strong>01</strong><span>Find nearby</span><p>Browse services around the places you are actually visiting.</p></article><article><strong>02</strong><span>See the details</span><p>Check location, hours, contact details and useful photos.</p></article><article><strong>03</strong><span>Keep moving</span><p>Use local support to make each travel day easier.</p></article></div></section><section aria-label="Local help along the way" class="editorial-gallery v31-reveal">
 <div class="editorial-gallery-head"><div><span class="v31-eyebrow">Travel, made easier</span><h2>Local help along the way</h2></div><p>Useful travel services, food, experiences and practical support in one place.</p></div>
 <div class="editorial-gallery-grid">
-<figure class="editorial-gallery-main"><img alt="Sri Lanka travel inspiration" decoding="async" loading="lazy" src="images/food.jpg"/><figcaption>Stay · Explore · Feel Sri Lanka</figcaption></figure>
-<figure><img alt="CeyBreez Sri Lanka experience" decoding="async" loading="lazy" src="images/nature.jpg"/></figure>
-<figure><img alt="Sri Lanka holiday inspiration" decoding="async" loading="lazy" src="images/temple.jpg"/></figure>
+<figure class="editorial-gallery-main"><img alt="Sri Lanka travel inspiration" decoding="async" loading="lazy" src="images/food.jpg"/ data-cb-media-slot="services-image-1"><figcaption>Stay · Explore · Feel Sri Lanka</figcaption></figure>
+<figure><img alt="CeyBreez Sri Lanka experience" decoding="async" loading="lazy" src="images/nature.jpg"/ data-cb-media-slot="services-image-2"></figure>
+<figure><img alt="Sri Lanka holiday inspiration" decoding="async" loading="lazy" src="images/temple.jpg"/ data-cb-media-slot="services-image-3"></figure>
 </div>
 </section><!-- SECTION: SERVICES IMAGE STORY | CSS: services-v4.css -->
-<section class="services-v4-story"><div class="services-v4-story-card big"><img alt="Local food in Sri Lanka" loading="lazy" src="images/food.jpg"/><div><span>TASTE THE PLACE</span><h3>From a quick coffee to the meal you remember.</h3><p>Food and everyday stops can become part of the travel story.</p></div></div><div class="services-v4-story-card"><img alt="Sri Lanka travel transport" loading="lazy" src="images/train.jpg"/><div><span>MOVE EASILY</span><h3>Make the in-between moments simpler.</h3></div></div><div class="services-v4-story-card"><img alt="Sri Lanka local travel" loading="lazy" src="images/nature.jpg"/><div><span>LOCAL HELP</span><h3>Useful support, close to where you are.</h3></div></div></section>
+<section class="services-v4-story"><div class="services-v4-story-card big"><img alt="Local food in Sri Lanka" loading="lazy" src="images/food.jpg"/ data-cb-media-slot="services-image-4"><div><span>TASTE THE PLACE</span><h3>From a quick coffee to the meal you remember.</h3><p>Food and everyday stops can become part of the travel story.</p></div></div><div class="services-v4-story-card"><img alt="Sri Lanka travel transport" loading="lazy" src="images/train.jpg"/ data-cb-media-slot="services-image-5"><div><span>MOVE EASILY</span><h3>Make the in-between moments simpler.</h3></div></div><div class="services-v4-story-card"><img alt="Sri Lanka local travel" loading="lazy" src="images/nature.jpg"/ data-cb-media-slot="services-image-6"><div><span>LOCAL HELP</span><h3>Useful support, close to where you are.</h3></div></div></section>
 <!-- SECTION: SERVICE CATEGORIES + FILTERS | CSS: services-v4.css | DATA: /api/services -->
 <section class="services-categories" data-section="categories" id="services-list"><div class="services-v4-section-head"><span class="services-v4-eyebrow dark">BROWSE BY NEED</span><h2>Service Categories</h2><p>Browse useful services and places for your Sri Lanka stay.</p></div>
 
@@ -87,6 +88,18 @@
 <div><h2>Need something specific on your trip?</h2><p>Tell us where you are going and what you need. We can help point you toward a practical local option.</p></div>
 <a class="btn contact-btn" href="contact.html">Ask CeyBreez <i class="fa-solid fa-arrow-right"></i></a>
 </section>
+
+<section class="cb-extra-gallery" data-cb-extra-gallery="services" hidden aria-label="More travel photos">
+  <div class="cb-extra-gallery-inner">
+    <div class="cb-extra-gallery-head">
+      <span>More moments</span>
+      <h2>More photos</h2>
+    </div>
+    <div class="cb-extra-gallery-grid" data-cb-extra-gallery-grid></div>
+    <button class="cb-extra-gallery-more" type="button" data-cb-extra-gallery-more hidden>Show more photos</button>
+  </div>
+</section>
+
 <footer class="site-footer" data-section="footer">
 <div class="footer-shell">
 <div class="footer-brand"><img alt="CeyBreez" src="logo.png"/><p>Handpicked stays, private tours and local experiences for memorable journeys across Sri Lanka.</p></div>
@@ -443,5 +456,6 @@ if(socialWA){
 <script src="page-builder.js?v=20260930-v65-live-mirror"></script>
 <script defer="" src="ceybreez-language.js"></script>
 <script src="ceybreez-public-v3.js?v=20260916-2"></script>
+  <script src="ceybreez-media-overrides.js?v=20261006-1"></script>
 </body>
 </html>

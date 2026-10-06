@@ -35,6 +35,7 @@
 <link href="apartments-v4.css?v=20260917-8" rel="stylesheet"/>
   <link rel="stylesheet" href="ceybreez-mobile-nav-v6.css?v=20260928-final">
   <link rel="stylesheet" href="inquiry-common.css?v=20260930-2">
+  <link rel="stylesheet" href="ceybreez-media-overrides.css?v=20261006-1">
 </head>
 <body data-page="apartments">
 <header class="site-header" id="siteHeader">
@@ -66,11 +67,11 @@
 </section><section aria-label="City comfort, island rhythm" class="editorial-gallery v31-reveal">
 <div class="editorial-gallery-head"><div><span class="v31-eyebrow">Stay your way</span><h2>City comfort, island rhythm</h2></div><p>Flexible apartment stays with room to settle in, work, relax and explore.</p></div>
 <div class="editorial-gallery-grid">
-<figure class="editorial-gallery-main"><img alt="Sri Lanka travel inspiration" decoding="async" loading="lazy" src="images/beach.jpg"/><figcaption>Stay · Explore · Feel Sri Lanka</figcaption></figure>
-<figure><img alt="CeyBreez Sri Lanka experience" decoding="async" loading="lazy" src="images/food.jpg"/></figure>
-<figure><img alt="Sri Lanka holiday inspiration" decoding="async" loading="lazy" src="images/cover.jpg"/></figure>
+<figure class="editorial-gallery-main"><img alt="Sri Lanka travel inspiration" decoding="async" loading="lazy" src="images/beach.jpg"/ data-cb-media-slot="apartments-image-1"><figcaption>Stay · Explore · Feel Sri Lanka</figcaption></figure>
+<figure><img alt="CeyBreez Sri Lanka experience" decoding="async" loading="lazy" src="images/food.jpg"/ data-cb-media-slot="apartments-image-2"></figure>
+<figure><img alt="Sri Lanka holiday inspiration" decoding="async" loading="lazy" src="images/cover.jpg"/ data-cb-media-slot="apartments-image-3"></figure>
 </div>
-</section><section class="stay-v4-moods v31-reveal"><div class="stay-v4-section-head"><span class="stay-v4-eyebrow dark">FIND YOUR PACE</span><h2>Made for real travel days.</h2><p>Different trips need different kinds of space. Start with the feeling you want.</p></div><div class="stay-v4-mood-grid"><article class="stay-v4-mood"><img alt="City ease" decoding="async" loading="lazy" src="images/food.jpg"/><div><span>CEYBREEZ STAY</span><h3>City ease</h3><p>A practical base for short stays, work trips and exploring.</p></div></article><article class="stay-v4-mood"><img alt="Family room" decoding="async" loading="lazy" src="images/cover.jpg"/><div><span>CEYBREEZ STAY</span><h3>Family room</h3><p>More usable space when everyone is travelling together.</p></div></article><article class="stay-v4-mood"><img alt="Stay longer" decoding="async" loading="lazy" src="images/beach.jpg"/><div><span>CEYBREEZ STAY</span><h3>Stay longer</h3><p>A flexible home base for slower, extended Sri Lanka visits.</p></div></article></div></section>
+</section><section class="stay-v4-moods v31-reveal"><div class="stay-v4-section-head"><span class="stay-v4-eyebrow dark">FIND YOUR PACE</span><h2>Made for real travel days.</h2><p>Different trips need different kinds of space. Start with the feeling you want.</p></div><div class="stay-v4-mood-grid"><article class="stay-v4-mood"><img alt="City ease" decoding="async" loading="lazy" src="images/food.jpg"/ data-cb-media-slot="apartments-image-4"><div><span>CEYBREEZ STAY</span><h3>City ease</h3><p>A practical base for short stays, work trips and exploring.</p></div></article><article class="stay-v4-mood"><img alt="Family room" decoding="async" loading="lazy" src="images/cover.jpg"/ data-cb-media-slot="apartments-image-5"><div><span>CEYBREEZ STAY</span><h3>Family room</h3><p>More usable space when everyone is travelling together.</p></div></article><article class="stay-v4-mood"><img alt="Stay longer" decoding="async" loading="lazy" src="images/beach.jpg"/ data-cb-media-slot="apartments-image-6"><div><span>CEYBREEZ STAY</span><h3>Stay longer</h3><p>A flexible home base for slower, extended Sri Lanka visits.</p></div></article></div></section>
 <!-- SECTION: CMS PROPERTY LISTING | Data comes from /api/properties; visual styling in page V4 CSS -->
 <section class="properties-section" id="properties"><div class="stay-v4-property-head"><span class="stay-v4-eyebrow dark">HANDPICKED FOR THE JOURNEY</span><h2>Featured Apartments</h2><p>Flexible stays selected for comfort, convenience and easy exploring.</p></div>
 
@@ -166,6 +167,18 @@
 <p>Share your dates, guest count and preferred area. We’ll help shortlist a stay that fits the journey.</p>
 <a href="#propertyInquiry">Start a stay request <span>→</span></a>
 </section>
+
+<section class="cb-extra-gallery" data-cb-extra-gallery="apartments" hidden aria-label="More travel photos">
+  <div class="cb-extra-gallery-inner">
+    <div class="cb-extra-gallery-head">
+      <span>More moments</span>
+      <h2>More photos</h2>
+    </div>
+    <div class="cb-extra-gallery-grid" data-cb-extra-gallery-grid></div>
+    <button class="cb-extra-gallery-more" type="button" data-cb-extra-gallery-more hidden>Show more photos</button>
+  </div>
+</section>
+
 <footer class="site-footer" data-section="footer">
 <div class="footer-shell">
 <div class="footer-brand"><img alt="CeyBreez" src="logo.png"/><p>Handpicked stays, private tours and local experiences for memorable journeys across Sri Lanka.</p></div>
@@ -775,5 +788,6 @@ if(waBtn){
 <script src="ceybreez-language.js"></script>
 <script src="ceybreez-public-v3.js?v=20260916-2"></script>
 <script src="inquiry-common.js?v=20260930-2"></script>
+  <script src="ceybreez-media-overrides.js?v=20261006-1"></script>
 </body>
 </html>

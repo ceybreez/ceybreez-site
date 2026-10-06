@@ -26,6 +26,19 @@
     if (json) headers['Content-Type'] = 'application/json';
     return headers;
   };
+
+  async function fetchWithTimeout(url, options = {}, timeoutMs = 9000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await fetch(url, { ...options, signal: controller.signal, cache: 'no-store' });
+    } catch (error) {
+      if (error?.name === 'AbortError') throw new Error('Server response timed out');
+      throw error;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
   const clean = v => String(v ?? '').trim();
   const escapeHtml = v => clean(v).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 
@@ -98,10 +111,9 @@
   }
 
   async function api(path, options = {}) {
-    const res = await fetch(API_BASE + path, {
+    const res = await fetchWithTimeout(API_BASE + path, {
       ...options,
-      headers: { ...authHeaders(!(options.body instanceof FormData)), ...(options.headers || {}) },
-      cache: 'no-store'
+      headers: { ...authHeaders(!(options.body instanceof FormData)), ...(options.headers || {}) }
     });
     const type = res.headers.get('content-type') || '';
     const data = type.includes('application/json') ? await res.json().catch(() => ({})) : { text: await res.text().catch(() => '') };
@@ -118,6 +130,11 @@
       location.replace('index.html');
       return false;
     }
+
+    // Reuse the session already validated by the main Admin shell.
+    // This avoids blocking this isolated manager on another auth round-trip.
+    if (sessionStorage.getItem(VALIDATED_KEY) === '1') return true;
+
     try {
       const { data } = await api('/api/admin/auth/me');
       currentUser = data.user || data;
@@ -125,19 +142,39 @@
       return true;
     } catch (error) {
       sessionStorage.removeItem(VALIDATED_KEY);
-      if (error.status === 401) location.replace('index.html');
-      else setStatus(`Could not validate session: ${error.message}`, 'error');
+      if (error.status === 401) {
+        location.replace('index.html');
+      } else {
+        setStatus(`Admin session check failed: ${error.message}. Return to Admin and sign in again.`, 'error');
+      }
       return false;
     }
   }
 
   async function loadGallery() {
-    setStatus('Loading live gallery…');
-    const { data } = await api('/api/admin/site-content');
-    serverItems = parseGallery(data.home_gallery);
-    const usingFallback = serverItems.length === 0;
-    if (usingFallback) serverItems = cloneItems(DEFAULT_GALLERY);
+    // Always show the current approved six photos immediately.
+    // The manager must remain usable even if the API is slow.
+    serverItems = cloneItems(DEFAULT_GALLERY);
     draftItems = cloneItems(serverItems);
+    render();
+    updateSummary();
+    setStatus('Showing the current Home gallery while checking saved gallery data…');
+
+    let usingFallback = true;
+    try {
+      // Read-only public endpoint: loading gallery data does not need an Admin write request.
+      const res = await fetchWithTimeout(`${API_BASE}/api/site-content`, {}, 9000);
+      if (!res.ok) throw new Error(`Gallery data request failed (${res.status})`);
+      const data = await res.json().catch(() => ({}));
+      const savedItems = parseGallery(data.home_gallery);
+      if (savedItems.length) {
+        serverItems = cloneItems(savedItems);
+        draftItems = cloneItems(serverItems);
+        usingFallback = false;
+      }
+    } catch (error) {
+      setStatus(`Current 6 Home photos loaded. Saved gallery sync unavailable: ${error.message}`, 'warn');
+    }
 
     try {
       const saved = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
@@ -156,8 +193,8 @@
     updateSummary();
     if (!localStorage.getItem(DRAFT_KEY)) {
       setStatus(usingFallback
-        ? 'Loaded the 6 photos currently used by the Home gallery. Edit or add photos, then preview before publishing.'
-        : 'Gallery loaded. Live website is unchanged until Publish Gallery.');
+        ? 'Loaded the current 6 Home photos. You can replace, reorder or add more photos; nothing is live until Publish Gallery.'
+        : 'Saved gallery loaded. The live website is unchanged until Publish Gallery.');
     }
   }
 
@@ -385,13 +422,20 @@
 
   async function init() {
     bindEvents();
+
+    // Paint gallery cards first so the page never appears blank while auth/API checks run.
+    serverItems = cloneItems(DEFAULT_GALLERY);
+    draftItems = cloneItems(serverItems);
+    render();
+    updateSummary();
+
     const valid = await validateSession();
     if (!valid) return;
     await loadGallery().catch(error => {
-      setStatus(`Could not load gallery: ${error.message}`, 'error');
-      if (error.status === 403) alert('Your account does not have Page Builder permission.');
+      setStatus(`Gallery manager could not sync: ${error.message}. The current 6 photos are still available as a safe draft.`, 'error');
     });
   }
+
 
   document.addEventListener('DOMContentLoaded', init);
 })();

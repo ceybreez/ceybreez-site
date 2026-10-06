@@ -7,6 +7,18 @@
   const DRAFT_KEY = 'CEYBREEZ_HOME_GALLERY_DRAFT_V1';
   const MAX_IMAGES = 48;
 
+  // Current approved Home gallery fallback.
+  // These are already on the live Home page and are only used in the manager
+  // when no home_gallery value has been saved to site_content yet.
+  const DEFAULT_GALLERY = [
+    { src: '../images/beach.jpg', kicker: 'Coast', title: 'Golden shores', caption: '' },
+    { src: '../images/train.jpg', kicker: 'Highlands', title: 'Slow rail journeys', caption: '' },
+    { src: '../images/food.jpg', kicker: 'Taste', title: 'Island flavours', caption: '' },
+    { src: '../images/nature.jpg', kicker: 'Nature', title: 'Wild green places', caption: '' },
+    { src: '../images/temple.jpg', kicker: 'Culture', title: 'Living heritage', caption: '' },
+    { src: '../images/mountains.jpg', kicker: 'Escape', title: 'Misty mornings', caption: '' }
+  ];
+
   const $ = (s, root = document) => root.querySelector(s);
   const token = () => sessionStorage.getItem(TOKEN_KEY) || '';
   const authHeaders = (json = true) => {
@@ -123,6 +135,8 @@
     setStatus('Loading live gallery…');
     const { data } = await api('/api/admin/site-content');
     serverItems = parseGallery(data.home_gallery);
+    const usingFallback = serverItems.length === 0;
+    if (usingFallback) serverItems = cloneItems(DEFAULT_GALLERY);
     draftItems = cloneItems(serverItems);
 
     try {
@@ -140,7 +154,11 @@
 
     render();
     updateSummary();
-    if (!localStorage.getItem(DRAFT_KEY)) setStatus('Gallery loaded. Live website is unchanged until Publish Gallery.');
+    if (!localStorage.getItem(DRAFT_KEY)) {
+      setStatus(usingFallback
+        ? 'Loaded the 6 photos currently used by the Home gallery. Edit or add photos, then preview before publishing.'
+        : 'Gallery loaded. Live website is unchanged until Publish Gallery.');
+    }
   }
 
   function render() {

@@ -14,7 +14,8 @@
 
   const state = {
     items: [], selectedId: '', selectedSelector: '', selectedDevice: 'desktop',
-    elementStyles: {}, customElements: [], previewController: null, initialized: false
+    elementStyles: {}, customElements: [], previewController: null, initialized: false,
+    dirty: false, previewed: true, draftPreviewOpen: false
   };
 
   const esc = (value) => String(value ?? '').replace(/[&<>"']/g, ch => ({
@@ -47,6 +48,86 @@
     state.elementStyles[state.selectedSelector] ||= { desktop:{}, tablet:{}, mobile:{} };
     state.elementStyles[state.selectedSelector][state.selectedDevice] ||= {};
     return state.elementStyles[state.selectedSelector][state.selectedDevice];
+  };
+
+  function updateDraftStatus(message, cls='') {
+    const status = $('pb2SaveStatus');
+    if (!status) return;
+    status.textContent = message || '';
+    status.className = cls || '';
+  }
+
+  function markDraft() {
+    state.dirty = true;
+    state.previewed = false;
+    updateDraftStatus('Draft – not published', 'pbx-draft-status');
+  }
+
+  function ensureDraftPreviewUi() {
+    if ($('pbxDraftPreviewOverlay')) return;
+    const style = document.createElement('style');
+    style.id = 'pbx-draft-preview-style';
+    style.textContent = `
+      body.pbx-draft-preview-open{overflow:hidden!important}
+      #pbxDraftPreviewOverlay{position:fixed;inset:0;z-index:2147483000;background:#eaf0f1;display:none;flex-direction:column}
+      #pbxDraftPreviewOverlay.open{display:flex}
+      .pbx-draft-bar{height:58px;display:flex;align-items:center;gap:10px;padding:9px 14px;background:#0b4d46;color:#fff;box-shadow:0 2px 12px rgba(0,0,0,.18)}
+      .pbx-draft-bar strong{font-size:16px}.pbx-draft-note{font-size:12px;opacity:.86;margin-right:auto}
+      .pbx-draft-bar button{border:1px solid rgba(255,255,255,.38);background:rgba(255,255,255,.10);color:#fff;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}
+      .pbx-draft-bar button.active{background:#fff;color:#0b4d46}
+      .pbx-draft-bar .pbx-close-preview{background:#fff;color:#0b4d46}
+      .pbx-draft-stage{flex:1;overflow:auto;padding:16px;display:flex;justify-content:center;align-items:flex-start}
+      #pbxDraftPreviewOverlay .pb2-preview-frame-wrap{min-height:calc(100vh - 90px);max-width:100%;margin:0 auto}
+      #pbxDraftPreviewOverlay .pb2-preview-frame-wrap iframe{height:calc(100vh - 90px)}
+      #pb2SaveStatus.pbx-draft-status{color:#b36b00;font-weight:800}
+      @media(max-width:700px){.pbx-draft-note{display:none}.pbx-draft-bar{overflow-x:auto}.pbx-draft-bar button{white-space:nowrap}}
+    `;
+    document.head.appendChild(style);
+    const overlay = document.createElement('div');
+    overlay.id = 'pbxDraftPreviewOverlay';
+    overlay.innerHTML = `
+      <div class="pbx-draft-bar">
+        <strong>Draft Preview</strong>
+        <span class="pbx-draft-note">Private preview only — nothing is live until you publish.</span>
+        <button type="button" data-pbx-preview-device="desktop" class="active">Desktop</button>
+        <button type="button" data-pbx-preview-device="tablet">Tablet</button>
+        <button type="button" data-pbx-preview-device="mobile">Mobile</button>
+        <button type="button" class="pbx-close-preview">Close Preview</button>
+      </div>
+      <div class="pbx-draft-stage"></div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelectorAll('[data-pbx-preview-device]').forEach(btn => btn.addEventListener('click', () => {
+      const device = btn.dataset.pbxPreviewDevice;
+      setDevice(device);
+      overlay.querySelectorAll('[data-pbx-preview-device]').forEach(b => b.classList.toggle('active', b.dataset.pbxPreviewDevice === device));
+    }));
+    overlay.querySelector('.pbx-close-preview')?.addEventListener('click', closeDraftPreview);
+  }
+
+  function closeDraftPreview() {
+    const overlay = $('pbxDraftPreviewOverlay');
+    const wrap = $('pb2PreviewFrameWrap');
+    const panel = document.querySelector('.pb2-preview-panel');
+    if (wrap && panel && overlay?.contains(wrap)) panel.appendChild(wrap);
+    overlay?.classList.remove('open');
+    document.body.classList.remove('pbx-draft-preview-open');
+    state.draftPreviewOpen = false;
+  }
+
+  window.pb2PreviewDraft = function pb2PreviewDraft() {
+    ensureDraftPreviewUi();
+    applySectionFormPreview();
+    applyAllToPreview();
+    const overlay = $('pbxDraftPreviewOverlay');
+    const stage = overlay?.querySelector('.pbx-draft-stage');
+    const wrap = $('pb2PreviewFrameWrap');
+    if (!overlay || !stage || !wrap) return;
+    stage.appendChild(wrap);
+    overlay.classList.add('open');
+    document.body.classList.add('pbx-draft-preview-open');
+    state.draftPreviewOpen = true;
+    state.previewed = true;
+    updateDraftStatus(state.dirty ? 'Draft previewed – ready to publish' : 'Previewing current live version', state.dirty ? 'pb2-status-ok' : '');
   };
 
   function selectorFor(el, section) {
@@ -107,7 +188,7 @@
         <label class="pbx-check"><input id="pbxHidden" type="checkbox"> Hide on this device</label>
         <div class="pbx-actions"><button type="button" id="pbxResetDevice">Reset Device Style</button><button type="button" id="pbxDeleteCustom" class="danger">Delete Added Element</button></div>
       </div>
-      <div class="pbx-add-row"><button type="button" data-pbx-add="heading">+ Heading</button><button type="button" data-pbx-add="text">+ Text</button><button type="button" data-pbx-add="button">+ Button</button><button type="button" data-pbx-add="image">+ Image</button></div>
+      <div class="pbx-add-row"><button type="button" data-pbx-add="heading">+ Heading</button><button type="button" data-pbx-add="text">+ Text</button><button type="button" data-pbx-add="button">+ Button</button><button type="button" data-pbx-add="image">+ Image / Upload</button></div>
     `;
     head.insertAdjacentElement('afterend', box);
     box.classList.add('hidden');
@@ -178,14 +259,15 @@
         rec[key] = ['fontSize','width','height','x','y','marginTop','marginRight','marginBottom','marginLeft','paddingTop','paddingRight','paddingBottom','paddingLeft','borderRadius','opacity'].includes(key)
           ? (value === '' ? '' : Number(value)) : value;
         applySelectedRecord();
+        markDraft();
       });
     });
-    $('pbxHidden')?.addEventListener('change', () => { const rec=record(); if(rec){rec.hidden=$('pbxHidden').checked;applySelectedRecord();} });
+    $('pbxHidden')?.addEventListener('change', () => { const rec=record(); if(rec){rec.hidden=$('pbxHidden').checked;applySelectedRecord();markDraft();} });
     $('pbxClearSelection')?.addEventListener('click', clearSelection);
     $('pbxResetDevice')?.addEventListener('click', () => {
       if (!state.selectedSelector) return;
       state.elementStyles[state.selectedSelector][state.selectedDevice] = {};
-      renderInspector(); applyAllToPreview();
+      renderInspector(); applyAllToPreview(); markDraft();
     });
     $('pbxDeleteCustom')?.addEventListener('click', deleteSelectedCustom);
     $('pbxUploadImageBtn')?.addEventListener('click', () => $('pbxImageUploader')?.click());
@@ -197,6 +279,100 @@
     document.querySelectorAll('[data-pbx-device]').forEach(btn => btn.addEventListener('click', () => setDevice(btn.dataset.pbxDevice)));
     document.querySelectorAll('[data-pbx-add]').forEach(btn => btn.addEventListener('click', () => addCustom(btn.dataset.pbxAdd)));
   }
+
+
+  async function pbxUploadBuilderMedia(file, options = {}) {
+    const kind = options.kind === 'video' ? 'video' : 'image';
+    const status = $(options.statusId || '');
+    const input = $(options.inputId || '');
+    if (!file) return '';
+    if (kind === 'image' && !String(file.type || '').startsWith('image/')) {
+      throw new Error('Please select an image file.');
+    }
+    if (kind === 'video' && !String(file.type || '').startsWith('video/')) {
+      throw new Error('Please select a video file.');
+    }
+    try {
+      if (status) status.textContent = `Uploading ${kind}...`;
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', options.folder || (kind === 'video' ? 'page-builder-videos' : 'page-builder-images'));
+      const endpoint = kind === 'video' ? '/api/admin/upload-video' : '/api/admin/upload-image';
+      const res = await fetch(`${API_BASE}${endpoint}`, {
+        method: 'POST',
+        headers: typeof uploadHeaders === 'function' ? uploadHeaders() : (typeof authHeaders === 'function' ? authHeaders(false) : {}),
+        body: formData
+      });
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(result.error || `${kind === 'video' ? 'Video' : 'Image'} upload failed`);
+      if (!result.url) throw new Error('Upload completed, but no media URL was returned');
+      if (input) {
+        input.value = result.url;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      if (options.mode) {
+        const radio = document.querySelector(`input[name="sectionBackgroundMode"][value="${options.mode}"]`);
+        if (radio) {
+          radio.checked = true;
+          radio.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
+      window.pb2LivePreview?.();
+      if (status) status.textContent = `${kind === 'video' ? 'Video' : 'Image'} uploaded successfully.`;
+      return result.url;
+    } catch (error) {
+      if (status) status.textContent = error.message || 'Upload failed.';
+      throw error;
+    }
+  }
+
+  window.uploadSectionImage = async function uploadSectionImage() {
+    const picker = $('sectionImageUploader');
+    const file = picker?.files?.[0];
+    if (!file) return;
+    try {
+      await pbxUploadBuilderMedia(file, {
+        kind: 'image', inputId: 'sectionImage', statusId: 'sectionImageUploadStatus',
+        folder: `page-builder/${currentPage()}/section-images`
+      });
+    } catch (error) {
+      alert(error.message || 'Section image upload failed.');
+    } finally {
+      if (picker) picker.value = '';
+    }
+  };
+
+  window.uploadSectionBackground = async function uploadSectionBackground() {
+    const picker = $('sectionBackgroundUploader');
+    const file = picker?.files?.[0];
+    if (!file) return;
+    try {
+      await pbxUploadBuilderMedia(file, {
+        kind: 'image', inputId: 'sectionBackgroundImage', statusId: 'sectionBackgroundUploadStatus',
+        folder: `page-builder/${currentPage()}/backgrounds`, mode: 'image'
+      });
+    } catch (error) {
+      alert(error.message || 'Background image upload failed.');
+    } finally {
+      if (picker) picker.value = '';
+    }
+  };
+
+  window.uploadSectionVideo = async function uploadSectionVideo() {
+    const picker = $('sectionVideoUploader');
+    const file = picker?.files?.[0];
+    if (!file) return;
+    try {
+      await pbxUploadBuilderMedia(file, {
+        kind: 'video', inputId: 'sectionVideo', statusId: 'sectionVideoUploadStatus',
+        folder: `page-builder/${currentPage()}/videos`, mode: 'video'
+      });
+    } catch (error) {
+      alert(error.message || 'Background video upload failed.');
+    } finally {
+      if (picker) picker.value = '';
+    }
+  };
 
   async function uploadSelectedElementImage(file) {
     const status = $('pbxImageUploadStatus');
@@ -233,6 +409,7 @@
       rec.src = result.url;
       if ($('pbxSrc')) $('pbxSrc').value = result.url;
       applySelectedRecord();
+      markDraft();
       if (status) status.textContent = 'Image uploaded successfully.';
     } catch (error) {
       if (status) status.textContent = error.message || 'Image upload failed.';
@@ -309,14 +486,15 @@
   function addCustom(type) {
     const key=$('sectionKey')?.value; if(!key){alert('Select a section first.');return;}
     const id=`pb-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
-    state.customElements.push({id,sectionKey:key,type,text:type==='heading'?'New Heading':type==='button'?'Button':'New text',url:'#'});
+    state.customElements.push({id,sectionKey:key,type,text:type==='heading'?'New Heading':type==='button'?'Button':'New text',url:type==='image'?'':'#'});
     state.selectedSelector=`[data-pb-id="${id}"]`;
     state.elementStyles[state.selectedSelector]={desktop:{},tablet:{},mobile:{}};
-    applyAllToPreview(); renderInspector();
+    applyAllToPreview(); renderInspector(); markDraft();
+    if(type==='image') setTimeout(() => $('pbxImageUploader')?.click(), 60);
   }
   function deleteSelectedCustom() {
     const el=selectedElement(); if(!el?.dataset.pbId)return;
-    const id=el.dataset.pbId; state.customElements=state.customElements.filter(x=>x.id!==id); delete state.elementStyles[state.selectedSelector]; clearSelection(); applyAllToPreview();
+    const id=el.dataset.pbId; state.customElements=state.customElements.filter(x=>x.id!==id); delete state.elementStyles[state.selectedSelector]; clearSelection(); applyAllToPreview(); markDraft();
   }
 
   function discoverPreviewSections() {
@@ -381,9 +559,9 @@
   }
 
   window.pb2SetDevice=(device)=>setDevice(device);
-  window.pb2RefreshPreview=()=>{const f=$('pb2PreviewFrame');if(f)f.src=`${PAGE_URLS[currentPage()]||PAGE_URLS.home}?pbmirror=${Date.now()}`;};
-  window.pb2ChangePage=(page)=>{if($('sectionPage'))$('sectionPage').value=page;state.selectedId='';clearSelection();loadPageSections();window.pb2RefreshPreview();};
-  window.pb2NewSection=()=>{resetSectionForm();$('sectionPage').value=currentPage();$('sectionKey').value='custom';state.selectedId='';clearSelection();};
+  window.pb2RefreshPreview=()=>{closeDraftPreview();const f=$('pb2PreviewFrame');if(f)f.src=`${PAGE_URLS[currentPage()]||PAGE_URLS.home}?pbmirror=${Date.now()}`;};
+  window.pb2ChangePage=(page)=>{closeDraftPreview();if($('sectionPage'))$('sectionPage').value=page;state.selectedId='';state.dirty=false;state.previewed=true;clearSelection();loadPageSections();window.pb2RefreshPreview();};
+  window.pb2NewSection=()=>{resetSectionForm();$('sectionPage').value=currentPage();$('sectionKey').value='custom';state.selectedId='';clearSelection();markDraft();};
   window.pb2ResetSelectedSection=()=>{if(confirm('Clear the selected form? Saved data remains until Save is pressed.'))window.pb2NewSection();};
   window.pb2SaveCurrentSection=()=>$('sectionForm')?.requestSubmit();
 
@@ -424,16 +602,20 @@
     const item=state.items.find(x=>String(x.id)===String(id)); if(!item)return;
     const s=parseSettings(item.settings); state.selectedId=item.id; state.elementStyles=s.elementStyles||{}; state.customElements=s.customElements||[]; state.selectedSelector='';
     const vals={sectionEditId:item.__virtual?'':(item.id||''),sectionPage:item.page||currentPage(),sectionKey:item.sectionKey||'custom',sectionType:item.sectionType||'custom',sectionTitle:item.title||'',sectionSubtitle:item.subtitle||'',sectionContent:item.content||'',sectionButtonText:item.buttonText||s.buttonText||'',sectionButtonUrl:item.buttonUrl||s.buttonUrl||'',sectionImage:item.mediaUrl||'',sectionVideo:s.videoUrl||'',sectionBgColor:item.backgroundColor||'#ffffff',sectionBackgroundImage:item.backgroundImage||'',sectionTextColor:item.textColor||'#222222',sectionButtonColor:item.buttonColor||'#0f766e',sectionFontFamily:item.fontFamily||'',sectionFontSize:stripPx(item.fontSize||s.fontSize),sectionHeadingColor:item.headingColor||s.headingColor||'#17324d',sectionHeadingFont:s.headingFont||'',sectionHeadingSize:stripPx(s.headingSize),sectionBackgroundSize:s.backgroundSize||'cover',sectionBackgroundPosition:s.backgroundPosition||'center center',sectionOverlay:s.overlay??35,sectionSortOrder:item.sortOrder||0,sectionGradientStart:s.gradientStart||'#ffffff',sectionGradientEnd:s.gradientEnd||'#f8f3eb',sectionPaddingTop:stripPx(s.paddingTop),sectionPaddingBottom:stripPx(s.paddingBottom),sectionBorderRadius:stripPx(s.borderRadius),sectionShadow:s.shadow||'',sectionAnimation:s.animation||''};
-    Object.entries(vals).forEach(([id,v])=>{if($(id))$(id).value=v;}); $('sectionActive').checked=!!item.active; loadCards(s.cards||[]); renderList(); renderInspector(); applySectionFormPreview(); applyAllToPreview(); if(scroll)$('sectionForm')?.scrollIntoView({behavior:'smooth',block:'start'});
+    Object.entries(vals).forEach(([id,v])=>{if($(id))$(id).value=v;}); $('sectionActive').checked=!!item.active; loadCards(s.cards||[]); renderList(); renderInspector(); applySectionFormPreview(); applyAllToPreview(); state.dirty=false; state.previewed=true; updateDraftStatus(item.__virtual?'Unsaved section – edit then preview':''); if(scroll)$('sectionForm')?.scrollIntoView({behavior:'smooth',block:'start'});
     const mode=s.backgroundMode||item.backgroundType||(s.videoUrl?'video':item.backgroundImage?'image':'color'); const radio=document.querySelector(`input[name="sectionBackgroundMode"][value="${mode}"]`); if(radio)radio.checked=true; updateBackgroundControls();
   };
 
   window.savePageSection=async function(e){
-    e?.preventDefault(); const status=$('pb2SaveStatus'); if(status){status.textContent='Saving…';status.className='';}
+    e?.preventDefault();
+    if(state.dirty && !state.previewed){ alert('Please preview this draft before publishing it live.'); window.pb2PreviewDraft(); return; }
+    if(!confirm(`Publish these ${currentPage()} section changes to the live website?`)) return;
+    closeDraftPreview();
+    const status=$('pb2SaveStatus'); if(status){status.textContent='Publishing…';status.className='';}
     const mode=backgroundMode();
     const settings={liveLayout:true,builderVersion:'5.0-live-mirror',backgroundMode:mode,videoUrl:mode==='video'?$('sectionVideo').value.trim():'',gradientStart:$('sectionGradientStart').value,gradientEnd:$('sectionGradientEnd').value,paddingTop:px('sectionPaddingTop'),paddingBottom:px('sectionPaddingBottom'),borderRadius:px('sectionBorderRadius'),shadow:$('sectionShadow').value,animation:$('sectionAnimation').value,cards:collectCards(),buttonText:$('sectionButtonText').value.trim(),buttonUrl:$('sectionButtonUrl').value.trim(),backgroundSize:$('sectionBackgroundSize').value,backgroundPosition:$('sectionBackgroundPosition').value,overlay:Number($('sectionOverlay').value||35),headingColor:$('sectionHeadingColor').value,headingFont:$('sectionHeadingFont').value,headingSize:px('sectionHeadingSize'),fontSize:px('sectionFontSize'),elementStyles:state.elementStyles,customElements:state.customElements};
     const data={id:$('sectionEditId').value||'',page:currentPage(),sectionKey:$('sectionKey').value,sectionType:$('sectionType').value,title:$('sectionTitle').value.trim(),subtitle:$('sectionSubtitle').value.trim(),content:$('sectionContent').value.trim(),buttonText:$('sectionButtonText').value.trim(),buttonUrl:$('sectionButtonUrl').value.trim(),mediaUrl:$('sectionImage').value.trim(),backgroundType:mode,backgroundColor:mode==='color'?$('sectionBgColor').value:'transparent',backgroundImage:mode==='image'?$('sectionBackgroundImage').value.trim():'',textColor:$('sectionTextColor').value,headingColor:$('sectionHeadingColor').value,buttonColor:$('sectionButtonColor').value,fontFamily:$('sectionFontFamily').value,fontSize:px('sectionFontSize'),sortOrder:$('sectionSortOrder').value,active:$('sectionActive').checked,settings};
-    try{const res=await fetch(`${API_BASE}/api/admin/page-sections`,{method:'POST',headers:authHeaders(),body:JSON.stringify(data)});const out=await res.json();if(!res.ok)throw new Error(out.error||'Save failed');if(status){status.textContent='Saved';status.className='pb2-status-ok';}await loadPageSections();window.pb2RefreshPreview();}
+    try{const res=await fetch(`${API_BASE}/api/admin/page-sections`,{method:'POST',headers:authHeaders(),body:JSON.stringify(data)});const out=await res.json();if(!res.ok)throw new Error(out.error||'Save failed');if(status){status.textContent='Published Live';status.className='pb2-status-ok';}state.dirty=false;state.previewed=true;await loadPageSections();window.pb2RefreshPreview();}
     catch(err){if(status){status.textContent=err.message;status.className='pb2-status-error';}alert(err.message);}
   };
 
@@ -458,10 +640,17 @@
   function bindOnce(){
     if(state.initialized)return;state.initialized=true;ensureInspector();
     const help=document.querySelector('#pageControlTab .v3-help');
-    if(help) help.innerHTML='<strong>Live Mirror:</strong> this preview is built from the same public page structure visitors see. Legacy hidden Visual Builder layouts are ignored. Save Changes publishes only the section you are editing.';
+    if(help) help.innerHTML='<strong>Draft-safe Live Mirror:</strong> edit freely, preview the draft privately, then publish only when you are satisfied. Uploaded media is not shown live until the section is published.';
+    ensureDraftPreviewUi();
+    const previewButton=document.querySelector('.pb2-header-actions button[onclick*="pb2RefreshPreview"]');
+    if(previewButton){previewButton.textContent='Preview Draft';previewButton.setAttribute('onclick','pb2PreviewDraft()');}
+    const publishButton=document.querySelector('.pb2-header-actions button[onclick*="pb2SaveCurrentSection"]');
+    if(publishButton) publishButton.textContent='Publish Changes';
+    const bottomPublish=document.querySelector('#sectionForm button[type="submit"]');
+    if(bottomPublish) bottomPublish.textContent='Publish Section';
     document.querySelectorAll('.pb2-accordion-title').forEach(btn=>btn.addEventListener('click',()=>btn.parentElement.classList.toggle('open')));
-    document.querySelectorAll('#sectionForm input,#sectionForm textarea,#sectionForm select').forEach(input=>input.addEventListener('input',window.pb2LivePreview));
-    document.querySelectorAll('input[name="sectionBackgroundMode"]').forEach(input=>input.addEventListener('change',updateBackgroundControls));
+    document.querySelectorAll('#sectionForm input,#sectionForm textarea,#sectionForm select').forEach(input=>input.addEventListener('input',()=>{markDraft();window.pb2LivePreview();}));
+    document.querySelectorAll('input[name="sectionBackgroundMode"]').forEach(input=>input.addEventListener('change',()=>{markDraft();updateBackgroundControls();}));
     $('sectionForm')?.addEventListener('submit',window.savePageSection);
     $('pb2PreviewFrame')?.addEventListener('load',installPreviewEditor);
     document.querySelectorAll('.pb2-devices button').forEach(btn=>btn.addEventListener('click',()=>setDevice(btn.dataset.device||((btn.getAttribute('onclick')||'').match(/'(desktop|tablet|mobile)'/)||[])[1]||'desktop')));

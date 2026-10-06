@@ -1765,6 +1765,99 @@ async function loadReviewShowcaseSettings(){
   }
 }
 
+async function uploadReviewReel(){
+  const input = document.getElementById("reviewReelUploader");
+  const status = document.getElementById("reviewReelUploadStatus");
+  const file = input?.files?.[0];
+
+  if(!file){
+    if(status) status.textContent = "Select a video first.";
+    return;
+  }
+
+  const fileName = String(file.name || "");
+  const ext = fileName.includes(".") ? fileName.split(".").pop().toLowerCase() : "";
+  const allowedTypes = new Set(["video/mp4", "video/webm", "video/quicktime"]);
+  const allowedExtensions = new Set(["mp4", "webm", "mov"]);
+
+  if(!allowedTypes.has(file.type) && !allowedExtensions.has(ext)){
+    if(status) status.textContent = "Only MP4, WebM or MOV videos are supported.";
+    if(input) input.value = "";
+    return;
+  }
+
+  const maxSize = 100 * 1024 * 1024;
+  if(Number(file.size || 0) > maxSize){
+    if(status) status.textContent = "Video is too large. Maximum size is 100 MB.";
+    if(input) input.value = "";
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("folder", "review-reels");
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 180000);
+
+  try{
+    if(input) input.disabled = true;
+    if(status) status.textContent = `Uploading ${fileName || "video"}...`;
+
+    const res = await fetch(`${API_BASE}/api/admin/upload-video`, {
+      method: "POST",
+      headers: uploadHeaders(),
+      body: formData,
+      signal: controller.signal
+    });
+
+    const result = await res.json().catch(() => ({}));
+    if(!res.ok) throw new Error(result.error || `Video upload failed (${res.status})`);
+    if(!result.url) throw new Error("Upload completed but no video URL was returned.");
+
+    const reels = document.getElementById("reviewReels");
+    if(reels){
+      const urls = reels.value
+        .split("\n")
+        .map(value => value.trim())
+        .filter(Boolean);
+      if(!urls.includes(result.url)) urls.push(result.url);
+      reels.value = urls.join("\n");
+    }
+
+    if(status) status.textContent = "Video uploaded. Saving it to the Home reels...";
+
+    const payload = {
+      happy_customer_count: document.getElementById("happyCustomerCount")?.value.trim() || "0",
+      completed_trip_count: document.getElementById("completedTripCount")?.value.trim() || "0",
+      google_rating: document.getElementById("googleRating")?.value.trim() || "5.0",
+      google_review_url: document.getElementById("googleReviewUrl")?.value.trim() || "",
+      review_reels: reels?.value || result.url
+    };
+
+    const saveRes = await fetch(`${API_BASE}/api/admin/site-content`, {
+      method: "PUT",
+      headers: authHeaders(),
+      body: JSON.stringify(payload)
+    });
+    const saveResult = await saveRes.json().catch(() => ({}));
+    if(!saveRes.ok) throw new Error(saveResult.error || "Video uploaded, but Home reels save failed.");
+
+    if(status) status.textContent = "✓ Video uploaded and added to Home reels.";
+    if(input) input.value = "";
+  }catch(err){
+    console.error("Travel reel upload failed:", err);
+    if(status){
+      status.textContent = err?.name === "AbortError"
+        ? "Upload timed out. Please try a smaller video or check the connection."
+        : (err?.message || "Video upload failed.");
+    }
+  }finally{
+    clearTimeout(timeout);
+    if(input) input.disabled = false;
+  }
+}
+
 async function saveReviewShowcaseSettings(){
   const button = document.querySelector('#reviewsShowcaseSettings button[onclick="saveReviewShowcaseSettings()"]');
   const originalText = button?.textContent || "Save Website Showcase";

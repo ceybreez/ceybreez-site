@@ -531,6 +531,7 @@ function initV18BlockDatePickers(bookings){
         <button data-v14-tab="reports">📈 Reports</button>
         <button data-v14-tab="pageBuilder">📄 Page Builder</button>
         <button type="button" data-security-module="pageBuilder" onclick="window.location.href='visual-builder/index.html'">🎨 Visual Designer</button>
+        <button type="button" data-security-module="pageBuilder" onclick="window.location.href='gallery-manager.html'">🖼️ Gallery Manager</button>
         <button data-v14-tab="users" data-super-admin-only="1">👥 User Management</button>
         <button data-v14-tab="approvals" data-super-admin-only="1">✅ Approval Queue</button>
         <button data-v14-tab="backup" data-super-admin-only="1">🛡 Backup & Recovery</button>

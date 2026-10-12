@@ -80,3 +80,12 @@
 #tourCostingTab .tc-supplier-table input.wide{min-width:190px}
 @media(max-width:1000px){#tourCostingTab .tc-settlement-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){#tourCostingTab .tc-settlement-cards{grid-template-columns:1fr}#tourCostingTab .tc-settlement-actions>*{width:100%}}
+
+/* V6.6.18 Tour Operations + Voucher */
+#tourCostingTab .tc-op-count{font-size:11px;font-weight:800;color:var(--tc-muted);padding:6px 0}
+#tourCostingTab .tc-operations-actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+#tourCostingTab .tc-operations-actions.final{justify-content:flex-end;margin-top:16px}
+#tourCostingTab .tc-operations-table input,#tourCostingTab .tc-operations-table select{min-width:110px}
+#tourCostingTab .tc-operations-table input.wide{min-width:190px}
+#tourCostingTab .tc-operations-table td:nth-child(1),#tourCostingTab .tc-operations-table td:nth-child(2){white-space:nowrap}
+@media(max-width:700px){#tourCostingTab .tc-operations-actions>*{width:100%}}

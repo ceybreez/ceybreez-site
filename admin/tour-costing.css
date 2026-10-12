@@ -126,3 +126,15 @@
 @media(max-width:1250px){#tourCostingTab .tc-dashboard-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}#tourCostingTab .tc-dashboard-filters{grid-template-columns:repeat(3,minmax(0,1fr))}#tourCostingTab .tc-dash-search{grid-column:span 2}}
 @media(max-width:850px){#tourCostingTab .tc-dashboard-grid{grid-template-columns:1fr}#tourCostingTab .tc-dashboard-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}#tourCostingTab .tc-dashboard-filters{grid-template-columns:1fr 1fr}#tourCostingTab .tc-dash-search{grid-column:1/-1}}
 @media(max-width:560px){#tourCostingTab .tc-dashboard-kpis,#tourCostingTab .tc-dashboard-filters{grid-template-columns:1fr}#tourCostingTab .tc-dash-search{grid-column:auto}#tourCostingTab .tc-dashboard-actions>*{width:100%}#tourCostingTab .tc-month-row{grid-template-columns:92px 1fr}#tourCostingTab .tc-month-money{grid-column:1/-1;text-align:left;padding-left:102px}}
+
+/* V6.6.20 — Finance documents */
+.tc-doc-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0 18px}
+.tc-doc-metrics>div{border:1px solid var(--tc-border,#dbe7e4);background:#f8fbfa;border-radius:14px;padding:14px 16px}
+.tc-doc-metrics span{display:block;font-size:11px;color:#6a7f7b;text-transform:uppercase;letter-spacing:.04em}
+.tc-doc-metrics strong{display:block;margin-top:5px;font-size:20px;color:#163f39}
+.tc-doc-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 18px}
+.tc-section-title.compact .tc-doc-toolbar{margin:0}
+.tc-doc-table input,.tc-doc-table select{min-width:105px}
+.tc-doc-table input.wide{min-width:210px}
+.tc-doc-actions{white-space:nowrap;display:flex;gap:6px;align-items:center}
+@media(max-width:900px){.tc-doc-metrics{grid-template-columns:1fr}.tc-doc-actions{display:table-cell}.tc-doc-table input.wide{min-width:180px}}

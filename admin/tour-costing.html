@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Tour Costing | CeyBreez Admin</title>
+  <link rel="icon" href="../logo.png" />
+  <link rel="stylesheet" href="tour-costing.css?v=20261012-1" />
+</head>
+<body>
+  <div id="tcAuthGate" class="tc-auth-gate">
+    <div class="tc-auth-card"><strong>CeyBreez Tour Costing</strong><span>Checking admin session…</span></div>
+  </div>
+
+  <main id="tcApp" class="tc-app hidden">
+    <header class="tc-topbar">
+      <div>
+        <span class="tc-kicker">CEYBREEZ ADMIN · COMMERCIAL</span>
+        <h1>Tour Costing & Profit</h1>
+        <p>Build estimated cost, selling price, revisions and actual profit before a tour goes live.</p>
+      </div>
+      <div class="tc-top-actions">
+        <button type="button" class="tc-btn ghost" onclick="location.href='index.html'">← Admin</button>
+        <button type="button" class="tc-btn" id="tcNewBtn">＋ New Costing</button>
+      </div>
+    </header>
+
+    <nav class="tc-main-tabs" aria-label="Tour costing navigation">
+      <button type="button" class="active" data-main-tab="register">Costing Register</button>
+      <button type="button" data-main-tab="editor">Costing Editor</button>
+      <button type="button" data-main-tab="rates">Rate Library</button>
+    </nav>
+
+    <section id="tcRegisterPane" class="tc-pane active">
+      <div class="tc-stats" id="tcStats"></div>
+      <div class="tc-panel">
+        <div class="tc-panel-head">
+          <div><h2>Costing Register</h2><p>Saved package estimates, selling prices, revisions and actual results.</p></div>
+          <div class="tc-toolbar">
+            <input id="tcSearch" placeholder="Search reference, package, inquiry…" />
+            <select id="tcStatusFilter">
+              <option value="all">All status</option>
+              <option>Draft</option><option>Approved</option><option>Quoted</option><option>Booked</option><option>Completed</option><option>Cancelled</option>
+            </select>
+            <button type="button" class="tc-btn ghost" id="tcRefreshBtn">Refresh</button>
+          </div>
+        </div>
+        <div class="tc-table-wrap">
+          <table class="tc-table">
+            <thead><tr><th>Reference</th><th>Package</th><th>Rev</th><th>Travel</th><th>Pax</th><th>Est. Cost</th><th>Sale</th><th>Profit</th><th>Margin</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="tcRegisterBody"><tr><td colspan="11" class="tc-empty">Loading costings…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="tcEditorPane" class="tc-pane">
+      <div class="tc-editor-head">
+        <div>
+          <span class="tc-kicker" id="tcEditorMode">NEW COSTING</span>
+          <h2 id="tcEditorTitle">New Tour Costing</h2>
+          <p id="tcEditorSub">Estimate the full package cost and selling price before quotation.</p>
+        </div>
+        <div class="tc-editor-actions">
+          <button type="button" class="tc-btn ghost" id="tcPrintBtn">Print Summary</button>
+          <button type="button" class="tc-btn ghost" id="tcRevisionBtn">Create Revision</button>
+          <button type="button" class="tc-btn danger" id="tcDeleteBtn">Delete</button>
+          <button type="button" class="tc-btn" id="tcSaveBtn">Save Costing</button>
+        </div>
+      </div>
+
+      <div class="tc-editor-grid">
+        <div class="tc-editor-main">
+          <div class="tc-step-tabs">
+            <button type="button" class="active" data-step="setup">1 Setup</button>
+            <button type="button" data-step="hotels">2 Hotels</button>
+            <button type="button" data-step="transport">3 Transport</button>
+            <button type="button" data-step="activities">4 Activities</button>
+            <button type="button" data-step="staff">5 Driver & Guide</button>
+            <button type="button" data-step="extras">6 Other Costs</button>
+            <button type="button" data-step="sale">7 Sale & Profit</button>
+            <button type="button" data-step="actual">8 Actual / Variance</button>
+          </div>
+
+          <div class="tc-step active" data-step-pane="setup">
+            <div class="tc-section-title"><div><span>STEP 1</span><h3>Package & Guest Setup</h3><p>Based on the Sasora quote input sheet, with extra commercial controls.</p></div></div>
+            <div class="tc-form-grid three">
+              <label>Existing Tour Package<select data-field="tourPackageId" id="tcTourPackage"><option value="">New / Proposed Tour</option></select></label>
+              <label>Package Name<input data-field="packageName" id="tcPackageName" placeholder="Down South 6D/5N" /></label>
+              <label>Costing Status<select data-field="status"><option>Draft</option><option>Approved</option><option>Quoted</option><option>Booked</option><option>Completed</option><option>Cancelled</option></select></label>
+              <label>Inquiry Reference<input data-field="inquiryRef" placeholder="INQ-8842" /></label>
+              <label>Inquiry Source<select data-field="source"><option>Web</option><option>Facebook</option><option>WhatsApp</option><option>Agent</option><option>Friend</option><option>Walk-in</option><option>Other</option></select></label>
+              <label>Guest Name<input data-field="guestName" placeholder="Guest / group name" /></label>
+              <label>Guest Type<select data-field="guestType"><option>Family</option><option>Friends</option><option>Couple</option><option>Bachelor</option><option>Group</option><option>Corporate</option><option>Other</option></select></label>
+              <label>Nationality<input data-field="nationality" /></label>
+              <label>Country<input data-field="country" /></label>
+              <label>Travel Start<input data-field="travelStart" type="date" /></label>
+              <label>Days<input data-field="days" type="number" min="1" step="1" /></label>
+              <label>Nights<input data-field="nights" type="number" min="0" step="1" /></label>
+            </div>
+            <div style="margin-top:10px"><button type="button" class="tc-btn ghost" id="tcGenerateRowsBtn">Generate Day / Night Cost Rows</button></div>
+
+            <div class="tc-subsection"><h4>Pax</h4>
+              <div class="tc-form-grid six">
+                <label>Adults<input data-field="adultPax" type="number" min="0" step="1" /></label>
+                <label>Child With Bed<input data-field="childWithBed" type="number" min="0" step="1" /></label>
+                <label>Child Without Bed<input data-field="childWithoutBed" type="number" min="0" step="1" /></label>
+                <label>Infants<input data-field="infantPax" type="number" min="0" step="1" /></label>
+                <label>FOC / Tour Leader<input data-field="focPax" type="number" min="0" step="1" /></label>
+                <label>Total Pax<input id="tcTotalPax" readonly /></label>
+              </div>
+            </div>
+
+            <div class="tc-subsection"><h4>Commercial Inputs</h4>
+              <div class="tc-form-grid four">
+                <label>Quote Currency<select data-field="currency"><option>USD</option><option>LKR</option><option>EUR</option><option>GBP</option><option>AED</option><option>OMR</option></select></label>
+                <label>LKR / Selected Currency<input data-field="exchangeRate" type="number" min="0" step="0.0001" /></label>
+                <label>Hotel Category<select data-field="hotelCategory"><option>Budget</option><option>2 Star</option><option>3 Star</option><option>4 Star</option><option>5 Star</option><option>Villa</option><option>Home Stay</option><option>Mixed</option></select></label>
+                <label>Vehicle Preference<input data-field="vehiclePreference" placeholder="Car / KDH Van / Bus" /></label>
+              </div>
+            </div>
+            <label class="tc-full">Internal Notes<textarea data-field="notes" rows="4" placeholder="Special requirements, assumptions, supplier notes…"></textarea></label>
+          </div>
+
+          <div class="tc-step" data-step-pane="hotels">
+            <div class="tc-section-title"><div><span>STEP 2</span><h3>Hotels & Accommodation</h3><p>Add one row per room type/night. Multiple room types can be added for the same night.</p></div><button type="button" class="tc-btn small" data-add-row="hotels">＋ Add Hotel Row</button></div>
+            <div class="tc-line-table-wrap"><table class="tc-line-table"><thead><tr><th>Day/Night</th><th>Hotel / Property</th><th>Location</th><th>Meal</th><th>Room Setup</th><th>Qty</th><th>Rate</th><th>Extra</th><th>Est.</th><th>Actual</th><th></th></tr></thead><tbody id="tcHotelsBody"></tbody></table></div>
+          </div>
+
+          <div class="tc-step" data-step-pane="transport">
+            <div class="tc-section-title"><div><span>STEP 3</span><h3>Private Transport & Tolls</h3><p>Supports Per Day, Per Km and Per Tour vehicle pricing.</p></div><button type="button" class="tc-btn small" data-add-row="transport">＋ Add Transport Row</button></div>
+            <div class="tc-line-table-wrap"><table class="tc-line-table"><thead><tr><th>Day</th><th>Route / Service</th><th>Vehicle</th><th>Basis</th><th>Qty/Km</th><th>Rate</th><th>Tolls</th><th>Parking</th><th>Est.</th><th>Actual</th><th></th></tr></thead><tbody id="tcTransportBody"></tbody></table></div>
+          </div>
+
+          <div class="tc-step" data-step-pane="activities">
+            <div class="tc-section-title"><div><span>STEP 4</span><h3>Activities & Sightseeing</h3><p>Per Pax, Per Team, Per Jeep, Per Boat or fixed activity cost.</p></div><button type="button" class="tc-btn small" data-add-row="activities">＋ Add Activity</button></div>
+            <div class="tc-line-table-wrap"><table class="tc-line-table"><thead><tr><th>Day</th><th>Activity / Attraction</th><th>Location</th><th>Basis</th><th>Qty</th><th>Rate</th><th>Est.</th><th>Actual</th><th>Remark</th><th></th></tr></thead><tbody id="tcActivitiesBody"></tbody></table></div>
+          </div>
+
+          <div class="tc-step" data-step-pane="staff">
+            <div class="tc-section-title"><div><span>STEP 5</span><h3>Driver, Guide & Logistics</h3><p>Required / Included / Not Required logic avoids charging included services twice.</p></div><button type="button" class="tc-btn small" data-add-row="staff">＋ Add Staff Cost</button></div>
+            <div class="tc-line-table-wrap"><table class="tc-line-table"><thead><tr><th>Day</th><th>Type</th><th>Requirement</th><th>Qty/Days</th><th>Fee Rate</th><th>Hotel</th><th>Food</th><th>Est.</th><th>Actual</th><th>Remark</th><th></th></tr></thead><tbody id="tcStaffBody"></tbody></table></div>
+          </div>
+
+          <div class="tc-step" data-step-pane="extras">
+            <div class="tc-section-title"><div><span>STEP 6</span><h3>Meals, Consumables & Other Costs</h3><p>Add water, snacks, tickets, visas, insurance, permits, tips and any package-specific cost.</p></div><button type="button" class="tc-btn small" data-add-row="extras">＋ Add Other Cost</button></div>
+            <div class="tc-line-table-wrap"><table class="tc-line-table"><thead><tr><th>Day</th><th>Category</th><th>Description</th><th>Basis</th><th>Qty</th><th>Rate</th><th>Est.</th><th>Actual</th><th>Remark</th><th></th></tr></thead><tbody id="tcExtrasBody"></tbody></table></div>
+          </div>
+
+          <div class="tc-step" data-step-pane="sale">
+            <div class="tc-section-title"><div><span>STEP 7</span><h3>Selling Price & Profit</h3><p>Use markup, target margin or a manual selling price. Fees and VAT remain separate.</p></div></div>
+            <div class="tc-form-grid four">
+              <label>Pricing Method<select data-field="pricing.method"><option value="markup">Markup %</option><option value="margin">Target Margin %</option><option value="manual">Manual Selling Price</option></select></label>
+              <label>Contingency %<input data-field="pricing.contingencyPct" type="number" min="0" step="0.01" /></label>
+              <label>Overhead / Admin %<input data-field="pricing.overheadPct" type="number" min="0" step="0.01" /></label>
+              <label>Markup %<input data-field="pricing.markupPct" type="number" min="0" step="0.01" /></label>
+              <label>Target Margin %<input data-field="pricing.targetMarginPct" type="number" min="0" max="99.99" step="0.01" /></label>
+              <label>Manual Sale<input data-field="pricing.manualSale" type="number" min="0" step="0.01" /></label>
+              <label>Discount %<input data-field="pricing.discountPct" type="number" min="0" step="0.01" /></label>
+              <label>Agent Commission %<input data-field="pricing.agentCommissionPct" type="number" min="0" step="0.01" /></label>
+              <label>Bank / Card Fee %<input data-field="pricing.bankFeePct" type="number" min="0" step="0.01" /></label>
+              <label>Tax / VAT %<input data-field="pricing.vatPct" type="number" min="0" step="0.01" /></label>
+              <label>Child WB % of Adult<input data-field="pricing.childWBPct" type="number" min="0" step="0.01" /></label>
+              <label>Child WOB % of Adult<input data-field="pricing.childWOBPct" type="number" min="0" step="0.01" /></label>
+              <label>Infant Fixed Rate<input data-field="pricing.infantFixed" type="number" min="0" step="0.01" /></label>
+            </div>
+            <div id="tcSaleBreakdown" class="tc-breakdown"></div>
+          </div>
+
+          <div class="tc-step" data-step-pane="actual">
+            <div class="tc-section-title"><div><span>STEP 8</span><h3>Actual Cost & Variance</h3><p>Enter actual supplier costs in each section after the tour. This page compares estimate vs actual automatically.</p></div></div>
+            <div id="tcVarianceCards" class="tc-variance-grid"></div>
+            <div class="tc-note-box">Actual cost fields are available in every hotel, transport, activity, staff and other-cost row. Leave them blank until invoices/receipts are known.</div>
+          </div>
+        </div>
+
+        <aside class="tc-summary-rail">
+          <div class="tc-summary-head"><span>LIVE COSTING</span><strong id="tcSummaryRef">Unsaved</strong></div>
+          <div class="tc-summary-card"><span>Direct Estimated Cost</span><strong id="tcDirectCost">0.00</strong></div>
+          <div class="tc-summary-card"><span>Cost Before Profit</span><strong id="tcCostBeforeProfit">0.00</strong></div>
+          <div class="tc-summary-card brand"><span>Final Customer Price</span><strong id="tcFinalSale">0.00</strong></div>
+          <div class="tc-summary-card good"><span>Operating Profit</span><strong id="tcProfit">0.00</strong></div>
+          <div class="tc-summary-card"><span>Profit Margin</span><strong id="tcMargin">0.0%</strong></div>
+          <div class="tc-summary-card"><span>Actual Direct Cost</span><strong id="tcActualCost">0.00</strong></div>
+          <div class="tc-summary-card"><span>Actual Variance</span><strong id="tcActualVariance">0.00</strong></div>
+          <div class="tc-per-person" id="tcPerPerson"></div>
+          <div class="tc-summary-actions"><button type="button" class="tc-btn ghost" id="tcCopySaleBtn">Copy Sale</button><button type="button" class="tc-btn" id="tcSaveBtnRail">Save</button></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="tcRatesPane" class="tc-pane">
+      <div class="tc-panel">
+        <div class="tc-panel-head"><div><h2>Rate Library</h2><p>Reusable supplier/vehicle/activity reference rates. These are private admin records.</p></div><button type="button" class="tc-btn" id="tcAddRateBtn">＋ Add Rate</button></div>
+        <div id="tcRateForm" class="tc-rate-form hidden">
+          <input type="hidden" id="tcRateId" />
+          <label>Category<select id="tcRateCategory"><option>Hotel</option><option>Transport</option><option>Activity</option><option>Driver</option><option>Guide</option><option>Meal</option><option>Consumable</option><option>Ticket</option><option>Visa</option><option>Insurance</option><option>Permit</option><option>Other</option></select></label>
+          <label>Name<input id="tcRateName" placeholder="KDH Van / Hotel / Whale Watching" /></label>
+          <label>Location<input id="tcRateLocation" /></label>
+          <label>Supplier<input id="tcRateSupplier" placeholder="Supplier / hotel / operator" /></label>
+          <label>Valid From<input id="tcRateValidFrom" type="date" /></label>
+          <label>Valid To<input id="tcRateValidTo" type="date" /></label>
+          <label>Basis<select id="tcRateBasis"><option>Per Day</option><option>Per Km</option><option>Per Tour</option><option>Per Pax</option><option>Per Night</option><option>Per Room</option><option>Per Unit</option><option>Fixed</option></select></label>
+          <label>Currency<select id="tcRateCurrency"><option>USD</option><option>LKR</option><option>EUR</option><option>GBP</option><option>AED</option><option>OMR</option></select></label>
+          <label>Rate<input id="tcRateAmount" type="number" min="0" step="0.01" /></label>
+          <label class="tc-rate-notes">Notes<input id="tcRateNotes" /></label>
+          <div class="tc-rate-actions"><button type="button" class="tc-btn ghost" id="tcRateCancelBtn">Cancel</button><button type="button" class="tc-btn" id="tcRateSaveBtn">Save Rate</button></div>
+        </div>
+        <div class="tc-toolbar rate"><input id="tcRateSearch" placeholder="Search rate library…" /><select id="tcRateCategoryFilter"><option value="all">All categories</option><option>Hotel</option><option>Transport</option><option>Activity</option><option>Driver</option><option>Guide</option><option>Meal</option><option>Consumable</option><option>Ticket</option><option>Visa</option><option>Insurance</option><option>Permit</option><option>Other</option></select></div>
+        <div class="tc-table-wrap"><table class="tc-table"><thead><tr><th>Category</th><th>Name</th><th>Supplier</th><th>Location</th><th>Valid</th><th>Basis</th><th>Currency</th><th>Rate</th><th>Notes</th><th>Action</th></tr></thead><tbody id="tcRatesBody"></tbody></table></div>
+      </div>
+    </section>
+
+    <div id="tcToast" class="tc-toast" role="status"></div>
+  </main>
+
+  <datalist id="tcHotelRates"></datalist>
+  <datalist id="tcTransportRates"></datalist>
+  <datalist id="tcActivityRates"></datalist>
+  <datalist id="tcOtherRates"></datalist>
+
+  <script type="module" src="tour-costing.js?v=20261012-1"></script>
+</body>
+</html>

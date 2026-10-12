@@ -528,6 +528,7 @@ function initV18BlockDatePickers(bookings){
         <button data-v14-tab="services">☕ Cafe & Services CMS</button>
         <button data-v14-tab="reviews">⭐ Reviews</button>
         <button data-v14-tab="finance">💰 Finance</button>
+        <button type="button" data-security-module="finance" onclick="window.location.href='tour-costing.html'">🧮 Tour Costing</button>
         <button data-v14-tab="reports">📈 Reports</button>
         <button data-v14-tab="pageBuilder">📄 Page Builder</button>
         <button type="button" data-security-module="pageBuilder" onclick="window.location.href='visual-builder/index.html'">🎨 Visual Designer</button>

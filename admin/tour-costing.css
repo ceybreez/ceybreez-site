@@ -169,3 +169,52 @@
 #tourCostingTab .tc-doccenter-table td:nth-child(3){min-width:210px}
 @media(max-width:1100px){#tourCostingTab .tc-doccenter-metrics{grid-template-columns:repeat(3,minmax(120px,1fr))}}
 @media(max-width:700px){#tourCostingTab .tc-doccenter-metrics{grid-template-columns:1fr 1fr}#tourCostingTab .tc-doc-upload-box .tc-form-grid.four{grid-template-columns:1fr}#tourCostingTab .tc-doc-upload-box .tc-doc-toolbar>*{width:100%}}
+
+/* V6.6.23 — Tour Operations Calendar + Resource Assignment */
+#tourCostingTab .tc-oc-panel{overflow:visible;background:transparent;border:0;box-shadow:none}
+#tourCostingTab .tc-oc-head{background:#fff;border:1px solid var(--tc-border);border-radius:16px;margin-bottom:12px}
+#tourCostingTab .tc-oc-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#tourCostingTab .tc-oc-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:12px}
+#tourCostingTab .tc-oc-stat{appearance:none;text-align:left;border:1px solid var(--tc-border);background:#fff;border-radius:14px;padding:13px 14px;cursor:pointer;min-width:0}
+#tourCostingTab .tc-oc-stat span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.055em;color:var(--tc-muted);font-weight:900}
+#tourCostingTab .tc-oc-stat strong{display:block;margin-top:5px;font-size:21px;color:#173f39}
+#tourCostingTab .tc-oc-stat.warn{background:#fff7ed;border-color:#fed7aa}#tourCostingTab .tc-oc-stat.bad{background:#fef2f2;border-color:#fecaca}
+#tourCostingTab .tc-oc-toolbar{display:grid;grid-template-columns:auto 150px auto auto 180px minmax(220px,1fr) auto;gap:8px;align-items:center;background:#fff;border:1px solid var(--tc-border);border-radius:14px;padding:11px;margin-bottom:12px}
+#tourCostingTab .tc-oc-load-state{font-size:10px;color:var(--tc-muted);text-align:right;white-space:nowrap}
+#tourCostingTab .tc-oc-layout{display:grid;grid-template-columns:minmax(620px,1.45fr) minmax(330px,.75fr);gap:12px;align-items:start}
+#tourCostingTab .tc-oc-calendar-head{background:#fff;border:1px solid var(--tc-border);border-bottom:0;border-radius:16px 16px 0 0;padding:14px 14px 8px}
+#tourCostingTab .tc-oc-calendar-head h3{margin:0 0 10px;font-family:Georgia,serif;color:#173f39;font-size:20px}
+#tourCostingTab .tc-oc-week{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+#tourCostingTab .tc-oc-week span{text-align:center;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--tc-muted);font-weight:900;padding:4px}
+#tourCostingTab .tc-oc-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:1px;background:var(--tc-border);border:1px solid var(--tc-border);border-radius:0 0 16px 16px;overflow:hidden}
+#tourCostingTab .tc-oc-day{appearance:none;border:0;background:#fff;min-height:112px;padding:8px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;min-width:0}
+#tourCostingTab .tc-oc-day:hover{background:#f7fbfa}#tourCostingTab .tc-oc-day.muted{background:#f7f8f8;color:#9ca3af}#tourCostingTab .tc-oc-day.today{box-shadow:inset 0 0 0 2px var(--tc-green)}#tourCostingTab .tc-oc-day.selected{background:#eef8f5}
+#tourCostingTab .tc-oc-date{font-size:11px;font-weight:900;color:#173f39}
+#tourCostingTab .tc-oc-events{display:grid;gap:4px;min-width:0}
+#tourCostingTab .tc-oc-event{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-radius:7px;padding:4px 6px;background:#eef4f3;color:#244c47;font-size:9px;font-weight:800}
+#tourCostingTab .tc-oc-event.good{background:#ecfdf5;color:#047857}.tc-oc-event.brand{background:#e8f7f4;color:#0f766e}.tc-oc-event.warn{background:#fff7ed;color:#c2410c}.tc-oc-event.bad{background:#fef2f2;color:#b91c1c}
+#tourCostingTab .tc-oc-more{font-size:9px;color:var(--tc-muted);font-weight:800}
+#tourCostingTab .tc-oc-side{background:#fff;border:1px solid var(--tc-border);border-radius:16px;padding:14px;max-height:760px;overflow:auto}
+#tourCostingTab .tc-oc-day-board{display:grid;gap:10px}
+#tourCostingTab .tc-oc-tour-card{border:1px solid var(--tc-border);border-radius:14px;padding:12px;background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.025)}
+#tourCostingTab .tc-oc-tour-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+#tourCostingTab .tc-oc-tour-head>div>span{display:block;font-size:9px;color:var(--tc-green);font-weight:900;letter-spacing:.05em}
+#tourCostingTab .tc-oc-tour-head h4{margin:3px 0;font-size:15px;color:#173f39}.tc-oc-tour-head small{font-size:10px;color:var(--tc-muted);line-height:1.35}
+#tourCostingTab .tc-oc-assign{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}
+#tourCostingTab .tc-oc-assign>div{border:1px solid #e5eeec;background:#f8fbfa;border-radius:9px;padding:8px;min-width:0}
+#tourCostingTab .tc-oc-assign span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.05em;color:var(--tc-muted);font-weight:900}
+#tourCostingTab .tc-oc-assign strong{display:block;margin-top:3px;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tc-oc-assign small{display:block;margin-top:2px;color:var(--tc-muted);font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tourCostingTab .tc-oc-timeline{display:grid;gap:4px;margin-top:10px}
+#tourCostingTab .tc-oc-timeline span{display:flex;gap:7px;align-items:flex-start;font-size:10px;line-height:1.35;color:#3f5e59}.tc-oc-timeline b{min-width:64px;color:#173f39}
+#tourCostingTab .tc-oc-alerts{display:grid;gap:4px;margin-top:9px;padding:8px 9px;border-radius:9px;background:#fff8e8;border:1px solid #eedba9;font-size:9px;color:#795a13}.tc-oc-alerts .bad{color:#b91c1c;font-weight:800}
+#tourCostingTab .tc-oc-card-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+#tourCostingTab .tc-oc-conflicts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#tourCostingTab .tc-oc-conflict{border:1px solid #fecaca;background:#fef2f2;border-radius:10px;padding:10px 12px}.tc-oc-conflict strong{display:block;color:#b91c1c;font-size:11px}.tc-oc-conflict span{display:block;margin-top:4px;color:#7f1d1d;font-size:10px;line-height:1.35}
+#tourCostingTab .tc-oc-assign-dialog{max-width:860px;width:min(94vw,860px)}
+#tourCostingTab .tc-oc-assign-grid{max-height:58vh;overflow:auto;padding-right:4px}
+#tourCostingTab .tc-oc-assign-warning{display:grid;gap:4px;margin-top:12px;border-radius:10px;padding:10px 12px;font-size:10px}.tc-oc-assign-warning.good{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}.tc-oc-assign-warning.bad{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}.tc-oc-assign-warning strong,.tc-oc-assign-warning span{display:block}
+#tourCostingTab .tc-op-conflict-inline{display:grid;gap:4px;margin:10px 0 14px;padding:10px 12px;background:#fef2f2;border:1px solid #fecaca;border-radius:10px;color:#991b1b;font-size:10px}.tc-op-conflict-inline.hidden{display:none}.tc-op-conflict-inline strong,.tc-op-conflict-inline span{display:block}
+#tourCostingTab .tc-oc-empty{padding:28px 10px}
+@media(max-width:1280px){#tourCostingTab .tc-oc-layout{grid-template-columns:1fr}#tourCostingTab .tc-oc-side{max-height:none}#tourCostingTab .tc-oc-toolbar{grid-template-columns:auto 150px auto auto 170px 1fr}#tourCostingTab .tc-oc-load-state{grid-column:1/-1;text-align:left}}
+@media(max-width:900px){#tourCostingTab .tc-oc-stats{grid-template-columns:repeat(3,minmax(0,1fr))}#tourCostingTab .tc-oc-toolbar{grid-template-columns:auto 1fr auto auto}#tourCostingTab .tc-oc-toolbar #tcOcStatus,#tourCostingTab .tc-oc-toolbar #tcOcSearch{grid-column:span 2}#tourCostingTab .tc-oc-day{min-height:90px;padding:6px}#tourCostingTab .tc-oc-event{font-size:8px;padding:3px 4px}}
+@media(max-width:620px){#tourCostingTab .tc-oc-stats{grid-template-columns:1fr 1fr}#tourCostingTab .tc-oc-toolbar{grid-template-columns:auto 1fr auto}#tourCostingTab .tc-oc-toolbar #tcOcToday{grid-column:1/-1}#tourCostingTab .tc-oc-toolbar #tcOcStatus,#tourCostingTab .tc-oc-toolbar #tcOcSearch{grid-column:1/-1}#tourCostingTab .tc-oc-calendar-head,#tourCostingTab .tc-oc-calendar{min-width:680px}#tourCostingTab .tc-oc-layout>div:first-child{overflow-x:auto}#tourCostingTab .tc-oc-conflicts{grid-template-columns:1fr}#tourCostingTab .tc-oc-assign{grid-template-columns:1fr}}

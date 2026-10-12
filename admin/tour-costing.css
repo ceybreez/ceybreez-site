@@ -18,3 +18,33 @@
 #tourCostingTab .tc-pane{padding:0 0 42px}
 #tourCostingTab .tc-summary-rail{top:90px}
 @media(max-width:760px){#tourCostingTab .tc-module-head,#tourCostingTab .tc-context-banner{align-items:flex-start;flex-direction:column}}
+
+/* V6.6.15 Smart Rate Library + vehicle selection */
+#tourCostingTab .tc-smart-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+#tourCostingTab .tc-check{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--tc-border);background:#f7fbfa;border-radius:12px;padding:11px 12px;color:#315a54;cursor:pointer}
+#tourCostingTab .tc-check>input{width:18px;min-height:18px;height:18px;margin:2px 0 0;flex:0 0 auto;accent-color:var(--tc-green)}
+#tourCostingTab .tc-check span{display:grid;gap:3px}
+#tourCostingTab .tc-check strong{font-size:12px;color:#234c46}
+#tourCostingTab .tc-check small{font-size:11px;font-weight:500;color:var(--tc-muted);line-height:1.35}
+#tourCostingTab #tcVehicleSuggestion span{display:inline;color:var(--tc-green);font-weight:800}
+#tourCostingTab .tc-lib-field{display:flex;align-items:center;gap:5px;min-width:150px}
+#tourCostingTab .tc-lib-field input{min-width:0;flex:1}
+#tourCostingTab .tc-lib-btn{width:34px;height:34px;min-width:34px;border:1px solid #c8ddd8;background:#eef8f6;color:#0d6b62;border-radius:8px;cursor:pointer;display:grid;place-items:center;padding:0}
+#tourCostingTab .tc-lib-btn:hover{background:#dff1ed;border-color:#9ecbc2}
+#tourCostingTab .tc-meta-hidden{display:none!important}
+#tourCostingTab .tc-library-modal{position:fixed;inset:0;background:rgba(6,33,29,.48);z-index:99999;display:none;align-items:center;justify-content:center;padding:20px}
+#tourCostingTab .tc-library-modal.show{display:flex}
+#tourCostingTab .tc-library-dialog{width:min(760px,96vw);max-height:min(720px,88vh);background:white;border-radius:18px;border:1px solid var(--tc-border);box-shadow:0 24px 70px rgba(0,0,0,.24);display:flex;flex-direction:column;overflow:hidden}
+#tourCostingTab .tc-library-head{padding:16px 18px;border-bottom:1px solid var(--tc-border);display:flex;align-items:center;justify-content:space-between;gap:16px}
+#tourCostingTab .tc-library-head span{font-size:10px;letter-spacing:.1em;font-weight:900;color:var(--tc-green)}
+#tourCostingTab .tc-library-head h3{margin:3px 0 0;font-family:Georgia,serif;font-size:22px;color:#123f3a}
+#tourCostingTab .tc-library-search{margin:14px 16px 8px;width:calc(100% - 32px)!important}
+#tourCostingTab .tc-library-results{padding:8px 16px 16px;overflow:auto;display:grid;gap:7px}
+#tourCostingTab .tc-library-item{border:1px solid var(--tc-border);background:#fff;border-radius:12px;padding:11px 12px;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:16px;cursor:pointer;color:var(--tc-text)}
+#tourCostingTab .tc-library-item:hover{border-color:#9bc9c0;background:#f3fbf9}
+#tourCostingTab .tc-library-item>span{display:grid;gap:3px}
+#tourCostingTab .tc-library-item strong{font-size:13px;color:#173f39}
+#tourCostingTab .tc-library-item small{font-size:11px;color:var(--tc-muted)}
+#tourCostingTab .tc-library-price{text-align:right;white-space:nowrap;font-weight:900;color:var(--tc-green)}
+#tourCostingTab .tc-library-price small{font-weight:600}
+@media(max-width:760px){#tourCostingTab .tc-smart-controls{grid-template-columns:1fr}#tourCostingTab .tc-library-item{align-items:flex-start;flex-direction:column}#tourCostingTab .tc-library-price{text-align:left}}

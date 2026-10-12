@@ -12,7 +12,7 @@ const money = (v,c="USD") => `${c} ${round2(v).toLocaleString(undefined,{minimum
 const uid = p => `${p}-${Date.now()}-${Math.floor(Math.random()*100000)}`;
 const today = () => new Date().toISOString().slice(0,10);
 
-const state = { costings:[], tours:[], rates:[], current:null, dirty:false, activeStep:"setup", context:null };
+const state = { costings:[], tours:[], rates:[], current:null, dirty:false, activeStep:"setup", context:null, reportActuals:{}, dashboardLoadingActuals:false };
 let bound = false;
 let loaded = false;
 
@@ -162,7 +162,7 @@ async function loadAll(){
     api("/api/admin/finance/tour-costing-rates").catch(()=>[])
   ]);
   state.costings=normalizeList(costings); state.tours=normalizeList(tours); state.rates=normalizeList(rates);
-  populateTourOptions(); populateRateLists(); renderRegister(); renderQuotationRegister(); renderRates();
+  populateTourOptions(); populateRateLists(); renderRegister(); renderQuotationRegister(); renderRates(); renderCommercialDashboard();
 }
 function populateTourOptions(){
   const box=$("#tcTourPackage"); if(!box)return; const cur=state.current?.tourPackageId||"";
@@ -390,8 +390,69 @@ function renderSummary(){ if(!state.current)return; const c=state.current,s=comp
   renderSettlementMetrics();
 }
 
+
+function installCommercialDashboardUI(){
+  if(!root||root.dataset.tcCommercialUi==="1")return; root.dataset.tcCommercialUi="1";
+  const nav=$('.tc-main-tabs'), editorTab=nav?.querySelector('[data-main-tab="editor"]');
+  if(nav&&editorTab&&!nav.querySelector('[data-main-tab="dashboard"]')) editorTab.insertAdjacentHTML('beforebegin','<button data-main-tab="dashboard" type="button">Commercial Dashboard</button>');
+  const editorPane=$("#tcEditorPane");
+  if(editorPane&&!$("#tcDashboardPane")) editorPane.insertAdjacentHTML('beforebegin',`<section class="tc-pane" id="tcDashboardPane">
+    <div class="tc-panel tc-dashboard-panel">
+      <div class="tc-panel-head tc-dashboard-head"><div><h2>Commercial Dashboard</h2><p>Sales, estimated cost, profit, margins and package performance from Tour Costing.</p></div><div class="tc-dashboard-actions"><button class="tc-btn ghost" id="tcDashLoadActualBtn" type="button">Load Completed Actual Profit</button><button class="tc-btn ghost" id="tcDashCsvBtn" type="button">Export CSV</button><button class="tc-btn" id="tcDashPrintBtn" type="button">Print Report</button></div></div>
+      <div class="tc-dashboard-filters"><label>From<input id="tcDashFrom" type="date"></label><label>To<input id="tcDashTo" type="date"></label><label>Status<select id="tcDashStatus"><option value="all">All status</option><option>Draft</option><option>Approved</option><option>Quoted</option><option>Booked</option><option>Completed</option><option>Cancelled</option></select></label><label>Currency<select id="tcDashCurrency"><option value="all">All currencies</option></select></label><label class="tc-dash-search">Search<input id="tcDashSearch" placeholder="Package, reference, inquiry…"></label><button class="tc-btn ghost" id="tcDashResetBtn" type="button">Reset</button></div>
+      <div class="tc-dashboard-kpis" id="tcDashKpis"></div>
+      <div class="tc-dashboard-grid">
+        <div class="tc-report-card"><div class="tc-report-card-head"><div><span>PIPELINE</span><h3>Costing Status</h3></div></div><div id="tcDashPipeline" class="tc-pipeline-list"></div></div>
+        <div class="tc-report-card"><div class="tc-report-card-head"><div><span>TREND</span><h3>Monthly Sales &amp; Profit</h3></div></div><div id="tcDashMonthly" class="tc-monthly-list"></div></div>
+      </div>
+      <div class="tc-report-card tc-report-wide"><div class="tc-report-card-head"><div><span>PACKAGE PERFORMANCE</span><h3>Sales &amp; Profit by Tour Package</h3></div><small>Based on selected filters</small></div><div class="tc-table-wrap"><table class="tc-table"><thead><tr><th>Package</th><th>Tours</th><th>Pax</th><th>Est. Cost</th><th>Customer Sale</th><th>Expected Profit</th><th>Avg. Margin</th></tr></thead><tbody id="tcDashPackageBody"></tbody></table></div></div>
+      <div class="tc-report-card tc-report-wide"><div class="tc-report-card-head"><div><span>SALES &amp; PROFIT REPORT</span><h3>Costing Detail</h3></div><small id="tcDashCount">0 records</small></div><div class="tc-table-wrap"><table class="tc-table"><thead><tr><th>Reference</th><th>Package</th><th>Travel</th><th>Status</th><th>Pax</th><th>Est. Cost</th><th>Customer Sale</th><th>Expected Profit</th><th>Margin</th><th>Actual Profit</th><th>Action</th></tr></thead><tbody id="tcDashReportBody"></tbody></table></div></div>
+      <div class="tc-dashboard-note">Amounts are never combined across currencies. Select one currency for a single-currency commercial report. Actual Profit is loaded from completed costing details on demand.</div>
+    </div>
+  </section>`);
+}
+function dashboardDate(row){return String(row.travelStart||row.updatedAt||row.createdAt||"").slice(0,10);}
+function dashboardRows(){
+  const from=$("#tcDashFrom")?.value||"", to=$("#tcDashTo")?.value||"", status=$("#tcDashStatus")?.value||"all", currency=$("#tcDashCurrency")?.value||"all", q=normalizeKey($("#tcDashSearch")?.value||"");
+  return state.costings.filter(x=>{const d=dashboardDate(x), text=normalizeKey(`${x.reference||""} ${x.packageName||""} ${x.inquiryRef||""}`);return(!from||!d||d>=from)&&(!to||!d||d<=to)&&(status==="all"||x.status===status)&&(currency==="all"||(x.currency||"USD")===currency)&&(!q||text.includes(q));});
+}
+function dashboardCurrencyGroups(rows,key){const g={};rows.forEach(x=>{const c=x.currency||"USD";g[c]=(g[c]||0)+num(x[key]);});return g;}
+function dashboardMoneyHtml(rows,key){const entries=Object.entries(dashboardCurrencyGroups(rows,key));return entries.length?entries.map(([c,v])=>`<span>${money(v,c)}</span>`).join(""):`<span>—</span>`;}
+function dashboardAvgMargin(rows){const vals=rows.map(x=>num(x.marginPct));return vals.length?round2(vals.reduce((a,b)=>a+b,0)/vals.length):0;}
+function dashboardMonthLabel(key){if(!key||key==="Unknown")return "Unscheduled";const d=new Date(`${key}-01T00:00:00`);return Number.isNaN(d.getTime())?key:d.toLocaleDateString(undefined,{month:"short",year:"numeric"});}
+function dashboardActualProfitHtml(rows){
+  const completed=rows.filter(x=>x.status==="Completed"), loaded=completed.filter(x=>state.reportActuals[x.id]);
+  if(!completed.length)return '<span>—</span><small>No completed tours</small>';
+  if(!loaded.length)return `<span>Not loaded</span><small>${completed.length} completed tour${completed.length===1?"":"s"}</small>`;
+  const groups={};loaded.forEach(x=>{const a=state.reportActuals[x.id],c=x.currency||a.currency||"USD";groups[c]=(groups[c]||0)+num(a.actualProfit);});
+  return `${Object.entries(groups).map(([c,v])=>`<span>${money(v,c)}</span>`).join("")}<small>${loaded.length}/${completed.length} completed loaded</small>`;
+}
+function populateDashboardCurrencies(){const sel=$("#tcDashCurrency");if(!sel)return;const cur=sel.value||"all", vals=[...new Set(state.costings.map(x=>x.currency||"USD"))].sort();sel.innerHTML='<option value="all">All currencies</option>'+vals.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");sel.value=(cur==="all"||vals.includes(cur))?cur:"all";}
+function renderCommercialDashboard(){
+  if(!$("#tcDashboardPane"))return;populateDashboardCurrencies();const rows=dashboardRows(),active=rows.filter(x=>x.status!=="Cancelled"),completed=rows.filter(x=>x.status==="Completed");
+  const kpis=[["Costings",String(rows.length),`${active.length} active / ${completed.length} completed`],["Customer Sale",dashboardMoneyHtml(active,"finalSale"),"Quoted / booked / completed value"],["Estimated Direct Cost",dashboardMoneyHtml(active,"directCost"),"Before contingency & overhead"],["Expected Profit",dashboardMoneyHtml(active,"grossProfit"),"Operating profit from saved costing"],["Average Margin",`${dashboardAvgMargin(active)}%`,"Average across selected records"],["Completed Actual Profit",dashboardActualProfitHtml(rows),"Load completed details for actual result"]];
+  $("#tcDashKpis").innerHTML=kpis.map(([label,value,sub])=>`<div class="tc-kpi"><span>${esc(label)}</span><strong class="${String(value).includes('<span>')?'tc-kpi-stack':''}">${String(value).includes('<')?value:esc(value)}</strong><small>${esc(sub)}</small></div>`).join("");
+  const statuses=["Draft","Approved","Quoted","Booked","Completed","Cancelled"],maxStatus=Math.max(1,...statuses.map(s=>rows.filter(x=>x.status===s).length));
+  $("#tcDashPipeline").innerHTML=statuses.map(s=>{const n=rows.filter(x=>x.status===s).length;return `<div class="tc-pipeline-row"><span>${statusPill(s)}</span><div class="tc-bar"><i style="width:${Math.round(n/maxStatus*100)}%"></i></div><strong>${n}</strong></div>`;}).join("");
+  const months={};active.forEach(x=>{const d=dashboardDate(x),m=d?d.slice(0,7):"Unknown";(months[m]??={rows:[]}).rows.push(x)});const monthEntries=Object.entries(months).sort((a,b)=>a[0].localeCompare(b[0])).slice(-12),maxSale=Math.max(1,...monthEntries.flatMap(([,v])=>Object.values(dashboardCurrencyGroups(v.rows,"finalSale"))));
+  $("#tcDashMonthly").innerHTML=monthEntries.length?monthEntries.map(([m,v])=>{const sale=dashboardMoneyHtml(v.rows,"finalSale"),profit=dashboardMoneyHtml(v.rows,"grossProfit"),bar=Math.max(...Object.values(dashboardCurrencyGroups(v.rows,"finalSale")),0);return `<div class="tc-month-row"><div><strong>${esc(dashboardMonthLabel(m))}</strong><small>${v.rows.length} tour${v.rows.length===1?"":"s"}</small></div><div class="tc-bar"><i style="width:${Math.round(bar/maxSale*100)}%"></i></div><div class="tc-month-money"><b>${sale}</b><small>Profit ${profit}</small></div></div>`;}).join(""):'<div class="tc-empty">No monthly data for selected filters.</div>';
+  const packs={};active.forEach(x=>{const k=x.packageName||"Unspecified Tour";(packs[k]??={name:k,rows:[],pax:0}).rows.push(x);packs[k].pax+=num(x.totalPax)});const packRows=Object.values(packs).sort((a,b)=>b.rows.length-a.rows.length||String(a.name).localeCompare(String(b.name)));
+  $("#tcDashPackageBody").innerHTML=packRows.length?packRows.map(p=>`<tr><td><strong>${esc(p.name)}</strong></td><td>${p.rows.length}</td><td>${round2(p.pax)}</td><td class="tc-money tc-money-stack">${dashboardMoneyHtml(p.rows,"directCost")}</td><td class="tc-money tc-money-stack">${dashboardMoneyHtml(p.rows,"finalSale")}</td><td class="tc-money tc-money-stack">${dashboardMoneyHtml(p.rows,"grossProfit")}</td><td>${dashboardAvgMargin(p.rows)}%</td></tr>`).join(""):'<tr><td colspan="7" class="tc-empty">No package data.</td></tr>';
+  $("#tcDashReportBody").innerHTML=rows.length?rows.map(x=>{const a=state.reportActuals[x.id];return `<tr><td><strong>${esc(x.reference||x.id)}</strong><br><small>${esc(x.inquiryRef||"")}</small></td><td>${esc(x.packageName||"-")}</td><td>${esc(x.travelStart||"-")}</td><td>${statusPill(x.status)}</td><td>${esc(x.totalPax??0)}</td><td class="tc-money">${money(x.directCost,x.currency)}</td><td class="tc-money">${money(x.finalSale,x.currency)}</td><td class="tc-money">${money(x.grossProfit,x.currency)}</td><td>${round2(x.marginPct)}%</td><td class="tc-money">${a?money(a.actualProfit,x.currency):x.status==="Completed"?'<span class="tc-muted-report">Load actual</span>':'—'}</td><td><button class="tc-btn small ghost" data-report-open="${esc(x.id)}">Open</button></td></tr>`;}).join(""):'<tr><td colspan="11" class="tc-empty">No report records for selected filters.</td></tr>';
+  if($("#tcDashCount"))$("#tcDashCount").textContent=`${rows.length} record${rows.length===1?"":"s"}`;const btn=$("#tcDashLoadActualBtn");if(btn){btn.disabled=state.dashboardLoadingActuals;btn.textContent=state.dashboardLoadingActuals?"Loading Actual Profit…":"Load Completed Actual Profit";}
+}
+async function loadDashboardActuals(){
+  if(state.dashboardLoadingActuals)return;const rows=dashboardRows().filter(x=>x.status==="Completed"&&!state.reportActuals[x.id]);if(!rows.length){toast("No unloaded completed tour actuals in this report");return;}state.dashboardLoadingActuals=true;renderCommercialDashboard();let ok=0,fail=0;
+  for(let i=0;i<rows.length;i+=5){await Promise.all(rows.slice(i,i+5).map(async x=>{try{const row=await api(`/api/admin/finance/tour-costings/${encodeURIComponent(x.id)}`),c=sanitizeCurrent(row.payload||row),s=computeSummary(c),st=c.settlement||{};state.reportActuals[x.id]={actualProfit:round2(s.netSale-s.actualOperatingCost-num(st.miscActualCost)),actualCost:round2(s.actualOperatingCost+num(st.miscActualCost)),currency:c.currency||x.currency||"USD"};ok++;}catch(_){fail++;}}));}
+  state.dashboardLoadingActuals=false;renderCommercialDashboard();toast(fail?`${ok} actual result(s) loaded · ${fail} failed`:`${ok} completed actual result(s) loaded`,!!fail);
+}
+function resetCommercialDashboard(){["#tcDashFrom","#tcDashTo","#tcDashSearch"].forEach(id=>{const el=$(id);if(el)el.value=""});if($("#tcDashStatus"))$("#tcDashStatus").value="all";if($("#tcDashCurrency"))$("#tcDashCurrency").value="all";renderCommercialDashboard();}
+function csvCell(v){return `"${String(v??"").replaceAll('"','""')}"`;}
+function exportCommercialCsv(){const rows=dashboardRows(),head=["Reference","Inquiry Ref","Package","Travel Date","Status","Pax","Currency","Estimated Direct Cost","Customer Sale","Expected Profit","Margin %","Actual Profit"],lines=[head.map(csvCell).join(",")].concat(rows.map(x=>{const a=state.reportActuals[x.id];return [x.reference||x.id,x.inquiryRef||"",x.packageName||"",x.travelStart||"",x.status||"",x.totalPax??0,x.currency||"USD",num(x.directCost),num(x.finalSale),num(x.grossProfit),num(x.marginPct),a?num(a.actualProfit):""].map(csvCell).join(",")}));const blob=new Blob(["\ufeff"+lines.join("\n")],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`CeyBreez-Tour-Commercial-Report-${today()}.csv`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("Commercial report exported");}
+function printCommercialReport(){const rows=dashboardRows(),w=window.open("","_blank","width=1150,height=850");if(!w){toast("Allow pop-ups to print report",true);return;}const body=rows.map(x=>{const a=state.reportActuals[x.id];return `<tr><td>${esc(x.reference||x.id)}</td><td>${esc(x.packageName||"-")}</td><td>${esc(x.travelStart||"-")}</td><td>${esc(x.status||"")}</td><td>${esc(x.totalPax??0)}</td><td>${money(x.directCost,x.currency)}</td><td>${money(x.finalSale,x.currency)}</td><td>${money(x.grossProfit,x.currency)}</td><td>${round2(x.marginPct)}%</td><td>${a?money(a.actualProfit,x.currency):"-"}</td></tr>`;}).join("");w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>CeyBreez Commercial Report</title><style>body{font-family:Arial,sans-serif;color:#173b36;margin:30px}h1{font-family:Georgia,serif;margin-bottom:4px}.sub{color:#6a7f7b;margin-bottom:20px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:18px 0}.summary div{border:1px solid #d9e6e3;border-radius:10px;padding:12px}.summary span{display:block;color:#6a7f7b;font-size:10px;text-transform:uppercase}.summary strong{display:block;margin-top:5px}table{border-collapse:collapse;width:100%;font-size:11px}th,td{padding:8px 6px;border-bottom:1px solid #d9e6e3;text-align:left}th{background:#f3f8f7;font-size:9px;text-transform:uppercase}.money span{display:block}@media print{body{margin:8mm}}</style></head><body><h1>CeyBreez Tour Commercial Report</h1><div class="sub">Generated ${esc(today())} · ${rows.length} record${rows.length===1?"":"s"}</div><div class="summary"><div><span>Customer Sale</span><strong class="money">${dashboardMoneyHtml(rows.filter(x=>x.status!=="Cancelled"),"finalSale")}</strong></div><div><span>Estimated Direct Cost</span><strong class="money">${dashboardMoneyHtml(rows.filter(x=>x.status!=="Cancelled"),"directCost")}</strong></div><div><span>Expected Profit</span><strong class="money">${dashboardMoneyHtml(rows.filter(x=>x.status!=="Cancelled"),"grossProfit")}</strong></div><div><span>Average Margin</span><strong>${dashboardAvgMargin(rows.filter(x=>x.status!=="Cancelled"))}%</strong></div></div><table><thead><tr><th>Ref</th><th>Package</th><th>Travel</th><th>Status</th><th>Pax</th><th>Est Cost</th><th>Sale</th><th>Exp Profit</th><th>Margin</th><th>Actual Profit</th></tr></thead><tbody>${body||'<tr><td colspan="10">No records.</td></tr>'}</tbody></table></body></html>`);w.document.close();setTimeout(()=>w.print(),250);}
+
 function setStep(step){ state.activeStep=step; $$("[data-step]").forEach(b=>b.classList.toggle("active",b.dataset.step===step)); $$("[data-step-pane]").forEach(p=>p.classList.toggle("active",p.dataset.stepPane===step)); }
-function showMain(which){ $$(`[data-main-tab]`).forEach(b=>b.classList.toggle("active",b.dataset.mainTab===which)); ["register","editor","quotes","rates"].forEach(x=>$(`#tc${x[0].toUpperCase()+x.slice(1)}Pane`)?.classList.toggle("active",x===which)); if(which==="quotes")renderQuotationRegister(); }
+function showMain(which){ $$(`[data-main-tab]`).forEach(b=>b.classList.toggle("active",b.dataset.mainTab===which)); ["register","dashboard","editor","quotes","rates"].forEach(x=>$(`#tc${x[0].toUpperCase()+x.slice(1)}Pane`)?.classList.toggle("active",x===which)); if(which==="quotes")renderQuotationRegister(); if(which==="dashboard")renderCommercialDashboard(); }
 
 async function saveCurrent(){
   const c=state.current; if(!c?.packageName?.trim()){toast("Package Name is required",true);setStep("setup");return;}
@@ -402,7 +463,7 @@ async function saveCurrent(){
     const row=res?.costing||res; state.current=sanitizeCurrent(row.payload||payload); state.current.id=row.id||state.current.id; state.current.reference=row.reference||state.current.reference; const addedRates=await syncNewRatesToLibrary().catch(()=>0); setDirty(false); await refreshCostings(); renderEditor(); renderContextBanner(); toast(`${c.id?"Costing updated":"Costing saved"}${addedRates?` · ${addedRates} new library item${addedRates===1?"":"s"} saved`:""}`);
   }catch(e){toast(e.message,true)}
 }
-async function refreshCostings(){ state.costings=normalizeList(await api("/api/admin/finance/tour-costings")); renderRegister(); }
+async function refreshCostings(){ state.costings=normalizeList(await api("/api/admin/finance/tour-costings")); renderRegister(); renderQuotationRegister(); renderCommercialDashboard(); }
 async function deleteCurrent(){ const c=state.current;if(!c?.id)return;if(!confirm(`Delete ${c.reference||c.packageName}?`))return;try{const r=await api(`/api/admin/finance/tour-costings/${encodeURIComponent(c.id)}`,{method:"DELETE"});if(r?.pendingApproval){toast(r.message||"Delete submitted for approval");return;}await refreshCostings();showMain("register");toast("Costing deleted");}catch(e){toast(e.message,true)}}
 function createRevision(){ const c=state.current;if(!c?.id)return;const clone=JSON.parse(JSON.stringify(c));const next=num(c.revisionNo)+1;const base=String(c.reference||"").replace(/-R\d+$/i,"");clone.id="";clone.rootId=c.rootId||c.id;clone.previousId=c.id;clone.revisionNo=next;clone.reference=base?`${base}-R${next}`:"";clone.status="Draft";clone.quotation={...quoteDefaults(clone),quoteNo:"",status:"Draft",sentAt:"",acceptedAt:"",bookingId:""};clone.notes=`Revision ${next} based on ${c.reference||c.id}.\n${clone.notes||""}`.trim();state.current=clone;state.dirty=true;renderEditor();setDirty(true);toast(`Revision ${next} created as draft`);}
 function applyTourSelection(id){ const t=state.tours.find(x=>String(x.id)===String(id)); if(!t)return; state.current.packageName=t.title||state.current.packageName; state.current.currency=t.currency||state.current.currency; if(num(t.basePrice)>0 && state.current.pricing.method==="manual") state.current.pricing.manualSale=num(t.basePrice); const d=parseInt(String(t.duration||"").match(/\d+/)?.[0]||"0",10); if(d){state.current.days=d;if(!state.current.nights||state.current.nights>=d)state.current.nights=Math.max(0,d-1)} renderEditor(); setDirty(true); }
@@ -419,6 +480,7 @@ async function deleteRate(id){if(!confirm("Delete this rate library item?"))retu
 
 function bind(){ if(bound) return; bound=true;
   $$("[data-main-tab]").forEach(b=>b.addEventListener("click",()=>showMain(b.dataset.mainTab)));
+  ["#tcDashFrom","#tcDashTo","#tcDashStatus","#tcDashCurrency"].forEach(id=>$(id)?.addEventListener("change",renderCommercialDashboard)); $("#tcDashSearch")?.addEventListener("input",renderCommercialDashboard); $("#tcDashResetBtn")?.addEventListener("click",resetCommercialDashboard); $("#tcDashLoadActualBtn")?.addEventListener("click",loadDashboardActuals); $("#tcDashCsvBtn")?.addEventListener("click",exportCommercialCsv); $("#tcDashPrintBtn")?.addEventListener("click",printCommercialReport); $("#tcDashReportBody")?.addEventListener("click",e=>{const b=e.target.closest("[data-report-open]");if(b)openCosting(b.dataset.reportOpen)});
   $$("[data-step]").forEach(b=>b.addEventListener("click",()=>setStep(b.dataset.step)));
   $("#tcNewBtn").addEventListener("click",openNew); $("#tcGenerateRowsBtn").addEventListener("click",generateDayRows); $("#tcRefreshBtn").addEventListener("click",loadAll); $("#tcSearch").addEventListener("input",renderRegister); $("#tcStatusFilter").addEventListener("change",renderRegister);
   $("#tcRegisterBody").addEventListener("click",e=>{const b=e.target.closest("[data-edit-costing]");if(b)openCosting(b.dataset.editCosting);const q=e.target.closest("[data-quote-costing]");if(q)openQuoteFromRegister(q.dataset.quoteCosting)}); $("#tcQuotesBody").addEventListener("click",e=>{const q=e.target.closest("[data-open-quote]");if(q)openQuoteFromRegister(q.dataset.openQuote)});
@@ -504,7 +566,7 @@ const MODULE_HTML = "<div class=\"tc-module-head\"><div><span class=\"tc-kicker\
 export async function initTourCostingModule(){
   root=document.getElementById("tourCostingTab"); if(!root) return;
   ensureCss();
-  if(root.dataset.tcRendered!=="1"){ root.innerHTML=MODULE_HTML; root.dataset.tcRendered="1"; installQuotationUI(); installOperationsUI(); installSettlementUI(); bind(); } else { installQuotationUI(); installOperationsUI(); installSettlementUI(); }
+  if(root.dataset.tcRendered!=="1"){ root.innerHTML=MODULE_HTML; root.dataset.tcRendered="1"; installCommercialDashboardUI(); installQuotationUI(); installOperationsUI(); installSettlementUI(); bind(); } else { installCommercialDashboardUI(); installQuotationUI(); installOperationsUI(); installSettlementUI(); }
   try{ await loadAll(); loaded=true; if(!state.current) showMain("register"); renderContextBanner(); }
   catch(e){ loaded=false; toast(e.message||"Tour Costing API is not available",true); const body=$("#tcRegisterBody"); if(body) body.innerHTML=`<tr><td colspan="11" class="tc-empty">${esc(e.message||"Tour Costing API is not available. Deploy the included Worker update once.")}</td></tr>`; }
 }

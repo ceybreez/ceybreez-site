@@ -89,3 +89,40 @@
 #tourCostingTab .tc-operations-table input.wide{min-width:190px}
 #tourCostingTab .tc-operations-table td:nth-child(1),#tourCostingTab .tc-operations-table td:nth-child(2){white-space:nowrap}
 @media(max-width:700px){#tourCostingTab .tc-operations-actions>*{width:100%}}
+
+
+/* V6.6.19 Commercial Dashboard + Sales / Profit Reports */
+#tourCostingTab .tc-dashboard-panel{overflow:visible;background:transparent;border:0;box-shadow:none}
+#tourCostingTab .tc-dashboard-head{background:#fff;border:1px solid var(--tc-border);border-radius:16px;margin-bottom:12px}
+#tourCostingTab .tc-dashboard-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#tourCostingTab .tc-dashboard-filters{display:grid;grid-template-columns:150px 150px 160px 150px minmax(220px,1fr) auto;gap:9px;align-items:end;background:#fff;border:1px solid var(--tc-border);border-radius:14px;padding:13px;margin-bottom:12px}
+#tourCostingTab .tc-dashboard-filters label{display:grid;gap:5px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;font-weight:900;color:#5d7671}
+#tourCostingTab .tc-dashboard-filters input,#tourCostingTab .tc-dashboard-filters select{min-height:38px}
+#tourCostingTab .tc-dashboard-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:12px}
+#tourCostingTab .tc-kpi{background:#fff;border:1px solid var(--tc-border);border-radius:14px;padding:14px;min-width:0;box-shadow:0 5px 16px rgba(0,0,0,.025)}
+#tourCostingTab .tc-kpi>span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.055em;color:var(--tc-muted);font-weight:900}
+#tourCostingTab .tc-kpi>strong{display:block;margin-top:6px;font-size:20px;color:#123f3a;line-height:1.2;overflow-wrap:anywhere}
+#tourCostingTab .tc-kpi>small{display:block;margin-top:6px;font-size:10px;color:var(--tc-muted);line-height:1.35}
+#tourCostingTab .tc-kpi-stack span,#tourCostingTab .tc-money-stack span{display:block;white-space:nowrap}
+#tourCostingTab .tc-kpi-stack span+span,#tourCostingTab .tc-money-stack span+span{margin-top:3px}
+#tourCostingTab .tc-dashboard-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:12px;margin-bottom:12px}
+#tourCostingTab .tc-report-card{background:#fff;border:1px solid var(--tc-border);border-radius:16px;overflow:hidden;box-shadow:0 5px 16px rgba(0,0,0,.025)}
+#tourCostingTab .tc-report-wide{margin-bottom:12px}
+#tourCostingTab .tc-report-card-head{padding:15px 17px;border-bottom:1px solid #e6efed;display:flex;justify-content:space-between;gap:14px;align-items:center}
+#tourCostingTab .tc-report-card-head span{display:block;font-size:9px;letter-spacing:.09em;font-weight:900;color:var(--tc-green)}
+#tourCostingTab .tc-report-card-head h3{margin:3px 0 0;font-family:Georgia,serif;font-size:19px;color:#173f39}
+#tourCostingTab .tc-report-card-head small{color:var(--tc-muted)}
+#tourCostingTab .tc-pipeline-list,#tourCostingTab .tc-monthly-list{padding:13px 16px;display:grid;gap:9px}
+#tourCostingTab .tc-pipeline-row{display:grid;grid-template-columns:100px minmax(90px,1fr) 34px;gap:9px;align-items:center}
+#tourCostingTab .tc-pipeline-row>strong{text-align:right;font-size:12px}
+#tourCostingTab .tc-bar{height:8px;background:#edf4f2;border-radius:999px;overflow:hidden;min-width:40px}
+#tourCostingTab .tc-bar i{display:block;height:100%;background:var(--tc-green);border-radius:999px;min-width:0}
+#tourCostingTab .tc-month-row{display:grid;grid-template-columns:115px minmax(90px,1fr) minmax(150px,auto);gap:10px;align-items:center}
+#tourCostingTab .tc-month-row>div:first-child{display:grid;gap:2px}
+#tourCostingTab .tc-month-row strong{font-size:12px}#tourCostingTab .tc-month-row small{font-size:10px;color:var(--tc-muted)}
+#tourCostingTab .tc-month-money{text-align:right;display:grid;gap:2px}#tourCostingTab .tc-month-money b{font-size:11px;color:#173f39}#tourCostingTab .tc-month-money b span,#tourCostingTab .tc-month-money small span{display:block}
+#tourCostingTab .tc-muted-report{color:var(--tc-muted);font-weight:600;font-size:10px}
+#tourCostingTab .tc-dashboard-note{font-size:11px;line-height:1.45;color:#607671;background:#f8fbfa;border:1px dashed #cadbd8;border-radius:10px;padding:10px 12px}
+@media(max-width:1250px){#tourCostingTab .tc-dashboard-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}#tourCostingTab .tc-dashboard-filters{grid-template-columns:repeat(3,minmax(0,1fr))}#tourCostingTab .tc-dash-search{grid-column:span 2}}
+@media(max-width:850px){#tourCostingTab .tc-dashboard-grid{grid-template-columns:1fr}#tourCostingTab .tc-dashboard-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}#tourCostingTab .tc-dashboard-filters{grid-template-columns:1fr 1fr}#tourCostingTab .tc-dash-search{grid-column:1/-1}}
+@media(max-width:560px){#tourCostingTab .tc-dashboard-kpis,#tourCostingTab .tc-dashboard-filters{grid-template-columns:1fr}#tourCostingTab .tc-dash-search{grid-column:auto}#tourCostingTab .tc-dashboard-actions>*{width:100%}#tourCostingTab .tc-month-row{grid-template-columns:92px 1fr}#tourCostingTab .tc-month-money{grid-column:1/-1;text-align:left;padding-left:102px}}

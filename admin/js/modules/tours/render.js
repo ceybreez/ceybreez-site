@@ -261,7 +261,7 @@ export function renderTourPackagesTable(tours = []) {
       <td><strong>${t.basePrice ? `${escapeHtml(t.currency || "USD")} ${escapeHtml(t.basePrice)}` : "On request"}</strong>${t.childPrice ? `<br><small>Child: ${escapeHtml(t.currency || "USD")} ${escapeHtml(t.childPrice)}</small>` : ""}</td>
       <td>${active ? `<span class="tour-state-chip live">● Live</span>` : `<span class="tour-state-chip hidden-state">○ Hidden</span>`}</td>
       <td>${featured ? `<span class="tour-state-chip featured">★ Featured</span>` : `<span class="tour-state-chip neutral">—</span>`}</td>
-      <td><div class="tour-row-actions"><button type="button" class="mini-btn" data-tour-edit="${escapeHtml(t.id)}">Edit</button><button type="button" class="delete-btn mini-btn" data-tour-delete="${escapeHtml(t.id)}">Delete</button></div></td>
+      <td><div class="tour-row-actions"><button type="button" class="mini-btn" data-tour-costing="${escapeHtml(t.id)}">Costing</button><button type="button" class="mini-btn" data-tour-edit="${escapeHtml(t.id)}">Edit</button><button type="button" class="delete-btn mini-btn" data-tour-delete="${escapeHtml(t.id)}">Delete</button></div></td>
     </tr>`;
   }).join("");
 }

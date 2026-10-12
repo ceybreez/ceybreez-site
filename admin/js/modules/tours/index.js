@@ -204,7 +204,18 @@ function wireToursModule() {
   window.addEventListener("beforeunload", e => { if (!formDirty) return; e.preventDefault(); e.returnValue = ""; });
 
   byId("tourPackagesTableBody")?.addEventListener("click", async e => {
-    const editId = e.target.closest("[data-tour-edit]")?.dataset.tourEdit || e.target.closest("[data-tour-row]")?.dataset.tourRow; const deleteId = e.target.closest("[data-tour-delete]")?.dataset.tourDelete;
+    const costingId = e.target.closest("[data-tour-costing]")?.dataset.tourCosting;
+    const editId = e.target.closest("[data-tour-edit]")?.dataset.tourEdit || (!costingId ? e.target.closest("[data-tour-row]")?.dataset.tourRow : null); const deleteId = e.target.closest("[data-tour-delete]")?.dataset.tourDelete;
+    if (costingId) {
+      e.stopPropagation();
+      const tour = allTourPackages.find(t => String(t.id) === String(costingId));
+      if (!tour) return;
+      try {
+        if (typeof window.v14OpenTourCosting !== "function") throw new Error("Tour Costing module is not ready. Refresh Admin and try again.");
+        await window.v14OpenTourCosting({ mode:"tour", tour });
+      } catch (err) { console.error(err); alert(err.message || "Unable to open Tour Costing"); }
+      return;
+    }
     if (deleteId) { e.stopPropagation(); const tour = allTourPackages.find(t => String(t.id) === String(deleteId)); if (!confirm(`Delete “${tour?.title || "this tour package"}”? This cannot be undone.`)) return; try { await deleteTourPackage(deleteId); alert("Tour package deleted"); await loadTourPackages(); } catch (err) { alert(err.message || "Delete failed"); } return; }
     if (editId) { const tour = allTourPackages.find(t => String(t.id) === String(editId)); if (tour) openTourForm(tour); }
   });

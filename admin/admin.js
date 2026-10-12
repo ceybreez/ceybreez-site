@@ -3102,6 +3102,21 @@ async function cancelBookingFromModal(id) {
 
 let currentInquiry = null;
 
+async function openTourCostingForInquiry(id){
+  const inquiry = allInquiries.find(x => String(x.id) === String(id));
+  if(!inquiry) return alert("Inquiry not found.");
+  if(!isTourInquiry(inquiry)) return alert("Tour Costing is available for tour inquiries.");
+  try{
+    closeInquiryModal();
+    if(typeof window.v14OpenTourCosting !== "function") throw new Error("Tour Costing module is not ready. Refresh Admin and try again.");
+    await window.v14OpenTourCosting({ mode:"inquiry", inquiry });
+  }catch(error){
+    console.error(error);
+    alert(error.message || "Unable to open Tour Costing.");
+  }
+}
+window.openTourCostingForInquiry = openTourCostingForInquiry;
+
 function openInquiryModal(id){
 
   const inquiry = allInquiries.find(
@@ -3135,6 +3150,7 @@ function openInquiryModal(id){
   <button onclick="openGuestWhatsApp()">WhatsApp</button>
   <button onclick="emailGuest()">Email</button>
   <button onclick="copyInquiryDetails()">Copy</button>
+  ${isTourInquiry(inquiry) ? `<button class="edit-btn" onclick="openTourCostingForInquiry('${escapeJs(inquiry.id)}')">🧮 Create / Edit Costing</button>` : ""}
   <button onclick="confirmBooking(document.getElementById('sendStatusEmail')?.checked ?? true)">Confirm Booking</button>
   <button class="delete-btn" onclick="deleteCurrentInquiry()">Delete Inquiry</button>
 </div>

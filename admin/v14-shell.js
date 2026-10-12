@@ -12,6 +12,7 @@
     services: "servicesTab",
     reviews: "reviewsTab",
     finance: "financeTab",
+    tourCosting: "tourCostingTab",
     reports: "reportsTab",
     pageBuilder: "pageControlTab",
     users: "usersTab",
@@ -48,6 +49,7 @@
     services:["Cafe & Services CMS","Cafes, restaurants and service partners"],
     reviews:["Reviews","Guest reviews and approval"],
     finance:["Finance","Booking payments, advances, balances and refunds"],
+    tourCosting:["Tour Costing","Cost, selling price, revisions and actual profit linked to inquiries and tour packages"],
     reports:["Reports","Revenue, occupancy and performance reports"],
     pageBuilder:["Page Builder","Global website content and page sections"],
     users:["User Management","Create staff accounts, roles and module access"],
@@ -59,6 +61,23 @@
   const moduleIds = Object.values(modules).filter((v,i,a)=>a.indexOf(v)===i);
   let originalShowTab = window.showTab;
   let shellReady = false;
+  let tourCostingModulePromise = null;
+  async function ensureTourCostingModule(){
+    if(!tourCostingModulePromise){
+      tourCostingModulePromise = import("./tour-costing-module.js?v=20261012-2");
+    }
+    const mod = await tourCostingModulePromise;
+    await mod.initTourCostingModule?.();
+    return mod;
+  }
+  window.v14OpenTourCosting = async function(context={}){
+    ensureShell();
+    forceOnly("tourCosting");
+    setActive("tourCosting");
+    const mod = await ensureTourCostingModule();
+    await mod.openTourCostingContext?.(context);
+    if(typeof window.v14CloseMobileMenu==="function") window.v14CloseMobileMenu();
+  };
 
   function authHeaders(){
     return {"Content-Type":"application/json","Authorization":"Bearer " + (sessionStorage.getItem(TOKEN_KEY)||"")};
@@ -528,7 +547,7 @@ function initV18BlockDatePickers(bookings){
         <button data-v14-tab="services">☕ Cafe & Services CMS</button>
         <button data-v14-tab="reviews">⭐ Reviews</button>
         <button data-v14-tab="finance">💰 Finance</button>
-        <button type="button" data-security-module="finance" onclick="window.location.href='tour-costing.html'">🧮 Tour Costing</button>
+        <button data-v14-tab="tourCosting" data-security-module="finance">🧮 Tour Costing</button>
         <button data-v14-tab="reports">📈 Reports</button>
         <button data-v14-tab="pageBuilder">📄 Page Builder</button>
         <button type="button" data-security-module="pageBuilder" onclick="window.location.href='visual-builder/index.html'">🎨 Visual Designer</button>
@@ -563,6 +582,13 @@ function initV18BlockDatePickers(bookings){
       avail.id="availabilityTab";
       avail.className="hidden";
       panel.appendChild(avail);
+    }
+
+    if(!document.getElementById("tourCostingTab")){
+      const costing=document.createElement("section");
+      costing.id="tourCostingTab";
+      costing.className="hidden";
+      panel.appendChild(costing);
     }
 
     // Move only real module sections into the content root. This removes old blank wrappers.
@@ -620,6 +646,7 @@ function initV18BlockDatePickers(bookings){
     document.getElementById("v14RefreshBtn")?.addEventListener("click",()=>{
       const active=document.querySelector(".v14-nav button.active")?.dataset.v14Tab || "dashboard";
       if(active==="dashboard") callDashboard();
+      else if(active==="tourCosting") ensureTourCostingModule().catch(e=>console.warn("Tour Costing refresh warning",e));
       else refreshLegacy(active);
     });
   }
@@ -659,6 +686,7 @@ function initV18BlockDatePickers(bookings){
       else if(logical==="bookings" && typeof loadBookings==="function") loadBookings();
       else if(logical==="availability") renderAvailabilityManager();
       else if(logical==="finance" && typeof window.renderFinanceModule==="function") window.renderFinanceModule();
+      else if(logical==="tourCosting") ensureTourCostingModule();
       else if(logical==="properties" && typeof loadProperties==="function") loadProperties();
       else if(logical==="tours" && typeof loadDestinations==="function") loadDestinations();
       else if(logical==="services" && typeof loadServices==="function") loadServices();
@@ -688,6 +716,8 @@ function initV18BlockDatePickers(bookings){
       renderAvailabilityManager();
     } else if(logical==="finance"){
       if(typeof window.renderFinanceModule==="function") window.renderFinanceModule();
+    } else if(logical==="tourCosting"){
+      ensureTourCostingModule().catch(e=>console.warn("Tour Costing load warning",e));
     } else if(logical==="reports"){
       if(typeof window.renderReportsModule==="function") window.renderReportsModule();
       else if(typeof renderReports==="function") renderReports();

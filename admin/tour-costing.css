@@ -138,3 +138,18 @@
 .tc-doc-table input.wide{min-width:210px}
 .tc-doc-actions{white-space:nowrap;display:flex;gap:6px;align-items:center}
 @media(max-width:900px){.tc-doc-metrics{grid-template-columns:1fr}.tc-doc-actions{display:table-cell}.tc-doc-table input.wide{min-width:180px}}
+
+
+/* V6.6.21 Payment Schedule / Aging */
+.tc-payment-metrics{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:10px;margin:14px 0 18px}
+.tc-payment-metrics>div{border:1px solid var(--tc-border,#dfe5ea);border-radius:12px;padding:13px 14px;background:#fff;min-width:0}
+.tc-payment-metrics span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;margin-bottom:5px}
+.tc-payment-metrics strong{display:block;font-size:18px;line-height:1.15;overflow-wrap:anywhere}
+.tc-payment-metrics .good{background:#f0fdf4;border-color:#bbf7d0}.tc-payment-metrics .warn{background:#fff7ed;border-color:#fed7aa}
+.tc-aging{display:inline-flex;align-items:center;white-space:nowrap;padding:4px 8px;border-radius:999px;background:#f3f4f6;font-size:11px;font-weight:700;color:#4b5563}
+.tc-aging.warn{background:#fff7ed;color:#c2410c}.tc-aging.bad{background:#fef2f2;color:#b91c1c}.tc-aging.good{background:#f0fdf4;color:#15803d}
+#tcPaymentSchedulePane .tc-line-table th,#tcPaymentSchedulePane .tc-line-table td{vertical-align:middle}
+#tcPaymentSchedulePane .tc-line-table input,#tcPaymentSchedulePane .tc-line-table select{min-width:105px}
+#tcPaymentSchedulePane .tc-line-table input.wide{min-width:190px}
+@media(max-width:1050px){.tc-payment-metrics{grid-template-columns:repeat(2,minmax(150px,1fr))}}
+@media(max-width:620px){.tc-payment-metrics{grid-template-columns:1fr}.tc-payment-metrics>div{padding:11px 12px}}

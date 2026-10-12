@@ -79,10 +79,10 @@ function renderLibraryPicker(){
 function applyLibraryRate(id){
   const modal=$("#tcLibraryModal"),r=state.rates.find(x=>String(x.id)===String(id));if(!modal||!r)return;const section=modal.dataset.section,i=num(modal.dataset.index),key=modal.dataset.key,row=state.current?.[section]?.[i];if(!row)return;const applied=rateToCostingCurrency(r);
   row[key]=r.name||row[key];
-  if(section==="hotels"){row.hotel=r.name;row.location=r.location||row.location;if(applied!==null)row.rate=applied;}
-  if(section==="transport"&&key==="vehicle"){row.vehicle=r.name;if(applied!==null)row.rate=applied;row.basis=r.basis||row.basis;state.current.vehiclePreference=r.name;state.current.autoVehicle=false;}
-  if(section==="transport"&&key==="route"){row.route=r.name;if(applied!==null&&num(r.rate)>0){row.rate=applied;row.basis=r.basis||row.basis;}}
-  if(section==="activities"){row.activity=r.name;row.location=r.location||row.location;if(applied!==null)row.rate=applied;row.basis=r.basis||row.basis;if(row.basis==="Per Pax")row.qty=Math.max(1,totalPax());}
+  if(section==="hotels"){row.hotel=r.name;row.location=r.location||row.location;row.supplier=r.supplier||row.supplier||"";if(applied!==null)row.rate=applied;}
+  if(section==="transport"&&key==="vehicle"){row.vehicle=r.name;row.supplier=r.supplier||row.supplier||"";if(applied!==null)row.rate=applied;row.basis=r.basis||row.basis;state.current.vehiclePreference=r.name;state.current.autoVehicle=false;}
+  if(section==="transport"&&key==="route"){row.route=r.name;row.supplier=r.supplier||row.supplier||"";if(applied!==null&&num(r.rate)>0){row.rate=applied;row.basis=r.basis||row.basis;}}
+  if(section==="activities"){row.activity=r.name;row.location=r.location||row.location;row.supplier=r.supplier||row.supplier||"";if(applied!==null)row.rate=applied;row.basis=r.basis||row.basis;if(row.basis==="Per Pax")row.qty=Math.max(1,totalPax());}
   renderSection(section);renderSummary();setDirty();updateVehicleSuggestionUI();closeLibraryPicker();toast(`${r.name} loaded from Rate Library`);
 }
 function candidateRatesFromCurrent(){
@@ -106,6 +106,7 @@ function blankCosting(){
     currency:"USD",exchangeRate:310,hotelCategory:"3 Star",vehiclePreference:"",autoVehicle:true,saveNewRatesToLibrary:true,notes:"",
     pricing:{method:"markup",contingencyPct:5,overheadPct:3,markupPct:15,targetMarginPct:20,manualSale:0,discountPct:0,agentCommissionPct:0,bankFeePct:2.5,vatPct:18,childWBPct:75,childWOBPct:50,infantFixed:0},
     quotation:{quoteNo:"",status:"Not Generated",issuedDate:today(),validUntil:"",guestName:"",guestEmail:"",guestMobile:"",totalAmount:"",unitRate:"",paymentStatus:"Pending",advanceAmount:"",balanceAmount:"",customerMessage:"",inclusions:"",exclusions:"",paymentTerms:"",cancellationTerms:"",sentAt:"",acceptedAt:"",bookingId:"",sendBookingEmail:false},
+    settlement:{status:"Open",completedDate:"",customerReceived:0,refunds:0,bankFeesActual:0,taxPaidActual:0,miscActualCost:0,notes:"",supplierPayments:[]},
     hotels:[],transport:[],activities:[],staff:[],extras:[],summary:{}
   };
 }
@@ -113,6 +114,8 @@ function sanitizeCurrent(raw){
   const b=blankCosting(); const c={...b,...(raw||{})};
   c.pricing={...b.pricing,...(raw?.pricing||{})};
   c.quotation={...b.quotation,...(raw?.quotation||{})};
+  c.settlement={...b.settlement,...(raw?.settlement||{})};
+  c.settlement.supplierPayments=asArray(raw?.settlement?.supplierPayments);
   ["hotels","transport","activities","staff","extras"].forEach(k=>c[k]=asArray(raw?.[k]));
   return c;
 }
@@ -195,7 +198,7 @@ function renderEditor(){
   const inquiryField=$('[data-field="inquiryRef"]'); if(inquiryField) inquiryField.readOnly=!!c.inquiryRef;
   $("#tcTotalPax").value=totalPax(c); $("#tcEditorMode").textContent=c.id?`EDIT COSTING · REV ${num(c.revisionNo)}`:"NEW COSTING"; $("#tcEditorTitle").textContent=c.packageName||"New Tour Costing"; $("#tcEditorSub").textContent=c.reference?`${c.reference}${c.inquiryRef?` · ${c.inquiryRef}`:""}`:"Estimate the full package cost and selling price before quotation.";
   $("#tcDeleteBtn").disabled=!c.id; $("#tcRevisionBtn").disabled=!c.id;
-  renderSection("hotels"); renderSection("transport"); renderSection("activities"); renderSection("staff"); renderSection("extras"); renderSummary(); renderQuotation(); updateVehicleSuggestionUI(); setStep(state.activeStep); setDirty(false);
+  renderSection("hotels"); renderSection("transport"); renderSection("activities"); renderSection("staff"); renderSection("extras"); renderSummary(); renderQuotation(); renderSettlement(); updateVehicleSuggestionUI(); setStep(state.activeStep); setDirty(false);
 }
 function lineInput(section,i,key,value,type="text",extra="") { return `<input ${type!=="text"?`type="${type}"`:""} data-section="${section}" data-index="${i}" data-key="${key}" value="${esc(value??"")}" ${extra}>`; }
 function lineSelect(section,i,key,value,opts){return `<select data-section="${section}" data-index="${i}" data-key="${key}">${opts.map(o=>`<option${o===value?" selected":""}>${esc(o)}</option>`).join("")}</select>`;}
@@ -223,10 +226,10 @@ function autoRate(section,row,key,value){
   const map={hotels:["Hotel","hotel"],transport:key==="route"?["Route","route"]:["Transport","vehicle"],activities:["Activity","activity"],extras:[null,"description"]}; const m=map[section]; if(!m||key!==m[1])return;
   const hit=state.rates.find(r=>(!m[0]||r.category===m[0])&&normalizeKey(r.name)===normalizeKey(value)&&validRateDate(r)); if(!hit)return;
   const appliedRate=rateToCostingCurrency(hit); if(appliedRate===null){toast(`Rate is ${hit.currency}; costing is ${state.current.currency}. Convert it before use.`,true);return;}
-  if(section==="hotels"){row.rate=round2(appliedRate);row.location=hit.location||row.location;}
-  else if(section==="transport"){if(num(hit.rate)>0)row.rate=round2(appliedRate);row.basis=hit.basis||row.basis;if(key==="vehicle"){state.current.vehiclePreference=hit.name;state.current.autoVehicle=false;}}
-  else if(section==="activities"){row.rate=round2(appliedRate);row.basis=hit.basis||row.basis;row.location=hit.location||row.location;if(row.basis==="Per Pax")row.qty=Math.max(1,totalPax());}
-  else if(section==="extras"){row.rate=round2(appliedRate);row.basis=hit.basis||row.basis;}
+  if(section==="hotels"){row.rate=round2(appliedRate);row.location=hit.location||row.location;row.supplier=hit.supplier||row.supplier||"";}
+  else if(section==="transport"){if(num(hit.rate)>0)row.rate=round2(appliedRate);row.basis=hit.basis||row.basis;row.supplier=hit.supplier||row.supplier||"";if(key==="vehicle"){state.current.vehiclePreference=hit.name;state.current.autoVehicle=false;}}
+  else if(section==="activities"){row.rate=round2(appliedRate);row.basis=hit.basis||row.basis;row.location=hit.location||row.location;row.supplier=hit.supplier||row.supplier||"";if(row.basis==="Per Pax")row.qty=Math.max(1,totalPax());}
+  else if(section==="extras"){row.rate=round2(appliedRate);row.basis=hit.basis||row.basis;row.supplier=hit.supplier||row.supplier||"";}
   renderSection(section); updateVehicleSuggestionUI(); toast(`Rate applied: ${money(appliedRate,state.current.currency)}${hit.supplier?` · ${hit.supplier}`:""}`);
 }
 function updateLineTotal(section,i){ const r=state.current[section][i]; const fn={hotels:hotelEst,transport:transportEst,activities:activityEst,staff:staffEst,extras:extraEst}[section]; const el=$(`[data-line-total="${section}-${i}"]`); if(el)el.textContent=money(fn(r),state.current.currency); }
@@ -279,11 +282,65 @@ function installQuotationUI(){
   const guestName=$('[data-field="guestName"]')?.closest('label');if(guestName&&!$('[data-field="guestEmail"]'))guestName.insertAdjacentHTML('afterend','<label>Guest Email<input data-field="guestEmail" type="email" placeholder="guest@email.com"/></label><label>Guest Mobile<input data-field="guestMobile" placeholder="+94..."/></label>');
 }
 
+
+function settlementDefaults(c=state.current){
+  const s=c?.settlement||{};
+  return {status:s.status||"Open",completedDate:s.completedDate||"",customerReceived:num(s.customerReceived),refunds:num(s.refunds),bankFeesActual:num(s.bankFeesActual),taxPaidActual:num(s.taxPaidActual),miscActualCost:num(s.miscActualCost),notes:s.notes||"",supplierPayments:asArray(s.supplierPayments)};
+}
+function ensureSettlement(){if(!state.current)return null;state.current.settlement=settlementDefaults(state.current);return state.current.settlement;}
+function actualSupplierCandidates(){
+  const c=state.current||blankCosting(), out=[];
+  const push=(category,supplier,description,amount,key)=>{amount=round2(amount);if(amount<=0)return;out.push({id:key||uid("sp"),category,supplier:supplier||"",description:description||category,dueAmount:amount,paidAmount:0,status:"Unpaid",paidDate:"",reference:"",notes:""});};
+  asArray(c.hotels).forEach((r,i)=>push("Hotel",r.supplier||r.hotel,`${r.day||`Night ${i+1}`} · ${r.hotel||"Accommodation"}`,lineActual(r),`hotel-${i}`));
+  asArray(c.transport).forEach((r,i)=>push("Transport",r.supplier||r.vehicle,`${r.day||`Day ${i+1}`} · ${r.route||r.vehicle||"Transport"}`,lineActual(r),`transport-${i}`));
+  asArray(c.activities).forEach((r,i)=>push("Activity",r.supplier||r.activity,`${r.day||`Day ${i+1}`} · ${r.activity||"Activity"}`,lineActual(r),`activity-${i}`));
+  asArray(c.staff).forEach((r,i)=>push("Staff",r.supplier||r.type,`${r.day||`Day ${i+1}`} · ${r.type||"Staff"}`,lineActual(r),`staff-${i}`));
+  asArray(c.extras).forEach((r,i)=>push(r.category||"Other",r.supplier||"",`${r.day?`${r.day} · `:""}${r.description||r.category||"Other cost"}`,lineActual(r),`extra-${i}`));
+  return out;
+}
+function syncSupplierPayments(){
+  const st=ensureSettlement(), old=new Map(st.supplierPayments.map(x=>[String(x.id),x]));
+  st.supplierPayments=actualSupplierCandidates().map(x=>{const prev=old.get(String(x.id));return prev?{...x,paidAmount:num(prev.paidAmount),status:prev.status||x.status,paidDate:prev.paidDate||"",reference:prev.reference||"",notes:prev.notes||"",supplier:prev.supplier||x.supplier}:{...x};});
+  renderSettlement();setDirty();toast(st.supplierPayments.length?"Supplier payment list synced from Actual Costs":"No Actual Costs entered yet");
+}
+function settlementSummary(){
+  const c=state.current||blankCosting(), st=settlementDefaults(c), s=computeSummary(c), q=quoteDefaults(c);
+  const supplierDue=st.supplierPayments.reduce((a,x)=>a+num(x.dueAmount),0), supplierPaid=st.supplierPayments.reduce((a,x)=>a+num(x.paidAmount),0);
+  const customerTarget=num(q.totalAmount||s.finalSale), customerOutstanding=Math.max(0,customerTarget-num(st.customerReceived));
+  const supplierOutstanding=Math.max(0,supplierDue-supplierPaid);
+  const finalActualProfit=round2(s.netSale-s.actualOperatingCost-num(st.miscActualCost));
+  const cashPosition=round2(num(st.customerReceived)-num(st.refunds)-supplierPaid-num(st.bankFeesActual)-num(st.taxPaidActual)-num(st.miscActualCost));
+  return {customerTarget:round2(customerTarget),customerReceived:round2(st.customerReceived),customerOutstanding:round2(customerOutstanding),supplierDue:round2(supplierDue),supplierPaid:round2(supplierPaid),supplierOutstanding:round2(supplierOutstanding),finalActualProfit,cashPosition};
+}
+function settlementStatusClass(v){return v==="Settled"?"good":v==="Partially Settled"?"warn":"";}
+function renderSettlementMetrics(){
+  if(!state.current)return;const st=settlementDefaults(state.current),m=settlementSummary(),cur=state.current.currency||"USD";
+  const el=id=>$(id); if(el("#tcSettlementStatus")){el("#tcSettlementStatus").textContent=st.status;el("#tcSettlementStatus").className=`tc-quote-status ${settlementStatusClass(st.status)}`;}
+  const vals={"#tcSetCustomerTarget":m.customerTarget,"#tcSetCustomerReceived":m.customerReceived,"#tcSetCustomerOutstanding":m.customerOutstanding,"#tcSetSupplierDue":m.supplierDue,"#tcSetSupplierPaid":m.supplierPaid,"#tcSetSupplierOutstanding":m.supplierOutstanding,"#tcSetFinalProfit":m.finalActualProfit,"#tcSetCashPosition":m.cashPosition};Object.entries(vals).forEach(([id,v])=>{const n=el(id);if(n)n.textContent=money(v,cur)});
+}
+function supplierPaymentRow(r,i){const cur=state.current?.currency||"USD";return `<tr><td>${esc(r.category||"Other")}</td><td><input data-sp-index="${i}" data-sp-key="supplier" value="${esc(r.supplier||"")}" placeholder="Supplier"></td><td><input class="wide" data-sp-index="${i}" data-sp-key="description" value="${esc(r.description||"")}"></td><td class="tc-money">${money(r.dueAmount,cur)}</td><td><input data-sp-index="${i}" data-sp-key="paidAmount" type="number" min="0" step="0.01" value="${esc(r.paidAmount||0)}"></td><td><select data-sp-index="${i}" data-sp-key="status">${["Unpaid","Partially Paid","Paid"].map(v=>`<option${v===(r.status||"Unpaid")?" selected":""}>${v}</option>`).join("")}</select></td><td><input data-sp-index="${i}" data-sp-key="paidDate" type="date" value="${esc(r.paidDate||"")}"></td><td><input data-sp-index="${i}" data-sp-key="reference" value="${esc(r.reference||"")}" placeholder="Invoice / receipt"></td><td><button type="button" class="tc-icon-btn" data-remove-supplier-payment="${i}" title="Remove">×</button></td></tr>`;}
+function renderSettlement(){
+  if(!state.current||!$("#tcSettlementPane"))return;const st=ensureSettlement();$$('[data-settlement-field]').forEach(el=>{const v=st[el.dataset.settlementField];if(el.type==="checkbox")el.checked=!!v;else el.value=v??"";});
+  const body=$("#tcSupplierPaymentsBody");if(body)body.innerHTML=st.supplierPayments.length?st.supplierPayments.map(supplierPaymentRow).join(""):`<tr><td colspan="9" class="tc-empty">No supplier payment rows yet. Enter Actual Costs, then click “Sync from Actual Costs”.</td></tr>`;
+  renderSettlementMetrics();
+}
+function addSupplierPayment(){const st=ensureSettlement();st.supplierPayments.push({id:uid("sp"),category:"Other",supplier:"",description:"",dueAmount:0,paidAmount:0,status:"Unpaid",paidDate:"",reference:"",notes:""});renderSettlement();setDirty();}
+function updateSupplierPayment(i,key,value,el){const st=ensureSettlement(),r=st.supplierPayments[i];if(!r)return;r[key]=el?.type==="number"?(value===""?0:num(value)):value;if(key==="paidAmount"){r.status=num(r.paidAmount)>=num(r.dueAmount)&&num(r.dueAmount)>0?"Paid":num(r.paidAmount)>0?"Partially Paid":"Unpaid";}setDirty();renderSettlementMetrics();}
+function removeSupplierPayment(i){const st=ensureSettlement();st.supplierPayments.splice(i,1);renderSettlement();setDirty();}
+function markCustomerFullyReceived(){const st=ensureSettlement(),m=settlementSummary();st.customerReceived=m.customerTarget;renderSettlement();setDirty();toast("Customer received amount set to quoted total");}
+async function completeSettlement(){const c=state.current;if(!c)return;const st=ensureSettlement(),m=settlementSummary();if(m.customerOutstanding>0||m.supplierOutstanding>0){if(!confirm(`There are outstanding balances. Customer: ${money(m.customerOutstanding,c.currency)} · Suppliers: ${money(m.supplierOutstanding,c.currency)}. Mark completed anyway?`))return;}st.status="Settled";st.completedDate=st.completedDate||today();c.status="Completed";renderSettlement();setDirty();await saveCurrent();toast("Tour marked Completed and settlement saved");}
+function installSettlementUI(){
+  if(!root||root.dataset.tcSettlementUi==="1")return;root.dataset.tcSettlementUi="1";
+  const stepTabs=$('.tc-step-tabs'), actualTab=stepTabs?.querySelector('[data-step="actual"]');if(actualTab&&!stepTabs.querySelector('[data-step="settlement"]'))actualTab.insertAdjacentHTML('afterend','<button data-step="settlement" type="button">10 Settlement / Profit</button>');
+  const actualPane=$('[data-step-pane="actual"]');if(actualPane&&!$('[data-step-pane="settlement"]'))actualPane.insertAdjacentHTML('afterend',`<div class="tc-step" id="tcSettlementPane" data-step-pane="settlement"><div class="tc-section-title"><div><span>STEP 10</span><h3>Tour Settlement &amp; Final Profit</h3><p>Close customer collections and supplier payments after the tour without changing the original quotation.</p></div><span id="tcSettlementStatus" class="tc-quote-status">Open</span></div><div class="tc-form-grid four"><label>Settlement Status<select data-settlement-field="status"><option>Open</option><option>Partially Settled</option><option>Settled</option></select></label><label>Completed Date<input data-settlement-field="completedDate" type="date"></label><label>Customer Received<input data-settlement-field="customerReceived" type="number" min="0" step="0.01"></label><label>Refunds / Credits<input data-settlement-field="refunds" type="number" min="0" step="0.01"></label><label>Actual Bank Fees<input data-settlement-field="bankFeesActual" type="number" min="0" step="0.01"></label><label>Actual Tax / VAT Paid<input data-settlement-field="taxPaidActual" type="number" min="0" step="0.01"></label><label>Misc. Actual Cost<input data-settlement-field="miscActualCost" type="number" min="0" step="0.01"></label></div><div class="tc-settlement-actions"><button class="tc-btn ghost" id="tcSyncSuppliersBtn" type="button">Sync Suppliers from Actual Costs</button><button class="tc-btn ghost" id="tcAddSupplierPaymentBtn" type="button">+ Add Supplier Payment</button><button class="tc-btn ghost" id="tcFullReceivedBtn" type="button">Mark Customer Fully Received</button></div><div class="tc-settlement-cards"><div><span>Customer Sale</span><strong id="tcSetCustomerTarget">-</strong></div><div><span>Received</span><strong id="tcSetCustomerReceived">-</strong></div><div><span>Customer Outstanding</span><strong id="tcSetCustomerOutstanding">-</strong></div><div><span>Supplier Due</span><strong id="tcSetSupplierDue">-</strong></div><div><span>Supplier Paid</span><strong id="tcSetSupplierPaid">-</strong></div><div><span>Supplier Outstanding</span><strong id="tcSetSupplierOutstanding">-</strong></div><div class="good"><span>Final Actual Profit</span><strong id="tcSetFinalProfit">-</strong></div><div><span>Current Cash Position</span><strong id="tcSetCashPosition">-</strong></div></div><div class="tc-section-title compact"><div><h3>Supplier Payments</h3><p>Due amounts are generated from the Actual Cost fields already entered in Steps 2–6.</p></div></div><div class="tc-line-table-wrap"><table class="tc-line-table tc-supplier-table"><thead><tr><th>Category</th><th>Supplier</th><th>Description</th><th>Due</th><th>Paid</th><th>Status</th><th>Paid Date</th><th>Invoice / Ref</th><th></th></tr></thead><tbody id="tcSupplierPaymentsBody"></tbody></table></div><label class="tc-full">Settlement / Closing Notes<textarea data-settlement-field="notes" rows="4" placeholder="Supplier issues, refunds, adjustments, closing remarks…"></textarea></label><div class="tc-settlement-actions final"><button class="tc-btn ghost" id="tcSaveSettlementBtn" type="button">Save Settlement</button><button class="tc-btn tc-book-btn" id="tcCompleteSettlementBtn" type="button">Mark Tour Completed &amp; Save</button></div></div>`);
+}
+
 function renderSummary(){ if(!state.current)return; const c=state.current,s=computeSummary(c); c.summary=s; const cur=c.currency||"USD";
   $("#tcSummaryRef").textContent=c.reference||"Unsaved"; $("#tcDirectCost").textContent=money(s.directCost,cur); $("#tcCostBeforeProfit").textContent=money(s.costBeforeProfit,cur); $("#tcFinalSale").textContent=money(s.finalSale,cur); $("#tcProfit").textContent=money(s.operatingProfit,cur); $("#tcMargin").textContent=`${s.marginPct}%`; $("#tcActualCost").textContent=money(s.actualCost,cur); $("#tcActualVariance").textContent=money(s.actualVariance,cur); $("#tcTotalPax").value=totalPax(c);
   $("#tcPerPerson").innerHTML=`<h4>Selling Rate Guide</h4><div><span>Adult</span><strong>${money(s.adultRate,cur)}</strong></div><div><span>Child With Bed</span><strong>${money(s.childWBRate,cur)}</strong></div><div><span>Child Without Bed</span><strong>${money(s.childWOBRate,cur)}</strong></div><div><span>Infant</span><strong>${money(s.infantRate,cur)}</strong></div>`;
   $("#tcSaleBreakdown").innerHTML=[["Direct Cost",s.directCost],["Contingency",s.contingency],["Overhead / Admin",s.overhead],["Cost Before Profit",s.costBeforeProfit],["Core Selling",s.coreSale],["Discount",-s.discount],["Agent Commission",s.agentCommission],["Bank / Card Fee",s.bankFee],["Tax / VAT",s.vat],["Final Customer Price",s.finalSale],["Operating Profit",s.operatingProfit],["Profit Margin",`${s.marginPct}%`]].map(([a,b])=>`<div class="tc-break-item"><span>${esc(a)}</span><strong>${typeof b==="string"?esc(b):money(b,cur)}</strong></div>`).join("");
   $("#tcVarianceCards").innerHTML=[["Estimated Direct",s.directCost],["Actual Direct",s.actualCost],["Cost Variance",s.actualVariance],["Actual Profit",s.actualProfit]].map(([a,b])=>`<div class="tc-variance-card"><span>${esc(a)}</span><strong>${money(b,cur)}</strong></div>`).join("");
+  renderSettlementMetrics();
 }
 
 function setStep(step){ state.activeStep=step; $$("[data-step]").forEach(b=>b.classList.toggle("active",b.dataset.step===step)); $$("[data-step-pane]").forEach(p=>p.classList.toggle("active",p.dataset.stepPane===step)); }
@@ -318,13 +375,15 @@ function bind(){ if(bound) return; bound=true;
   $$("[data-step]").forEach(b=>b.addEventListener("click",()=>setStep(b.dataset.step)));
   $("#tcNewBtn").addEventListener("click",openNew); $("#tcGenerateRowsBtn").addEventListener("click",generateDayRows); $("#tcRefreshBtn").addEventListener("click",loadAll); $("#tcSearch").addEventListener("input",renderRegister); $("#tcStatusFilter").addEventListener("change",renderRegister);
   $("#tcRegisterBody").addEventListener("click",e=>{const b=e.target.closest("[data-edit-costing]");if(b)openCosting(b.dataset.editCosting);const q=e.target.closest("[data-quote-costing]");if(q)openQuoteFromRegister(q.dataset.quoteCosting)}); $("#tcQuotesBody").addEventListener("click",e=>{const q=e.target.closest("[data-open-quote]");if(q)openQuoteFromRegister(q.dataset.openQuote)});
-  $("#tcSaveBtn").addEventListener("click",saveCurrent); $("#tcSaveBtnRail").addEventListener("click",saveCurrent); $("#tcDeleteBtn").addEventListener("click",deleteCurrent); $("#tcRevisionBtn").addEventListener("click",createRevision); $("#tcPrintBtn").addEventListener("click",()=>window.print()); $("#tcCopySaleBtn").addEventListener("click",async()=>{const s=computeSummary();await navigator.clipboard.writeText(String(s.finalSale));toast("Final sale copied")}); $("#tcSyncQuoteBtn").addEventListener("click",()=>syncQuotationFromCosting(false)); $("#tcSaveQuoteBtn").addEventListener("click",saveQuoteOnly); $("#tcPrintQuoteBtn").addEventListener("click",printQuotation); $("#tcCopyQuoteBtn").addEventListener("click",copyQuotation); $("#tcSendQuoteBtn").addEventListener("click",sendQuotationToGuest); $("#tcQuoteAcceptedBtn").addEventListener("click",markQuoteAccepted); $("#tcConvertBookingBtn").addEventListener("click",convertQuoteToBooking);
+  $("#tcSaveBtn").addEventListener("click",saveCurrent); $("#tcSaveBtnRail").addEventListener("click",saveCurrent); $("#tcDeleteBtn").addEventListener("click",deleteCurrent); $("#tcRevisionBtn").addEventListener("click",createRevision); $("#tcPrintBtn").addEventListener("click",()=>window.print()); $("#tcCopySaleBtn").addEventListener("click",async()=>{const s=computeSummary();await navigator.clipboard.writeText(String(s.finalSale));toast("Final sale copied")}); $("#tcSyncQuoteBtn").addEventListener("click",()=>syncQuotationFromCosting(false)); $("#tcSaveQuoteBtn").addEventListener("click",saveQuoteOnly); $("#tcPrintQuoteBtn").addEventListener("click",printQuotation); $("#tcCopyQuoteBtn").addEventListener("click",copyQuotation); $("#tcSendQuoteBtn").addEventListener("click",sendQuotationToGuest); $("#tcQuoteAcceptedBtn").addEventListener("click",markQuoteAccepted); $("#tcConvertBookingBtn").addEventListener("click",convertQuoteToBooking); $("#tcSyncSuppliersBtn")?.addEventListener("click",syncSupplierPayments); $("#tcAddSupplierPaymentBtn")?.addEventListener("click",addSupplierPayment); $("#tcFullReceivedBtn")?.addEventListener("click",markCustomerFullyReceived); $("#tcSaveSettlementBtn")?.addEventListener("click",saveCurrent); $("#tcCompleteSettlementBtn")?.addEventListener("click",completeSettlement);
   $("#tcEditorPane").addEventListener("input",e=>{const el=e.target;if(el.matches("[data-field]")){const path=el.dataset.field;const val=el.type==="number"?(el.value===""?"":num(el.value)):el.value;pathSet(state.current,path,val);if(path==="packageName")$("#tcEditorTitle").textContent=val||"New Tour Costing";if(path==="vehiclePreference"){state.current.autoVehicle=false;state.current._lastAutoVehicle="";}if(["adultPax","childWithBed","childWithoutBed","infantPax","focPax"].includes(path))autoSelectVehicle(false);setDirty();renderSummary();updateVehicleSuggestionUI();}});
   $("#tcEditorPane").addEventListener("input",e=>{const el=e.target;if(el.matches("[data-quote-field]")){const q=ensureQuotation(),k=el.dataset.quoteField;q[k]=el.type==="checkbox"?el.checked:(el.type==="number"?(el.value===""?"":num(el.value)):el.value);if(k==="advanceAmount"||k==="totalAmount"){q.balanceAmount=Math.max(0,num(q.totalAmount)-num(q.advanceAmount));const bal=$('[data-quote-field="balanceAmount"]');if(bal&&document.activeElement!==bal)bal.value=q.balanceAmount;}setDirty();}});
   $("#tcEditorPane").addEventListener("change",e=>{const el=e.target;if(el.matches("[data-quote-field]")){const q=ensureQuotation(),k=el.dataset.quoteField;q[k]=el.type==="checkbox"?el.checked:(el.type==="number"?(el.value===""?"":num(el.value)):el.value);setDirty();renderQuotation();}});
+  $("#tcEditorPane").addEventListener("input",e=>{const el=e.target;if(el.matches("[data-settlement-field]")){const st=ensureSettlement(),k=el.dataset.settlementField;st[k]=el.type==="number"?(el.value===""?0:num(el.value)):el.value;setDirty();renderSettlementMetrics();}if(el.matches("[data-sp-index][data-sp-key]"))updateSupplierPayment(num(el.dataset.spIndex),el.dataset.spKey,el.value,el);});
+  $("#tcEditorPane").addEventListener("change",e=>{const el=e.target;if(el.matches("[data-settlement-field]")){const st=ensureSettlement(),k=el.dataset.settlementField;st[k]=el.type==="number"?(el.value===""?0:num(el.value)):el.value;setDirty();renderSettlementMetrics();}if(el.matches("[data-sp-index][data-sp-key]")){updateSupplierPayment(num(el.dataset.spIndex),el.dataset.spKey,el.value,el);renderSettlement();}});
   $("#tcEditorPane").addEventListener("change",e=>{const el=e.target;if(el.id==="tcTourPackage"){state.current.tourPackageId=el.value;applyTourSelection(el.value);return;}if(el.matches("[data-section][data-key]"))updateLine(el.dataset.section,num(el.dataset.index),el.dataset.key,el.value,el,true);});
   $("#tcEditorPane").addEventListener("input",e=>{const el=e.target;if(el.matches("[data-section][data-key]"))updateLine(el.dataset.section,num(el.dataset.index),el.dataset.key,el.value,el,false);});
-  $("#tcEditorPane").addEventListener("click",e=>{const a=e.target.closest("[data-add-row]");if(a)addRow(a.dataset.addRow);const r=e.target.closest("[data-remove-row]");if(r)removeRow(r.dataset.removeRow,num(r.dataset.index));const lib=e.target.closest("[data-open-library]");if(lib)openLibraryPicker(lib.dataset.openLibrary,lib.dataset.section,num(lib.dataset.index),lib.dataset.key);});
+  $("#tcEditorPane").addEventListener("click",e=>{const a=e.target.closest("[data-add-row]");if(a)addRow(a.dataset.addRow);const r=e.target.closest("[data-remove-row]");if(r)removeRow(r.dataset.removeRow,num(r.dataset.index));const lib=e.target.closest("[data-open-library]");if(lib)openLibraryPicker(lib.dataset.openLibrary,lib.dataset.section,num(lib.dataset.index),lib.dataset.key);const sp=e.target.closest("[data-remove-supplier-payment]");if(sp)removeSupplierPayment(num(sp.dataset.removeSupplierPayment));});
   $("#tcAutoVehicle").addEventListener("change",e=>{state.current.autoVehicle=e.target.checked;if(e.target.checked)autoSelectVehicle(true);else updateVehicleSuggestionUI();setDirty();});
   $("#tcAutoSaveRates").addEventListener("change",e=>{state.current.saveNewRatesToLibrary=e.target.checked;setDirty();});
   $("#tcAddRateBtn").addEventListener("click",()=>openRateForm()); $("#tcRateCancelBtn").addEventListener("click",closeRateForm); $("#tcRateSaveBtn").addEventListener("click",saveRate); $("#tcRateSearch").addEventListener("input",renderRates); $("#tcRateCategoryFilter").addEventListener("change",renderRates); $("#tcRateCategory").addEventListener("change",updateRateCapacityVisibility);
@@ -396,7 +455,7 @@ const MODULE_HTML = "<div class=\"tc-module-head\"><div><span class=\"tc-kicker\
 export async function initTourCostingModule(){
   root=document.getElementById("tourCostingTab"); if(!root) return;
   ensureCss();
-  if(root.dataset.tcRendered!=="1"){ root.innerHTML=MODULE_HTML; root.dataset.tcRendered="1"; installQuotationUI(); bind(); } else { installQuotationUI(); }
+  if(root.dataset.tcRendered!=="1"){ root.innerHTML=MODULE_HTML; root.dataset.tcRendered="1"; installQuotationUI(); installSettlementUI(); bind(); } else { installQuotationUI(); installSettlementUI(); }
   try{ await loadAll(); loaded=true; if(!state.current) showMain("register"); renderContextBanner(); }
   catch(e){ loaded=false; toast(e.message||"Tour Costing API is not available",true); const body=$("#tcRegisterBody"); if(body) body.innerHTML=`<tr><td colspan="11" class="tc-empty">${esc(e.message||"Tour Costing API is not available. Deploy the included Worker update once.")}</td></tr>`; }
 }

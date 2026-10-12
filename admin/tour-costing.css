@@ -153,3 +153,19 @@
 #tcPaymentSchedulePane .tc-line-table input.wide{min-width:190px}
 @media(max-width:1050px){.tc-payment-metrics{grid-template-columns:repeat(2,minmax(150px,1fr))}}
 @media(max-width:620px){.tc-payment-metrics{grid-template-columns:1fr}.tc-payment-metrics>div{padding:11px 12px}}
+
+
+/* V6.6.22 Secure Tour Documents Center */
+#tourCostingTab .tc-doccenter-metrics{display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));gap:10px;margin:14px 0 18px}
+#tourCostingTab .tc-doccenter-metrics>div{border:1px solid var(--tc-border);border-radius:12px;padding:13px 14px;background:#fff}
+#tourCostingTab .tc-doccenter-metrics>div.good{background:#f0fdf4;border-color:#bbf7d0}#tourCostingTab .tc-doccenter-metrics>div.warn{background:#fff7ed;border-color:#fed7aa}
+#tourCostingTab .tc-doccenter-metrics span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--tc-muted);font-weight:900}
+#tourCostingTab .tc-doccenter-metrics strong{display:block;margin-top:5px;font-size:20px;color:#173f39}
+#tourCostingTab .tc-doc-upload-box{background:#f8fbfa;border:1px solid var(--tc-border);border-radius:14px;padding:15px;margin-bottom:18px}
+#tourCostingTab .tc-doc-upload-box .tc-doc-toolbar small{color:var(--tc-muted);font-size:10px;line-height:1.4;max-width:560px}
+#tourCostingTab .tc-doccenter-table input,#tourCostingTab .tc-doccenter-table select{min-width:120px}
+#tourCostingTab .tc-doccenter-table input.wide{min-width:210px}
+#tourCostingTab .tc-doc-file-meta{display:block;margin-top:3px;color:var(--tc-muted);font-size:10px;font-weight:500;white-space:nowrap}
+#tourCostingTab .tc-doccenter-table td:nth-child(3){min-width:210px}
+@media(max-width:1100px){#tourCostingTab .tc-doccenter-metrics{grid-template-columns:repeat(3,minmax(120px,1fr))}}
+@media(max-width:700px){#tourCostingTab .tc-doccenter-metrics{grid-template-columns:1fr 1fr}#tourCostingTab .tc-doc-upload-box .tc-form-grid.four{grid-template-columns:1fr}#tourCostingTab .tc-doc-upload-box .tc-doc-toolbar>*{width:100%}}

@@ -1,5 +1,5 @@
 import { getDestinations, getTourPackages, saveTourPackage, deleteTourPackage, uploadTourImage } from "./api.js";
-import { renderToursModuleShell, renderDestinationOptions, renderCategoryOptions, renderTourPackagesTable, renderTourStats, linesToArray, arrayToLines } from "./render.js";
+import { renderToursModuleShell, renderDestinationOptions, renderCategoryOptions, renderTourPackagesTable, renderTourStats, linesToArray, arrayToLines } from "./render.js?v=20261013-critical-fix-1";
 
 let toursModuleReady = false;
 let allTourPackages = [];
@@ -145,8 +145,10 @@ function markInputValidity() {
 }
 
 async function loadTourPackages() {
-  try { allTourDestinations = await getDestinations().catch(() => []); allTourPackages = await getTourPackages().catch(err => { console.error(err); return []; }); renderDestinationOptions(allTourDestinations || []); renderCategoryOptions(allTourPackages || []); renderTourPackagesTable(allTourPackages || []); renderTourStats(allTourPackages || []); }
-  catch (err) { console.error("loadTourPackages failed", err); alert(err.message || "Failed to load tour packages"); }
+  const body = byId("tourPackagesTableBody");
+  if (body) body.innerHTML = `<tr><td colspan="8" class="empty-row">Loading tour packages...</td></tr>`;
+  try { allTourDestinations = await getDestinations().catch(() => []); allTourPackages = await getTourPackages().catch(err => { console.error(err); throw err; }); window.allTourPackages = allTourPackages || []; renderDestinationOptions(allTourDestinations || []); renderCategoryOptions(allTourPackages || []); renderTourPackagesTable(allTourPackages || []); renderTourStats(allTourPackages || []); }
+  catch (err) { console.error("loadTourPackages failed", err); if(body) body.innerHTML = `<tr><td colspan="8" class="empty-row">${String(err.message || "Failed to load tour packages").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}</td></tr>`; }
 }
 
 function resetTourForm({ keepOpen = true } = {}) {

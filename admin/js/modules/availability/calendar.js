@@ -1,11 +1,11 @@
-import { getBookedDatesForProperty } from "./helpers.js";
+import { getBookedDatesForProperty, toISO } from "./helpers.js";
 
 let fromPicker = null;
 let toPicker = null;
 let disabledDates = [];
 
 function decorateBookedDay(dayElem) {
-  const date = dayElem.dateObj.toISOString().slice(0, 10);
+  const date = toISO(dayElem.dateObj);
 
   if (disabledDates.includes(date)) {
     dayElem.classList.add("cey-booked-date");

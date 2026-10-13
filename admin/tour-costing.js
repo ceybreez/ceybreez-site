@@ -9,7 +9,7 @@ const pct = v => num(v) / 100;
 const round2 = v => Math.round((num(v) + Number.EPSILON) * 100) / 100;
 const money = (v,c="USD") => `${c} ${round2(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}`;
 const uid = p => `${p}-${Date.now()}-${Math.floor(Math.random()*100000)}`;
-const today = () => new Date().toISOString().slice(0,10);
+const today = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
 
 const state = { costings:[], tours:[], rates:[], current:null, dirty:false, activeStep:"setup" };
 

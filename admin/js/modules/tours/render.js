@@ -63,7 +63,7 @@ export function renderToursModuleShell(container) {
           <div class="table-wrap cms-table-wrap tours-table-wrap">
             <table class="admin-table cms-table tours-table">
               <thead><tr><th>Tour</th><th>Category</th><th>Destination</th><th>Duration</th><th>Price</th><th>Status</th><th>Featured</th><th>Action</th></tr></thead>
-              <tbody id="tourPackagesTableBody"><tr><td colspan="8" class="empty-row">No tour packages loaded</td></tr></tbody>
+              <tbody id="tourPackagesTableBody"><tr><td colspan="8" class="empty-row">Loading tour packages...</td></tr></tbody>
             </table>
           </div>
 

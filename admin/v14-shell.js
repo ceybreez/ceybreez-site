@@ -64,7 +64,7 @@
   let tourCostingModulePromise = null;
   async function ensureTourCostingModule(){
     if(!tourCostingModulePromise){
-      tourCostingModulePromise = import("./tour-costing-module.js?v=20261012-2");
+      tourCostingModulePromise = import("./tour-costing-module.js?v=20261013-critical-fix-1");
     }
     const mod = await tourCostingModulePromise;
     await mod.initTourCostingModule?.();
@@ -86,7 +86,7 @@
     return String(value||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
   }
   function norm(v){return String(v||"").toLowerCase();}
-  function toISO(d){return d.toISOString().slice(0,10);}
+  function toISO(d){const x=new Date(d);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;}
   function addDays(n){const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+n); return toISO(d);}
   function fmtDate(v){if(!v)return"-"; const d=new Date(String(v).slice(0,10)+"T00:00:00"); if(isNaN(d))return v; return d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});}
   function isBooked(x){return norm(x.status||"Booked")==="booked";}
@@ -340,7 +340,7 @@ function initV18BlockDatePickers(bookings){
       }
     },
     onDayCreate: function(dObj, dStr, fp, dayElem){
-      const date = dayElem.dateObj.toISOString().slice(0,10);
+      const date = toISO(dayElem.dateObj);
       if(disabledDates.includes(date)){
         dayElem.classList.add("cey-booked-date");
         dayElem.title = "Not Available";
@@ -352,7 +352,7 @@ function initV18BlockDatePickers(bookings){
     dateFormat: "Y-m-d",
     disable: disabledDates,
     onDayCreate: function(dObj, dStr, fp, dayElem){
-      const date = dayElem.dateObj.toISOString().slice(0,10);
+      const date = toISO(dayElem.dateObj);
       if(disabledDates.includes(date)){
         dayElem.classList.add("cey-booked-date");
         dayElem.title = "Not Available";

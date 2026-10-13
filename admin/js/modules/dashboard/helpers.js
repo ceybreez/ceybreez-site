@@ -2,7 +2,7 @@ import { clean, dateOnly } from "../../core/utils.js";
 
 export function safeArray(value) { return Array.isArray(value) ? value : []; }
 export function isBooked(item) { return clean(item?.status || "Booked") === "booked"; }
-export function addDays(count) { const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+count); return d.toISOString().slice(0,10); }
+export function addDays(count) { const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+count); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
 export function formatDate(value) { if(!value) return "-"; const d=new Date(`${String(value).slice(0,10)}T00:00:00`); if(Number.isNaN(d.getTime())) return value; return d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}); }
 export function formatTime(value){ if(!value) return ""; const d=new Date(value); if(Number.isNaN(d.getTime())) return ""; return d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}); }
 export function bookingCheckIn(b, d) { return isBooked(b) && dateOnly(b.dateFrom) === d; }

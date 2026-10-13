@@ -4,7 +4,7 @@
 ===================================================== */
 
 import { apiGet } from "../../core/api.js";
-import { clean, dateOnly, getDatesBetween } from "../../core/utils.js";
+import { clean, dateOnly, getDatesBetween } from "../../core/utils.js?v=20261013-critical-fix-1";
 
 async function loadBookings() {
   const data = await apiGet("/api/admin/bookings");

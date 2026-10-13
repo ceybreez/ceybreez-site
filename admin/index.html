@@ -194,7 +194,7 @@
             </tr>
           </thead>
           <tbody id="destinationsTableBody">
-            <tr><td colspan="8" class="empty-row">No destinations loaded</td></tr>
+            <tr><td colspan="8" class="empty-row">Loading destinations...</td></tr>
           </tbody>
         </table>
       </div>
@@ -415,7 +415,7 @@
       </div>
       <div class="table-wrap cms-table-wrap"><table class="admin-table cms-table"><thead><tr>
         <th onclick="sortCmsTable('properties','name')">Property</th><th onclick="sortCmsTable('properties','type')">Type</th><th onclick="sortCmsTable('properties','location')">Location</th><th>Price</th><th>Guests</th><th>Rooms</th><th>Status</th><th>Featured</th><th>Action</th>
-      </tr></thead><tbody id="propertiesTableBody"><tr><td colspan="9" class="empty-row">No properties loaded</td></tr></tbody></table></div>
+      </tr></thead><tbody id="propertiesTableBody"><tr><td colspan="9" class="empty-row">Loading properties...</td></tr></tbody></table></div>
       <button type="button" class="form-toggle-btn" onclick="openAddEnterprisePropertyForm('villa')">+ Add New Property</button>
       <div id="propertyFormBox" class="cms-form-box hidden">
         <div class="cms-modal-head" id="propertyFormBoxHeader">
@@ -495,7 +495,7 @@
   </div>
   <div class="table-wrap cms-table-wrap"><table class="admin-table cms-table"><thead><tr>
     <th onclick="sortCmsTable('services','name')">Name</th><th onclick="sortCmsTable('services','category')">Category</th><th onclick="sortCmsTable('services','location')">Location</th><th>Phone</th><th>WhatsApp</th><th>Status</th><th>Featured</th><th>Action</th>
-  </tr></thead><tbody id="servicesTableBody"><tr><td colspan="8" class="empty-row">No services loaded</td></tr></tbody></table></div>
+  </tr></thead><tbody id="servicesTableBody"><tr><td colspan="8" class="empty-row">Loading services...</td></tr></tbody></table></div>
   <button type="button" class="form-toggle-btn" onclick="toggleCmsForm('serviceFormBox')">Show / Hide Service Form</button>
   <div id="serviceFormBox" class="cms-form-box hidden">
         <div class="cms-modal-head" id="serviceFormBoxHeader">
@@ -881,7 +881,7 @@
           </tr>
         </thead>
         <tbody id="bookingTableBody">
-          <tr><td colspan="10" class="empty-row">No bookings loaded</td></tr>
+          <tr><td colspan="10" class="empty-row">Loading bookings...</td></tr>
         </tbody>
       </table>
     </div>
@@ -1035,7 +1035,7 @@
           </tr>
         </thead>
         <tbody id="reviewsTableBody">
-          <tr><td colspan="8" class="empty-row">No reviews loaded</td></tr>
+          <tr><td colspan="8" class="empty-row">Loading reviews...</td></tr>
         </tbody>
       </table>
     </div>
@@ -1426,20 +1426,20 @@
 
 <script src="image-upload-optimizer.js?v=20260927-1"></script>
 <script src="admin-analytics.js?v=20260926-1"></script>
-<script src="admin.js"></script>
+<script src="admin.js?v=20261013-critical-fix-1"></script>
 <script src="destination-cms-v55.js?v=20260928-1"></script>
 <script src="security-rbac.js?v=20260924-2"></script>
-<script type="module" src="js/modules/bookings/date-guard.js"></script>
+<script type="module" src="js/modules/bookings/date-guard.js?v=20261013-critical-fix-1"></script>
 <script type="module">
-  import { initFinanceModule } from "./js/modules/finance/index.js";
+  import { initFinanceModule } from "./js/modules/finance/index.js?v=20261013-critical-fix-1";
   initFinanceModule();
 </script>
 <script type="module">
-  import { initDashboardModule } from "./js/modules/dashboard/index.js";
+  import { initDashboardModule } from "./js/modules/dashboard/index.js?v=20261013-critical-fix-1";
   initDashboardModule();
 </script>
   <script type="module">
-  import { initToursModule } from "./js/modules/tours/index.js";
+  import { initToursModule } from "./js/modules/tours/index.js?v=20261013-critical-fix-1";
   initToursModule();
 </script>
   <script type="module">
@@ -1455,7 +1455,7 @@
   initReportsModule();
 </script>
   <script src="backup-recovery.js?v=20260924-1"></script>
-  <script src="v14-shell.js"></script>
+  <script src="v14-shell.js?v=20261013-critical-fix-1"></script>
   <script src="pwa-admin.js?v=6.4.0"></script>
 <script src="page-builder-admin-v2.js"></script>
 <script src="footer-partners-admin.js?v=20260928-1"></script>

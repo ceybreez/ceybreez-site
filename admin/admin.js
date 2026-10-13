@@ -3,6 +3,9 @@ let ADMIN_TOKEN = sessionStorage.getItem("CEYBREEZ_SESSION_TOKEN") || "";
 let allInquiries = [];
 let allBookings = [];
 let allDestinations = [];
+let allTourPackages = [];
+let bookingCatalogLoadedAt = 0;
+let bookingCatalogLoadPromise = null;
 let allServices = [];
 let allReviews = [];
 let cmsSort = { destinations:{key:'name',dir:1}, properties:{key:'name',dir:1}, services:{key:'name',dir:1} };
@@ -68,9 +71,10 @@ document.addEventListener("DOMContentLoaded", () => {
  const manualBookingForm = document.getElementById("manualBookingForm");
 if (manualBookingForm) manualBookingForm.addEventListener("submit", createManualBooking);
 
-document.getElementById("manualServiceType")?.addEventListener("change", () => {
+document.getElementById("manualServiceType")?.addEventListener("change", async () => {
+  try { await loadBookingCatalogs(); } catch(error) { console.error("Booking catalog load failed", error); }
   filterManualProperties();
-    renderAvailabilityMatrix();
+  renderAvailabilityMatrix();
   checkManualBookingAvailability();
 });
 
@@ -1581,6 +1585,8 @@ function v6CloseCmsModal(formBoxId){
 ========================= */
 
 async function loadReviews(){
+  const tbody = document.getElementById("reviewsTableBody");
+  if(tbody) tbody.innerHTML = `<tr><td colspan="8" class="empty-row">Loading reviews...</td></tr>`;
   try{
     const res = await fetch(`${API_BASE}/api/admin/reviews`, { headers: authHeaders() });
     const data = await res.json();
@@ -1592,7 +1598,6 @@ async function loadReviews(){
     renderReviewsTable();
     await loadReviewShowcaseSettings();
   }catch(err){
-    const tbody = document.getElementById("reviewsTableBody");
     if(tbody) tbody.innerHTML = `<tr><td colspan="8" class="empty-row">${escapeHtml(err.message)}</td></tr>`;
   }
 }
@@ -2420,7 +2425,16 @@ function renderAvailabilityMatrix(){
   const daysCount = Number(document.getElementById("matrixDaysFilter")?.value || 30);
   const selectedType = (document.getElementById("matrixTypeFilter")?.value || "all").toLowerCase();
 
-  const properties = (window.allProperties || []).filter(p => {
+  const catalogItems = [
+    ...(window.allProperties || []).filter(p => p.active !== false && Number(p.active) !== 0),
+    ...(window.allTourPackages || allTourPackages || []).filter(t => t.active !== false && Number(t.active) !== 0).map(t => ({
+      id: t.id,
+      name: t.title || t.name || "Tour Package",
+      type: "tour"
+    }))
+  ];
+
+  const properties = catalogItems.filter(p => {
     const type = String(p.type || "").toLowerCase();
     return selectedType === "all" || type === selectedType;
   });
@@ -2428,7 +2442,8 @@ function renderAvailabilityMatrix(){
   const dates = getMatrixDates(daysCount);
 
   if(!properties.length){
-    box.innerHTML = `<div class="empty-row">No properties found for selected type.</div>`;
+    const loadError = window.CEYBREEZ_BOOKING_CATALOG_ERROR || "";
+    box.innerHTML = `<div class="empty-row">${loadError ? `Unable to load booking catalog: ${escapeHtml(loadError)}` : "No properties / tour packages found for selected type."}</div>`;
     return;
   }
 
@@ -2731,10 +2746,11 @@ function exportReportCSV(){
 async function loadBookings() {
   const tableBody = document.getElementById("bookingTableBody");
   if (tableBody) {
-    tableBody.innerHTML = `<tr><td colspan="9" class="empty-row">Loading bookings...</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="10" class="empty-row">Loading bookings...</td></tr>`;
   }
 
   try {
+    await loadBookingCatalogs().catch(error => console.warn("Booking catalog warning", error));
     const res = await fetch(`${API_BASE}/api/admin/bookings`, {
       headers: authHeaders()
     });
@@ -2747,6 +2763,8 @@ async function loadBookings() {
     const visibleBookings = allBookings.filter(x => getBookingCategory(x) === currentBookingView);
     renderBookingStats(visibleBookings);
     applyBookingFilters();
+    renderAvailabilityMatrix();
+    renderManualPropertyDropdown(window.allProperties || []);
     renderReports();
   } catch (err) {
     if (tableBody) {
@@ -3480,6 +3498,48 @@ async function deleteCurrentInquiry() {
   await loadInquiries();
   await loadBookings();
 }
+async function loadBookingCatalogs(force = false){
+  const fresh = Date.now() - bookingCatalogLoadedAt < 60000;
+  if(!force && fresh && Array.isArray(window.allProperties) && window.allProperties.length && Array.isArray(allTourPackages)) {
+    return { properties: window.allProperties, tours: allTourPackages };
+  }
+  if(bookingCatalogLoadPromise) return bookingCatalogLoadPromise;
+
+  bookingCatalogLoadPromise = (async () => {
+    const [propertiesRes, toursRes] = await Promise.all([
+      fetch(`${API_BASE}/api/admin/properties`, { headers: authHeaders() }),
+      fetch(`${API_BASE}/api/admin/tour-packages`, { headers: authHeaders() })
+    ]);
+
+    const [propertiesData, toursData] = await Promise.all([
+      propertiesRes.json().catch(() => []),
+      toursRes.json().catch(() => [])
+    ]);
+
+    if(!propertiesRes.ok) throw new Error(propertiesData.error || "Failed to load booking properties");
+    if(!toursRes.ok) throw new Error(toursData.error || "Failed to load tour packages");
+
+    window.allProperties = Array.isArray(propertiesData) ? propertiesData : [];
+    allTourPackages = Array.isArray(toursData) ? toursData : [];
+    window.allTourPackages = allTourPackages;
+    window.CEYBREEZ_BOOKING_CATALOG_ERROR = "";
+    bookingCatalogLoadedAt = Date.now();
+
+    renderManualPropertyDropdown(window.allProperties);
+    renderAvailabilityMatrix();
+    return { properties: window.allProperties, tours: allTourPackages };
+  })();
+
+  try {
+    return await bookingCatalogLoadPromise;
+  } catch(error) {
+    window.CEYBREEZ_BOOKING_CATALOG_ERROR = error?.message || "Booking catalog load failed";
+    throw error;
+  } finally {
+    bookingCatalogLoadPromise = null;
+  }
+}
+
 function renderManualPropertyDropdown(properties){
   const box = document.getElementById("manualItemName");
   if(!box) return;
@@ -3488,9 +3548,13 @@ function renderManualPropertyDropdown(properties){
   let options = [];
 
   if(selectedType.includes("tour")){
-    options = (allDestinations || []).map(d => ({ name: d.name, type: "tour" }));
+    options = (window.allTourPackages || allTourPackages || []).filter(t => t.active !== false && Number(t.active) !== 0).map(t => ({
+      name: t.title || t.name || "Tour Package",
+      type: "tour"
+    }));
   } else {
     options = (properties || window.allProperties || []).filter(p => {
+      if(p.active === false || Number(p.active) === 0) return false;
       const propType = String(p.type || "").toLowerCase();
       if(selectedType.includes("villa")) return propType === "villa";
       if(selectedType.includes("homestay")) return propType === "homestay";
@@ -4828,7 +4892,7 @@ function v92DatePlusOne(value){
   const d = new Date(value + "T00:00:00");
   if(isNaN(d.getTime())) return "";
   d.setDate(d.getDate() + 1);
-  return d.toISOString().slice(0,10);
+  return toDateInputValue(d);
 }
 
 function v92GetTourDate(){
@@ -4874,7 +4938,7 @@ function classifyInquiryItem(i){return v10IsTour(i)?'tour':(v10IsService(i)?'ser
 function classifyBookingItem(i){if(v10IsTour(i))return'tour'; if(String(i?.reference||'').startsWith('MAN-')||String(i?.inquiryId||'').startsWith('MAN-'))return'manual'; return'property';}
 function v10Bool(v){return v===1||v===true||String(v||'').toLowerCase()==='true'||String(v||'')==='1';}
 function v10Badge(i){return `${v10Bool(i?.guestConfirmed)?'<span class="status-badge status-booked">Guest Confirmed</span>':'<span class="status-badge status-quoted">Guest Pending</span>'} ${v10Bool(i?.adminConfirmed)||normalizeStatus(i?.status)==='booked'?'<span class="status-badge status-booked">Admin Confirmed</span>':'<span class="status-badge status-contacted">Admin Pending</span>'} <span class="status-badge ${String(i?.paymentStatus||'Pending').toLowerCase().includes('paid')?'status-booked':'status-contacted'}">${escapeHtml(i?.paymentStatus||'Pending')}</span>`;}
-function v10DatePlusOne(v){if(!v)return'';const d=new Date(v+'T00:00:00');if(isNaN(d.getTime()))return'';d.setDate(d.getDate()+1);return d.toISOString().slice(0,10);}
+function v10DatePlusOne(v){if(!v)return'';const d=new Date(v+'T00:00:00');if(isNaN(d.getTime()))return'';d.setDate(d.getDate()+1);return toDateInputValue(d);}
 function v10Name(i){return i?.itemName||String(i?.serviceType||'').replace('Tour Inquiry - ','').replace('Tours Inquiry - ','').replace('Villa Inquiry - ','').replace('Apartment Inquiry - ','').replace('Homestay Inquiry - ','').trim()||(v10IsTour(i)?'Tour Booking':'Property Booking');}
 function v10CleanOldPanels(root=document){
   root.querySelectorAll('.v65-quote-panel,.booking-confirm-panel').forEach(x=>x.remove());
@@ -4935,7 +4999,7 @@ async function ceybreezLoadBookedDatesForProperty(propertyName) {
 
     for (let d = new Date(s); d < e; d.setDate(d.getDate() + 1)) {
       booked.push({
-        date: d.toISOString().slice(0, 10),
+        date: toDateInputValue(d),
         reference: item.reference || item.id || "",
         guestName: item.guestName || "",
         type: item.serviceType || "Booking"

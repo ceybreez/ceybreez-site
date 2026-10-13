@@ -1,6 +1,6 @@
 import { loadDashboardData } from "./api.js";
 import { calculateDashboard } from "./cards.js";
-import { escapeHtml, formatDate, formatMoney, normalizeCurrency } from "./helpers.js";
+import { escapeHtml, formatDate, formatMoney, normalizeCurrency } from "./helpers.js?v=20261013-critical-fix-1";
 import { stat } from "./lists.js";
 import { renderTimeline } from "./timeline.js";
 import { renderOperations } from "./operations.js";

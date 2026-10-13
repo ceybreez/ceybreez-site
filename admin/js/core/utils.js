@@ -18,7 +18,7 @@ export function getDatesBetween(dateFrom, dateTo) {
   }
 
   for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
-    dates.push(d.toISOString().slice(0, 10));
+    dates.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`);
   }
 
   return dates;

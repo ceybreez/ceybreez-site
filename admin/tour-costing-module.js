@@ -1066,12 +1066,21 @@ function opsCalendarState(){return state.operationsCalendar||(state.operationsCa
 function ocDate(v){const s=String(v||"").slice(0,10);return /^\d{4}-\d{2}-\d{2}$/.test(s)?s:"";}
 function ocEndDate(c){const start=ocDate(c?.travelStart);if(!start)return "";return dateAdd(start,Math.max(0,num(c?.days||1)-1));}
 function ocDateInRange(date,c){const d=ocDate(date),a=ocDate(c?.travelStart),b=ocEndDate(c);return !!(d&&a&&b&&d>=a&&d<=b);}
+function ocSchedulePhase(c,date=today()){
+  if(c?.status==="Cancelled")return "Cancelled";
+  if(c?.status==="Completed"||c?.operations?.status==="Completed"||c?.settlement?.status==="Settled")return "Completed";
+  const a=ocDate(c?.travelStart),b=ocEndDate(c),d=ocDate(date)||today();
+  if(!a)return "Planning";
+  if(d<a)return "Upcoming";
+  if(d<=b)return "In Progress";
+  return "Close-out";
+}
 function ocStatus(c,date=today()){
   if(c?.status==="Cancelled")return "Cancelled";
   if(c?.status==="Completed"||c?.operations?.status==="Completed"||c?.settlement?.status==="Settled")return "Completed";
-  const a=ocDate(c?.travelStart),b=ocEndDate(c),d=ocDate(date)||today();if(!a)return "Planning";if(d<a)return "Upcoming";if(d<=b)return "In Progress";return "Close-out";
+  return operationsDefaults(c).status||"Planning";
 }
-function ocStatusClass(v){return v==="Completed"?"good":v==="In Progress"?"brand":v==="Upcoming"?"":v==="Cancelled"?"bad":"warn";}
+function ocStatusClass(v){return v==="Completed"||v==="Ready"?"good":v==="In Progress"?"brand":v==="Upcoming"?"":v==="Cancelled"?"bad":"warn";}
 function ocOperationalRows(){
   const oc=opsCalendarState(),q=normalizeKey(oc.search),details=Object.values(oc.details||{});let rows=details.length?details:state.costings;
   rows=rows.filter(c=>{const st=oc.status||"operational";if(st==="operational"&&!['Booked','Completed'].includes(c.status))return false;if(st!=="all"&&st!=="operational"&&c.status!==st)return false;const txt=normalizeKey(`${c.reference||""} ${c.inquiryRef||""} ${c.packageName||""} ${c.guestName||""} ${c.operations?.driverName||""} ${c.operations?.guideName||""} ${c.operations?.vehicleNo||""}`);return !q||txt.includes(q);});
@@ -1087,8 +1096,8 @@ function ocPaymentAlerts(c,date=today()){
   const ps=paymentScheduleDefaults(c),d=ocDate(date)||today(),out=[];asArray(ps.customer).forEach(r=>{if(["Paid","Waived"].includes(r.status))return;if(r.dueDate&&r.dueDate<=d)out.push(`Customer payment ${r.dueDate<d?"overdue":"due today"}: ${r.milestone||"Payment"}`);});asArray(ps.suppliers).forEach(r=>{if(r.status==="Paid")return;if(r.dueDate&&r.dueDate<=d)out.push(`Supplier payment ${r.dueDate<d?"overdue":"due today"}: ${r.supplier||r.description||"Supplier"}`);});return out;
 }
 function ocTourAlerts(c,date=today()){
-  const out=[],st=ocStatus(c,date),o=operationsDefaults(c),docs=ocDocFlags(c),start=ocDate(c.travelStart),days=daysBetween(today(),start),pending=asArray(o.services).filter(x=>!["Confirmed","Cancelled"].includes(x.status));
-  if(["Upcoming","In Progress"].includes(st)){
+  const out=[],phase=ocSchedulePhase(c,date),o=operationsDefaults(c),docs=ocDocFlags(c),start=ocDate(c.travelStart),days=daysBetween(today(),start),pending=asArray(o.services).filter(x=>!["Confirmed","Cancelled"].includes(x.status));
+  if(["Upcoming","In Progress"].includes(phase)){
     if(!o.driverName)out.push("Driver not assigned");if(!o.vehicleNo)out.push("Vehicle number not assigned");if(!docs.passport)out.push("Passport not attached");if(!docs.visa)out.push("Visa not attached");if(!docs.ticket)out.push("Air ticket not attached");if(pending.length)out.push(`${pending.length} supplier confirmation(s) pending`);
   }
   if(days!==null&&days<=7&&days>=0&&o.status!=="Ready")out.push("Operations not marked Ready");

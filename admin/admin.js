@@ -3145,9 +3145,11 @@ function openInquiryModal(id){
   if(!inquiry) return;
 
   currentInquiry = inquiry;
+  const uiInquiry = cbInquiryUiRecord(inquiry);
+  const isTourDisplay = classifyInquiryItem(uiInquiry) === "tour";
 
   const selectedItem =
-    inquiry.itemName || getItemNameFromService(inquiry.serviceType) || "-";
+    uiInquiry.itemName || getItemNameFromService(uiInquiry.serviceType) || "-";
 
   document.getElementById("inquiryModal").classList.remove("hidden");
 
@@ -3194,16 +3196,16 @@ function openInquiryModal(id){
       </div>
     </div>
 
-    ${renderBookingConfirmPanel(inquiry)}
+    ${renderBookingConfirmPanel(uiInquiry)}
 
     <div class="modal-grid">
       <div class="modal-section">
         <h4>Guest Details</h4>
-        <p><b>Name:</b> ${escapeHtml(inquiry.guestName || "-")}</p>
-        <p><b>Email:</b> ${escapeHtml(inquiry.guestEmail || "-")}</p>
-        <p><b>Mobile:</b> ${escapeHtml(inquiry.guestMobile || "-")}</p>
-        <p><b>Country:</b> ${escapeHtml(inquiry.guestCountry || "-")}</p>
-        <p><b>Guests:</b> ${escapeHtml(inquiry.guests || "-")}</p>
+        <p><b>Name:</b> ${escapeHtml(uiInquiry.guestName || "-")}</p>
+        <p><b>Email:</b> ${escapeHtml(uiInquiry.guestEmail || "-")}</p>
+        <p><b>Mobile:</b> ${escapeHtml(uiInquiry.guestMobile || "-")}</p>
+        <p><b>Country:</b> ${escapeHtml(uiInquiry.guestCountry || "-")}</p>
+        <p><b>Guests:</b> ${escapeHtml(uiInquiry.guests || "-")}</p>
       </div>
 
       <div class="modal-section">
@@ -3212,8 +3214,8 @@ function openInquiryModal(id){
         <p><b>Inquiry Date:</b> ${formatDate(inquiry.createdAt || inquiry.created_at)}</p>
         <p><b>Type:</b> ${escapeHtml(inquiry.serviceType || "-")}</p>
         <p><b>Selected Property / Tour:</b> ${escapeHtml(selectedItem)}</p>
-        <p><b>Check In:</b> ${escapeHtml(inquiry.dateFrom || "-")}</p>
-        <p><b>Check Out:</b> ${escapeHtml(inquiry.dateTo || "-")}</p>
+        <p><b>${isTourDisplay ? "Tour Start" : "Check In"}:</b> ${escapeHtml(uiInquiry.dateFrom || "-")}</p>
+        <p><b>${isTourDisplay ? "Tour End" : "Check Out"}:</b> ${escapeHtml(isTourDisplay ? cbInquiryActualEnd(uiInquiry) : (uiInquiry.dateTo || "-"))}</p>
       </div>
     </div>
 
@@ -3237,6 +3239,7 @@ function openInquiryModal(id){
 
 
 function renderBookingConfirmPanel(inquiry){
+  inquiry = cbInquiryUiRecord(inquiry);
   const isTour = isTourInquiry(inquiry);
   if(isTour){
     return `
@@ -3246,13 +3249,13 @@ function renderBookingConfirmPanel(inquiry){
         <label>Tour Date<input id="bookingConfirmTourDate" type="date" value="${escapeHtml(inquiry.dateFrom || "")}"></label>
         <label>Pickup Time<input id="bookingConfirmCheckInTime" type="time" value="08:00"></label>
         <label>Pickup Location<input id="bookingConfirmPickupLocation" placeholder="Hotel / Airport / Location"></label>
-        <label>Currency<select id="bookingConfirmCurrency"><option>LKR</option><option>USD</option><option>EUR</option><option>OMR</option></select></label>
-        <label>Adult Rate<input id="bookingConfirmDayRate" type="number" min="0" step="0.01" placeholder="Adult rate"></label>
+        <label>Currency<select id="bookingConfirmCurrency">${["USD","LKR","EUR","OMR"].map(c => `<option value="${c}" ${(inquiry.quoteCurrency || inquiry.currency || "USD") === c ? "selected" : ""}>${c}</option>`).join("")}</select></label>
+        <label>Adult Rate<input id="bookingConfirmDayRate" type="number" min="0" step="0.01" value="${escapeHtml(inquiry.quoteUnitRate || inquiry.adultRate || inquiry.dayRate || "")}" placeholder="Adult rate"></label>
         <label>Child Rate<input id="bookingConfirmChildRate" type="number" min="0" step="0.01" placeholder="Child rate"></label>
         <label>Adults<input id="bookingConfirmAdultCount" type="number" min="0" value="${escapeHtml(inquiry.guests || "1")}"></label>
         <label>Children<input id="bookingConfirmChildCount" type="number" min="0" value="0"></label>
         <label>Discount %<input id="bookingConfirmDiscount" type="number" min="0" max="100" step="0.01" value="0"></label>
-        <label>Total Amount<input id="bookingConfirmTotalAmount" readonly></label>
+        <label>Total Amount<input id="bookingConfirmTotalAmount" value="${escapeHtml(inquiry.quoteTotalAmount || inquiry.totalAmount || "")}" readonly></label>
         <input id="bookingConfirmNights" type="hidden" value="1">
         <input id="bookingConfirmCheckOutTime" type="hidden" value="">
       </div>
@@ -3266,11 +3269,11 @@ function renderBookingConfirmPanel(inquiry){
       <div class="booking-confirm-grid">
         <label>Check-in Time<input id="bookingConfirmCheckInTime" type="time" value="14:00"></label>
         <label>Check-out Time<input id="bookingConfirmCheckOutTime" type="time" value="11:00"></label>
-        <label>Currency<select id="bookingConfirmCurrency"><option>LKR</option><option>USD</option><option>EUR</option><option>OMR</option></select></label>
-        <label>Night Rate<input id="bookingConfirmDayRate" type="number" min="0" step="0.01" placeholder="Example: 15000"></label>
+        <label>Currency<select id="bookingConfirmCurrency">${["USD","LKR","EUR","OMR"].map(c => `<option value="${c}" ${(inquiry.quoteCurrency || inquiry.currency || "USD") === c ? "selected" : ""}>${c}</option>`).join("")}</select></label>
+        <label>Night Rate<input id="bookingConfirmDayRate" type="number" min="0" step="0.01" value="${escapeHtml(inquiry.quoteUnitRate || inquiry.dayRate || "")}" placeholder="Example: 15000"></label>
         <label>Discount %<input id="bookingConfirmDiscount" type="number" min="0" max="100" step="0.01" value="0"></label>
         <label>Total Nights<input id="bookingConfirmNights" readonly></label>
-        <label>Total Amount<input id="bookingConfirmTotalAmount" readonly></label>
+        <label>Total Amount<input id="bookingConfirmTotalAmount" value="${escapeHtml(inquiry.quoteTotalAmount || inquiry.totalAmount || "")}" readonly></label>
       </div>
       <label>Admin Message to Guest<textarea id="bookingConfirmAdminMessage" placeholder="Example: Please arrive after 2.00 PM. Our team will contact you before check-in."></textarea></label>
       <p class="confirm-help">Total nights and total amount calculate automatically from dates, night rate and discount.</p>
@@ -4291,6 +4294,7 @@ async function adminConfirmFinalBooking(id){
 }
 
 function v65QuotePanelHtml(item){
+  item = cbInquiryUiRecord(item);
   const isTour = classifyInquiryItem(item) === "tour";
   const defaultCurrency = item.quoteCurrency || item.currency || "USD";
   const defaultRate = item.quoteUnitRate || item.dayRate || "";
@@ -4950,6 +4954,38 @@ function cbTourActualEnd(item){
   if(storedTo&&storedTo>from)return cbDateAddDays(storedTo,-1);
   return storedTo||from;
 }
+function cbRelatedBookingForInquiry(item){
+  const rows=Array.isArray(allBookings)?allBookings:[];
+  const id=String(item?.id||"").trim(), ref=String(item?.reference||"").trim();
+  return rows.find(b=>{
+    const bid=String(b?.inquiryId||"").trim(), bref=String(b?.reference||"").trim();
+    return (id&&bid===id)||(ref&&bref===ref);
+  })||null;
+}
+function cbInquiryUiRecord(item){
+  if(!item)return item||{};
+  const booking=cbRelatedBookingForInquiry(item);
+  if(!booking)return item;
+  // A confirmed booking is the canonical commercial snapshot for display only.
+  // Do not mutate the inquiry or write anything back automatically.
+  return {
+    ...item,
+    currency:booking.currency||booking.quoteCurrency||item.quoteCurrency||item.currency||"USD",
+    quoteCurrency:booking.currency||booking.quoteCurrency||item.quoteCurrency||item.currency||"USD",
+    dayRate:booking.dayRate||booking.adultRate||item.quoteUnitRate||item.dayRate||item.adultRate||"",
+    adultRate:booking.adultRate||booking.dayRate||item.quoteUnitRate||item.adultRate||item.dayRate||"",
+    quoteUnitRate:booking.dayRate||booking.adultRate||item.quoteUnitRate||item.dayRate||item.adultRate||"",
+    totalAmount:booking.totalAmount||booking.quoteTotalAmount||item.quoteTotalAmount||item.totalAmount||"",
+    quoteTotalAmount:booking.totalAmount||booking.quoteTotalAmount||item.quoteTotalAmount||item.totalAmount||"",
+    paymentStatus:booking.paymentStatus||item.paymentStatus||"Pending",
+    advanceAmount:booking.advanceAmount||item.advanceAmount||"",
+    balanceAmount:booking.balanceAmount||item.balanceAmount||"",
+    totalDays:booking.totalDays||item.totalDays||"",
+    dateFrom:item.dateFrom||booking.dateFrom||"",
+    dateTo:item.dateTo||booking.dateTo||"",
+    __linkedBookingId:booking.id||""
+  };
+}
 function cbInquiryActualEnd(item){
   const from=String(item?.dateFrom||'').slice(0,10), storedTo=String(item?.dateTo||'').slice(0,10);
   if(classifyInquiryItem(item)!=='tour')return storedTo||from;
@@ -4967,6 +5003,7 @@ function v10CleanOldPanels(root=document){
   const seen=new Set(); root.querySelectorAll('button').forEach(b=>{const t=v10Norm(b.textContent); if(['send quote / invoice','mark guest confirmed','admin confirm booking','save payment status','send payment / invoice email'].includes(t)){if(seen.has(t))b.remove();else seen.add(t);}});
 }
 function v10Panel(i){
+ i=cbInquiryUiRecord(i);
  const isTour=v10IsTour(i), cur=i.quoteCurrency||i.currency||'USD', pay=i.paymentStatus||'Pending';
  const opts=['USD','LKR','EUR','OMR'].map(c=>`<option value="${c}" ${cur===c?'selected':''}>${c}</option>`).join('');
  const payopts=['Pending','Advance Paid','Paid','Refunded'].map(s=>`<option value="${s}" ${pay===s?'selected':''}>${s}</option>`).join('');

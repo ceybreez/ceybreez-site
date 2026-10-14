@@ -28,6 +28,16 @@ export function loadReports(filters = {}) {
   return requestJson("/api/admin/reports" + queryString(filters));
 }
 
+// Existing admin APIs are used only to correct report semantics on the frontend.
+// No Worker/API/schema changes are required.
+export function loadTourCostings() {
+  return requestJson("/api/admin/finance/tour-costings");
+}
+
+export function loadReportProperties() {
+  return requestJson("/api/admin/properties");
+}
+
 export function reportsCsvUrl(filters = {}) {
   return "/api/admin/reports/export/csv" + queryString(filters);
 }

@@ -278,12 +278,307 @@ function renderQuotation(){
 }
 function printQuotation(){if(!state.current)return;ensureQuotation();const w=window.open("","_blank","width=980,height=800");if(!w){toast("Allow pop-ups to print the quotation",true);return;}w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(state.current.quotation.quoteNo||"Tour Quotation")}</title><style>body{font-family:Arial,sans-serif;background:#f4f8f7;color:#173b36;margin:0;padding:28px}.wrap{max-width:900px;margin:auto}.tc-customer-quote{background:#fff;border:1px solid #d9e6e3;border-radius:18px;overflow:hidden}.tc-cq-head{background:#123f3a;color:#fff;padding:24px;display:flex;justify-content:space-between;gap:20px}.tc-cq-head h2{margin:5px 0 0;font-family:Georgia,serif}.tc-cq-head span,.tc-cq-head small{font-size:11px;opacity:.82;display:block}.tc-cq-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#d9e6e3}.tc-cq-grid>div{background:#fff;padding:16px}.tc-cq-grid span,.tc-cq-grid small{display:block;font-size:11px;color:#6a7f7b}.tc-cq-grid strong{display:block;margin:5px 0}.tc-cq-price{background:#eef8f6!important}.tc-cq-price strong{font-size:20px;color:#0d6b62}.tc-cq-two,.tc-cq-terms{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px 22px}.tc-cq-block,.tc-cq-message{margin:0 22px 14px;padding:14px;border:1px solid #d9e6e3;border-radius:12px}.tc-cq-message{background:#f8f3eb}.tc-cq-block h4,.tc-cq-two h4,.tc-cq-terms h4{margin:0 0 7px}.tc-cq-block p,.tc-cq-two p,.tc-cq-terms p{margin:0;line-height:1.55}.tc-cq-foot{display:flex;justify-content:space-between;padding:15px 22px;border-top:1px solid #d9e6e3;font-size:11px;color:#6a7f7b}@media(max-width:700px){.tc-cq-grid{grid-template-columns:1fr 1fr}}@media print{body{background:#fff;padding:0}.tc-customer-quote{border:0}}</style></head><body><div class="wrap">${quotationPreviewHtml()}</div></body></html>`);w.document.close();setTimeout(()=>w.print(),250);}
 async function copyQuotation(){const c=state.current,q=ensureQuotation(),sum=computeSummary(c);const text=`CeyBreez Tour Quotation\n${q.quoteNo}\n${c.packageName}\nGuest: ${q.guestName||c.guestName||"Guest"}\nTravel: ${c.travelStart} · ${c.days}D/${c.nights}N · ${totalPax(c)} pax\nTotal: ${money(q.totalAmount||sum.finalSale,c.currency)}\nValid until: ${q.validUntil||"-"}\n\nInclusions:\n${q.inclusions||"-"}\n\nExclusions:\n${q.exclusions||"-"}`;await navigator.clipboard.writeText(text);toast("Customer quotation copied");}
-async function resolveInquiryRecord(){const c=state.current;if(!c?.inquiryRef&&!c?.linkedInquiryId)return null;const rows=normalizeList(await api("/api/admin/inquiries"));const hit=rows.find(x=>String(x.id)===String(c.linkedInquiryId||"")||String(x.id)===String(c.inquiryRef||"")||String(x.reference)===String(c.inquiryRef||""));if(!hit)return null;c.linkedInquiryId=String(hit.id||"");c.inquiryRef=String(hit.reference||c.inquiryRef||hit.id||"");c.guestName=c.guestName||hit.guestName||"";c.guestEmail=c.guestEmail||hit.guestEmail||"";c.guestMobile=c.guestMobile||hit.guestMobile||"";return hit;}
-async function resolveInquiryId(){try{return String((await resolveInquiryRecord())?.id||"");}catch(error){console.error("Inquiry resolution failed",error);throw error;}}
-async function sendQuotationToGuest(){const c=state.current;if(!c)return;const inquiryId=await resolveInquiryId();if(!inquiryId){toast("This costing is not linked to a valid Inquiry",true);return;}const q=ensureQuotation(),sum=computeSummary(c);if(!confirm(q.guestEmail?`Send quotation ${q.quoteNo} to the guest?`:`Guest email is empty. Save quote to Inquiry Management without email?`))return;try{const body={currency:c.currency||"USD",unitRate:String(q.unitRate||sum.adultRate||""),discountPercent:String(c.pricing?.discountPct||0),discountAmount:String(sum.discount||0),totalAmount:String(q.totalAmount||sum.finalSale||""),validUntil:q.validUntil||"",paymentStatus:q.paymentStatus||"Pending",advanceAmount:String(q.advanceAmount||""),balanceAmount:String(Math.max(0,num(q.totalAmount||sum.finalSale)-num(q.advanceAmount))),adminMessage:q.customerMessage||"",sendEmail:!!q.guestEmail};const r=await api(`/api/admin/inquiries/${encodeURIComponent(inquiryId)}/quote`,{method:"POST",body:JSON.stringify(body)});q.status="Sent";q.sentAt=new Date().toISOString();q.balanceAmount=body.balanceAmount;c.status="Quoted";await saveCurrent();setStep("quotation");renderQuotation();toast(r.emailSent?"Quotation sent and linked to Inquiry":"Quotation saved to Inquiry Management");}catch(e){toast(e.message||"Quote send failed",true)}}
+function setBookingConversionStatus(message="",kind="info"){
+  const button=$("#tcConvertBookingBtn");
+  const actions=button?.closest(".tc-quote-actions");
+  let box=$("#tcBookingConversionStatus");
+  if(!box && actions){
+    box=document.createElement("div");
+    box.id="tcBookingConversionStatus";
+    box.setAttribute("role","status");
+    box.setAttribute("aria-live","polite");
+    box.style.cssText="margin-top:12px;padding:11px 13px;border-radius:10px;font-size:13px;line-height:1.45;display:none";
+    actions.insertAdjacentElement("afterend",box);
+  }
+  if(!box)return;
+  if(!message){box.textContent="";box.style.display="none";return;}
+  const tones={
+    error:["#fff1f2","#be123c","#fecdd3"],
+    success:["#ecfdf5","#047857","#a7f3d0"],
+    warn:["#fffbeb","#92400e","#fde68a"],
+    info:["#eff6ff","#1d4ed8","#bfdbfe"]
+  };
+  const tone=tones[kind]||tones.info;
+  box.textContent=message;
+  box.style.display="block";
+  box.style.background=tone[0];
+  box.style.color=tone[1];
+  box.style.border=`1px solid ${tone[2]}`;
+}
+
+function conversionSafePayload(path,body){
+  if(!body||typeof body!=="object")return undefined;
+  if(path.includes("/bookings"))return {
+    inquiryId:body.inquiryId||"",reference:body.reference||"",itemName:body.itemName||"",
+    serviceType:body.serviceType||"",dateFrom:body.dateFrom||"",dateTo:body.dateTo||"",
+    guests:body.guests||"",currency:body.currency||"",totalAmount:body.totalAmount||"",sendEmail:!!body.sendEmail
+  };
+  if(path.includes("/quote")||path.includes("/payment-sync"))return {
+    currency:body.currency||"",unitRate:body.unitRate||"",totalAmount:body.totalAmount||"",
+    paymentStatus:body.paymentStatus||"",sendEmail:!!body.sendEmail
+  };
+  if(path.includes("/status"))return {status:body.status||"",sendEmail:!!body.sendEmail};
+  return undefined;
+}
+
+async function conversionApi(path,options={},stage="Request"){
+  const requestOptions={...options,headers:{...authHeaders(!(options.body instanceof FormData)),...(options.headers||{})}};
+  let parsedBody;
+  if(typeof options.body==="string"){
+    try{parsedBody=JSON.parse(options.body);}catch(_){parsedBody=undefined;}
+  }
+  console.info("[CeyBreez Quote→Booking] request",{stage,path,method:requestOptions.method||"GET",payload:conversionSafePayload(path,parsedBody)});
+  let res;
+  try{
+    res=await fetch(API_BASE+path,requestOptions);
+  }catch(error){
+    const e=new Error(`${stage}: network request failed — ${error?.message||"Network error"}`);
+    e.cause=error;
+    throw e;
+  }
+  const raw=await res.text().catch(()=>"");
+  let data=raw;
+  const type=res.headers.get("content-type")||"";
+  if(type.includes("application/json")||String(raw).trim().startsWith("{")||String(raw).trim().startsWith("[")){
+    try{data=raw?JSON.parse(raw):{};}catch(_){data={raw};}
+  }
+  console.info("[CeyBreez Quote→Booking] response",{stage,path,status:res.status,ok:res.ok,body:Array.isArray(data)?`Array(${data.length})`:data});
+  if(!res.ok){
+    const detail=(data&&typeof data==="object")?(data.error||data.message||data.detail||""):String(data||"");
+    const e=new Error(`${stage}: ${detail||`HTTP ${res.status}`}`);
+    e.status=res.status;
+    e.response=data;
+    throw e;
+  }
+  return {data,status:res.status};
+}
+
+async function resolveInquiryRecord(){
+  const c=state.current;
+  if(!c?.inquiryRef&&!c?.linkedInquiryId)return null;
+  const {data}=await conversionApi("/api/admin/inquiries",{},"Load linked inquiry");
+  const rows=normalizeList(data);
+  const ref=String(c.inquiryRef||"").trim();
+  const storedId=String(c.linkedInquiryId||"").trim();
+
+  const byReference=ref ? rows.find(x=>String(x.reference||"").trim()===ref) : null;
+  const byReferenceAsId=ref ? rows.find(x=>String(x.id||"").trim()===ref) : null;
+  const byStoredId=storedId ? rows.find(x=>String(x.id||"").trim()===storedId) : null;
+  const hit=byReference||byReferenceAsId||byStoredId||null;
+  if(!hit)return null;
+
+  if(ref && byStoredId && String(byStoredId.id)!==String(hit.id)){
+    console.warn("[CeyBreez Quote→Booking] stale linkedInquiryId corrected",{
+      visibleInquiryRef:ref,storedLinkedInquiryId:storedId,resolvedInquiryId:String(hit.id||"")
+    });
+  }
+  if(ref && byStoredId && !byReference && !byReferenceAsId && String(byStoredId.reference||"").trim()!==ref){
+    throw new Error(`Linked inquiry mismatch: costing shows ${ref}, but saved inquiryId points to ${byStoredId.reference||byStoredId.id||storedId}`);
+  }
+
+  c.linkedInquiryId=String(hit.id||"");
+  c.inquiryRef=String(hit.reference||ref||hit.id||"");
+  c.guestName=c.guestName||hit.guestName||"";
+  c.guestEmail=c.guestEmail||hit.guestEmail||"";
+  c.guestMobile=c.guestMobile||hit.guestMobile||"";
+  return hit;
+}
+
+async function resolveInquiryId(){return String((await resolveInquiryRecord())?.id||"");}
+
+async function sendQuotationToGuest(){const c=state.current;if(!c)return;try{const inquiryId=await resolveInquiryId();if(!inquiryId){toast("This costing is not linked to a valid Inquiry",true);return;}const q=ensureQuotation(),sum=computeSummary(c);if(!confirm(q.guestEmail?`Send quotation ${q.quoteNo} to the guest?`:`Guest email is empty. Save quote to Inquiry Management without email?`))return;const body={currency:c.currency||"USD",unitRate:String(q.unitRate||sum.adultRate||""),discountPercent:String(c.pricing?.discountPct||0),discountAmount:String(sum.discount||0),totalAmount:String(q.totalAmount||sum.finalSale||""),validUntil:q.validUntil||"",paymentStatus:q.paymentStatus||"Pending",advanceAmount:String(q.advanceAmount||""),balanceAmount:String(Math.max(0,num(q.totalAmount||sum.finalSale)-num(q.advanceAmount))),adminMessage:q.customerMessage||"",sendEmail:!!q.guestEmail};const r=await api(`/api/admin/inquiries/${encodeURIComponent(inquiryId)}/quote`,{method:"POST",body:JSON.stringify(body)});q.status="Sent";q.sentAt=new Date().toISOString();q.balanceAmount=body.balanceAmount;c.status="Quoted";await saveCurrent();setStep("quotation");renderQuotation();toast(r.emailSent?"Quotation sent and linked to Inquiry":"Quotation saved to Inquiry Management");}catch(e){console.error("Quote send failed",e);toast(e.message||"Quote send failed",true);}}
 function markQuoteAccepted(){const c=state.current;if(!c)return;const q=ensureQuotation();q.status="Accepted";q.acceptedAt=new Date().toISOString();if(c.status==="Draft"||c.status==="Approved")c.status="Quoted";setDirty();renderQuotation();toast("Quotation marked Accepted — save the costing");}
 async function saveQuoteOnly(){if(!state.current)return;const q=ensureQuotation();if(q.status==="Not Generated")q.status="Draft";await saveCurrent();setStep("quotation");renderQuotation();}
-async function convertQuoteToBooking(){const c=state.current;if(!c){toast("No costing is open",true);return;}const button=$("#tcConvertBookingBtn");const originalText=button?.textContent||"Convert to Booking";try{if(button){button.disabled=true;button.textContent="Converting...";}toast("Validating linked inquiry and creating booking...");const inquiry=await resolveInquiryRecord();if(!inquiry?.id)throw new Error(`Linked inquiry ${c.inquiryRef||""} was not found`);const inquiryId=String(inquiry.id);const q=ensureQuotation(),sum=computeSummary(c);if(q.status!=="Accepted"&&!confirm("Quotation is not marked Accepted. Convert it anyway?"))return;if(!c.travelStart)throw new Error("Travel Start is required");const dateTo=dateAdd(c.travelStart,Math.max(1,num(c.days)-1));if(!dateTo||dateTo<=c.travelStart)throw new Error("Unable to calculate a valid booking end date");if(!confirm(`Convert ${q.quoteNo||c.reference} to a confirmed booking?`))return;const quoteBody={currency:c.currency||"USD",unitRate:String(q.unitRate||sum.adultRate||""),discountPercent:String(c.pricing?.discountPct||0),discountAmount:String(sum.discount||0),totalAmount:String(q.totalAmount||sum.finalSale||""),validUntil:q.validUntil||"",paymentStatus:q.paymentStatus||"Pending",advanceAmount:String(q.advanceAmount||""),balanceAmount:String(Math.max(0,num(q.totalAmount||sum.finalSale)-num(q.advanceAmount))),adminMessage:q.customerMessage||"",sendEmail:false};await api(`/api/admin/inquiries/${encodeURIComponent(inquiryId)}/quote`,{method:"POST",body:JSON.stringify(quoteBody)});const bookingPayload={inquiryId,reference:inquiry.reference||c.inquiryRef||c.reference,itemName:c.packageName||inquiry.itemName||"Tour",serviceType:"Tour",guestName:q.guestName||c.guestName||inquiry.guestName||"Guest",guestEmail:q.guestEmail||c.guestEmail||inquiry.guestEmail||"",guestMobile:q.guestMobile||c.guestMobile||inquiry.guestMobile||"",guestCountry:c.country||inquiry.guestCountry||"",dateFrom:c.travelStart,dateTo,guests:String(totalPax(c)),totalDays:String(c.days||1),dayRate:String(q.unitRate||sum.adultRate||""),totalAmount:String(q.totalAmount||sum.finalSale||""),currency:c.currency||"USD",discountPercent:String(c.pricing?.discountPct||0),discountAmount:String(sum.discount||0),paymentStatus:q.paymentStatus||"Pending",advanceAmount:String(q.advanceAmount||""),balanceAmount:String(Math.max(0,num(q.totalAmount||sum.finalSale)-num(q.advanceAmount))),adminMessage:`Converted from Tour Costing ${c.reference||""} / Quotation ${q.quoteNo||""}. ${q.customerMessage||""}`.trim(),message:`Booking converted from ${q.quoteNo||c.reference||"Tour Costing"}`,sendEmail:!!q.sendBookingEmail};const res=await api("/api/admin/bookings",{method:"POST",body:JSON.stringify(bookingPayload)});if(!res?.success||!res?.id)throw new Error(res?.error||res?.message||"Booking API did not return a booking ID");const bookings=normalizeList(await api("/api/admin/bookings"));const confirmed=bookings.find(b=>String(b.id)===String(res.id)||String(b.inquiryId)===inquiryId||String(b.reference)===String(bookingPayload.reference));if(!confirmed)throw new Error(`Booking API returned success (${res.id}) but the booking was not found after refresh`);await api("/api/admin/bookings/sync-from-inquiries",{method:"POST",body:JSON.stringify({})}).catch(error=>console.warn("Booking sync warning",error));q.status="Booked";q.bookingId=confirmed.id||res.id;q.acceptedAt=q.acceptedAt||new Date().toISOString();c.status="Booked";let saveWarning="";try{await saveCurrent();}catch(error){saveWarning=error.message||"Costing status could not be saved";console.error("Booking created but costing save failed",error);}setStep("quotation");renderQuotation();window.dispatchEvent(new CustomEvent("ceybreez:booking-created",{detail:{booking:confirmed,inquiryId,costingId:c.id||""}}));toast(saveWarning?`Booking created (${confirmed.reference||confirmed.id}). ${saveWarning}`:`Quotation converted to Booking: ${confirmed.reference||confirmed.id}`,!!saveWarning);}catch(e){console.error("Quote to booking conversion failed",e);const message=e?.message||"Booking conversion failed";toast(`Booking conversion failed: ${message}`,true);alert(`Booking conversion failed.\n\n${message}`);}finally{if(button){button.disabled=!state.current?.inquiryRef||state.current?.quotation?.status==="Booked";button.textContent=originalText;}}}
+
+function sameInquiryBooking(booking,inquiry){
+  if(!booking||!inquiry)return false;
+  const iid=String(inquiry.id||"");
+  const ref=String(inquiry.reference||"");
+  const bid=String(booking.inquiryId||"");
+  const bref=String(booking.reference||"");
+  if(iid&&bid===iid)return true;
+  return !bid && ref && bref===ref;
+}
+
+async function persistConvertedCosting(){
+  const c=state.current;
+  if(!c?.packageName?.trim())throw new Error("Costing status save: Package Name is required");
+  c.summary=computeSummary(c);
+  const payload={...c,totalPax:totalPax(c),summary:c.summary};
+  const path=c.id?`/api/admin/finance/tour-costings/${encodeURIComponent(c.id)}`:"/api/admin/finance/tour-costings";
+  const {data}=await conversionApi(path,{method:c.id?"PUT":"POST",body:JSON.stringify(payload)},"Save converted costing");
+  if(data?.pendingApproval)throw new Error(data.message||"Converted costing status is pending approval");
+  const row=data?.costing||data;
+  state.current=sanitizeCurrent(row?.payload||payload);
+  state.current.id=row?.id||c.id||state.current.id;
+  state.current.reference=row?.reference||c.reference||state.current.reference;
+  return state.current;
+}
+
+let bookingConversionInFlight=false;
+async function convertQuoteToBooking(){
+  const c=state.current;
+  if(!c){toast("No costing is open",true);return;}
+  if(bookingConversionInFlight){setBookingConversionStatus("A booking conversion is already running.","warn");return;}
+
+  const button=$("#tcConvertBookingBtn");
+  const originalText=button?.textContent||"Convert to Booking";
+  let confirmedBooking=null;
+  let stage="Validate conversion";
+  bookingConversionInFlight=true;
+
+  try{
+    if(button){button.disabled=true;button.textContent="Converting...";}
+    setBookingConversionStatus("Validating the linked inquiry and checking for an existing booking…","info");
+    toast("Validating linked inquiry and creating booking...");
+
+    stage="Resolve linked inquiry";
+    const inquiry=await resolveInquiryRecord();
+    if(!inquiry?.id)throw new Error(`Linked inquiry ${c.inquiryRef||"(blank)"} was not found`);
+    const inquiryId=String(inquiry.id);
+    const q=ensureQuotation();
+    const sum=computeSummary(c);
+
+    if(String(q.status||"").toLowerCase()!=="accepted" && String(q.status||"").toLowerCase()!=="booked"){
+      throw new Error(`Quotation ${q.quoteNo||""} must be Accepted before conversion (current status: ${q.status||"Not Generated"})`);
+    }
+    if(!c.packageName?.trim())throw new Error("Tour / package name is required");
+    if(!c.travelStart)throw new Error("Travel Start is required");
+    const dateTo=dateAdd(c.travelStart,Math.max(1,num(c.days)-1));
+    if(!dateTo||dateTo<=c.travelStart)throw new Error("Unable to calculate a valid booking end date");
+
+    stage="Check existing booking";
+    const existingResponse=await conversionApi("/api/admin/bookings",{},"Check existing booking");
+    const existingBookings=normalizeList(existingResponse.data);
+    const existing=existingBookings.find(b=>sameInquiryBooking(b,inquiry));
+
+    if(existing && String(existing.status||"").toLowerCase()==="booked"){
+      confirmedBooking=existing;
+      setBookingConversionStatus(`Booking already exists (${existing.reference||existing.id}). No duplicate was created. Synchronising statuses…`,"warn");
+    }else{
+      if(!confirm(`Convert ${q.quoteNo||c.reference} to a confirmed booking?`)){
+        setBookingConversionStatus("Conversion cancelled. No booking was created.","warn");
+        return;
+      }
+
+      stage="Synchronise accepted quote values to linked inquiry";
+      const quoteBody={
+        currency:c.currency||"USD",
+        unitRate:String(q.unitRate||sum.adultRate||""),
+        discountPercent:String(c.pricing?.discountPct||0),
+        discountAmount:String(sum.discount||0),
+        totalAmount:String(q.totalAmount||sum.finalSale||""),
+        validUntil:q.validUntil||"",
+        paymentStatus:q.paymentStatus||"Pending",
+        advanceAmount:String(q.advanceAmount||""),
+        balanceAmount:String(Math.max(0,num(q.totalAmount||sum.finalSale)-num(q.advanceAmount))),
+        adminMessage:q.customerMessage||"",
+        sendEmail:false
+      };
+      await conversionApi(`/api/admin/inquiries/${encodeURIComponent(inquiryId)}/payment-sync`,{method:"POST",body:JSON.stringify(quoteBody)},"Sync accepted quote values");
+
+      stage="Create booking";
+      const bookingPayload={
+        inquiryId,
+        reference:inquiry.reference||c.inquiryRef||c.reference,
+        itemName:c.packageName||inquiry.itemName||"Tour",
+        serviceType:"Tour",
+        guestName:q.guestName||c.guestName||inquiry.guestName||"Guest",
+        guestEmail:q.guestEmail||c.guestEmail||inquiry.guestEmail||"",
+        guestMobile:q.guestMobile||c.guestMobile||inquiry.guestMobile||"",
+        guestCountry:c.country||inquiry.guestCountry||"",
+        dateFrom:c.travelStart,
+        dateTo,
+        guests:String(totalPax(c)),
+        totalDays:String(c.days||1),
+        dayRate:String(q.unitRate||sum.adultRate||""),
+        totalAmount:String(q.totalAmount||sum.finalSale||""),
+        currency:c.currency||"USD",
+        discountPercent:String(c.pricing?.discountPct||0),
+        discountAmount:String(sum.discount||0),
+        paymentStatus:q.paymentStatus||"Pending",
+        advanceAmount:String(q.advanceAmount||""),
+        balanceAmount:String(Math.max(0,num(q.totalAmount||sum.finalSale)-num(q.advanceAmount))),
+        adminMessage:`Converted from Tour Costing ${c.reference||""} / Quotation ${q.quoteNo||""} / Package ${c.tourPackageId||c.packageName||""}. ${q.customerMessage||""}`.trim(),
+        message:`Booking converted from ${q.quoteNo||c.reference||"Tour Costing"}`,
+        sendEmail:false
+      };
+      setBookingConversionStatus("Creating the booking with guest email/WhatsApp sending OFF…","info");
+      const createResponse=await conversionApi("/api/admin/bookings",{method:"POST",body:JSON.stringify(bookingPayload)},"Create booking");
+      const res=createResponse.data;
+      if(!res?.success||!res?.id)throw new Error(res?.error||res?.message||"Booking API did not return a booking ID");
+
+      stage="Verify created booking";
+      const verifyResponse=await conversionApi("/api/admin/bookings",{},"Verify created booking");
+      confirmedBooking=normalizeList(verifyResponse.data).find(b=>String(b.id)===String(res.id)||sameInquiryBooking(b,inquiry));
+      if(!confirmedBooking)throw new Error(`Booking API returned success (${res.id}) but the booking was not found after refresh`);
+    }
+
+    stage="Synchronise booking finance/status";
+    await conversionApi("/api/admin/bookings/sync-from-inquiries",{method:"POST",body:JSON.stringify({})},"Sync booking values").catch(error=>console.warn("[CeyBreez Quote→Booking] non-fatal sync warning",error));
+    await conversionApi(`/api/admin/inquiries/${encodeURIComponent(inquiryId)}/status`,{method:"PUT",body:JSON.stringify({status:"Booked",adminMessage:"",sendEmail:false})},"Set inquiry status to Booked");
+
+    stage="Verify inquiry status";
+    const inquiryVerify=await conversionApi("/api/admin/inquiries",{},"Verify inquiry status");
+    const finalInquiry=normalizeList(inquiryVerify.data).find(x=>String(x.id)===inquiryId||String(x.reference)===String(inquiry.reference||""));
+    if(!finalInquiry)throw new Error("Booking exists, but the linked inquiry could not be reloaded for status verification");
+    if(String(finalInquiry.status||"").toLowerCase()!=="booked")throw new Error(`Booking exists, but inquiry status is ${finalInquiry.status||"unknown"} instead of Booked`);
+
+    stage="Save costing and quotation status";
+    const active=state.current;
+    active.linkedInquiryId=inquiryId;
+    active.inquiryRef=String(inquiry.reference||active.inquiryRef||inquiryId);
+    const activeQuote=ensureQuotation();
+    activeQuote.status="Booked";
+    activeQuote.bookingId=confirmedBooking.id||activeQuote.bookingId;
+    activeQuote.acceptedAt=activeQuote.acceptedAt||new Date().toISOString();
+    activeQuote.sendBookingEmail=false;
+    active.status="Booked";
+    state.activeStep="quotation";
+    await persistConvertedCosting();
+
+    stage="Verify costing status";
+    if(state.current?.id){
+      const costingCheck=await conversionApi(`/api/admin/finance/tour-costings/${encodeURIComponent(state.current.id)}`,{},"Verify converted costing");
+      const saved=sanitizeCurrent(costingCheck.data?.payload||costingCheck.data);
+      if(String(saved.status||"").toLowerCase()!=="booked"||String(saved.quotation?.status||"").toLowerCase()!=="booked"){
+        throw new Error("Booking exists, but costing/quotation status did not persist as Booked");
+      }
+      state.current=saved;
+      state.current.id=costingCheck.data?.id||state.current.id;
+      state.current.reference=costingCheck.data?.reference||state.current.reference;
+    }
+
+    await refreshCostings().catch(error=>console.warn("[CeyBreez Quote→Booking] costing register refresh warning",error));
+    if(typeof window.loadBookings==="function")await window.loadBookings().catch?.(()=>{});
+    if(typeof window.loadInquiries==="function")await window.loadInquiries().catch?.(()=>{});
+    setStep("quotation");
+    renderQuotation();
+    renderContextBanner();
+    setDirty(false);
+
+    const bookingRef=confirmedBooking.reference||confirmedBooking.id;
+    const success=`Booking confirmed: ${bookingRef}. Inquiry ${inquiry.reference||inquiryId} is Booked. Guest messaging remained OFF.`;
+    setBookingConversionStatus(success,"success");
+    toast(`Booking confirmed: ${bookingRef}`);
+    window.dispatchEvent(new CustomEvent("ceybreez:booking-created",{detail:{booking:confirmedBooking,inquiryId,costingId:state.current?.id||""}}));
+  }catch(error){
+    console.error("[CeyBreez Quote→Booking] failed",{stage,error,booking:confirmedBooking});
+    const detail=error?.message||"Booking conversion failed";
+    const prefix=confirmedBooking?`Booking ${confirmedBooking.reference||confirmedBooking.id} exists, but ${stage} failed`:`${stage} failed`;
+    const message=`${prefix}: ${detail}`;
+    setBookingConversionStatus(message,"error");
+    toast(message,true);
+    alert(`Booking conversion error\n\n${message}\n\nNo guest email or WhatsApp message was sent.`);
+  }finally{
+    bookingConversionInFlight=false;
+    if(button){
+      button.textContent=originalText;
+      button.disabled=!state.current?.inquiryRef||String(state.current?.quotation?.status||"").toLowerCase()==="booked";
+    }
+  }
+}
+
 function renderQuotationRegister(){const body=$("#tcQuotesBody");if(!body)return;const rows=state.costings.filter(x=>x.status!=="Cancelled");body.innerHTML=rows.length?rows.map(x=>`<tr><td><strong>${esc(x.reference||x.id)}</strong><br><small>${esc(x.inquiryRef||"Base package")}</small></td><td>${esc(x.packageName||"-")}</td><td>${esc(x.travelStart||"-")}</td><td>${esc(x.totalPax??0)}</td><td class="tc-money">${money(x.finalSale,x.currency)}</td><td>${statusPill(x.status)}</td><td><button class="tc-btn small ghost" data-open-quote="${esc(x.id)}">Open Quote</button></td></tr>`).join(""):`<tr><td colspan="7" class="tc-empty">No tour costings available.</td></tr>`;}
 async function openQuoteFromRegister(id){await openCosting(id);setStep("quotation");renderQuotation();}
 function installQuotationUI(){

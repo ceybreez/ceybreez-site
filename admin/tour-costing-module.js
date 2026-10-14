@@ -444,8 +444,10 @@ async function convertQuoteToBooking(){
     }
     if(!c.packageName?.trim())throw new Error("Tour / package name is required");
     if(!c.travelStart)throw new Error("Travel Start is required");
-    const dateTo=dateAdd(c.travelStart,Math.max(1,num(c.days)-1));
-    if(!dateTo||dateTo<=c.travelStart)throw new Error("Unable to calculate a valid booking end date");
+    // Bookings store dateTo as an EXCLUSIVE boundary. For tours this means:
+    // 1 day: 24 -> 25 (operates on 24), 2 days: 24 -> 26 (24-25), etc.
+    const dateTo=dateAdd(c.travelStart,Math.max(1,Math.round(num(c.days)||1)));
+    if(!dateTo||dateTo<=c.travelStart)throw new Error("Unable to calculate a valid booking end boundary");
 
     stage="Check existing booking";
     const existingResponse=await conversionApi("/api/admin/bookings",{},"Check existing booking");
@@ -625,8 +627,9 @@ function updateOperationService(i,key,value){const o=ensureOperations(),r=o.serv
 function markOperationsReady(){const o=ensureOperations();if(!o.services.length){toast("Sync operational services first",true);return;}const pending=o.services.filter(x=>!["Confirmed","Cancelled"].includes(x.status));if(pending.length&&!confirm(`${pending.length} service(s) are not confirmed. Mark tour operations Ready anyway?`))return;o.status="Ready";renderOperations();setDirty();toast("Tour operations marked Ready — save costing");}
 function operationSheetHtml(guest=false){
   const c=state.current,o=ensureOperations(),pax=totalPax(c),confirmed=o.services.filter(x=>x.status!=="Cancelled");
+  const actualEnd=ocEndDate(c)||c.travelStart||"";
   const rows=confirmed.map(r=>`<tr><td>${esc(r.day||"-")}</td><td>${esc(r.category||"-")}</td><td>${esc(r.service||"-")}</td>${guest?"":`<td>${esc(r.supplier||"-")}</td><td>${esc(r.status||"Pending")}</td><td>${esc(r.confirmationRef||"-")}</td>`}<td>${esc(r.notes||"")}</td></tr>`).join("");
-  return `<div class="op-sheet"><div class="op-head"><div><span>CEYBREEZ · SRI LANKA</span><h1>${guest?"Guest Tour Voucher":"Tour Operations Sheet"}</h1></div><div><strong>${esc(c.reference||"")}</strong><small>${esc(c.inquiryRef||"")}</small></div></div><div class="op-meta"><div><span>Guest</span><strong>${esc(c.guestName||"Guest")}</strong></div><div><span>Tour</span><strong>${esc(c.packageName||"")}</strong></div><div><span>Travel</span><strong>${esc(c.travelStart||"-")}</strong><small>${esc(c.days||1)}D / ${esc(c.nights||0)}N · ${pax} pax</small></div><div><span>Pickup</span><strong>${esc(o.pickupLocation||"-")}</strong><small>${esc(o.pickupTime||"")}</small></div></div><div class="op-contacts"><div><b>Arrival:</b> ${esc(o.flightNo||"-")} ${o.arrivalTime?`· ${esc(o.arrivalTime)}`:""}</div><div><b>Departure:</b> ${esc(o.departureFlightNo||"-")} ${o.departureTime?`· ${esc(o.departureTime)}`:""}</div><div><b>Driver:</b> ${esc(o.driverName||"-")} ${o.driverMobile?`· ${esc(o.driverMobile)}`:""}</div><div><b>Guide:</b> ${esc(o.guideName||"-")} ${o.guideMobile?`· ${esc(o.guideMobile)}`:""}</div><div><b>Vehicle:</b> ${esc(o.vehicleName||c.vehiclePreference||"-")} ${o.vehicleNo?`· ${esc(o.vehicleNo)}`:""}</div><div><b>Drop:</b> ${esc(o.dropLocation||"-")} ${o.dropTime?`· ${esc(o.dropTime)}`:""}</div><div><b>Emergency:</b> ${esc(o.emergencyContact||"-")}</div></div><table><thead><tr><th>Day</th><th>Type</th><th>Service</th>${guest?"":"<th>Supplier</th><th>Status</th><th>Confirmation</th>"}<th>Notes</th></tr></thead><tbody>${rows||`<tr><td colspan="${guest?4:7}">No services listed.</td></tr>`}</tbody></table>${guest?"":o.internalNotes?`<div class="op-note"><b>Internal Notes</b><br>${esc(o.internalNotes).replace(/\n/g,"<br>")}</div>`:""}</div>`;
+  return `<div class="op-sheet"><div class="op-head"><div><span>CEYBREEZ · SRI LANKA</span><h1>${guest?"Guest Tour Voucher":"Tour Operations Sheet"}</h1></div><div><strong>${esc(c.reference||"")}</strong><small>${esc(c.inquiryRef||"")}</small></div></div><div class="op-meta"><div><span>Guest</span><strong>${esc(c.guestName||"Guest")}</strong></div><div><span>Tour</span><strong>${esc(c.packageName||"")}</strong></div><div><span>Travel</span><strong>${esc(c.travelStart||"-")} → ${esc(actualEnd||"-")}</strong><small>${esc(c.days||1)}D / ${esc(c.nights||0)}N · ${pax} pax</small></div><div><span>Pickup</span><strong>${esc(o.pickupLocation||"-")}</strong><small>${esc(o.pickupTime||"")}</small></div></div><div class="op-contacts"><div><b>Arrival:</b> ${esc(o.flightNo||"-")} ${o.arrivalTime?`· ${esc(o.arrivalTime)}`:""}</div><div><b>Departure:</b> ${esc(o.departureFlightNo||"-")} ${o.departureTime?`· ${esc(o.departureTime)}`:""}</div><div><b>Driver:</b> ${esc(o.driverName||"-")} ${o.driverMobile?`· ${esc(o.driverMobile)}`:""}</div><div><b>Guide:</b> ${esc(o.guideName||"-")} ${o.guideMobile?`· ${esc(o.guideMobile)}`:""}</div><div><b>Vehicle:</b> ${esc(o.vehicleName||c.vehiclePreference||"-")} ${o.vehicleNo?`· ${esc(o.vehicleNo)}`:""}</div><div><b>Drop:</b> ${esc(o.dropLocation||"-")} ${o.dropTime?`· ${esc(o.dropTime)}`:""}</div><div><b>Emergency:</b> ${esc(o.emergencyContact||"-")}</div></div><table><thead><tr><th>Day</th><th>Type</th><th>Service</th>${guest?"":"<th>Supplier</th><th>Status</th><th>Confirmation</th>"}<th>Notes</th></tr></thead><tbody>${rows||`<tr><td colspan="${guest?4:7}">No services listed.</td></tr>`}</tbody></table>${guest?"":o.internalNotes?`<div class="op-note"><b>Internal Notes</b><br>${esc(o.internalNotes).replace(/\n/g,"<br>")}</div>`:""}</div>`;
 }
 function printOperationDocument(guest=false){if(!state.current)return;const title=guest?"Guest Tour Voucher":"Tour Operations Sheet",w=window.open("","_blank","width=1100,height=820");if(!w){toast("Allow pop-ups to print",true);return;}w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>body{font-family:Arial,sans-serif;background:#f4f8f7;color:#173b36;margin:0;padding:28px}.op-sheet{max-width:1000px;margin:auto;background:#fff;border:1px solid #d9e6e3;border-radius:16px;overflow:hidden}.op-head{background:#123f3a;color:#fff;padding:22px;display:flex;justify-content:space-between;gap:20px}.op-head span,.op-head small{display:block;font-size:11px;opacity:.8}.op-head h1{margin:5px 0 0;font-family:Georgia,serif}.op-head>div:last-child{text-align:right}.op-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#d9e6e3}.op-meta>div{background:#fff;padding:14px}.op-meta span,.op-meta small{display:block;font-size:10px;color:#6a7f7b}.op-meta strong{display:block;margin:4px 0}.op-contacts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:16px 20px;background:#f7fbfa;font-size:12px}table{width:calc(100% - 40px);margin:18px 20px;border-collapse:collapse;font-size:12px}th,td{border-bottom:1px solid #d9e6e3;text-align:left;padding:9px 7px;vertical-align:top}th{font-size:10px;text-transform:uppercase;color:#6a7f7b}.op-note{margin:0 20px 20px;padding:13px;background:#fff8e8;border:1px solid #eedba9;border-radius:10px;line-height:1.5}@media(max-width:700px){.op-meta,.op-contacts{grid-template-columns:1fr 1fr}}@media print{body{background:#fff;padding:0}.op-sheet{border:0}}</style></head><body>${operationSheetHtml(guest)}</body></html>`);w.document.close();setTimeout(()=>w.print(),250);}
 function installOperationsUI(){
@@ -859,11 +862,16 @@ function bind(){ if(bound) return; bound=true;
 
 
 function normalizeText(v){ return String(v||"").trim().toLowerCase(); }
-function dateSpan(from,to){
+function dateSpan(from,to,{exclusiveEnd=false}={}){
   if(!from) return {days:1,nights:0};
   const a=new Date(String(from).slice(0,10)+"T00:00:00"), b=new Date(String(to||from).slice(0,10)+"T00:00:00");
   if(Number.isNaN(a.getTime())||Number.isNaN(b.getTime())||b<a) return {days:1,nights:0};
-  const nights=Math.max(0,Math.round((b-a)/86400000)); return {days:nights+1,nights};
+  const diff=Math.max(0,Math.round((b-a)/86400000));
+  if(exclusiveEnd){
+    const days=Math.max(1,diff);
+    return {days,nights:Math.max(0,days-1)};
+  }
+  return {days:diff+1,nights:diff};
 }
 function paxFromInquiry(value){
   const text=String(value||""); const direct=parseInt(text,10);
@@ -896,7 +904,10 @@ async function openContext(ctx={}){
     const inquiry=ctx.inquiry, ref=String(inquiry.reference||inquiry.id||"");
     const existing=latest(state.costings.filter(x=>String(x.inquiryRef||"")===ref));
     if(existing){ await openCosting(existing.id); state.context=ctx; renderContextBanner(); return; }
-    const c=blankCosting(), span=dateSpan(inquiry.dateFrom,inquiry.dateTo), pax=paxFromInquiry(inquiry.guests);
+    // Public tour inquiries use inclusive actual dates. Once booked, the booking API
+    // writes inquiry.dateTo as the same exclusive boundary used by bookings.
+    const bookedBoundary=normalizeText(inquiry.status)==="booked";
+    const c=blankCosting(), span=dateSpan(inquiry.dateFrom,inquiry.dateTo,{exclusiveEnd:bookedBoundary}), pax=paxFromInquiry(inquiry.guests);
     c.inquiryRef=ref; c.linkedInquiryId=String(inquiry.id||""); c.source="Web"; c.guestName=inquiry.guestName||inquiry.name||""; c.guestEmail=inquiry.guestEmail||""; c.guestMobile=inquiry.guestMobile||""; c.country=inquiry.guestCountry||inquiry.country||""; c.travelStart=inquiry.dateFrom||today(); c.days=span.days; c.nights=span.nights; Object.assign(c,pax);
     c.packageName=inquiry.itemName||"Custom Sri Lanka Tour"; c.tourPackageId=packageIdFromInquiry(inquiry); if(c.tourPackageId){ const t=state.tours.find(x=>String(x.id)===c.tourPackageId); if(t){c.packageName=t.title||c.packageName;c.currency=t.currency||c.currency;} }
     c.notes=`Created from Inquiry ${ref}.${inquiry.message?`\n\nInquiry message:\n${inquiry.message}`:""}`;

@@ -23,6 +23,33 @@ function fmtDate(value) {
   return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 }
 
+function dateOnly(value) {
+  return String(value || "").slice(0, 10);
+}
+
+function addDateDays(value, days) {
+  if (!value) return "";
+  const d = new Date(dateOnly(value) + "T00:00:00");
+  if (Number.isNaN(d.getTime())) return "";
+  d.setDate(d.getDate() + Number(days || 0));
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function isTourBooking(booking) {
+  const text = `${booking?.bookingCategory || ""} ${booking?.serviceType || ""} ${booking?.itemName || ""}`.toLowerCase();
+  return text.includes("tour") || text.includes("trip") || text.includes("safari") || text.includes("excursion");
+}
+
+function actualBookingEnd(booking) {
+  const from = dateOnly(booking?.dateFrom);
+  const storedTo = dateOnly(booking?.dateTo);
+  if (!isTourBooking(booking)) return storedTo || from;
+  const days = Math.round(Number(booking?.totalDays || 0));
+  if (from && days > 0) return addDateDays(from, Math.max(0, days - 1));
+  if (from && storedTo && storedTo > from) return addDateDays(storedTo, -1);
+  return storedTo || from;
+}
+
 function statusClass(status) {
   const s = String(status || "").toLowerCase();
   if (s.includes("paid")) return "booked";
@@ -103,7 +130,7 @@ function bookingRows(bookings) {
     return `<tr>
       <td><strong>${escapeHtml(b.reference || b.id || "-")}</strong><br><small>${escapeHtml(b.serviceType || "")}</small></td>
       <td>${escapeHtml(b.guestName || "Guest")}<br><small>${escapeHtml(b.itemName || "-")}</small></td>
-      <td>${fmtDate(b.dateFrom)} → ${fmtDate(b.dateTo)}</td>
+      <td>${fmtDate(b.dateFrom)} → ${fmtDate(actualBookingEnd(b))}</td>
       <td>${fmtAmount(currency, total)}</td>
       <td>${fmtAmount(currency, paid)}</td>
       <td>${fmtAmount(currency, refunded)}</td>
@@ -162,7 +189,7 @@ function compactBookingSummary(b, historySummary) {
     <div><span>Reference</span><strong>${escapeHtml(b.reference || b.id || "-")}</strong></div>
     <div><span>Guest</span><strong>${escapeHtml(b.guestName || "Guest")}</strong></div>
     <div><span>Item</span><strong>${escapeHtml(b.itemName || b.serviceType || "-")}</strong></div>
-    <div><span>Dates</span><strong>${fmtDate(b.dateFrom)} → ${fmtDate(b.dateTo)}</strong></div>
+    <div><span>Dates</span><strong>${fmtDate(b.dateFrom)} → ${fmtDate(actualBookingEnd(b))}</strong></div>
     <div><span>Total</span><strong>${fmtAmount(currency, total)}</strong></div>
     <div><span>Paid</span><strong>${fmtAmount(currency, paid)}</strong></div>
     <div><span>Refunded</span><strong>${fmtAmount(currency, refunded)}</strong></div>
